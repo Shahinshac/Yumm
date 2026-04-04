@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: bankmanagement-api
+    env: python
+    plan: starter
+    buildCommand: "cd backend && pip install -r requirements.txt"
+    startCommand: "cd backend && gunicorn --bind 0.0.0.0:$PORT run:app"
+    envVars:
+      - key: FLASK_ENV
+        value: production
+      - key: PYTHON_VERSION
+        value: 3.11
+
+databases:
+  - name: bankmanagement-db
+    engine: postgres
+    ipAllowList: []
