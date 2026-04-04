@@ -1,0 +1,33 @@
+run = "cd backend && bash ../scripts/init_replit.sh"
+modules = ["python-3.11", "nodejs-18"]
+
+[env]
+FLASK_ENV = "production"
+FLASK_APP = "run.py"
+DATABASE_URL = "postgresql://bankuser:bankpass123@localhost:5432/bankmanagement"
+PGDATA = "$REPL_HOME/.local/share/postgresql"
+PYTHONUNBUFFERED = "1"
+
+[nix]
+channel = "unstable"
+
+[languages]
+python = {pattern = "**/*.py", syntax = "python"}
+
+[unitTest]
+language = "python"
+
+[debugger]
+support = true
+
+[ports]
+5000 = {
+  label = "Bank API"
+  description = "Flask backend API server"
+  visibility = "public"
+}
+
+[packager]
+language = "python"
+ignoredPaths = [".git", "__pycache__", ".pytest_cache"]
+ignoreVcsIgnore = false
