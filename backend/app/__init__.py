@@ -11,6 +11,13 @@ import logging
 # Initialize extensions
 jwt = JWTManager()
 
+# Dummy db object for backward compatibility with existing code
+class DummyDB:
+    """Placeholder for SQLAlchemy db - not used with MongoDB"""
+    pass
+
+db = DummyDB()
+
 
 def create_app(config_name=None):
     """
