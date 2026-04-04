@@ -1,7 +1,6 @@
 """
 User management service - Business logic for user operations
 """
-from app import db
 from app.models.user import User, Role, RoleEnum
 from app.utils.exceptions import (
     ResourceNotFoundError,
@@ -26,18 +25,20 @@ class UserService:
         Returns:
             Dictionary with users list and pagination info
         """
-        query = User.query.order_by(User.created_at.desc())
-        paginated = query.paginate(page=page, per_page=per_page)
+        skip = (page - 1) * per_page
+        users = User.objects.order_by("-created_at").skip(skip).limit(per_page)
+        total = User.objects.count()
+        pages = (total + per_page - 1) // per_page
 
         return {
-            "users": [user.to_dict() for user in paginated.items],
-            "total": paginated.total,
-            "pages": paginated.pages,
+            "users": [user.to_dict() for user in users],
+            "total": total,
+            "pages": pages,
             "current_page": page,
         }
 
     @staticmethod
-    def get_user_by_id(user_id: int) -> User:
+    def get_user_by_id(user_id: str) -> User:
         """
         Get user by ID
 
@@ -50,7 +51,10 @@ class UserService:
         Raises:
             ResourceNotFoundError: If user not found
         """
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
 
         if not user:
             raise ResourceNotFoundError(f"User with ID {user_id} not found")
@@ -71,7 +75,7 @@ class UserService:
         Raises:
             ResourceNotFoundError: If user not found
         """
-        user = User.query.filter_by(username=username).first()
+        user = User.objects(username=username).first()
 
         if not user:
             raise ResourceNotFoundError(f"User {username} not found")
@@ -92,7 +96,7 @@ class UserService:
         Raises:
             ResourceNotFoundError: If user not found
         """
-        user = User.query.filter_by(email=email).first()
+        user = User.objects(email=email).first()
 
         if not user:
             raise ResourceNotFoundError(f"User with email {email} not found")
@@ -100,7 +104,7 @@ class UserService:
         return user
 
     @staticmethod
-    def update_user(user_id: int, **kwargs) -> User:
+    def update_user(user_id: str, **kwargs) -> User:
         """
         Update user information
 
@@ -130,8 +134,9 @@ class UserService:
             Validators.validate_phone(update_fields["phone_number"])
 
             # Check if phone already exists
-            existing = User.query.filter(
-                (User.phone_number == update_fields["phone_number"]) & (User.id != user_id)
+            existing = User.objects(
+                phone_number=update_fields["phone_number"],
+                id__ne=user_id
             ).first()
 
             if existing:
@@ -151,12 +156,12 @@ class UserService:
             setattr(user, field, value)
 
         user.updated_at = datetime.utcnow()
-        db.session.commit()
+        user.save()
 
         return user
 
     @staticmethod
-    def assign_role(user_id: int, role_name: str) -> User:
+    def assign_role(user_id: str, role_name: str) -> User:
         """
         Assign role to user
 
@@ -174,20 +179,20 @@ class UserService:
         user = UserService.get_user_by_id(user_id)
 
         # Validate role exists
-        role = Role.query.filter_by(name=role_name).first()
+        role = Role.objects(name=role_name).first()
 
         if not role:
-            available_roles = ", ".join([r.name for r in Role.query.all()])
+            available_roles = ", ".join([r.name for r in Role.objects()])
             raise ValidationError(f"Invalid role. Available: {available_roles}")
 
-        user.role_id = role.id
+        user.role = role
         user.updated_at = datetime.utcnow()
-        db.session.commit()
+        user.save()
 
         return user
 
     @staticmethod
-    def deactivate_user(user_id: int) -> User:
+    def deactivate_user(user_id: str) -> User:
         """
         Deactivate user (disable account)
 
@@ -201,12 +206,12 @@ class UserService:
 
         user.is_active = False
         user.updated_at = datetime.utcnow()
-        db.session.commit()
+        user.save()
 
         return user
 
     @staticmethod
-    def activate_user(user_id: int) -> User:
+    def activate_user(user_id: str) -> User:
         """
         Activate user (enable account)
 
@@ -220,7 +225,7 @@ class UserService:
 
         user.is_active = True
         user.updated_at = datetime.utcnow()
-        db.session.commit()
+        user.save()
 
         return user
 
@@ -237,12 +242,12 @@ class UserService:
             List of matching users
         """
         if search_type == "username":
-            users = User.query.filter(User.username.ilike(f"%{query}%")).all()
+            users = User.objects(username__icontains=query)
         elif search_type == "email":
-            users = User.query.filter(User.email.ilike(f"%{query}%")).all()
+            users = User.objects(email__icontains=query)
         elif search_type == "phone":
-            users = User.query.filter(User.phone_number.contains(query)).all()
+            users = User.objects(phone_number__contains=query)
         else:
             raise ValidationError("Invalid search type")
 
-        return users
+        return list(users)

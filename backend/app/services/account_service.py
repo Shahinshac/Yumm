@@ -1,7 +1,6 @@
 """
 Account management service - Business logic for account operations
 """
-from app import db
 from app.models.account import Account, AccountTypeEnum, AccountStatusEnum
 from app.models.user import User
 from app.utils.generators import Generators
@@ -19,7 +18,7 @@ class AccountService:
 
     @staticmethod
     def create_account(
-        user_id: int,
+        user_id: str,
         account_type: str = "savings",
         initial_balance: float = 0.0,
     ) -> Account:
@@ -39,7 +38,11 @@ class AccountService:
             ValidationError: If validation fails
         """
         # Validate user exists
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
+
         if not user:
             raise ResourceNotFoundError(f"User with ID {user_id} not found")
 
@@ -65,10 +68,8 @@ class AccountService:
         )
 
         try:
-            db.session.add(account)
-            db.session.commit()
+            account.save()
         except Exception as e:
-            db.session.rollback()
             raise ValidationError(f"Failed to create account: {str(e)}")
 
         return account
@@ -84,12 +85,12 @@ class AccountService:
         while True:
             account_number = Generators.generate_account_number()
             # Check if it already exists
-            existing = Account.query.filter_by(account_number=account_number).first()
+            existing = Account.objects(account_number=account_number).first()
             if not existing:
                 return account_number
 
     @staticmethod
-    def get_account_by_id(account_id: int) -> Account:
+    def get_account_by_id(account_id: str) -> Account:
         """
         Get account by ID
 
@@ -102,7 +103,10 @@ class AccountService:
         Raises:
             ResourceNotFoundError: If account not found
         """
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
 
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
@@ -123,7 +127,7 @@ class AccountService:
         Raises:
             ResourceNotFoundError: If account not found
         """
-        account = Account.query.filter_by(account_number=account_number).first()
+        account = Account.objects(account_number=account_number).first()
 
         if not account:
             raise ResourceNotFoundError(f"Account {account_number} not found")
@@ -131,7 +135,7 @@ class AccountService:
         return account
 
     @staticmethod
-    def get_user_accounts(user_id: int) -> list:
+    def get_user_accounts(user_id: str) -> list:
         """
         Get all accounts for a user
 
@@ -144,15 +148,18 @@ class AccountService:
         Raises:
             ResourceNotFoundError: If user not found
         """
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
 
         if not user:
             raise ResourceNotFoundError(f"User with ID {user_id} not found")
 
-        return Account.query.filter_by(user_id=user_id).order_by(Account.created_at.desc()).all()
+        return list(Account.objects(user_id=user_id).order_by("-created_at"))
 
     @staticmethod
-    def get_account_balance(account_id: int) -> dict:
+    def get_account_balance(account_id: str) -> dict:
         """
         Get account balance
 
@@ -175,7 +182,7 @@ class AccountService:
         }
 
     @staticmethod
-    def update_balance(account_id: int, amount: float, operation: str = "add") -> Account:
+    def update_balance(account_id: str, amount: float, operation: str = "add") -> Account:
         """
         Update account balance
 
@@ -206,12 +213,12 @@ class AccountService:
             account.balance -= Decimal(str(amount))
 
         account.updated_at = datetime.utcnow()
-        db.session.commit()
+        account.save()
 
         return account
 
     @staticmethod
-    def freeze_account(account_id: int) -> Account:
+    def freeze_account(account_id: str) -> Account:
         """
         Freeze account (block transactions)
 
@@ -231,12 +238,12 @@ class AccountService:
 
         account.status = AccountStatusEnum.FROZEN.value
         account.updated_at = datetime.utcnow()
-        db.session.commit()
+        account.save()
 
         return account
 
     @staticmethod
-    def unfreeze_account(account_id: int) -> Account:
+    def unfreeze_account(account_id: str) -> Account:
         """
         Unfreeze account (allow transactions)
 
@@ -256,12 +263,12 @@ class AccountService:
 
         account.status = AccountStatusEnum.ACTIVE.value
         account.updated_at = datetime.utcnow()
-        db.session.commit()
+        account.save()
 
         return account
 
     @staticmethod
-    def close_account(account_id: int) -> Account:
+    def close_account(account_id: str) -> Account:
         """
         Close account (permanent closure)
 
@@ -287,12 +294,12 @@ class AccountService:
 
         account.status = AccountStatusEnum.CLOSED.value
         account.updated_at = datetime.utcnow()
-        db.session.commit()
+        account.save()
 
         return account
 
     @staticmethod
-    def get_account_status(account_id: int) -> dict:
+    def get_account_status(account_id: str) -> dict:
         """
         Get account status details
 

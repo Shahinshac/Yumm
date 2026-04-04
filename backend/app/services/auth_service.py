@@ -1,7 +1,6 @@
 """
 Authentication service - Business logic for user authentication
 """
-from app import db
 from app.models.user import User, Role, RoleEnum
 from app.utils.security import PasswordSecurity, TokenManager
 from app.utils.validators import Validators
@@ -55,8 +54,12 @@ class AuthService:
         Validators.validate_phone(phone_number)
 
         # Check if user already exists
-        existing_user = User.query.filter(
-            (User.username == username) | (User.email == email) | (User.phone_number == phone_number)
+        existing_user = User.objects(
+            username=username
+        ).first() or User.objects(
+            email=email
+        ).first() or User.objects(
+            phone_number=phone_number
         ).first()
 
         if existing_user:
@@ -65,28 +68,25 @@ class AuthService:
             )
 
         # Get role object
-        role_obj = Role.query.filter_by(name=role).first()
+        role_obj = Role.objects(name=role).first()
         if not role_obj:
             # Default to customer role if not found
-            role_obj = Role.query.filter_by(name=RoleEnum.CUSTOMER.value).first()
+            role_obj = Role.objects(name=RoleEnum.CUSTOMER.value).first()
 
         # Create new user
         password_hash = PasswordSecurity.hash_password(password)
-        user = User(
-            username=username,
-            email=email,
-            password_hash=password_hash,
-            first_name=first_name,
-            last_name=last_name,
-            phone_number=phone_number,
-            role_id=role_obj.id,
-        )
-
         try:
-            db.session.add(user)
-            db.session.commit()
+            user = User(
+                username=username,
+                email=email,
+                password_hash=password_hash,
+                first_name=first_name,
+                last_name=last_name,
+                phone_number=phone_number,
+                role=role_obj,
+            )
+            user.save()
         except Exception as e:
-            db.session.rollback()
             raise ValidationError(f"Failed to register user: {str(e)}")
 
         return user.to_dict()
@@ -107,9 +107,7 @@ class AuthService:
             AuthenticationError: If credentials are invalid or user not found
         """
         # Find user by username or email
-        user = User.query.filter(
-            (User.username == username) | (User.email == username)
-        ).first()
+        user = User.objects(username=username).first() or User.objects(email=username).first()
 
         if not user:
             raise AuthenticationError("Invalid credentials")
@@ -123,10 +121,10 @@ class AuthService:
 
         # Update last login
         user.last_login = datetime.utcnow()
-        db.session.commit()
+        user.save()
 
         # Create tokens
-        tokens = TokenManager.create_tokens(user.id, user.username, user.role.name)
+        tokens = TokenManager.create_tokens(str(user.id), user.username, user.role.name)
 
         return {
             "user": user.to_dict(),
@@ -134,7 +132,7 @@ class AuthService:
         }
 
     @staticmethod
-    def refresh_access_token(user_id: int) -> dict:
+    def refresh_access_token(user_id: str) -> dict:
         """
         Refresh access token using refresh token
 
@@ -147,7 +145,10 @@ class AuthService:
         Raises:
             ResourceNotFoundError: If user not found
         """
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
 
         if not user:
             raise ResourceNotFoundError("User not found")
@@ -157,7 +158,7 @@ class AuthService:
 
         # Create new access token only
         access_token = TokenManager.create_tokens(
-            user.id, user.username, user.role.name
+            str(user.id), user.username, user.role.name
         )["access_token"]
 
         return {
@@ -166,7 +167,7 @@ class AuthService:
         }
 
     @staticmethod
-    def get_user_by_id(user_id: int) -> User:
+    def get_user_by_id(user_id: str) -> User:
         """
         Get user by ID
 
@@ -179,7 +180,10 @@ class AuthService:
         Raises:
             ResourceNotFoundError: If user not found
         """
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
 
         if not user:
             raise ResourceNotFoundError("User not found")
@@ -187,7 +191,7 @@ class AuthService:
         return user
 
     @staticmethod
-    def change_password(user_id: int, old_password: str, new_password: str) -> dict:
+    def change_password(user_id: str, old_password: str, new_password: str) -> dict:
         """
         Change user password
 
@@ -214,7 +218,7 @@ class AuthService:
 
         # Update password
         user.password_hash = PasswordSecurity.hash_password(new_password)
-        db.session.commit()
+        user.save()
 
         return {"message": "Password changed successfully"}
 
@@ -224,20 +228,18 @@ def initialize_roles():
     Initialize default roles in database
     Call this during app startup
     """
-    roles = [
-        Role(name=RoleEnum.ADMIN.value, description="Administrator with full access"),
-        Role(name=RoleEnum.MANAGER.value, description="Manager can approve loans/accounts"),
-        Role(name=RoleEnum.STAFF.value, description="Staff can create accounts and handle queries"),
-        Role(name=RoleEnum.CUSTOMER.value, description="Regular customer"),
+    roles_data = [
+        {"name": RoleEnum.ADMIN.value, "description": "Administrator with full access"},
+        {"name": RoleEnum.MANAGER.value, "description": "Manager can approve loans/accounts"},
+        {"name": RoleEnum.STAFF.value, "description": "Staff can create accounts and handle queries"},
+        {"name": RoleEnum.CUSTOMER.value, "description": "Regular customer"},
     ]
 
-    for role in roles:
-        existing_role = Role.query.filter_by(name=role.name).first()
+    for role_data in roles_data:
+        existing_role = Role.objects(name=role_data["name"]).first()
         if not existing_role:
-            db.session.add(role)
-
-    try:
-        db.session.commit()
-    except Exception as e:
-        db.session.rollback()
-        raise Exception(f"Failed to initialize roles: {str(e)}")
+            try:
+                role = Role(name=role_data["name"], description=role_data["description"])
+                role.save()
+            except Exception as e:
+                raise Exception(f"Failed to initialize roles: {str(e)}")

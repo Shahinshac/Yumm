@@ -1,7 +1,6 @@
 """
 Beneficiary management service - Business logic for managing transfer beneficiaries
 """
-from app import db
 from app.models.base import Beneficiary
 from app.models.account import Account
 from app.models.user import User
@@ -19,7 +18,7 @@ class BeneficiaryService:
 
     @staticmethod
     def add_beneficiary(
-        account_id: int,
+        account_id: str,
         beneficiary_account_number: str,
         beneficiary_name: str,
     ) -> Beneficiary:
@@ -40,7 +39,11 @@ class BeneficiaryService:
             DuplicateResourceError: If beneficiary already exists
         """
         # Validate account exists
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
 
@@ -53,7 +56,7 @@ class BeneficiaryService:
             raise ValidationError("Cannot add your own account as a beneficiary")
 
         # Check if beneficiary already exists
-        existing = Beneficiary.query.filter_by(
+        existing = Beneficiary.objects(
             account_id=account_id,
             beneficiary_account_number=beneficiary_account_number,
         ).first()
@@ -64,7 +67,7 @@ class BeneficiaryService:
             )
 
         # Try to find beneficiary account (optional - for linking)
-        beneficiary_account = Account.query.filter_by(
+        beneficiary_account = Account.objects(
             account_number=beneficiary_account_number
         ).first()
 
@@ -77,16 +80,14 @@ class BeneficiaryService:
         )
 
         try:
-            db.session.add(beneficiary)
-            db.session.commit()
+            beneficiary.save()
         except Exception as e:
-            db.session.rollback()
             raise ValidationError(f"Failed to add beneficiary: {str(e)}")
 
         return beneficiary
 
     @staticmethod
-    def get_beneficiary(beneficiary_id: int) -> Beneficiary:
+    def get_beneficiary(beneficiary_id: str) -> Beneficiary:
         """
         Get beneficiary by ID
 
@@ -99,7 +100,10 @@ class BeneficiaryService:
         Raises:
             ResourceNotFoundError: If not found
         """
-        beneficiary = Beneficiary.query.get(beneficiary_id)
+        try:
+            beneficiary = Beneficiary.objects(id=beneficiary_id).first()
+        except Exception:
+            beneficiary = None
 
         if not beneficiary:
             raise ResourceNotFoundError(f"Beneficiary with ID {beneficiary_id} not found")
@@ -108,7 +112,7 @@ class BeneficiaryService:
 
     @staticmethod
     def get_account_beneficiaries(
-        account_id: int,
+        account_id: str,
         approved_only: bool = False,
     ) -> list:
         """
@@ -125,21 +129,23 @@ class BeneficiaryService:
             ResourceNotFoundError: If account not found
         """
         # Validate account exists
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
 
-        query = Beneficiary.query.filter_by(account_id=account_id).order_by(
-            Beneficiary.created_at.desc()
-        )
+        query_dict = {"account_id": account_id}
 
         if approved_only:
-            query = query.filter_by(is_approved=True)
+            query_dict["is_approved"] = True
 
-        return query.all()
+        return list(Beneficiary.objects(**query_dict).order_by("-created_at"))
 
     @staticmethod
-    def approve_beneficiary(beneficiary_id: int, approved_by_user_id: int) -> Beneficiary:
+    def approve_beneficiary(beneficiary_id: str, approved_by_user_id: str) -> Beneficiary:
         """
         Approve a beneficiary (admin/staff only)
 
@@ -164,12 +170,12 @@ class BeneficiaryService:
         beneficiary.approved_at = datetime.utcnow()
         beneficiary.updated_at = datetime.utcnow()
 
-        db.session.commit()
+        beneficiary.save()
 
         return beneficiary
 
     @staticmethod
-    def reject_beneficiary(beneficiary_id: int) -> Beneficiary:
+    def reject_beneficiary(beneficiary_id: str) -> Beneficiary:
         """
         Reject/delete a beneficiary
 
@@ -184,13 +190,12 @@ class BeneficiaryService:
         """
         beneficiary = BeneficiaryService.get_beneficiary(beneficiary_id)
 
-        db.session.delete(beneficiary)
-        db.session.commit()
+        beneficiary.delete()
 
         return beneficiary
 
     @staticmethod
-    def delete_beneficiary(beneficiary_id: int) -> dict:
+    def delete_beneficiary(beneficiary_id: str) -> dict:
         """
         Delete a beneficiary
 
@@ -205,15 +210,14 @@ class BeneficiaryService:
         """
         beneficiary = BeneficiaryService.get_beneficiary(beneficiary_id)
 
-        db.session.delete(beneficiary)
-        db.session.commit()
+        beneficiary.delete()
 
         return {
             "message": f"Beneficiary {beneficiary.beneficiary_account_number} deleted"
         }
 
     @staticmethod
-    def is_approved(account_id: int, beneficiary_account_number: str) -> bool:
+    def is_approved(account_id: str, beneficiary_account_number: str) -> bool:
         """
         Check if a beneficiary is approved
 
@@ -224,7 +228,7 @@ class BeneficiaryService:
         Returns:
             True if approved, False otherwise
         """
-        beneficiary = Beneficiary.query.filter_by(
+        beneficiary = Beneficiary.objects(
             account_id=account_id,
             beneficiary_account_number=beneficiary_account_number,
             is_approved=True,
@@ -233,7 +237,7 @@ class BeneficiaryService:
         return beneficiary is not None
 
     @staticmethod
-    def check_if_approved(account_id: int, beneficiary_account_number: str) -> None:
+    def check_if_approved(account_id: str, beneficiary_account_number: str) -> None:
         """
         Check if beneficiary is approved, raise error if not
 
@@ -244,7 +248,7 @@ class BeneficiaryService:
         Raises:
             ValidationError: If not approved or doesn't exist
         """
-        beneficiary = Beneficiary.query.filter_by(
+        beneficiary = Beneficiary.objects(
             account_id=account_id,
             beneficiary_account_number=beneficiary_account_number,
         ).first()
@@ -267,9 +271,7 @@ class BeneficiaryService:
         Returns:
             List of unapproved beneficiaries
         """
-        return Beneficiary.query.filter_by(is_approved=False).order_by(
-            Beneficiary.created_at.asc()
-        ).all()
+        return list(Beneficiary.objects(is_approved=False).order_by("created_at"))
 
     @staticmethod
     def get_beneficiary_statistics() -> dict:
@@ -279,8 +281,8 @@ class BeneficiaryService:
         Returns:
             Dictionary with stats
         """
-        total = Beneficiary.query.count()
-        approved = Beneficiary.query.filter_by(is_approved=True).count()
+        total = Beneficiary.objects.count()
+        approved = Beneficiary.objects(is_approved=True).count()
         pending = total - approved
 
         return {

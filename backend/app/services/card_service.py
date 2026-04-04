@@ -1,7 +1,6 @@
 """
 Card and ATM service - Business logic for debit cards and ATM operations
 """
-from app import db
 from app.models.base import Card
 from app.models.account import Account
 from app.models.transaction import Transaction, TransactionTypeEnum
@@ -22,7 +21,7 @@ class CardService:
     """Handle debit card operations"""
 
     @staticmethod
-    def generate_card(account_id: int) -> Card:
+    def generate_card(account_id: str) -> Card:
         """
         Generate a new debit card for account
 
@@ -37,7 +36,11 @@ class CardService:
             ValidationError: If card generation fails
         """
         # Validate account exists
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
 
@@ -61,16 +64,14 @@ class CardService:
         )
 
         try:
-            db.session.add(card)
-            db.session.commit()
+            card.save()
         except Exception as e:
-            db.session.rollback()
             raise ValidationError(f"Failed to generate card: {str(e)}")
 
         return card
 
     @staticmethod
-    def get_card(card_id: int) -> Card:
+    def get_card(card_id: str) -> Card:
         """
         Get card by ID
 
@@ -83,7 +84,10 @@ class CardService:
         Raises:
             ResourceNotFoundError: If card not found
         """
-        card = Card.query.get(card_id)
+        try:
+            card = Card.objects(id=card_id).first()
+        except Exception:
+            card = None
 
         if not card:
             raise ResourceNotFoundError(f"Card with ID {card_id} not found")
@@ -104,7 +108,7 @@ class CardService:
         Raises:
             ResourceNotFoundError: If card not found
         """
-        card = Card.query.filter_by(card_number=card_number).first()
+        card = Card.objects(card_number=card_number).first()
 
         if not card:
             raise ResourceNotFoundError(f"Card not found")
@@ -112,7 +116,7 @@ class CardService:
         return card
 
     @staticmethod
-    def get_account_cards(account_id: int) -> list:
+    def get_account_cards(account_id: str) -> list:
         """
         Get all cards for account
 
@@ -125,14 +129,18 @@ class CardService:
         Raises:
             ResourceNotFoundError: If account not found
         """
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
 
-        return Card.query.filter_by(account_id=account_id).order_by(Card.created_at.desc()).all()
+        return list(Card.objects(account_id=account_id).order_by("-created_at"))
 
     @staticmethod
-    def set_pin(card_id: int, pin: str) -> Card:
+    def set_pin(card_id: str, pin: str) -> Card:
         """
         Set or update card PIN
 
@@ -156,7 +164,7 @@ class CardService:
         card.pin_hash = PINSecurity.hash_pin(pin)
         card.updated_at = datetime.utcnow()
 
-        db.session.commit()
+        card.save()
 
         return card
 
@@ -192,7 +200,7 @@ class CardService:
         return card
 
     @staticmethod
-    def block_card(card_id: int) -> Card:
+    def block_card(card_id: str) -> Card:
         """
         Block card (disable transactions)
 
@@ -213,12 +221,12 @@ class CardService:
         card.is_blocked = True
         card.updated_at = datetime.utcnow()
 
-        db.session.commit()
+        card.save()
 
         return card
 
     @staticmethod
-    def unblock_card(card_id: int) -> Card:
+    def unblock_card(card_id: str) -> Card:
         """
         Unblock card (enable transactions)
 
@@ -239,7 +247,7 @@ class CardService:
         card.is_blocked = False
         card.updated_at = datetime.utcnow()
 
-        db.session.commit()
+        card.save()
 
         return card
 
@@ -266,18 +274,21 @@ class ATMService:
         card = CardService.verify_pin(card_number, pin)
 
         # Get account
-        account = Account.query.get(card.account_id)
+        try:
+            account = Account.objects(id=card.account_id).first()
+        except Exception:
+            account = None
 
         return {
-            "card_id": card.id,
+            "card_id": str(card.id),
             "account_number": account.account_number,
-            "account_id": account.id,
+            "account_id": str(account.id),
             "card_number": f"****{card.card_number[-4:]}",
             "balance": float(account.balance),
         }
 
     @staticmethod
-    def atm_check_balance(card_id: int) -> dict:
+    def atm_check_balance(card_id: str) -> dict:
         """
         Check account balance via ATM
 
@@ -291,7 +302,10 @@ class ATMService:
             ResourceNotFoundError: If card not found
         """
         card = CardService.get_card(card_id)
-        account = Account.query.get(card.account_id)
+        try:
+            account = Account.objects(id=card.account_id).first()
+        except Exception:
+            account = None
 
         return {
             "account_number": account.account_number,
@@ -300,7 +314,7 @@ class ATMService:
         }
 
     @staticmethod
-    def atm_withdraw(card_id: int, amount: float) -> dict:
+    def atm_withdraw(card_id: str, amount: float) -> dict:
         """
         Withdraw money via ATM
 
@@ -317,7 +331,10 @@ class ATMService:
             InsufficientBalanceError: If insufficient balance
         """
         card = CardService.get_card(card_id)
-        account = Account.query.get(card.account_id)
+        try:
+            account = Account.objects(id=card.account_id).first()
+        except Exception:
+            account = None
 
         # Validate amount
         if amount <= 0:
@@ -343,7 +360,7 @@ class ATMService:
 
         return {
             "message": "Withdrawal successful",
-            "transaction_id": transaction.id,
+            "transaction_id": str(transaction.id),
             "reference_id": transaction.reference_id,
             "amount": float(transaction.amount),
             "new_balance": float(account.balance),
@@ -351,7 +368,7 @@ class ATMService:
         }
 
     @staticmethod
-    def atm_mini_statement(card_id: int, num_transactions: int = 5) -> dict:
+    def atm_mini_statement(card_id: str, num_transactions: int = 5) -> dict:
         """
         Get mini statement (last N transactions) via ATM
 
@@ -366,14 +383,16 @@ class ATMService:
             ResourceNotFoundError: If card not found
         """
         card = CardService.get_card(card_id)
-        account = Account.query.get(card.account_id)
+        try:
+            account = Account.objects(id=card.account_id).first()
+        except Exception:
+            account = None
 
         # Get recent transactions
-        transactions = (
-            Transaction.query.filter_by(account_id=account.id)
-            .order_by(Transaction.created_at.desc())
+        transactions = list(
+            Transaction.objects(account_id=account.id)
+            .order_by("-created_at")
             .limit(num_transactions)
-            .all()
         )
 
         return {

@@ -1,7 +1,6 @@
 """
 Transaction management service - Business logic for financial transactions
 """
-from app import db
 from app.models.account import Account
 from app.models.transaction import Transaction, TransactionTypeEnum, TransactionStatusEnum
 from app.models.user import User
@@ -19,7 +18,7 @@ class TransactionService:
     """Handle all transaction operations"""
 
     @staticmethod
-    def deposit(account_id: int, amount: float, description: str = "") -> Transaction:
+    def deposit(account_id: str, amount: float, description: str = "") -> Transaction:
         """
         Deposit money into account
 
@@ -36,7 +35,11 @@ class TransactionService:
             ValidationError: If amount invalid
         """
         # Validate account exists
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
 
@@ -60,16 +63,15 @@ class TransactionService:
             account.balance += Decimal(str(amount))
             account.updated_at = datetime.utcnow()
 
-            db.session.add(transaction)
-            db.session.commit()
+            transaction.save()
+            account.save()
         except Exception as e:
-            db.session.rollback()
             raise ValidationError(f"Deposit failed: {str(e)}")
 
         return transaction
 
     @staticmethod
-    def withdraw(account_id: int, amount: float, description: str = "") -> Transaction:
+    def withdraw(account_id: str, amount: float, description: str = "") -> Transaction:
         """
         Withdraw money from account
 
@@ -87,7 +89,11 @@ class TransactionService:
             ValidationError: If amount invalid
         """
         # Validate account exists
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
 
@@ -117,18 +123,17 @@ class TransactionService:
             account.balance -= Decimal(str(amount))
             account.updated_at = datetime.utcnow()
 
-            db.session.add(transaction)
-            db.session.commit()
+            transaction.save()
+            account.save()
         except Exception as e:
-            db.session.rollback()
             raise ValidationError(f"Withdrawal failed: {str(e)}")
 
         return transaction
 
     @staticmethod
     def transfer(
-        from_account_id: int,
-        to_account_id: int,
+        from_account_id: str,
+        to_account_id: str,
         amount: float,
         description: str = "",
     ) -> dict:
@@ -150,11 +155,19 @@ class TransactionService:
             ValidationError: If invalid transfer
         """
         # Validate accounts exist
-        from_account = Account.query.get(from_account_id)
+        try:
+            from_account = Account.objects(id=from_account_id).first()
+        except Exception:
+            from_account = None
+
         if not from_account:
             raise ResourceNotFoundError(f"Source account with ID {from_account_id} not found")
 
-        to_account = Account.query.get(to_account_id)
+        try:
+            to_account = Account.objects(id=to_account_id).first()
+        except Exception:
+            to_account = None
+
         if not to_account:
             raise ResourceNotFoundError(f"Destination account with ID {to_account_id} not found")
 
@@ -212,11 +225,11 @@ class TransactionService:
             to_account.updated_at = datetime.utcnow()
 
             # Save both transactions
-            db.session.add(debit_txn)
-            db.session.add(credit_txn)
-            db.session.commit()
+            debit_txn.save()
+            credit_txn.save()
+            from_account.save()
+            to_account.save()
         except Exception as e:
-            db.session.rollback()
             raise ValidationError(f"Transfer failed: {str(e)}")
 
         return {
@@ -227,7 +240,7 @@ class TransactionService:
         }
 
     @staticmethod
-    def get_transaction(transaction_id: int) -> Transaction:
+    def get_transaction(transaction_id: str) -> Transaction:
         """
         Get transaction by ID
 
@@ -240,7 +253,10 @@ class TransactionService:
         Raises:
             ResourceNotFoundError: If transaction not found
         """
-        transaction = Transaction.query.get(transaction_id)
+        try:
+            transaction = Transaction.objects(id=transaction_id).first()
+        except Exception:
+            transaction = None
 
         if not transaction:
             raise ResourceNotFoundError(f"Transaction with ID {transaction_id} not found")
@@ -249,7 +265,7 @@ class TransactionService:
 
     @staticmethod
     def get_account_transactions(
-        account_id: int,
+        account_id: str,
         transaction_type: str = None,
         start_date: datetime = None,
         end_date: datetime = None,
@@ -274,42 +290,48 @@ class TransactionService:
             ResourceNotFoundError: If account not found
         """
         # Validate account exists
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
 
         # Build query
-        query = Transaction.query.filter_by(account_id=account_id).order_by(
-            Transaction.created_at.desc()
-        )
+        query_dict = {"account_id": account_id}
 
         # Apply filters
         if transaction_type:
-            query = query.filter_by(transaction_type=transaction_type)
+            query_dict["transaction_type"] = transaction_type
 
-        if start_date:
-            query = query.filter(Transaction.created_at >= start_date)
+        if start_date or end_date:
+            date_filter = {}
+            if start_date:
+                date_filter["$gte"] = start_date
+            if end_date:
+                end_date_with_offset = end_date + timedelta(days=1)
+                date_filter["$lt"] = end_date_with_offset
+            query_dict["created_at"] = date_filter
 
-        if end_date:
-            # Add 1 day to include all transactions until end of day
-            end_date = end_date + timedelta(days=1)
-            query = query.filter(Transaction.created_at < end_date)
-
-        # Paginate
-        paginated = query.paginate(page=page, per_page=per_page)
+        # Calculate pagination
+        skip = (page - 1) * per_page
+        transactions = Transaction.objects(**query_dict).order_by("-created_at").skip(skip).limit(per_page)
+        total = Transaction.objects(**query_dict).count()
+        pages = (total + per_page - 1) // per_page
 
         return {
-            "account_id": account_id,
+            "account_id": str(account_id),
             "account_number": account.account_number,
-            "total": paginated.total,
-            "pages": paginated.pages,
+            "total": total,
+            "pages": pages,
             "current_page": page,
-            "transactions": [txn.to_dict() for txn in paginated.items],
+            "transactions": [txn.to_dict() for txn in transactions],
         }
 
     @staticmethod
     def get_user_transactions(
-        user_id: int,
+        user_id: str,
         transaction_type: str = None,
         start_date: datetime = None,
         end_date: datetime = None,
@@ -334,39 +356,46 @@ class TransactionService:
             ResourceNotFoundError: If user not found
         """
         # Validate user exists
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
+
         if not user:
             raise ResourceNotFoundError(f"User with ID {user_id} not found")
 
         # Build query
-        query = Transaction.query.filter_by(user_id=user_id).order_by(
-            Transaction.created_at.desc()
-        )
+        query_dict = {"user_id": user_id}
 
         # Apply filters
         if transaction_type:
-            query = query.filter_by(transaction_type=transaction_type)
+            query_dict["transaction_type"] = transaction_type
 
-        if start_date:
-            query = query.filter(Transaction.created_at >= start_date)
+        if start_date or end_date:
+            date_filter = {}
+            if start_date:
+                date_filter["$gte"] = start_date
+            if end_date:
+                end_date_with_offset = end_date + timedelta(days=1)
+                date_filter["$lt"] = end_date_with_offset
+            query_dict["created_at"] = date_filter
 
-        if end_date:
-            end_date = end_date + timedelta(days=1)
-            query = query.filter(Transaction.created_at < end_date)
-
-        # Paginate
-        paginated = query.paginate(page=page, per_page=per_page)
+        # Calculate pagination
+        skip = (page - 1) * per_page
+        transactions = Transaction.objects(**query_dict).order_by("-created_at").skip(skip).limit(per_page)
+        total = Transaction.objects(**query_dict).count()
+        pages = (total + per_page - 1) // per_page
 
         return {
-            "user_id": user_id,
-            "total": paginated.total,
-            "pages": paginated.pages,
+            "user_id": str(user_id),
+            "total": total,
+            "pages": pages,
             "current_page": page,
-            "transactions": [txn.to_dict() for txn in paginated.items],
+            "transactions": [txn.to_dict() for txn in transactions],
         }
 
     @staticmethod
-    def get_transaction_summary(account_id: int, days: int = 30) -> dict:
+    def get_transaction_summary(account_id: str, days: int = 30) -> dict:
         """
         Get transaction summary for account
 
@@ -380,7 +409,11 @@ class TransactionService:
         Raises:
             ResourceNotFoundError: If account not found
         """
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
 
@@ -388,10 +421,10 @@ class TransactionService:
         start_date = datetime.utcnow() - timedelta(days=days)
 
         # Get transactions
-        transactions = Transaction.query.filter(
-            (Transaction.account_id == account_id)
-            & (Transaction.created_at >= start_date)
-        ).all()
+        transactions = list(Transaction.objects(
+            account_id=account_id,
+            created_at__gte=start_date
+        ))
 
         # Calculate totals by type
         deposits = sum(
@@ -422,7 +455,7 @@ class TransactionService:
         )
 
         return {
-            "account_id": account_id,
+            "account_id": str(account_id),
             "period_days": days,
             "transaction_count": len(transactions),
             "deposits": {

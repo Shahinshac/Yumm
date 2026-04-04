@@ -1,7 +1,6 @@
 """
 Loan service - Business logic for loan management
 """
-from app import db
 from app.models.base import Loan, LoanPayment
 from app.models.account import Account
 from app.models.transaction import Transaction, TransactionTypeEnum
@@ -33,8 +32,8 @@ class LoanService:
 
     @staticmethod
     def apply_for_loan(
-        user_id: int,
-        account_id: int,
+        user_id: str,
+        account_id: str,
         loan_amount: float,
         loan_type: str,
         tenure_months: int,
@@ -57,7 +56,11 @@ class LoanService:
             ValidationError: If inputs invalid
         """
         # Validate account exists
-        account = Account.query.get(account_id)
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
         if not account:
             raise ResourceNotFoundError(f"Account with ID {account_id} not found")
 
@@ -98,10 +101,8 @@ class LoanService:
         )
 
         try:
-            db.session.add(loan)
-            db.session.commit()
+            loan.save()
         except Exception as e:
-            db.session.rollback()
             raise ValidationError(f"Failed to apply for loan: {str(e)}")
 
         return loan
@@ -124,7 +125,7 @@ class LoanService:
         return Decimal(str(round(emi, 2)))
 
     @staticmethod
-    def get_loan(loan_id: int) -> Loan:
+    def get_loan(loan_id: str) -> Loan:
         """
         Get loan by ID
 
@@ -137,13 +138,17 @@ class LoanService:
         Raises:
             ResourceNotFoundError: If not found
         """
-        loan = Loan.query.get(loan_id)
+        try:
+            loan = Loan.objects(id=loan_id).first()
+        except Exception:
+            loan = None
+
         if not loan:
             raise ResourceNotFoundError(f"Loan with ID {loan_id} not found")
         return loan
 
     @staticmethod
-    def get_user_loans(user_id: int, status: str = None) -> list:
+    def get_user_loans(user_id: str, status: str = None) -> list:
         """
         Get all loans for user
 
@@ -154,15 +159,15 @@ class LoanService:
         Returns:
             List of Loan objects
         """
-        query = Loan.query.filter_by(user_id=user_id).order_by(Loan.created_at.desc())
+        query_dict = {"user_id": user_id}
 
         if status:
-            query = query.filter_by(status=status)
+            query_dict["status"] = status
 
-        return query.all()
+        return list(Loan.objects(**query_dict).order_by("-created_at"))
 
     @staticmethod
-    def approve_loan(loan_id: int, approved_by_user_id: int, disburse: bool = True) -> Loan:
+    def approve_loan(loan_id: str, approved_by_user_id: str, disburse: bool = True) -> Loan:
         """
         Approve and optionally disburse loan
 
@@ -194,7 +199,7 @@ class LoanService:
         # Create EMI schedule immediately (but not yet due)
         LoanService._create_emi_schedule(loan)
 
-        db.session.commit()
+        loan.save()
 
         # Disburse if requested
         if disburse:
@@ -203,7 +208,7 @@ class LoanService:
         return loan
 
     @staticmethod
-    def disburse_loan(loan_id: int) -> Loan:
+    def disburse_loan(loan_id: str) -> Loan:
         """
         Disburse approved loan to account
 
@@ -225,7 +230,10 @@ class LoanService:
             raise ValidationError(f"Cannot disburse {loan.status} loan")
 
         # Get account
-        account = Account.query.get(loan.account_id)
+        try:
+            account = Account.objects(id=loan.account_id).first()
+        except Exception:
+            account = None
 
         # Create disbursement transaction
         from app.services.transaction_service import TransactionService
@@ -241,12 +249,12 @@ class LoanService:
         loan.disbursed_amount = loan.loan_amount
         loan.disbursed_at = datetime.utcnow()
 
-        db.session.commit()
+        loan.save()
 
         return loan
 
     @staticmethod
-    def reject_loan(loan_id: int, rejection_reason: str) -> Loan:
+    def reject_loan(loan_id: str, rejection_reason: str) -> Loan:
         """
         Reject pending loan
 
@@ -269,12 +277,12 @@ class LoanService:
         loan.status = "rejected"
         loan.rejection_reason = rejection_reason
 
-        db.session.commit()
+        loan.save()
 
         return loan
 
     @staticmethod
-    def pay_emi(loan_id: int, account_id: int, amount: float) -> dict:
+    def pay_emi(loan_id: str, account_id: str, amount: float) -> dict:
         """
         Make EMI payment for loan
 
@@ -298,18 +306,21 @@ class LoanService:
             raise ValidationError(f"Cannot pay EMI for {loan.status} loan")
 
         # Validate account has sufficient balance
-        account = Account.query.get(account_id)
-        if account.balance < Decimal(str(amount)):
+        try:
+            account = Account.objects(id=account_id).first()
+        except Exception:
+            account = None
+
+        if not account or account.balance < Decimal(str(amount)):
             raise InsufficientBalanceError(
-                f"Insufficient balance. Available: {account.balance}"
+                f"Insufficient balance. Available: {account.balance if account else 0}"
             )
 
         # Get next pending EMI
-        next_emi = (
-            LoanPayment.query.filter_by(loan_id=loan_id, status="pending")
-            .order_by(LoanPayment.emi_number)
-            .first()
-        )
+        next_emi = LoanPayment.objects(
+            loan_id=loan_id,
+            status="pending"
+        ).order_by("emi_number").first()
 
         if not next_emi:
             raise ValidationError("No pending EMI found for this loan")
@@ -344,25 +355,26 @@ class LoanService:
             loan.status = "closed"
 
         # Set next due date
-        next_pending = (
-            LoanPayment.query.filter_by(loan_id=loan_id, status="pending")
-            .order_by(LoanPayment.emi_number)
-            .first()
-        )
+        next_pending = LoanPayment.objects(
+            loan_id=loan_id,
+            status="pending"
+        ).order_by("emi_number").first()
+
         if next_pending:
             loan.next_due_date = next_pending.due_date
         else:
             loan.next_due_date = None
 
-        db.session.commit()
+        next_emi.save()
+        loan.save()
 
         return {
             "message": "EMI paid successfully",
-            "loan_id": loan_id,
+            "loan_id": str(loan_id),
             "emi_number": next_emi.emi_number,
             "amount_paid": float(amount),
             "remaining_amount": float(loan.remaining_amount),
-            "transaction_id": transaction.id,
+            "transaction_id": str(transaction.id),
             "timestamp": transaction.created_at.isoformat(),
         }
 
@@ -386,12 +398,10 @@ class LoanService:
                 due_date=due_date,
                 status="pending",
             )
-            db.session.add(emi_payment)
-
-        db.session.commit()
+            emi_payment.save()
 
     @staticmethod
-    def get_emi_schedule(loan_id: int) -> list:
+    def get_emi_schedule(loan_id: str) -> list:
         """
         Get EMI payment schedule for loan
 
@@ -401,14 +411,10 @@ class LoanService:
         Returns:
             List of LoanPayment objects in schedule order
         """
-        return (
-            LoanPayment.query.filter_by(loan_id=loan_id)
-            .order_by(LoanPayment.emi_number)
-            .all()
-        )
+        return list(LoanPayment.objects(loan_id=loan_id).order_by("emi_number"))
 
     @staticmethod
-    def get_loan_summary(loan_id: int) -> dict:
+    def get_loan_summary(loan_id: str) -> dict:
         """
         Get comprehensive loan summary
 
@@ -435,7 +441,7 @@ class LoanService:
         ]
 
         return {
-            "loan_id": loan_id,
+            "loan_id": str(loan_id),
             "loan_type": loan.loan_type,
             "loan_amount": float(loan.loan_amount),
             "interest_rate": loan.interest_rate,
@@ -462,7 +468,7 @@ class LoanService:
         Returns:
             List of Loan objects in PENDING status
         """
-        return Loan.query.filter_by(status="pending").order_by(Loan.created_at.desc()).all()
+        return list(Loan.objects(status="pending").order_by("-created_at"))
 
     @staticmethod
     def get_loan_statistics() -> dict:
@@ -472,7 +478,7 @@ class LoanService:
         Returns:
             Summary statistics
         """
-        all_loans = Loan.query.all()
+        all_loans = list(Loan.objects())
         total_amount = sum(l.loan_amount for l in all_loans)
         total_paid = sum(l.paid_amount for l in all_loans)
         total_remaining = sum(l.remaining_amount for l in all_loans)
