@@ -1,1 +1,1 @@
-# Banking System Backend
+"""Backend package initialization"""
