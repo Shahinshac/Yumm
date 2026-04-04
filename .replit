@@ -1,13 +1,6 @@
 run = "cd backend && bash ../scripts/init_replit.sh"
 modules = ["python-3.11", "nodejs-18"]
 
-# FRONTEND DEPLOYMENT:
-# Frontend is deployed separately on Vercel (free tier)
-# After frontend is deployed on Vercel, update CORS_ORIGINS in backend/.env with:
-#   CORS_ORIGINS=https://your-frontend.vercel.app,http://localhost:3000
-#
-# See REPLIT_SETUP.md for complete deployment guide
-
 [env]
 FLASK_ENV = "production"
 FLASK_APP = "run.py"
@@ -27,12 +20,5 @@ language = "python"
 [debugger]
 support = true
 
-[ports."5000"]
-label = "Bank API"
-description = "Flask backend API server"
-visibility = "public"
-
 [packager]
 language = "python"
-ignoredPaths = [".git", "__pycache__", ".pytest_cache"]
-ignoreVcsIgnore = false
