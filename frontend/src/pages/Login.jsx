@@ -1,6 +1,6 @@
 /**
  * Login Page - 26-07 RESERVE BANK
- * Professional Banking UI
+ * Secure Enterprise Banking - No Public Registration
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -18,7 +18,7 @@ export function LoginPage() {
     const newErrors = {};
 
     if (!form.username) {
-      newErrors.username = 'Username is required';
+      newErrors.username = 'Username or email is required';
     }
 
     if (!form.password) {
@@ -33,7 +33,6 @@ export function LoginPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    // Clear error for this field when user starts typing
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
@@ -53,7 +52,16 @@ export function LoginPage() {
     setLoading(false);
 
     if (result.success) {
-      navigate('/dashboard');
+      // Check if user needs to change password on first login
+      if (result.is_first_login && result.role === 'customer') {
+        navigate('/change-password-first-login');
+      } else if (result.role === 'admin') {
+        navigate('/admin-dashboard');
+      } else if (result.role === 'staff') {
+        navigate('/staff-dashboard');
+      } else {
+        navigate('/dashboard');
+      }
     } else {
       setErrors({ form: result.message || 'Invalid credentials' });
     }
@@ -72,6 +80,14 @@ export function LoginPage() {
             <p className="bank-tagline">Secure Digital Banking</p>
           </div>
 
+          {/* Info Banner */}
+          <div className="info-banner">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+            </svg>
+            <p>Customer accounts are created by bank staff. Contact your administrator for account access.</p>
+          </div>
+
           {/* Login Form */}
           <form className="login-form" onSubmit={handleSubmit}>
             {/* Form Level Error */}
@@ -86,9 +102,7 @@ export function LoginPage() {
 
             {/* Username Field */}
             <div className="form-group">
-              <label htmlFor="username" className="form-label">
-                Username or Email
-              </label>
+              <label htmlFor="username" className="form-label">Username or Email</label>
               <div className="input-wrapper">
                 <svg className="input-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
                   <path d="M9 9a2.25 2.25 0 100-4.5A2.25 2.25 0 009 9zm0 1.5c-3 0-4.5 1.5-4.5 4.5v1.5h9v-1.5c0-3-1.5-4.5-4.5-4.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -105,16 +119,12 @@ export function LoginPage() {
                   disabled={loading}
                 />
               </div>
-              {errors.username && (
-                <span className="field-error">{errors.username}</span>
-              )}
+              {errors.username && <span className="field-error">{errors.username}</span>}
             </div>
 
             {/* Password Field */}
             <div className="form-group">
-              <label htmlFor="password" className="form-label">
-                Password
-              </label>
+              <label htmlFor="password" className="form-label">Password</label>
               <div className="input-wrapper">
                 <svg className="input-icon" width="18" height="18" viewBox="0 0 18 18" fill="none">
                   <path d="M3.75 8.25h10.5c.825 0 1.5.675 1.5 1.5v6c0 .825-.675 1.5-1.5 1.5h-10.5c-.825 0-1.5-.675-1.5-1.5v-6c0-.825.675-1.5 1.5-1.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -133,17 +143,11 @@ export function LoginPage() {
                   disabled={loading}
                 />
               </div>
-              {errors.password && (
-                <span className="field-error">{errors.password}</span>
-              )}
+              {errors.password && <span className="field-error">{errors.password}</span>}
             </div>
 
-            {/* Remember Me & Forgot Password */}
+            {/* Forgot Password Link */}
             <div className="form-actions">
-              <label className="checkbox-label">
-                <input type="checkbox" name="remember" defaultChecked />
-                <span>Remember me</span>
-              </label>
               <a href="/forgot-password" className="forgot-link">
                 Forgot password?
               </a>
@@ -168,18 +172,6 @@ export function LoginPage() {
               )}
             </button>
           </form>
-
-          {/* Divider */}
-          <div className="form-divider">
-            <span>New to 26-07 Reserve Bank?</span>
-          </div>
-
-          {/* Sign Up Section */}
-          <div className="signup-section">
-            <a href="/register" className="signup-button">
-              Create Account
-            </a>
-          </div>
         </div>
       </div>
 
@@ -200,3 +192,4 @@ export function LoginPage() {
 }
 
 export default LoginPage;
+

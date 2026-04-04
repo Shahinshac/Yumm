@@ -1,0 +1,265 @@
+"""
+Authentication API routes - Enterprise Banking Security
+"""
+from flask import Blueprint, request, jsonify
+from flask_jwt_extended import jwt_required, get_jwt
+from app.services.auth_service import AuthService
+from app.utils.exceptions import BankingException
+from app.middleware.rbac import require_authentication, require_role, get_current_user
+from app import db
+from app.models.user import User
+
+# Create blueprint
+auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
+
+
+@auth_bp.route("/register", methods=["POST"])
+def register():
+    """
+    ⛔ DISABLED - Public registration is not allowed
+
+    Only Admin/Staff can create customer accounts via POST /api/admin/customers
+
+    This endpoint returns 403 Forbidden for security reasons.
+    """
+    return jsonify({
+        "error": "Public registration is disabled",
+        "message": "Customer accounts can only be created by Admin or Staff members",
+        "info": "Please contact your administrator to create an account"
+    }), 403
+
+
+@auth_bp.route("/login", methods=["POST"])
+def login():
+    """
+    Login user and get authentication tokens
+
+    Works for ALL roles: admin, staff, customer
+
+    Request body:
+        {
+            "username": "john_doe",  # Can also use email
+            "password": "SecurePass123"
+        }
+
+    Returns:
+        200: Login successful with tokens and user info
+        401: Invalid credentials
+        400: Validation error
+    """
+    try:
+        data = request.get_json()
+
+        if not data.get("username") or not data.get("password"):
+            return jsonify({"error": "Username and password are required"}), 400
+
+        # Call service for login
+        result = AuthService.login(data["username"], data["password"])
+
+        # Add is_first_login flag to response
+        return jsonify(result), 200
+
+    except BankingException as e:
+        return jsonify({"error": e.message}), e.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@auth_bp.route("/change-password-first-login", methods=["POST"])
+@jwt_required()
+def change_password_first_login():
+    """
+    Change password on first login (no old password required)
+
+    MUST be called after first login if is_first_login = true
+
+    Request body:
+        {
+            "new_password": "NewSecurePassword123"
+        }
+
+    Returns:
+        200: Password changed successfully
+        400: Validation error
+        401: Unauthorized
+    """
+    try:
+        user_id = get_jwt()["sub"]
+        user = User.query.get(user_id)
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        data = request.get_json()
+        new_password = data.get("new_password")
+
+        if not new_password:
+            return jsonify({"error": "New password is required"}), 400
+
+        # Validate password strength
+        if len(new_password) < 8:
+            return jsonify({"error": "Password must be at least 8 characters"}), 400
+
+        if not any(c.isupper() for c in new_password):
+            return jsonify({"error": "Password must contain uppercase letters"}), 400
+
+        if not any(c.islower() for c in new_password):
+            return jsonify({"error": "Password must contain lowercase letters"}), 400
+
+        if not any(c.isdigit() for c in new_password):
+            return jsonify({"error": "Password must contain numbers"}), 400
+
+        # Change password
+        from app.utils.security import PasswordSecurity
+        user.password_hash = PasswordSecurity.hash_password(new_password)
+        user.is_first_login = False  # Mark first login as complete
+
+        db.session.commit()
+
+        return jsonify({
+            "message": "Password changed successfully",
+            "user": user.to_dict()
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@auth_bp.route("/change-password", methods=["POST"])
+@jwt_required()
+def change_password():
+    """
+    Change password (requires old password for security)
+
+    Request body:
+        {
+            "old_password": "CurrentPassword123",
+            "new_password": "NewSecurePassword123"
+        }
+
+    Returns:
+        200: Password changed successfully
+        400: Invalid old password or validation error
+        401: Unauthorized
+    """
+    try:
+        user_id = get_jwt()["sub"]
+        user = User.query.get(user_id)
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        data = request.get_json()
+        old_password = data.get("old_password")
+        new_password = data.get("new_password")
+
+        if not old_password or not new_password:
+            return jsonify({"error": "Old and new passwords are required"}), 400
+
+        # Verify old password
+        from app.utils.security import PasswordSecurity
+        if not PasswordSecurity.verify_password(old_password, user.password_hash):
+            return jsonify({"error": "Old password is incorrect"}), 400
+
+        # Validate new password strength
+        if len(new_password) < 8:
+            return jsonify({"error": "Password must be at least 8 characters"}), 400
+
+        if not any(c.isupper() for c in new_password):
+            return jsonify({"error": "Password must contain uppercase letters"}), 400
+
+        if not any(c.islower() for c in new_password):
+            return jsonify({"error": "Password must contain lowercase letters"}), 400
+
+        if not any(c.isdigit() for c in new_password):
+            return jsonify({"error": "Password must contain numbers"}), 400
+
+        # Prevent same password
+        if old_password == new_password:
+            return jsonify({"error": "New password must be different from current password"}), 400
+
+        # Change password
+        user.password_hash = PasswordSecurity.hash_password(new_password)
+        db.session.commit()
+
+        return jsonify({
+            "message": "Password changed successfully"
+        }), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@auth_bp.route("/refresh", methods=["POST"])
+@jwt_required(refresh=True)
+def refresh_token():
+    """
+    Refresh access token using refresh token
+
+    Headers:
+        Authorization: Bearer <refresh_token>
+
+    Returns:
+        200: New access token
+        401: Invalid refresh token
+    """
+    try:
+        user_id = get_jwt()["sub"]
+        user = User.query.get(user_id)
+
+        if not user or not user.is_active:
+            return jsonify({"error": "User not found or is inactive"}), 401
+
+        # Generate new access token
+        access_token = AuthService.generate_access_token(user)
+
+        return jsonify({
+            "access_token": access_token,
+            "token_type": "Bearer"
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@auth_bp.route("/me", methods=["GET"])
+@jwt_required()
+def get_current_user_info():
+    """
+    Get current logged-in user information
+
+    Headers:
+        Authorization: Bearer <access_token>
+
+    Returns:
+        200: Current user information
+        401: Unauthorized
+    """
+    try:
+        user_id = get_jwt()["sub"]
+        user = User.query.get(user_id)
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        return jsonify(user.to_dict()), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@auth_bp.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    """
+    Logout user (token is invalidated via logout)
+
+    In a production system, you would add token to a blacklist
+    For now, simply instructing client to discard token
+
+    Returns:
+        200: Logout successful
+    """
+    return jsonify({"message": "Logged out successfully"}), 200

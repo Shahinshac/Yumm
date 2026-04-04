@@ -116,7 +116,8 @@ def _register_error_handlers(app):
 
 def _register_blueprints(app):
     """Register API blueprints"""
-    from app.routes.auth import auth_bp
+    from app.routes.auth_secure import auth_bp
+    from app.routes.admin import admin_bp
     from app.routes.users import users_bp
     from app.routes.accounts import accounts_bp
     from app.routes.transactions import transactions_bp
@@ -128,6 +129,7 @@ def _register_blueprints(app):
     from app.routes.analytics import analytics_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(admin_bp)
     app.register_blueprint(users_bp)
     app.register_blueprint(accounts_bp)
     app.register_blueprint(transactions_bp)

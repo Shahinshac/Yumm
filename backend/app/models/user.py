@@ -59,6 +59,7 @@ class User(db.Model):
     # Account Status
     is_active = db.Column(db.Boolean, default=True, nullable=False)
     is_verified = db.Column(db.Boolean, default=False, nullable=False)
+    is_first_login = db.Column(db.Boolean, default=True, nullable=False)
 
     # Foreign Keys
     role_id = db.Column(db.Integer, db.ForeignKey("roles.id"), nullable=False)
@@ -96,6 +97,7 @@ class User(db.Model):
             "role": self.role.name,
             "is_active": self.is_active,
             "is_verified": self.is_verified,
+            "is_first_login": self.is_first_login,
             "created_at": self.created_at.isoformat(),
             "last_login": self.last_login.isoformat() if self.last_login else None,
         }

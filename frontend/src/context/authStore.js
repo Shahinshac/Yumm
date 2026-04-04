@@ -11,16 +11,11 @@ export const useAuthStore = create((set) => ({
   error: null,
 
   register: async (data) => {
-    set({ loading: true, error: null });
-    try {
-      await authAPI.register(data);
-      set({ loading: false });
-      return { success: true, message: 'Account created successfully!' };
-    } catch (error) {
-      const errorMessage = error.response?.data?.error || 'Registration failed';
-      set({ error: errorMessage, loading: false });
-      return { success: false, message: errorMessage };
-    }
+    // Registration is disabled - only admin/staff can create customer accounts
+    return {
+      success: false,
+      message: 'Public registration is disabled. Please contact your administrator to create an account.'
+    };
   },
 
   login: async (credentials) => {
@@ -30,7 +25,12 @@ export const useAuthStore = create((set) => ({
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('refresh_token', data.refresh_token);
       set({ user: data.user, isAuthenticated: true, loading: false });
-      return { success: true, message: 'Login successful!' };
+      return {
+        success: true,
+        message: 'Login successful!',
+        is_first_login: data.user?.is_first_login || false,
+        role: data.user?.role || 'customer'
+      };
     } catch (error) {
       const errorMessage = error.response?.data?.error || 'Login failed';
       set({ error: errorMessage, loading: false });
