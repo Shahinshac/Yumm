@@ -11,11 +11,21 @@ export const useAuthStore = create((set) => ({
   error: null,
 
   register: async (data) => {
-    // Registration is disabled - only admin/staff can create customer accounts
-    return {
-      success: false,
-      message: 'Public registration is disabled. Please contact your administrator to create an account.'
-    };
+    set({ loading: true, error: null });
+    try {
+      const { data: response } = await authAPI.register(data);
+      localStorage.setItem('access_token', response.access_token);
+      localStorage.setItem('refresh_token', response.refresh_token);
+      set({ user: response.user, isAuthenticated: true, loading: false });
+      return {
+        success: true,
+        message: 'Registration successful!'
+      };
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || error.response?.data?.message || 'Registration failed';
+      set({ error: errorMessage, loading: false });
+      return { success: false, message: errorMessage };
+    }
   },
 
   login: async (credentials) => {

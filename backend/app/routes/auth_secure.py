@@ -4,7 +4,8 @@ Authentication API routes - Enterprise Banking Security
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
 from app.services.auth_service import AuthService
-from app.utils.exceptions import BankingException
+from app.utils.exceptions import BankingException, UserAlreadyExistsError, ValidationError
+from app.utils.security import TokenManager
 from app.middleware.rbac import require_authentication, require_role, get_current_user
 from app import db
 from app.models.user import User
@@ -16,17 +17,57 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 @auth_bp.route("/register", methods=["POST"])
 def register():
     """
-    ⛔ DISABLED - Public registration is not allowed
+    Register a new user account
 
-    Only Admin/Staff can create customer accounts via POST /api/admin/customers
+    Request body:
+        {
+            "username": "john_doe",
+            "email": "john@example.com",
+            "password": "SecurePass123",
+            "first_name": "John",
+            "last_name": "Doe"
+        }
 
-    This endpoint returns 403 Forbidden for security reasons.
+    Returns:
+        201: Registration successful with tokens and user info
+        400: Validation error
+        409: User already exists
     """
-    return jsonify({
-        "error": "Public registration is disabled",
-        "message": "Customer accounts can only be created by Admin or Staff members",
-        "info": "Please contact your administrator to create an account"
-    }), 403
+    try:
+        data = request.get_json()
+
+        # Validate required fields
+        required_fields = ["username", "email", "password", "first_name", "last_name"]
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({"error": f"{field.replace('_', ' ').title()} is required"}), 400
+
+        # Register user
+        user = AuthService.register_user(
+            username=data["username"],
+            email=data["email"],
+            password=data["password"],
+            first_name=data["first_name"],
+            last_name=data["last_name"],
+            phone_number=data.get("phone_number", ""),
+            role="customer"
+        )
+
+        # Create tokens for auto-login after registration
+        tokens = TokenManager.create_tokens(user["id"], user["username"], "customer")
+
+        return jsonify({
+            "user": user,
+            "access_token": tokens["access_token"],
+            "refresh_token": tokens["refresh_token"]
+        }), 201
+
+    except UserAlreadyExistsError as e:
+        return jsonify({"error": str(e.message)}), 409
+    except ValidationError as e:
+        return jsonify({"error": str(e.message)}), 400
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @auth_bp.route("/login", methods=["POST"])
@@ -56,8 +97,12 @@ def login():
         # Call service for login
         result = AuthService.login(data["username"], data["password"])
 
-        # Add is_first_login flag to response
-        return jsonify(result), 200
+        # Flatten response to match frontend expectations
+        return jsonify({
+            "user": result["user"],
+            "access_token": result["tokens"]["access_token"],
+            "refresh_token": result["tokens"]["refresh_token"]
+        }), 200
 
     except BankingException as e:
         return jsonify({"error": e.message}), e.status_code
