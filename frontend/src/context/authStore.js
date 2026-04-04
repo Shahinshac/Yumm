@@ -15,10 +15,11 @@ export const useAuthStore = create((set) => ({
     try {
       await authAPI.register(data);
       set({ loading: false });
-      return { success: true };
+      return { success: true, message: 'Account created successfully!' };
     } catch (error) {
-      set({ error: error.response?.data?.error || 'Registration failed', loading: false });
-      return { success: false };
+      const errorMessage = error.response?.data?.error || 'Registration failed';
+      set({ error: errorMessage, loading: false });
+      return { success: false, message: errorMessage };
     }
   },
 
@@ -29,10 +30,11 @@ export const useAuthStore = create((set) => ({
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('refresh_token', data.refresh_token);
       set({ user: data.user, isAuthenticated: true, loading: false });
-      return { success: true };
+      return { success: true, message: 'Login successful!' };
     } catch (error) {
-      set({ error: error.response?.data?.error || 'Login failed', loading: false });
-      return { success: false };
+      const errorMessage = error.response?.data?.error || 'Login failed';
+      set({ error: errorMessage, loading: false });
+      return { success: false, message: errorMessage };
     }
   },
 
