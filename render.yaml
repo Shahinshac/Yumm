@@ -2,7 +2,6 @@ services:
   - type: web
     name: bankmanagement-api
     env: python
-    pythonVersion: 3.11
     region: oregon
     plan: starter
     buildCommand: cd backend && pip install -r requirements.txt
@@ -23,7 +22,6 @@ services:
   - type: web
     name: bankmanagement-ui
     env: node
-    nodeVersion: 18
     plan: free
     buildCommand: cd frontend && npm install && npm run build
     startCommand: cd frontend && npm start
