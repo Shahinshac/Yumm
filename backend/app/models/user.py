@@ -78,7 +78,10 @@ class User(db.Model):
         "Transaction", backref="user", lazy=True, cascade="all, delete-orphan"
     )
     loans = db.relationship(
-        "Loan", backref="user", lazy=True, cascade="all, delete-orphan"
+        "Loan", foreign_keys="Loan.user_id", backref="applicant", lazy=True, cascade="all, delete-orphan"
+    )
+    loans_approved = db.relationship(
+        "Loan", foreign_keys="Loan.approved_by", backref="approver", lazy=True
     )
 
     def to_dict(self, include_sensitive=False):
