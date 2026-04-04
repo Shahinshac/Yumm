@@ -114,8 +114,12 @@ def _register_error_handlers(app):
 def _register_blueprints(app):
     """Register API blueprints"""
     from app.routes.auth import auth_bp
+    from app.routes.users import users_bp
+    from app.routes.accounts import accounts_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(accounts_bp)
 
 
 def _initialize_default_data():
