@@ -27,12 +27,10 @@ language = "python"
 [debugger]
 support = true
 
-[ports]
-5000 = {
-  label = "Bank API"
-  description = "Flask backend API server"
-  visibility = "public"
-}
+[ports."5000"]
+label = "Bank API"
+description = "Flask backend API server"
+visibility = "public"
 
 [packager]
 language = "python"
