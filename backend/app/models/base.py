@@ -28,14 +28,38 @@ class Beneficiary(db.Model):
     __tablename__ = "beneficiaries"
 
     id = db.Column(db.Integer, primary_key=True)
-    account_number = db.Column(db.String(20), nullable=False)
-    name = db.Column(db.String(120), nullable=False)
-    is_approved = db.Column(db.Boolean, default=False)
+    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False, index=True)
 
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False)
+    # Beneficiary Details
+    beneficiary_account_number = db.Column(db.String(20), nullable=False)
+    beneficiary_name = db.Column(db.String(120), nullable=False)
+    beneficiary_account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=True)
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # Approval Status
+    is_approved = db.Column(db.Boolean, default=False, nullable=False)
+    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    approved_at = db.Column(db.DateTime, nullable=True)
+
+    # Tracking
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
+
+    def to_dict(self):
+        """Convert to dictionary"""
+        return {
+            "id": self.id,
+            "account_id": self.account_id,
+            "beneficiary_account_number": self.beneficiary_account_number,
+            "beneficiary_name": self.beneficiary_name,
+            "is_approved": self.is_approved,
+            "approved_at": self.approved_at.isoformat() if self.approved_at else None,
+            "created_at": self.created_at.isoformat(),
+        }
+
+    def __repr__(self):
+        return f"<Beneficiary {self.beneficiary_account_number}>"
 
 
 class Loan(db.Model):

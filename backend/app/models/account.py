@@ -63,7 +63,8 @@ class Account(db.Model):
         "Beneficiary",
         backref="account",
         lazy=True,
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
+        foreign_keys="Beneficiary.account_id"
     )
     cards = db.relationship(
         "Card",
