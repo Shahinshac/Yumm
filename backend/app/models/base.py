@@ -225,10 +225,54 @@ class ScheduledPayment(db.Model):
     __tablename__ = "scheduled_payments"
 
     id = db.Column(db.Integer, primary_key=True)
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False)
-    recipient_account_id = db.Column(db.Integer, nullable=False)
-    amount = db.Column(db.Numeric(15, 2), nullable=False)
-    scheduled_date = db.Column(db.DateTime, nullable=False)
-    status = db.Column(db.String(20), default="pending")
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    # Payment Details
+    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False, index=True)
+    recipient_account_number = db.Column(db.String(20), nullable=False)
+    recipient_account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=True)
+    amount = db.Column(db.Numeric(15, 2), nullable=False)
+    description = db.Column(db.String(255), nullable=True)
+
+    # Schedule Details
+    frequency = db.Column(db.String(20), default="once")  # ONCE, WEEKLY, MONTHLY, YEARLY
+    scheduled_date = db.Column(db.DateTime, nullable=False, index=True)  # First execution date
+    next_execution = db.Column(db.DateTime, nullable=True)  # Next scheduled date
+    last_executed = db.Column(db.DateTime, nullable=True)
+
+    # Recurring Configuration
+    max_executions = db.Column(db.Integer, nullable=True)  # Limit for recurring (None = unlimited)
+    execution_count = db.Column(db.Integer, default=0)  # How many times executed
+
+    # Status
+    status = db.Column(db.String(20), default="pending")  # PENDING, ACTIVE, COMPLETED, FAILED, CANCELLED
+    cancellation_reason = db.Column(db.String(255), nullable=True)
+
+    # Failed Execution Tracking
+    failure_count = db.Column(db.Integer, default=0)
+    last_failure_reason = db.Column(db.Text, nullable=True)
+
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        """Convert to dictionary"""
+        return {
+            "id": self.id,
+            "account_id": self.account_id,
+            "recipient_account_number": self.recipient_account_number,
+            "amount": float(self.amount),
+            "description": self.description,
+            "frequency": self.frequency,
+            "scheduled_date": self.scheduled_date.isoformat(),
+            "next_execution": self.next_execution.isoformat() if self.next_execution else None,
+            "last_executed": self.last_executed.isoformat() if self.last_executed else None,
+            "status": self.status,
+            "execution_count": self.execution_count,
+            "max_executions": self.max_executions,
+            "failure_count": self.failure_count,
+            "created_at": self.created_at.isoformat(),
+        }
+
+    def __repr__(self):
+        return f"<ScheduledPayment {self.id} {self.frequency} {self.status}>"

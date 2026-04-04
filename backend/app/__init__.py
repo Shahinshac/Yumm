@@ -120,6 +120,9 @@ def _register_blueprints(app):
     from app.routes.beneficiaries import beneficiaries_bp
     from app.routes.cards import cards_bp, atm_bp
     from app.routes.loans import loans_bp
+    from app.routes.scheduled_payments import scheduled_payments_bp
+    from app.routes.notifications import notifications_bp
+    from app.routes.analytics import analytics_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(users_bp)
@@ -129,6 +132,9 @@ def _register_blueprints(app):
     app.register_blueprint(cards_bp)
     app.register_blueprint(atm_bp)
     app.register_blueprint(loans_bp)
+    app.register_blueprint(scheduled_payments_bp)
+    app.register_blueprint(notifications_bp)
+    app.register_blueprint(analytics_bp)
 
 
 def _initialize_default_data():
