@@ -25,7 +25,7 @@ sleep 2
 # 2. Create database and user
 echo ""
 echo "🗄️ Setting up database..."
-psql -U postgres -tc "SELECT 1 FROM pg_user WHERE usename = 'bankuser'" | grep -q 1 || psql -U postgres -c "CREATE USER bankuser WITH PASSWORD 'bankpass123 CREATEDB'"
+psql -U postgres -tc "SELECT 1 FROM pg_user WHERE usename = 'bankuser'" | grep -q 1 || psql -U postgres -c "CREATE USER bankuser WITH PASSWORD 'bankpass123' CREATEDB"
 psql -U postgres -tc "SELECT 1 FROM pg_database WHERE datname = 'bankmanagement'" | grep -q 1 || psql -U postgres -c "CREATE DATABASE bankmanagement OWNER bankuser"
 echo "✓ Database ready"
 
@@ -61,6 +61,9 @@ import os
 secret_key = secrets.token_urlsafe(32)
 jwt_secret = secrets.token_urlsafe(32)
 
+# Default CORS origins (local development)
+cors_origins = os.getenv('CORS_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000')
+
 with open('.env', 'w') as f:
     f.write(f'''FLASK_ENV=production
 FLASK_APP=run.py
@@ -69,7 +72,7 @@ SECRET_KEY={secret_key}
 JWT_SECRET_KEY={jwt_secret}
 JWT_ACCESS_TOKEN_EXPIRES=3600
 JWT_REFRESH_TOKEN_EXPIRES=604800
-CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+CORS_ORIGINS={cors_origins}
 BCRYPT_LOG_ROUNDS=12
 DEBUG=False
 ''')
