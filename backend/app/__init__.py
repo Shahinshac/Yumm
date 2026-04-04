@@ -1,26 +1,17 @@
 """
 Flask application factory and initialization
+MongoDB Configuration
 """
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flask_mongoengine import MongoEngine
 import os
 import logging
 
-
 # Initialize extensions
-db = SQLAlchemy()
+db = MongoEngine()
 jwt = JWTManager()
-
-
-# Import models so relationships are defined
-def _import_models():
-    """Import all models to ensure relationships are defined"""
-    from app.models.user import User, Role
-    from app.models.account import Account
-    from app.models.transaction import Transaction
-    from app.models.base import Card, Beneficiary, Loan, LoanPayment, Notification, ScheduledPayment
 
 
 def create_app(config_name=None):
@@ -33,16 +24,11 @@ def create_app(config_name=None):
     Returns:
         Configured Flask application
     """
-    # Import config here (not at module level) to avoid import issues
-    import sys
-    config_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    if config_path not in sys.path:
-        sys.path.insert(0, config_path)
-
-    from config import config
-
     if config_name is None:
         config_name = os.getenv("FLASK_ENV", "development")
+
+    # Import config
+    from config import config
 
     # Create app
     app = Flask(__name__)
@@ -56,9 +42,6 @@ def create_app(config_name=None):
     cors_origins = app.config.get("CORS_ORIGINS", "http://localhost:3000").split(",")
     CORS(app, resources={r"/api/*": {"origins": cors_origins}})
 
-    # Import models (ensures relationships are defined)
-    _import_models()
-
     # Setup logging
     _setup_logging(app)
 
@@ -68,13 +51,6 @@ def create_app(config_name=None):
     # Register blueprints
     _register_blueprints(app)
 
-    # Database CLI commands
-    _register_cli_commands(app)
-
-    # Initialize default data
-    with app.app_context():
-        _initialize_default_data()
-
     app.logger.info(f"Application initialized in {config_name} mode")
 
     return app
@@ -83,12 +59,10 @@ def create_app(config_name=None):
 def _setup_logging(app):
     """Configure logging"""
     if not app.debug:
-        if not os.path.exists(app.config["LOG_DIR"]):
-            os.makedirs(app.config["LOG_DIR"])
+        if not os.path.exists("logs"):
+            os.makedirs("logs")
 
-        file_handler = logging.FileHandler(
-            os.path.join(app.config["LOG_DIR"], "banking_system.log")
-        )
+        file_handler = logging.FileHandler("logs/banking_system.log")
         file_handler.setLevel(logging.INFO)
 
         formatter = logging.Formatter(
@@ -112,7 +86,6 @@ def _register_error_handlers(app):
 
     @app.errorhandler(500)
     def internal_error(error):
-        db.session.rollback()
         return {"error": "Internal server error", "message": str(error)}, 500
 
     @app.errorhandler(BankingException)
@@ -124,55 +97,5 @@ def _register_error_handlers(app):
 def _register_blueprints(app):
     """Register API blueprints"""
     from app.routes.auth_secure import auth_bp
-    from app.routes.admin import admin_bp
-    from app.routes.users import users_bp
-    from app.routes.accounts import accounts_bp
-    from app.routes.transactions import transactions_bp
-    from app.routes.beneficiaries import beneficiaries_bp
-    from app.routes.cards import cards_bp, atm_bp
-    from app.routes.loans import loans_bp
-    from app.routes.scheduled_payments import scheduled_payments_bp
-    from app.routes.notifications import notifications_bp
-    from app.routes.analytics import analytics_bp
 
     app.register_blueprint(auth_bp)
-    app.register_blueprint(admin_bp)
-    app.register_blueprint(users_bp)
-    app.register_blueprint(accounts_bp)
-    app.register_blueprint(transactions_bp)
-    app.register_blueprint(beneficiaries_bp)
-    app.register_blueprint(cards_bp)
-    app.register_blueprint(atm_bp)
-    app.register_blueprint(loans_bp)
-    app.register_blueprint(scheduled_payments_bp)
-    app.register_blueprint(notifications_bp)
-    app.register_blueprint(analytics_bp)
-
-
-def _initialize_default_data():
-    """Initialize default data (roles, etc.) in database"""
-    from app.services.auth_service import initialize_roles
-
-    try:
-        initialize_roles()
-    except Exception as e:
-        # Roles may already exist, which is fine
-        pass
-
-
-def _register_cli_commands(app):
-    """Register CLI commands for database management"""
-
-    @app.cli.command()
-    def init_db():
-        """Initialize the database"""
-        db.create_all()
-        print("Database initialized!")
-
-    @app.cli.command()
-    def drop_db():
-        """Drop all database tables"""
-        if input("Are you sure? (y/n): ").lower() == "y":
-            db.drop_all()
-            print("Database dropped!")
-
