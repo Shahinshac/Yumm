@@ -4,10 +4,7 @@ from app.middleware.rbac import require_role, get_current_user
 from app.models.user import User
 from app.models.account import Account
 from app.models.transaction import Transaction
-from app.models.card import Card
-from app.models.loan import Loan
-from app.models.scheduled_payment import ScheduledPayment
-from app.models.notification import Notification
+from app.models.base import Card, Loan, ScheduledPayment, Notification
 from datetime import datetime, timedelta
 
 analytics_bp = Blueprint("analytics", __name__, url_prefix="/api/analytics")

@@ -1,7 +1,7 @@
 """
 Additional models for banking system using MongoEngine
 """
-from mongoengine import Document, StringField, BooleanField, IntField, DecimalField, DateTimeField, ReferenceField, TextField
+from mongoengine import Document, StringField, BooleanField, IntField, DecimalField, DateTimeField, ReferenceField
 from datetime import datetime
 
 
@@ -137,7 +137,7 @@ class Loan(Document):
     # Approval/Rejection
     approved_by = ReferenceField('User')
     approved_at = DateTimeField()
-    rejection_reason = TextField()
+    rejection_reason = StringField()
 
     # Foreign Keys
     user_id = ReferenceField('User', required=True)
@@ -193,7 +193,7 @@ class LoanPayment(Document):
     status = StringField(required=True, max_length=20, default="pending")
 
     # Transaction Reference
-    transaction_id = ReferenceField(Transaction)
+    transaction_id = ReferenceField('Transaction')
 
     # Timestamps
     created_at = DateTimeField(default=datetime.utcnow)
@@ -234,7 +234,7 @@ class Notification(Document):
 
     user_id = ReferenceField('User', required=True)
     title = StringField(required=True, max_length=255)
-    message = TextField(required=True)
+    message = StringField(required=True)
     is_read = BooleanField(default=False)
     created_at = DateTimeField(default=datetime.utcnow)
 
@@ -282,7 +282,7 @@ class ScheduledPayment(Document):
 
     # Failed Execution Tracking
     failure_count = IntField(default=0)
-    last_failure_reason = TextField()
+    last_failure_reason = StringField()
 
     # Timestamps
     created_at = DateTimeField(default=datetime.utcnow)
