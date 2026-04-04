@@ -10,17 +10,50 @@ class Card(db.Model):
     __tablename__ = "cards"
 
     id = db.Column(db.Integer, primary_key=True)
-    card_number = db.Column(db.String(20), unique=True, nullable=False)
-    card_type = db.Column(db.String(20), default="debit")
+
+    # Card Identification
+    card_number = db.Column(db.String(20), unique=True, nullable=False, index=True)
+    card_type = db.Column(db.String(20), default="debit", nullable=False)
+
+    # Security
     pin_hash = db.Column(db.String(255), nullable=False)
-    expiry_date = db.Column(db.String(5), nullable=False)
-    is_active = db.Column(db.Boolean, default=True)
 
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    # Card Details
+    expiry_date = db.Column(db.String(5), nullable=False)  # MM/YY format
+    cvv_hash = db.Column(db.String(255), nullable=True)  # Optional
 
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    # Status
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    is_blocked = db.Column(db.Boolean, default=False, nullable=False)
+
+    # Foreign Keys
+    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False, index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+
+    # Timestamps
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    updated_at = db.Column(
+        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
+    )
+
+    def to_dict(self, include_sensitive=False):
+        """Convert to dictionary"""
+        data = {
+            "id": self.id,
+            "card_number": f"****{self.card_number[-4:]}",  # Mask card number
+            "card_type": self.card_type,
+            "expiry_date": self.expiry_date,
+            "is_active": self.is_active,
+            "is_blocked": self.is_blocked,
+            "account_id": self.account_id,
+            "created_at": self.created_at.isoformat(),
+        }
+        if include_sensitive:
+            data["full_card_number"] = self.card_number
+        return data
+
+    def __repr__(self):
+        return f"<Card {self.card_number[-4:]}>"
 
 
 class Beneficiary(db.Model):
