@@ -122,5 +122,26 @@ def _register_error_handlers(app):
 def _register_blueprints(app):
     """Register API blueprints"""
     from app.routes.auth_secure import auth_bp
+    from app.routes.users import users_bp
+    from app.routes.accounts import accounts_bp
+    from app.routes.transactions import transactions_bp
+    from app.routes.loans import loans_bp
+    from app.routes.beneficiaries import beneficiaries_bp
+    from app.routes.cards import cards_bp, atm_bp
+    from app.routes.scheduled_payments import scheduled_payments_bp
+    from app.routes.notifications import notifications_bp
+    from app.routes.analytics import analytics_bp
+    from app.routes.admin import admin_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(users_bp)
+    app.register_blueprint(accounts_bp)
+    app.register_blueprint(transactions_bp)
+    app.register_blueprint(loans_bp)
+    app.register_blueprint(beneficiaries_bp)
+    app.register_blueprint(cards_bp)
+    app.register_blueprint(atm_bp)
+    app.register_blueprint(scheduled_payments_bp)
+    app.register_blueprint(notifications_bp)
+    app.register_blueprint(analytics_bp)
+    app.register_blueprint(admin_bp)
