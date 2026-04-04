@@ -1,5 +1,6 @@
 """
 Configuration management for different environments
+MongoDB + Render Setup
 """
 import os
 from datetime import timedelta
@@ -9,12 +10,11 @@ class Config:
     """Base configuration"""
     SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key-change-in-production")
 
-    # Database
-    SQLALCHEMY_DATABASE_URI = os.getenv(
-        "DATABASE_URL",
-        "postgresql://user:password@localhost:5432/banking_db"
-    )
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
+    # MongoDB Configuration
+    MONGODB_SETTINGS = {
+        'db': 'bankmanagement',
+        'host': os.getenv('MONGODB_URI', 'mongodb://localhost:27017/bankmanagement')
+    }
 
     # JWT
     JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY", "jwt-secret-key-change-in-production")
@@ -46,7 +46,10 @@ class DevelopmentConfig(Config):
 class TestingConfig(Config):
     """Testing configuration"""
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:///:memory:"
+    MONGODB_SETTINGS = {
+        'db': 'bankmanagement_test',
+        'host': 'mongodb://localhost:27017/bankmanagement_test'
+    }
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=5)
 
 
@@ -63,3 +66,4 @@ config = {
     "production": ProductionConfig,
     "default": DevelopmentConfig,
 }
+
