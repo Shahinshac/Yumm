@@ -43,7 +43,23 @@
 
 ---
 
-## ⏱️ TIMELINE: 25 MINUTES
+## ⏱️ DEPLOYMENT OPTIONS
+
+### 🚀 OPTION 1: AUTOMATIC (With render.yaml) - 10 MINUTES ⭐ RECOMMENDED
+```
+A render.yaml file is already configured in the repo!
+Render auto-detects it and deploys both services.
+
+Step 1: Render Account Setup       (5 min)
+Step 2: Create PostgreSQL Database (3 min)
+Step 3: Connect GitHub Repo        (2 min) - Render reads render.yaml automatically
+────────────────────────────────────────
+TOTAL TIME:                         10 minutes
+(Then add frontend to Vercel: 5 min)
+```
+
+### 📋 OPTION 2: MANUAL SETUP - 25 MINUTES
+If you prefer detailed step-by-step control:
 
 ```
 Step 1: Render Account Setup       (5 min)
@@ -56,11 +72,72 @@ Step 6: Setup Frontend (Vercel)    (5 min)
 TOTAL TIME:                         25 minutes
 ```
 
+**⭐ We recommend OPTION 1 - it's faster and simpler!**
+
 ---
 
-## 📝 STEP-BY-STEP DEPLOYMENT
+## 🚀 QUICK START (OPTION 1 - AUTOMATIC)
 
-### STEP 1: CREATE RENDER ACCOUNT (5 minutes)
+### What is render.yaml?
+The `render.yaml` file in this repository tells Render exactly how to deploy both your backend and frontend services automatically!
+
+### How to deploy:
+
+**1. Create Render Account (5 minutes)**
+```
+1. Go to: https://render.com
+2. Click "Get Started"
+3. Sign up with GitHub
+```
+
+**2. Create PostgreSQL Database (3 minutes)**
+```
+1. In Render Dashboard → "New +"
+2. Select "PostgreSQL"
+3. Name: "bankmanagement-db"
+4. Region: Choose closest to you
+5. Plan: "Free"
+6. Click "Create Database"
+```
+
+**3. Copy Database URL**
+```
+1. Wait for database to be ready
+2. Click on your database
+3. Copy the "Internal Database URL"
+4. Save it - you'll need it in Step 4
+```
+
+**4. Deploy with render.yaml (2 minutes)**
+```
+1. Render Dashboard → "New +"
+2. Select "Blueprint"
+3. Search for "bankmanagement"
+4. Click "Connect"
+5. Set these environment variables:
+   - DATABASE_URL: [Your database URL from Step 3]
+   - JWT_SECRET: 9f8c7d6e5a4b3c2d1e0f9a8b7c6d5e4f
+6. Click "Deploy"
+```
+
+**5. Wait for Deployment**
+```
+⏳ Building... → 🔄 Deploying... → ✅ Live
+This takes 5-10 minutes
+```
+
+**6. Deploy Frontend to Vercel (5 minutes)**
+```
+Same as Option 2 - follow Step 6 below
+```
+
+**That's it! Your app is live! 🎉**
+
+---
+
+## 📝 STEP-BY-STEP DEPLOYMENT (OPTION 2 - MANUAL)
+
+### STEP 1: CREATE RENDER ACCOUNT (5 minutes) [OPTION 2]
 
 **1.1: Go to Render.com**
 ```
@@ -82,7 +159,7 @@ TOTAL TIME:                         25 minutes
 
 ---
 
-### STEP 2: CREATE DATABASE (3 minutes)
+### STEP 2: CREATE DATABASE [OPTION 2] (3 minutes)
 
 **2.1: Create PostgreSQL Database**
 ```
@@ -110,7 +187,7 @@ SAVE THIS! You'll need it in Step 4.
 
 ---
 
-### STEP 3: CREATE WEB SERVICE (5 minutes)
+### STEP 3: CREATE WEB SERVICE [OPTION 2] (5 minutes)
 
 **3.1: Create Backend Service**
 ```
@@ -144,7 +221,7 @@ Jump to STEP 4 first to add variables.
 
 ---
 
-### STEP 4: CONFIGURE ENVIRONMENT (3 minutes)
+### STEP 4: CONFIGURE ENVIRONMENT [OPTION 2] (3 minutes)
 
 **Before clicking "Create", add these variables:**
 
@@ -188,7 +265,7 @@ For now, use: *
 
 ---
 
-### STEP 5: DEPLOY & VERIFY (4 minutes)
+### STEP 5: DEPLOY [OPTION 2] & VERIFY (4 minutes)
 
 **5.1: Wait for Deployment**
 ```
@@ -246,7 +323,7 @@ Should return JWT token.
 
 ---
 
-### STEP 6: DEPLOY FRONTEND (5 minutes)
+### STEP 6: DEPLOY FRONTEND [OPTION 2] (5 minutes)
 
 **6.1: Go to Vercel**
 ```
