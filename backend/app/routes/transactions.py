@@ -19,7 +19,7 @@ def deposit():
 
     Request body:
         {
-            "account_id": 1,
+            "account_id": "str_id",
             "amount": 5000.00,
             "description": "Monthly salary"  # Optional
         }
@@ -78,7 +78,7 @@ def withdraw():
 
     Request body:
         {
-            "account_id": 1,
+            "account_id": "str_id",
             "amount": 1000.00,
             "description": "ATM withdrawal"  # Optional
         }
@@ -137,8 +137,8 @@ def transfer():
 
     Request body:
         {
-            "from_account_id": 1,
-            "to_account_id": 2,
+            "from_account_id": "str_id",
+            "to_account_id": "str_id",
             "amount": 5000.00,
             "description": "Payment to John"  # Optional
         }
@@ -221,7 +221,7 @@ def get_transactions():
         current_user = get_current_user()
 
         # Get parameters
-        account_id = request.args.get("account_id", type=int)
+        account_id = request.args.get("account_id")
         transaction_type = request.args.get("type")
         start_date_str = request.args.get("start_date")
         end_date_str = request.args.get("end_date")
@@ -282,7 +282,7 @@ def get_transactions():
         return jsonify({"error": str(e)}), 500
 
 
-@transactions_bp.route("/<int:transaction_id>", methods=["GET"])
+@transactions_bp.route("/<transaction_id>", methods=["GET"])
 @require_authentication
 def get_transaction(transaction_id):
     """
@@ -312,7 +312,7 @@ def get_transaction(transaction_id):
         return jsonify({"error": str(e)}), 500
 
 
-@transactions_bp.route("/summary/<int:account_id>", methods=["GET"])
+@transactions_bp.route("/summary/<account_id>", methods=["GET"])
 @require_authentication
 def get_transaction_summary(account_id):
     """

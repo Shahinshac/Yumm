@@ -5,9 +5,8 @@ from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
 from app.services.auth_service import AuthService
 from app.utils.exceptions import BankingException, UserAlreadyExistsError, ValidationError
-from app.utils.security import TokenManager
+from app.utils.security import TokenManager, PasswordSecurity
 from app.middleware.rbac import require_authentication, require_role, get_current_user
-from app import db
 from app.models.user import User
 
 # Create blueprint
@@ -139,7 +138,10 @@ def change_password_first_login():
     """
     try:
         user_id = get_jwt()["sub"]
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
 
         if not user:
             return jsonify({"error": "User not found"}), 404
@@ -164,11 +166,10 @@ def change_password_first_login():
             return jsonify({"error": "Password must contain numbers"}), 400
 
         # Change password
-        from app.utils.security import PasswordSecurity
         user.password_hash = PasswordSecurity.hash_password(new_password)
         user.is_first_login = False  # Mark first login as complete
 
-        db.session.commit()
+        user.save()
 
         return jsonify({
             "message": "Password changed successfully",
@@ -176,7 +177,6 @@ def change_password_first_login():
         }), 200
 
     except Exception as e:
-        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 
@@ -199,7 +199,10 @@ def change_password():
     """
     try:
         user_id = get_jwt()["sub"]
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
 
         if not user:
             return jsonify({"error": "User not found"}), 404
@@ -212,7 +215,6 @@ def change_password():
             return jsonify({"error": "Old and new passwords are required"}), 400
 
         # Verify old password
-        from app.utils.security import PasswordSecurity
         if not PasswordSecurity.verify_password(old_password, user.password_hash):
             return jsonify({"error": "Old password is incorrect"}), 400
 
@@ -235,14 +237,13 @@ def change_password():
 
         # Change password
         user.password_hash = PasswordSecurity.hash_password(new_password)
-        db.session.commit()
+        user.save()
 
         return jsonify({
             "message": "Password changed successfully"
         }), 200
 
     except Exception as e:
-        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 
@@ -261,13 +262,18 @@ def refresh_token():
     """
     try:
         user_id = get_jwt()["sub"]
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
 
         if not user or not user.is_active:
             return jsonify({"error": "User not found or is inactive"}), 401
 
         # Generate new access token
-        access_token = AuthService.generate_access_token(user)
+        access_token = TokenManager.create_tokens(
+            str(user.id), user.username, user.role.name
+        )["access_token"]
 
         return jsonify({
             "access_token": access_token,
@@ -293,7 +299,10 @@ def get_current_user_info():
     """
     try:
         user_id = get_jwt()["sub"]
-        user = User.query.get(user_id)
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
 
         if not user:
             return jsonify({"error": "User not found"}), 404

@@ -21,7 +21,7 @@ def apply_for_loan():
 
     Request body:
         {
-            "account_id": 1,
+            "account_id": "str_id",
             "loan_amount": 100000,
             "loan_type": "personal",
             "tenure_months": 12
@@ -92,7 +92,7 @@ def list_loans():
         return jsonify({"error": str(e)}), 500
 
 
-@loans_bp.route("/<int:loan_id>", methods=["GET"])
+@loans_bp.route("/<loan_id>", methods=["GET"])
 @require_authentication
 def get_loan_details(loan_id):
     """
@@ -122,7 +122,7 @@ def get_loan_details(loan_id):
 # ===== APPROVAL & DISBURSEMENT =====
 
 
-@loans_bp.route("/<int:loan_id>/approve", methods=["POST"])
+@loans_bp.route("/<loan_id>/approve", methods=["POST"])
 @require_role("admin", "manager", "staff")
 def approve_loan(loan_id):
     """
@@ -161,7 +161,7 @@ def approve_loan(loan_id):
         return jsonify({"error": str(e)}), 500
 
 
-@loans_bp.route("/<int:loan_id>/reject", methods=["POST"])
+@loans_bp.route("/<loan_id>/reject", methods=["POST"])
 @require_role("admin", "manager", "staff")
 def reject_loan(loan_id):
     """
@@ -195,7 +195,7 @@ def reject_loan(loan_id):
         return jsonify({"error": str(e)}), 500
 
 
-@loans_bp.route("/<int:loan_id>/disburse", methods=["POST"])
+@loans_bp.route("/<loan_id>/disburse", methods=["POST"])
 @require_role("admin", "manager", "staff")
 def disburse_loan_endpoint(loan_id):
     """
@@ -224,7 +224,7 @@ def disburse_loan_endpoint(loan_id):
 # ===== EMI PAYMENTS =====
 
 
-@loans_bp.route("/<int:loan_id>/pay-emi", methods=["POST"])
+@loans_bp.route("/<loan_id>/pay-emi", methods=["POST"])
 @require_authentication
 def pay_emi(loan_id):
     """
@@ -232,7 +232,7 @@ def pay_emi(loan_id):
 
     Request body:
         {
-            "account_id": 1,
+            "account_id": "str_id",
             "amount": 5000
         }
 
@@ -263,7 +263,7 @@ def pay_emi(loan_id):
         return jsonify({"error": str(e)}), 500
 
 
-@loans_bp.route("/<int:loan_id>/emi-schedule", methods=["GET"])
+@loans_bp.route("/<loan_id>/emi-schedule", methods=["GET"])
 @require_authentication
 def get_emi_schedule(loan_id):
     """
@@ -296,7 +296,7 @@ def get_emi_schedule(loan_id):
         return jsonify({"error": str(e)}), 500
 
 
-@loans_bp.route("/<int:loan_id>/summary", methods=["GET"])
+@loans_bp.route("/<loan_id>/summary", methods=["GET"])
 @require_authentication
 def get_loan_summary_endpoint(loan_id):
     """

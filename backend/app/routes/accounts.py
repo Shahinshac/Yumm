@@ -19,7 +19,7 @@ def create_account():
 
     Request body:
         {
-            "user_id": 1,
+            "user_id": "str_id",
             "account_type": "savings",  # savings, current, salary
             "initial_balance": 1000.00
         }
@@ -72,7 +72,7 @@ def list_user_accounts():
     """
     try:
         current_user = get_current_user()
-        user_id = request.args.get("user_id", type=int)
+        user_id = request.args.get("user_id")
 
         # Authorization check
         if user_id and current_user["role"] not in ["admin", "manager", "staff"]:
@@ -95,7 +95,7 @@ def list_user_accounts():
         return jsonify({"error": str(e)}), 500
 
 
-@accounts_bp.route("/<int:account_id>", methods=["GET"])
+@accounts_bp.route("/<account_id>", methods=["GET"])
 @require_authentication
 def get_account(account_id):
     """
@@ -130,7 +130,7 @@ def get_account(account_id):
         return jsonify({"error": str(e)}), 500
 
 
-@accounts_bp.route("/<int:account_id>/balance", methods=["GET"])
+@accounts_bp.route("/<account_id>/balance", methods=["GET"])
 @require_authentication
 def get_account_balance(account_id):
     """
@@ -160,7 +160,7 @@ def get_account_balance(account_id):
         return jsonify({"error": str(e)}), 500
 
 
-@accounts_bp.route("/<int:account_id>/freeze", methods=["POST"])
+@accounts_bp.route("/<account_id>/freeze", methods=["POST"])
 @require_role("admin", "manager")
 def freeze_account(account_id):
     """
@@ -186,7 +186,7 @@ def freeze_account(account_id):
         return jsonify({"error": str(e)}), 500
 
 
-@accounts_bp.route("/<int:account_id>/unfreeze", methods=["POST"])
+@accounts_bp.route("/<account_id>/unfreeze", methods=["POST"])
 @require_role("admin", "manager")
 def unfreeze_account(account_id):
     """
@@ -212,7 +212,7 @@ def unfreeze_account(account_id):
         return jsonify({"error": str(e)}), 500
 
 
-@accounts_bp.route("/<int:account_id>/close", methods=["POST"])
+@accounts_bp.route("/<account_id>/close", methods=["POST"])
 @require_role("admin")
 def close_account(account_id):
     """
@@ -242,7 +242,7 @@ def close_account(account_id):
         return jsonify({"error": str(e)}), 500
 
 
-@accounts_bp.route("/<int:account_id>/status", methods=["GET"])
+@accounts_bp.route("/<account_id>/status", methods=["GET"])
 @require_authentication
 def get_account_status(account_id):
     """

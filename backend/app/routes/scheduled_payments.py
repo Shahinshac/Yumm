@@ -13,7 +13,7 @@ def schedule_payment():
     """Schedule a payment"""
     user = get_current_user()
     data = request.get_json()
-    
+
     try:
         scheduled_date = datetime.fromisoformat(data.get("scheduled_date"))
         payment = ScheduledPaymentService.schedule_payment(
@@ -35,16 +35,16 @@ def schedule_payment():
 @require_role("customer", "staff", "manager", "admin")
 def list_payments():
     """List scheduled payments"""
-    account_id = request.args.get("account_id", type=int)
+    account_id = request.args.get("account_id")
     status = request.args.get("status")
-    
+
     if not account_id:
         return jsonify({"error": "account_id required"}), 400
-    
+
     payments = ScheduledPaymentService.get_account_scheduled_payments(account_id, status)
     return jsonify([p.to_dict() for p in payments]), 200
 
-@scheduled_payments_bp.route("/<int:payment_id>", methods=["GET"])
+@scheduled_payments_bp.route("/<payment_id>", methods=["GET"])
 @require_role("customer", "staff", "manager", "admin")
 def get_payment(payment_id):
     """Get payment details"""
@@ -54,7 +54,7 @@ def get_payment(payment_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 404
 
-@scheduled_payments_bp.route("/<int:payment_id>/execute", methods=["POST"])
+@scheduled_payments_bp.route("/<payment_id>/execute", methods=["POST"])
 @require_role("customer", "staff", "manager", "admin")
 def execute_payment(payment_id):
     """Execute payment manually"""
@@ -64,7 +64,7 @@ def execute_payment(payment_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@scheduled_payments_bp.route("/<int:payment_id>/cancel", methods=["POST"])
+@scheduled_payments_bp.route("/<payment_id>/cancel", methods=["POST"])
 @require_role("customer", "staff", "manager", "admin")
 def cancel_payment(payment_id):
     """Cancel scheduled payment"""

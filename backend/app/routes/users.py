@@ -38,7 +38,7 @@ def list_users():
         return jsonify({"error": str(e)}), 500
 
 
-@users_bp.route("/<int:user_id>", methods=["GET"])
+@users_bp.route("/<user_id>", methods=["GET"])
 @require_authentication
 def get_user(user_id):
     """
@@ -73,7 +73,7 @@ def get_user(user_id):
         return jsonify({"error": str(e)}), 500
 
 
-@users_bp.route("/<int:user_id>", methods=["PUT"])
+@users_bp.route("/<user_id>", methods=["PUT"])
 @require_role("admin")
 def update_user(user_id):
     """
@@ -110,7 +110,7 @@ def update_user(user_id):
         return jsonify({"error": str(e)}), 500
 
 
-@users_bp.route("/<int:user_id>/assign-role", methods=["POST"])
+@users_bp.route("/<user_id>/assign-role", methods=["POST"])
 @require_role("admin")
 def assign_role(user_id):
     """
@@ -149,7 +149,7 @@ def assign_role(user_id):
         return jsonify({"error": str(e)}), 500
 
 
-@users_bp.route("/<int:user_id>/deactivate", methods=["POST"])
+@users_bp.route("/<user_id>/deactivate", methods=["POST"])
 @require_role("admin")
 def deactivate_user(user_id):
     """
@@ -174,7 +174,7 @@ def deactivate_user(user_id):
         return jsonify({"error": str(e)}), 500
 
 
-@users_bp.route("/<int:user_id>/activate", methods=["POST"])
+@users_bp.route("/<user_id>/activate", methods=["POST"])
 @require_role("admin")
 def activate_user(user_id):
     """

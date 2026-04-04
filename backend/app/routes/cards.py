@@ -21,7 +21,7 @@ def generate_card():
 
     Request body:
         {
-            "account_id": 1
+            "account_id": "str_id"
         }
 
     Returns:
@@ -70,7 +70,7 @@ def list_cards():
     try:
         current_user = get_current_user()
 
-        account_id = request.args.get("account_id", type=int)
+        account_id = request.args.get("account_id")
         if not account_id:
             return jsonify({"error": "account_id is required"}), 400
 
@@ -98,7 +98,7 @@ def list_cards():
         return jsonify({"error": str(e)}), 500
 
 
-@cards_bp.route("/<int:card_id>", methods=["GET"])
+@cards_bp.route("/<card_id>", methods=["GET"])
 @require_authentication
 def get_card_details(card_id):
     """
@@ -131,7 +131,7 @@ def get_card_details(card_id):
         return jsonify({"error": str(e)}), 500
 
 
-@cards_bp.route("/<int:card_id>/set-pin", methods=["POST"])
+@cards_bp.route("/<card_id>/set-pin", methods=["POST"])
 @require_authentication
 def set_pin(card_id):
     """
@@ -182,7 +182,7 @@ def set_pin(card_id):
         return jsonify({"error": str(e)}), 500
 
 
-@cards_bp.route("/<int:card_id>/block", methods=["POST"])
+@cards_bp.route("/<card_id>/block", methods=["POST"])
 @require_role("admin", "manager", "staff")
 def block_card(card_id):
     """
@@ -208,7 +208,7 @@ def block_card(card_id):
         return jsonify({"error": str(e)}), 500
 
 
-@cards_bp.route("/<int:card_id>/unblock", methods=["POST"])
+@cards_bp.route("/<card_id>/unblock", methods=["POST"])
 @require_role("admin", "manager", "staff")
 def unblock_card(card_id):
     """
@@ -274,7 +274,7 @@ def atm_login():
         return jsonify({"error": str(e)}), 500
 
 
-@atm_bp.route("/balance/<int:card_id>", methods=["GET"])
+@atm_bp.route("/balance/<card_id>", methods=["GET"])
 def check_balance(card_id):
     """
     Check account balance via ATM
@@ -295,7 +295,7 @@ def check_balance(card_id):
         return jsonify({"error": str(e)}), 500
 
 
-@atm_bp.route("/withdraw/<int:card_id>", methods=["POST"])
+@atm_bp.route("/withdraw/<card_id>", methods=["POST"])
 def atm_withdraw(card_id):
     """
     Withdraw money via ATM
@@ -328,7 +328,7 @@ def atm_withdraw(card_id):
         return jsonify({"error": str(e)}), 500
 
 
-@atm_bp.route("/mini-statement/<int:card_id>", methods=["GET"])
+@atm_bp.route("/mini-statement/<card_id>", methods=["GET"])
 def mini_statement(card_id):
     """
     Get mini statement (last transactions) via ATM

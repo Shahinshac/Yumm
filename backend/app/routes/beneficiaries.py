@@ -18,7 +18,7 @@ def add_beneficiary():
 
     Request body:
         {
-            "account_id": 1,
+            "account_id": "str_id",
             "beneficiary_account_number": "982677845009883129",
             "beneficiary_name": "John Doe"
         }
@@ -89,7 +89,7 @@ def list_beneficiaries():
     try:
         current_user = get_current_user()
 
-        account_id = request.args.get("account_id", type=int)
+        account_id = request.args.get("account_id")
         if not account_id:
             return jsonify({"error": "account_id is required"}), 400
 
@@ -122,7 +122,7 @@ def list_beneficiaries():
         return jsonify({"error": str(e)}), 500
 
 
-@beneficiaries_bp.route("/<int:beneficiary_id>", methods=["GET"])
+@beneficiaries_bp.route("/<beneficiary_id>", methods=["GET"])
 @require_authentication
 def get_beneficiary(beneficiary_id):
     """
@@ -154,7 +154,7 @@ def get_beneficiary(beneficiary_id):
         return jsonify({"error": str(e)}), 500
 
 
-@beneficiaries_bp.route("/<int:beneficiary_id>/approve", methods=["POST"])
+@beneficiaries_bp.route("/<beneficiary_id>/approve", methods=["POST"])
 @require_role("admin", "manager", "staff")
 def approve_beneficiary(beneficiary_id):
     """
@@ -185,7 +185,7 @@ def approve_beneficiary(beneficiary_id):
         return jsonify({"error": str(e)}), 500
 
 
-@beneficiaries_bp.route("/<int:beneficiary_id>/reject", methods=["POST"])
+@beneficiaries_bp.route("/<beneficiary_id>/reject", methods=["POST"])
 @require_role("admin", "manager", "staff")
 def reject_beneficiary(beneficiary_id):
     """
@@ -209,7 +209,7 @@ def reject_beneficiary(beneficiary_id):
         return jsonify({"error": str(e)}), 500
 
 
-@beneficiaries_bp.route("/<int:beneficiary_id>", methods=["DELETE"])
+@beneficiaries_bp.route("/<beneficiary_id>", methods=["DELETE"])
 @require_authentication
 def delete_beneficiary(beneficiary_id):
     """

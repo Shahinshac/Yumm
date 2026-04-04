@@ -7,7 +7,6 @@ from app.middleware.rbac import require_role, get_current_user
 from app.models.user import User, Role
 from app.utils.exceptions import BankingException
 from app.utils.security import PasswordSecurity
-from app import db
 import secrets
 import string
 
@@ -69,10 +68,10 @@ def create_customer():
             return jsonify({"error": "Phone number must be 9-15 digits"}), 400
 
         # Check if user already exists
-        if User.query.filter_by(email=email).first():
+        if User.objects(email=email).first():
             return jsonify({"error": "Email already registered"}), 409
 
-        if User.query.filter_by(phone_number=phone_number).first():
+        if User.objects(phone_number=phone_number).first():
             return jsonify({"error": "Phone number already registered"}), 409
 
         # Generate username from email (username@domain → username)
@@ -81,7 +80,7 @@ def create_customer():
         # Ensure unique username
         counter = 1
         original_username = username
-        while User.query.filter_by(username=username).first():
+        while User.objects(username=username).first():
             username = f"{original_username}{counter}"
             counter += 1
 
@@ -97,7 +96,7 @@ def create_customer():
             return jsonify({"error": "Password must be at least 8 characters"}), 400
 
         # Get customer role
-        customer_role = Role.query.filter_by(name="customer").first()
+        customer_role = Role.objects(name="customer").first()
         if not customer_role:
             return jsonify({"error": "Customer role not found in system"}), 500
 
@@ -109,14 +108,13 @@ def create_customer():
             first_name=first_name,
             last_name=last_name,
             phone_number=phone_number,
-            role_id=customer_role.id,
+            role=customer_role,
             is_active=True,
             is_verified=False,  # Require email verification
             is_first_login=True  # Force password change on first login
         )
 
-        db.session.add(new_customer)
-        db.session.commit()
+        new_customer.save()
 
         # Audit log
         print(f"[AUDIT] Admin {current_user['username']} created customer {new_customer.username}")
@@ -124,7 +122,7 @@ def create_customer():
         return jsonify({
             "message": "Customer account created successfully",
             "customer": {
-                "id": new_customer.id,
+                "id": str(new_customer.id),
                 "username": new_customer.username,
                 "email": new_customer.email,
                 "first_name": new_customer.first_name,
@@ -140,11 +138,10 @@ def create_customer():
     except BankingException as e:
         return jsonify({"error": e.message}), e.status_code
     except Exception as e:
-        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 
-@admin_bp.route("/customers/<int:customer_id>/reset-password", methods=["POST"])
+@admin_bp.route("/customers/<customer_id>/reset-password", methods=["POST"])
 @require_role("admin")
 def reset_customer_password(customer_id):
     """
@@ -163,7 +160,10 @@ def reset_customer_password(customer_id):
     """
     try:
         current_user = get_current_user()
-        customer = User.query.get(customer_id)
+        try:
+            customer = User.objects(id=customer_id).first()
+        except Exception:
+            customer = None
 
         if not customer:
             return jsonify({"error": "Customer not found"}), 404
@@ -179,7 +179,7 @@ def reset_customer_password(customer_id):
         customer.password_hash = PasswordSecurity.hash_password(temporary_password)
         customer.is_first_login = True
 
-        db.session.commit()
+        customer.save()
 
         # Audit log
         print(f"[AUDIT] Admin {current_user['username']} reset password for customer {customer.username}")
@@ -187,7 +187,7 @@ def reset_customer_password(customer_id):
         return jsonify({
             "message": "Password reset successfully",
             "customer": {
-                "id": customer.id,
+                "id": str(customer.id),
                 "username": customer.username,
                 "email": customer.email,
                 "temporary_password": temporary_password,
@@ -196,11 +196,10 @@ def reset_customer_password(customer_id):
         }), 200
 
     except Exception as e:
-        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 
-@admin_bp.route("/customers/<int:customer_id>/deactivate", methods=["POST"])
+@admin_bp.route("/customers/<customer_id>/deactivate", methods=["POST"])
 @require_role("admin")
 def deactivate_customer(customer_id):
     """
@@ -214,13 +213,16 @@ def deactivate_customer(customer_id):
         403: Unauthorized
     """
     try:
-        customer = User.query.get(customer_id)
+        try:
+            customer = User.objects(id=customer_id).first()
+        except Exception:
+            customer = None
 
         if not customer:
             return jsonify({"error": "Customer not found"}), 404
 
         customer.is_active = False
-        db.session.commit()
+        customer.save()
 
         return jsonify({
             "message": "Customer account deactivated",
@@ -228,11 +230,10 @@ def deactivate_customer(customer_id):
         }), 200
 
     except Exception as e:
-        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 
-@admin_bp.route("/customers/<int:customer_id>/activate", methods=["POST"])
+@admin_bp.route("/customers/<customer_id>/activate", methods=["POST"])
 @require_role("admin")
 def activate_customer(customer_id):
     """
@@ -246,13 +247,16 @@ def activate_customer(customer_id):
         403: Unauthorized
     """
     try:
-        customer = User.query.get(customer_id)
+        try:
+            customer = User.objects(id=customer_id).first()
+        except Exception:
+            customer = None
 
         if not customer:
             return jsonify({"error": "Customer not found"}), 404
 
         customer.is_active = True
-        db.session.commit()
+        customer.save()
 
         return jsonify({
             "message": "Customer account activated",
@@ -260,7 +264,6 @@ def activate_customer(customer_id):
         }), 200
 
     except Exception as e:
-        db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
 
@@ -282,15 +285,19 @@ def list_customers():
         page = request.args.get("page", 1, type=int)
         per_page = request.args.get("per_page", 20, type=int)
 
-        customer_role = Role.query.filter_by(name="customer").first()
-        customers = User.query.filter_by(role_id=customer_role.id).paginate(
-            page=page, per_page=per_page
-        )
+        customer_role = Role.objects(name="customer").first()
+        if not customer_role:
+            return jsonify({"error": "Customer role not found"}), 500
+
+        skip = (page - 1) * per_page
+        customers = list(User.objects(role=customer_role).skip(skip).limit(per_page))
+        total = User.objects(role=customer_role).count()
+        pages = (total + per_page - 1) // per_page
 
         return jsonify({
-            "customers": [c.to_dict() for c in customers.items],
-            "total": customers.total,
-            "pages": customers.pages,
+            "customers": [c.to_dict() for c in customers],
+            "total": total,
+            "pages": pages,
             "current_page": page
         }), 200
 
