@@ -2,6 +2,11 @@
 Entry point for the Flask application
 """
 import os
+import sys
+
+# Add current directory to path for config imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from dotenv import load_dotenv
 from app import create_app, db
 

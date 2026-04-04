@@ -7,11 +7,6 @@ from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 import os
 import logging
-import sys
-
-# Add parent directory to path for config import
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import config
 
 
 # Initialize extensions
@@ -38,6 +33,14 @@ def create_app(config_name=None):
     Returns:
         Configured Flask application
     """
+    # Import config here (not at module level) to avoid import issues
+    import sys
+    config_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if config_path not in sys.path:
+        sys.path.insert(0, config_path)
+
+    from config import config
+
     if config_name is None:
         config_name = os.getenv("FLASK_ENV", "development")
 
