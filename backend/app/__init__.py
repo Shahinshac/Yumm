@@ -5,12 +5,11 @@ MongoDB Configuration
 from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
-from flask_mongoengine import MongoEngine
+from mongoengine import connect
 import os
 import logging
 
 # Initialize extensions
-db = MongoEngine()
 jwt = JWTManager()
 
 
@@ -34,8 +33,19 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config.get(config_name, config["default"]))
 
-    # Initialize extensions
-    db.init_app(app)
+    # Initialize MongoDB connection
+    mongodb_settings = app.config.get("MONGODB_SETTINGS", {})
+    if mongodb_settings:
+        try:
+            connect(
+                db=mongodb_settings.get("db", "bankmanagement"),
+                host=mongodb_settings.get("host", "mongodb://localhost:27017/bankmanagement")
+            )
+        except Exception as e:
+            app.logger.error(f"Failed to connect to MongoDB: {str(e)}")
+            raise
+
+    # Initialize JWT
     jwt.init_app(app)
 
     # Configure CORS with environment-based origins
