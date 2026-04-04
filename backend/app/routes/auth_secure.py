@@ -25,7 +25,8 @@ def register():
             "email": "john@example.com",
             "password": "SecurePass123",
             "first_name": "John",
-            "last_name": "Doe"
+            "last_name": "Doe",
+            "phone_number": "+1-234-567-8900"  (optional)
         }
 
     Returns:
@@ -42,6 +43,14 @@ def register():
             if not data.get(field):
                 return jsonify({"error": f"{field.replace('_', ' ').title()} is required"}), 400
 
+        # Generate default phone if not provided
+        phone_number = data.get("phone_number", "")
+        if not phone_number:
+            # Generate a unique phone number (UUID-based)
+            import uuid
+            phone_num = str(uuid.uuid4()).replace('-', '')[:10]
+            phone_number = f"+1-{phone_num[:3]}-{phone_num[3:6]}-{phone_num[6:10]}"
+
         # Register user
         user = AuthService.register_user(
             username=data["username"],
@@ -49,7 +58,7 @@ def register():
             password=data["password"],
             first_name=data["first_name"],
             last_name=data["last_name"],
-            phone_number=data.get("phone_number", ""),
+            phone_number=phone_number,
             role="customer"
         )
 
