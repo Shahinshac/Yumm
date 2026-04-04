@@ -32,7 +32,7 @@ class Transaction(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     # Transaction Identification
-    reference_id = db.Column(db.String(50), unique=True, nullable=False, index=True)
+    reference_id = db.Column(db.String(50), nullable=False, index=True)
     transaction_type = db.Column(db.String(50), nullable=False)
     status = db.Column(
         db.String(20),
