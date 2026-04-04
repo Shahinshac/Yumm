@@ -1,7 +1,7 @@
 """
-Account model for bank accounts
+Account model for bank accounts using MongoEngine
 """
-from app import db
+from mongoengine import Document, StringField, DecimalField, DateTimeField, ReferenceField
 from datetime import datetime
 from enum import Enum
 
@@ -20,76 +20,52 @@ class AccountStatusEnum(Enum):
     CLOSED = "closed"
 
 
-class Account(db.Model):
+class Account(Document):
     """Bank Account model"""
-    __tablename__ = "accounts"
-
-    id = db.Column(db.Integer, primary_key=True)
+    meta = {
+        'collection': 'accounts',
+        'indexes': [
+            'account_number',
+            'user_id'
+        ]
+    }
 
     # Account Identification
-    account_number = db.Column(db.String(20), unique=True, nullable=False, index=True)
-    account_type = db.Column(
-        db.String(20),
-        nullable=False,
-        default=AccountTypeEnum.SAVINGS.value
+    account_number = StringField(required=True, unique=True, max_length=20)
+    account_type = StringField(
+        required=True,
+        max_length=20,
+        default=AccountTypeEnum.SAVINGS.value,
+        choices=[e.value for e in AccountTypeEnum]
     )
 
     # Account Balance and Status
-    balance = db.Column(db.Numeric(15, 2), default=0.00, nullable=False)
-    status = db.Column(
-        db.String(20),
-        nullable=False,
-        default=AccountStatusEnum.ACTIVE.value
+    balance = DecimalField(default=0.00, precision=2)
+    status = StringField(
+        required=True,
+        max_length=20,
+        default=AccountStatusEnum.ACTIVE.value,
+        choices=[e.value for e in AccountStatusEnum]
     )
 
-    # Foreign Key
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    # Foreign Key - User Reference
+    user_id = ReferenceField('User', required=True)
 
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
-    )
-
-    # Relationships
-    transactions = db.relationship(
-        "Transaction",
-        backref="account",
-        lazy=True,
-        cascade="all, delete-orphan",
-        foreign_keys="Transaction.account_id"
-    )
-    beneficiaries = db.relationship(
-        "Beneficiary",
-        backref="account",
-        lazy=True,
-        cascade="all, delete-orphan",
-        foreign_keys="Beneficiary.account_id"
-    )
-    cards = db.relationship(
-        "Card",
-        backref="account",
-        lazy=True,
-        cascade="all, delete-orphan"
-    )
-    loans = db.relationship(
-        "Loan",
-        backref="account",
-        lazy=True,
-        cascade="all, delete-orphan"
-    )
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
 
     def to_dict(self):
         """Convert to dictionary"""
         return {
-            "id": self.id,
+            "id": str(self.id),
             "account_number": self.account_number,
             "account_type": self.account_type,
-            "balance": float(self.balance),
+            "balance": float(self.balance) if self.balance else 0.0,
             "status": self.status,
-            "user_id": self.user_id,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
+            "user_id": str(self.user_id.id) if self.user_id else None,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
         }
 
     def __repr__(self):

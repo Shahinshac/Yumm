@@ -1,52 +1,55 @@
 """
-Stub models for other entities (will be fully implemented in later steps)
+Additional models for banking system using MongoEngine
 """
-from app import db
+from mongoengine import Document, StringField, BooleanField, IntField, DecimalField, DateTimeField, ReferenceField, TextField
 from datetime import datetime
 
 
-class Card(db.Model):
+class Card(Document):
     """Debit Card model"""
-    __tablename__ = "cards"
-
-    id = db.Column(db.Integer, primary_key=True)
+    meta = {
+        'collection': 'cards',
+        'indexes': [
+            'card_number',
+            'account_id',
+            'user_id'
+        ]
+    }
 
     # Card Identification
-    card_number = db.Column(db.String(20), unique=True, nullable=False, index=True)
-    card_type = db.Column(db.String(20), default="debit", nullable=False)
+    card_number = StringField(required=True, unique=True, max_length=20)
+    card_type = StringField(required=True, max_length=20, default="debit")
 
     # Security
-    pin_hash = db.Column(db.String(255), nullable=False)
+    pin_hash = StringField(required=True, max_length=255)
 
     # Card Details
-    expiry_date = db.Column(db.String(5), nullable=False)  # MM/YY format
-    cvv_hash = db.Column(db.String(255), nullable=True)  # Optional
+    expiry_date = StringField(required=True, max_length=5)  # MM/YY format
+    cvv_hash = StringField(max_length=255)
 
     # Status
-    is_active = db.Column(db.Boolean, default=True, nullable=False)
-    is_blocked = db.Column(db.Boolean, default=False, nullable=False)
+    is_active = BooleanField(default=True)
+    is_blocked = BooleanField(default=False)
 
     # Foreign Keys
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False, index=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    account_id = ReferenceField('Account', required=True)
+    user_id = ReferenceField('User', required=True)
 
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
-    )
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
 
     def to_dict(self, include_sensitive=False):
         """Convert to dictionary"""
         data = {
-            "id": self.id,
+            "id": str(self.id),
             "card_number": f"****{self.card_number[-4:]}",  # Mask card number
             "card_type": self.card_type,
             "expiry_date": self.expiry_date,
             "is_active": self.is_active,
             "is_blocked": self.is_blocked,
-            "account_id": self.account_id,
-            "created_at": self.created_at.isoformat(),
+            "account_id": str(self.account_id.id) if self.account_id else None,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
         if include_sensitive:
             data["full_card_number"] = self.card_number
@@ -56,222 +59,252 @@ class Card(db.Model):
         return f"<Card {self.card_number[-4:]}>"
 
 
-class Beneficiary(db.Model):
+class Beneficiary(Document):
     """Beneficiary model for transfers"""
-    __tablename__ = "beneficiaries"
+    meta = {
+        'collection': 'beneficiaries',
+        'indexes': [
+            'account_id'
+        ]
+    }
 
-    id = db.Column(db.Integer, primary_key=True)
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False, index=True)
+    account_id = ReferenceField('Account', required=True)
 
     # Beneficiary Details
-    beneficiary_account_number = db.Column(db.String(20), nullable=False)
-    beneficiary_name = db.Column(db.String(120), nullable=False)
-    beneficiary_account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=True)
+    beneficiary_account_number = StringField(required=True, max_length=20)
+    beneficiary_name = StringField(required=True, max_length=120)
+    beneficiary_account_id = ReferenceField('Account')
 
     # Approval Status
-    is_approved = db.Column(db.Boolean, default=False, nullable=False)
-    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    approved_at = db.Column(db.DateTime, nullable=True)
+    is_approved = BooleanField(default=False)
+    approved_by = ReferenceField('User')
+    approved_at = DateTimeField()
 
     # Tracking
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
-    updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
-    )
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
 
     def to_dict(self):
         """Convert to dictionary"""
         return {
-            "id": self.id,
-            "account_id": self.account_id,
+            "id": str(self.id),
+            "account_id": str(self.account_id.id) if self.account_id else None,
             "beneficiary_account_number": self.beneficiary_account_number,
             "beneficiary_name": self.beneficiary_name,
             "is_approved": self.is_approved,
             "approved_at": self.approved_at.isoformat() if self.approved_at else None,
-            "created_at": self.created_at.isoformat(),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
     def __repr__(self):
         return f"<Beneficiary {self.beneficiary_account_number}>"
 
 
-class Loan(db.Model):
+class Loan(Document):
     """Loan model - Complete loan lifecycle tracking"""
-    __tablename__ = "loans"
-
-    id = db.Column(db.Integer, primary_key=True)
+    meta = {
+        'collection': 'loans',
+        'indexes': [
+            'user_id',
+            'account_id',
+            'created_at'
+        ]
+    }
 
     # Loan Details
-    loan_amount = db.Column(db.Numeric(15, 2), nullable=False)
-    loan_type = db.Column(db.String(50), nullable=False)  # PERSONAL, HOME, AUTO, EDUCATION
-    interest_rate = db.Column(db.Float, nullable=False)  # Annual percentage rate (e.g., 8.5)
-    tenure_months = db.Column(db.Integer, nullable=False)  # Loan duration in months
-    emi = db.Column(db.Numeric(15, 2), nullable=False)  # Calculated EMI amount
+    loan_amount = DecimalField(required=True, precision=2)
+    loan_type = StringField(required=True, max_length=50)  # PERSONAL, HOME, AUTO, EDUCATION
+    interest_rate = DecimalField(required=True, precision=2)  # Annual percentage rate
+    tenure_months = IntField(required=True)  # Loan duration in months
+    emi = DecimalField(required=True, precision=2)  # Calculated EMI amount
 
     # Disbursement
-    disbursed_amount = db.Column(db.Numeric(15, 2), default=0)  # Amount disbursed to account
-    disbursed_at = db.Column(db.DateTime, nullable=True)  # When loan amount was transferred
+    disbursed_amount = DecimalField(default=0, precision=2)
+    disbursed_at = DateTimeField()
 
     # Outstanding
-    remaining_amount = db.Column(db.Numeric(15, 2), nullable=False)  # Remaining balance
-    paid_amount = db.Column(db.Numeric(15, 2), default=0)  # Total paid so far
-    next_due_date = db.Column(db.DateTime, nullable=True)  # Next EMI due date
+    remaining_amount = DecimalField(required=True, precision=2)
+    paid_amount = DecimalField(default=0, precision=2)
+    next_due_date = DateTimeField()
 
     # Status
-    status = db.Column(db.String(20), default="pending")  # PENDING, APPROVED, REJECTED, ACTIVE, CLOSED, DEFAULT
+    status = StringField(
+        required=True,
+        max_length=20,
+        default="pending"
+    )
 
     # Approval/Rejection
-    approved_by = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)  # Staff/Manager who approved
-    approved_at = db.Column(db.DateTime, nullable=True)
-    rejection_reason = db.Column(db.Text, nullable=True)  # Why loan was rejected
+    approved_by = ReferenceField('User')
+    approved_at = DateTimeField()
+    rejection_reason = TextField()
 
     # Foreign Keys
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False, index=True)
+    user_id = ReferenceField('User', required=True)
+    account_id = ReferenceField('Account', required=True)
 
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
 
     def to_dict(self):
         """Convert to dictionary"""
         return {
-            "id": self.id,
-            "loan_amount": float(self.loan_amount),
+            "id": str(self.id),
+            "loan_amount": float(self.loan_amount) if self.loan_amount else 0.0,
             "loan_type": self.loan_type,
-            "interest_rate": self.interest_rate,
+            "interest_rate": float(self.interest_rate) if self.interest_rate else 0.0,
             "tenure_months": self.tenure_months,
-            "emi": float(self.emi),
-            "disbursed_amount": float(self.disbursed_amount),
-            "remaining_amount": float(self.remaining_amount),
-            "paid_amount": float(self.paid_amount),
+            "emi": float(self.emi) if self.emi else 0.0,
+            "disbursed_amount": float(self.disbursed_amount) if self.disbursed_amount else 0.0,
+            "remaining_amount": float(self.remaining_amount) if self.remaining_amount else 0.0,
+            "paid_amount": float(self.paid_amount) if self.paid_amount else 0.0,
             "status": self.status,
-            "account_id": self.account_id,
+            "account_id": str(self.account_id.id) if self.account_id else None,
             "approved_at": self.approved_at.isoformat() if self.approved_at else None,
             "next_due_date": self.next_due_date.isoformat() if self.next_due_date else None,
             "disbursed_at": self.disbursed_at.isoformat() if self.disbursed_at else None,
-            "created_at": self.created_at.isoformat(),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
     def __repr__(self):
         return f"<Loan {self.id} {self.loan_type} {self.status}>"
 
 
-class LoanPayment(db.Model):
+class LoanPayment(Document):
     """Loan Payment model - EMI payment tracking"""
-    __tablename__ = "loan_payments"
-
-    id = db.Column(db.Integer, primary_key=True)
+    meta = {
+        'collection': 'loan_payments',
+        'indexes': [
+            'loan_id'
+        ]
+    }
 
     # Loan Reference
-    loan_id = db.Column(db.Integer, db.ForeignKey("loans.id"), nullable=False, index=True)
+    loan_id = ReferenceField(Loan, required=True)
 
     # Payment Details
-    emi_number = db.Column(db.Integer, nullable=False)  # Which EMI (1, 2, 3, ...)
-    amount = db.Column(db.Numeric(15, 2), nullable=False)  # EMI amount
-    due_date = db.Column(db.DateTime, nullable=False)
-    paid_on = db.Column(db.DateTime, nullable=True)
+    emi_number = IntField(required=True)
+    amount = DecimalField(required=True, precision=2)
+    due_date = DateTimeField(required=True)
+    paid_on = DateTimeField()
 
     # Status
-    status = db.Column(db.String(20), default="pending")  # PENDING, PAID, OVERDUE, WAIVED
+    status = StringField(required=True, max_length=20, default="pending")
 
     # Transaction Reference
-    transaction_id = db.Column(db.Integer, db.ForeignKey("transactions.id"), nullable=True)  # Links to actual payment transaction
+    transaction_id = ReferenceField(Transaction)
 
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
 
     def to_dict(self):
         """Convert to dictionary"""
         return {
-            "id": self.id,
-            "loan_id": self.loan_id,
+            "id": str(self.id),
+            "loan_id": str(self.loan_id.id) if self.loan_id else None,
             "emi_number": self.emi_number,
-            "amount": float(self.amount),
-            "due_date": self.due_date.isoformat(),
+            "amount": float(self.amount) if self.amount else 0.0,
+            "due_date": self.due_date.isoformat() if self.due_date else None,
             "paid_on": self.paid_on.isoformat() if self.paid_on else None,
             "status": self.status,
             "days_overdue": self._calculate_days_overdue() if self.status == "overdue" else 0,
-            "created_at": self.created_at.isoformat(),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
     def _calculate_days_overdue(self):
         """Calculate days overdue"""
         if self.status == "overdue" and self.paid_on is None:
-            from datetime import datetime as dt
-            return (dt.utcnow() - self.due_date).days
+            return (datetime.utcnow() - self.due_date).days
         return 0
 
     def __repr__(self):
         return f"<LoanPayment {self.loan_id} EMI#{self.emi_number} {self.status}>"
 
 
-class Notification(db.Model):
+class Notification(Document):
     """Notification model"""
-    __tablename__ = "notifications"
+    meta = {
+        'collection': 'notifications',
+        'indexes': [
+            'user_id'
+        ]
+    }
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    title = db.Column(db.String(255), nullable=False)
-    message = db.Column(db.Text, nullable=False)
-    is_read = db.Column(db.Boolean, default=False)
-
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-
-class ScheduledPayment(db.Model):
-    """Scheduled Payment model"""
-    __tablename__ = "scheduled_payments"
-
-    id = db.Column(db.Integer, primary_key=True)
-
-    # Payment Details
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False, index=True)
-    recipient_account_number = db.Column(db.String(20), nullable=False)
-    recipient_account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=True)
-    amount = db.Column(db.Numeric(15, 2), nullable=False)
-    description = db.Column(db.String(255), nullable=True)
-
-    # Schedule Details
-    frequency = db.Column(db.String(20), default="once")  # ONCE, WEEKLY, MONTHLY, YEARLY
-    scheduled_date = db.Column(db.DateTime, nullable=False, index=True)  # First execution date
-    next_execution = db.Column(db.DateTime, nullable=True)  # Next scheduled date
-    last_executed = db.Column(db.DateTime, nullable=True)
-
-    # Recurring Configuration
-    max_executions = db.Column(db.Integer, nullable=True)  # Limit for recurring (None = unlimited)
-    execution_count = db.Column(db.Integer, default=0)  # How many times executed
-
-    # Status
-    status = db.Column(db.String(20), default="pending")  # PENDING, ACTIVE, COMPLETED, FAILED, CANCELLED
-    cancellation_reason = db.Column(db.String(255), nullable=True)
-
-    # Failed Execution Tracking
-    failure_count = db.Column(db.Integer, default=0)
-    last_failure_reason = db.Column(db.Text, nullable=True)
-
-    # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    user_id = ReferenceField('User', required=True)
+    title = StringField(required=True, max_length=255)
+    message = TextField(required=True)
+    is_read = BooleanField(default=False)
+    created_at = DateTimeField(default=datetime.utcnow)
 
     def to_dict(self):
         """Convert to dictionary"""
         return {
-            "id": self.id,
-            "account_id": self.account_id,
+            "id": str(self.id),
+            "title": self.title,
+            "message": self.message,
+            "is_read": self.is_read,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+class ScheduledPayment(Document):
+    """Scheduled Payment model"""
+    meta = {
+        'collection': 'scheduled_payments',
+        'indexes': [
+            'account_id',
+            'scheduled_date'
+        ]
+    }
+
+    # Payment Details
+    account_id = ReferenceField('Account', required=True)
+    recipient_account_number = StringField(required=True, max_length=20)
+    recipient_account_id = ReferenceField('Account')
+    amount = DecimalField(required=True, precision=2)
+    description = StringField(max_length=255)
+
+    # Schedule Details
+    frequency = StringField(required=True, max_length=20, default="once")
+    scheduled_date = DateTimeField(required=True)
+    next_execution = DateTimeField()
+    last_executed = DateTimeField()
+
+    # Recurring Configuration
+    max_executions = IntField()
+    execution_count = IntField(default=0)
+
+    # Status
+    status = StringField(required=True, max_length=20, default="pending")
+    cancellation_reason = StringField(max_length=255)
+
+    # Failed Execution Tracking
+    failure_count = IntField(default=0)
+    last_failure_reason = TextField()
+
+    # Timestamps
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
+
+    def to_dict(self):
+        """Convert to dictionary"""
+        return {
+            "id": str(self.id),
+            "account_id": str(self.account_id.id) if self.account_id else None,
             "recipient_account_number": self.recipient_account_number,
-            "amount": float(self.amount),
+            "amount": float(self.amount) if self.amount else 0.0,
             "description": self.description,
             "frequency": self.frequency,
-            "scheduled_date": self.scheduled_date.isoformat(),
+            "scheduled_date": self.scheduled_date.isoformat() if self.scheduled_date else None,
             "next_execution": self.next_execution.isoformat() if self.next_execution else None,
             "last_executed": self.last_executed.isoformat() if self.last_executed else None,
             "status": self.status,
             "execution_count": self.execution_count,
             "max_executions": self.max_executions,
             "failure_count": self.failure_count,
-            "created_at": self.created_at.isoformat(),
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
     def __repr__(self):

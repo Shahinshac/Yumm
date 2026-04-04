@@ -1,7 +1,7 @@
 """
-Transaction model for bank transactions
+Transaction model for bank transactions using MongoEngine
 """
-from app import db
+from mongoengine import Document, StringField, DecimalField, DateTimeField, ReferenceField
 from datetime import datetime
 from enum import Enum
 
@@ -25,52 +25,57 @@ class TransactionStatusEnum(Enum):
     CANCELLED = "cancelled"
 
 
-class Transaction(db.Model):
+class Transaction(Document):
     """Transaction model"""
-    __tablename__ = "transactions"
-
-    id = db.Column(db.Integer, primary_key=True)
+    meta = {
+        'collection': 'transactions',
+        'indexes': [
+            'reference_id',
+            'account_id',
+            'user_id',
+            'created_at'
+        ]
+    }
 
     # Transaction Identification
-    reference_id = db.Column(db.String(50), nullable=False, index=True)
-    transaction_type = db.Column(db.String(50), nullable=False)
-    status = db.Column(
-        db.String(20),
-        nullable=False,
-        default=TransactionStatusEnum.SUCCESS.value
+    reference_id = StringField(required=True, max_length=50)
+    transaction_type = StringField(required=True, max_length=50)
+    status = StringField(
+        required=True,
+        max_length=20,
+        default=TransactionStatusEnum.SUCCESS.value,
+        choices=[e.value for e in TransactionStatusEnum]
     )
 
     # Amount and Description
-    amount = db.Column(db.Numeric(15, 2), nullable=False)
-    description = db.Column(db.String(255), nullable=True)
+    amount = DecimalField(required=True, precision=2)
+    description = StringField(max_length=255)
 
     # Account Information
-    account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=False, index=True)
+    account_id = ReferenceField('Account', required=True)
 
     # For transfers - receiver account
-    recipient_account_id = db.Column(db.Integer, db.ForeignKey("accounts.id"), nullable=True)
+    recipient_account_id = ReferenceField('Account')
 
     # For user-level transaction history
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    user_id = ReferenceField('User', required=True)
 
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
-    updated_at = db.Column(
-        db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow, nullable=False
-    )
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
 
     def to_dict(self):
         """Convert to dictionary"""
         return {
-            "id": self.id,
+            "id": str(self.id),
             "reference_id": self.reference_id,
             "transaction_type": self.transaction_type,
             "status": self.status,
-            "amount": float(self.amount),
+            "amount": float(self.amount) if self.amount else 0.0,
             "description": self.description,
-            "account_id": self.account_id,
-            "recipient_account_id": self.recipient_account_id,
-            "created_at": self.created_at.isoformat(),
+            "account_id": str(self.account_id.id) if self.account_id else None,
+            "recipient_account_id": str(self.recipient_account_id.id) if self.recipient_account_id else None,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
         }
 
     def __repr__(self):
