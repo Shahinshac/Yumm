@@ -2,8 +2,11 @@
 Entry point for the Flask application
 """
 import os
+from dotenv import load_dotenv
 from app import create_app, db
 
+# Load environment variables from .env file
+load_dotenv()
 
 # Set environment
 os.environ.setdefault("FLASK_ENV", "development")

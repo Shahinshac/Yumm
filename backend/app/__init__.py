@@ -44,7 +44,10 @@ def create_app(config_name=None):
     # Initialize extensions
     db.init_app(app)
     jwt.init_app(app)
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+    # Configure CORS with environment-based origins
+    cors_origins = app.config.get("CORS_ORIGINS", "http://localhost:3000").split(",")
+    CORS(app, resources={r"/api/*": {"origins": cors_origins}})
 
     # Import models (ensures relationships are defined)
     _import_models()
