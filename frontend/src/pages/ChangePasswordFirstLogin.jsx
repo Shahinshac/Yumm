@@ -6,7 +6,6 @@
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../context/authStore';
 import '../styles/change-password-first-login.css';
 
 export function ChangePasswordFirstLoginPage() {
