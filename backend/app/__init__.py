@@ -129,6 +129,7 @@ def _register_blueprints(app):
     from app.routes.beneficiaries import beneficiaries_bp
     from app.routes.cards import cards_bp, atm_bp
     from app.routes.scheduled_payments import scheduled_payments_bp
+    from app.routes.bills import bills_bp
     from app.routes.notifications import notifications_bp
     from app.routes.analytics import analytics_bp
     from app.routes.admin import admin_bp
@@ -142,6 +143,7 @@ def _register_blueprints(app):
     app.register_blueprint(cards_bp)
     app.register_blueprint(atm_bp)
     app.register_blueprint(scheduled_payments_bp)
+    app.register_blueprint(bills_bp)
     app.register_blueprint(notifications_bp)
     app.register_blueprint(analytics_bp)
     app.register_blueprint(admin_bp)

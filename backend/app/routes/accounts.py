@@ -272,6 +272,169 @@ def get_account_status(account_id):
         return jsonify({"error": str(e)}), 500
 
 
+@accounts_bp.route("/<account_id>/interest/calculate", methods=["GET"])
+@require_authentication
+def calculate_interest(account_id):
+    """
+    Calculate estimated monthly interest for account
+
+    Authorization:
+        - Account owner can view
+        - Admin/Manager/Staff can view any account
+
+    Query parameters:
+        None
+
+    Returns:
+        200: Interest calculation details
+        404: Account not found
+        403: Unauthorized
+    """
+    try:
+        current_user = get_current_user()
+        account = AccountService.get_account_by_id(account_id)
+
+        # Check authorization
+        if (current_user["role"] not in ["admin", "manager", "staff"] and
+                account.user_id != current_user["user_id"]):
+            return jsonify({"error": "Unauthorized"}), 403
+
+        from app.services.interest_service import InterestService
+        result = InterestService.calculate_interest_for_account(account_id)
+
+        return jsonify(result), 200
+
+    except BankingException as e:
+        return jsonify({"error": e.message}), e.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@accounts_bp.route("/<account_id>/interest/accrue", methods=["POST"])
+@require_role("admin", "manager", "staff")
+def accrue_interest(account_id):
+    """
+    Manually accrue (credit) monthly interest to account (Admin/Manager/Staff only)
+
+    Authorization:
+        - Admin/Manager/Staff only
+
+    Returns:
+        200: Interest accrued successfully
+        400: Interest accrual failed
+        404: Account not found
+        403: Unauthorized
+    """
+    try:
+        from app.services.interest_service import InterestService
+        result = InterestService.accrue_interest_for_account(account_id)
+
+        if result.get("status") == "success":
+            return jsonify(result), 200
+        else:
+            return jsonify(result), 200
+
+    except BankingException as e:
+        return jsonify({"error": e.message}), e.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@accounts_bp.route("/<account_id>/interest/statistics", methods=["GET"])
+@require_authentication
+def get_interest_statistics(account_id):
+    """
+    Get interest statistics for account
+
+    Authorization:
+        - Account owner can view
+        - Admin/Manager/Staff can view any account
+
+    Returns:
+        200: Interest statistics
+        404: Account not found
+        403: Unauthorized
+    """
+    try:
+        current_user = get_current_user()
+        account = AccountService.get_account_by_id(account_id)
+
+        # Check authorization
+        if (current_user["role"] not in ["admin", "manager", "staff"] and
+                account.user_id != current_user["user_id"]):
+            return jsonify({"error": "Unauthorized"}), 403
+
+        from app.services.interest_service import InterestService
+        result = InterestService.get_interest_statistics(account_id)
+
+        return jsonify(result), 200
+
+    except BankingException as e:
+        return jsonify({"error": e.message}), e.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@accounts_bp.route("/interest/process-all", methods=["POST"])
+@require_role("admin")
+def process_interest_all_users():
+    """
+    Process monthly interest for all users in the system (Admin only)
+
+    This should typically be scheduled to run on the 1st of each month
+
+    Authorization:
+        - Admin only
+
+    Returns:
+        200: Interest processing complete
+        403: Unauthorized
+    """
+    try:
+        from app.services.interest_service import InterestService
+        result = InterestService.process_monthly_interest_for_all_users()
+
+        return jsonify(result), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@accounts_bp.route("/interest/process-user", methods=["POST"])
+@require_role("admin", "manager")
+def process_interest_user():
+    """
+    Process monthly interest for a specific user (Admin/Manager only)
+
+    Request body:
+        {
+            "user_id": "str_id"
+        }
+
+    Returns:
+        200: Interest processing complete
+        400: Validation error
+        403: Unauthorized
+    """
+    try:
+        data = request.get_json()
+
+        if "user_id" not in data:
+            return jsonify({"error": "user_id is required"}), 400
+
+        user_id = data.get("user_id")
+
+        from app.services.interest_service import InterestService
+        result = InterestService.process_monthly_interest_for_user(user_id)
+
+        return jsonify(result), 200
+
+    except BankingException as e:
+        return jsonify({"error": e.message}), e.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @accounts_bp.errorhandler(BankingException)
 def handle_banking_exception(error):
     """Handle custom banking exceptions"""
