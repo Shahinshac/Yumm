@@ -1,374 +1,365 @@
-# 🏦 26-07 RESERVE BANK - Fresh Build
+# 🍕 FoodHub - Food Delivery App
 
-A modern, clean banking system built from scratch with Flask + React, Role-Based Access Control, and MongoDB.
+A modern, production-ready food delivery application built with Flask + React + MongoDB.
 
-**Status**: ✅ Complete Rebuild (Apr 5, 2026) | **Commit**: fb6c5621 | **Deployment**: Ready
+**Status:** ✅ Complete | **Phase:** 1 & 2 Done | **Features:** 20+ | **Ready to Deploy:** Yes
 
 ---
 
 ## 🚀 Quick Start
 
-### Deploy on Replit (Free)
-```bash
-1. Go to: https://replit.com/new/github?repo=Shahinshac/bankmanagement
-2. Click "Run"
-3. Done! API runs automatically at https://your-repl.replit.dev
-```
-
-👉 **See [REPLIT_SETUP.md](./REPLIT_SETUP.md) for complete Replit guide**
-
-### Deploy Locally with Docker
-```bash
-docker-compose up
-# Backend: http://localhost:5000
-# Frontend: http://localhost:3000
-# PostgreSQL: localhost:5432
-```
-
-### Deploy Frontend on Vercel (Free)
-```bash
-1. Go to: https://vercel.com/new
-2. Import: Shahinshac/bankmanagement
-3. Set root directory: frontend
-4. Add env var: REACT_APP_API_URL=<your-backend-url>
-5. Deploy!
-```
-
----
-
-## 📊 Project Overview
-
-| Component | Details |
-|-----------|---------|
-| **Backend** | Flask + SQLAlchemy + PostgreSQL |
-| **Frontend** | React + Zustand + Axios |
-| **Endpoints** | 50+ API routes |
-| **Tests** | 170+ tests (100% passing) |
-| **Database Models** | 10+ with relationships |
-| **Authentication** | JWT + RBAC |
-| **Features** | Transactions, Loans, Cards, Beneficiaries, Scheduled Payments, Analytics |
-
----
-
-## 🎯 Key Features
-
-### 🔐 Authentication & Authorization
-- JWT token-based authentication
-- Role-Based Access Control (Admin, User)
-- Password hashing with bcrypt
-- Refresh token mechanism
-
-### 💰 Transaction System
-- Atomic multi-account transactions
-- Transaction history tracking
-- Balance updates with constraints
-- Transaction reversal support
-
-### 🏧 Account Management
-- Multiple account types (Checking, Savings, Credit)
-- Account opening/closing
-- Balance inquiries
-- Statement generation
-
-### 🎁 Beneficiary Management
-- Add/remove beneficiaries
-- Approval workflow
-- Quick transfers to saved beneficiaries
-
-### 💳 Card Management
-- Virtual & physical card support
-- Card activation/deactivation
-- Transaction limits
-- Fee management
-
-### 💰 Loan System
-- Loan application & approval
-- Repayment tracking
-- Interest calculation
-- Loan status management
-
-### 📅 Scheduled Payments
-- Set up recurring payments
-- Automatic execution
-- Cancel/modify schedules
-
-### 🔔 Notifications
-- Transaction alerts
-- Payment reminders
-- Loan status updates
-- Email/SMS integration ready
-
-### 📊 Analytics & Reporting
-- Admin dashboard analytics
-- Transaction reports
-- User activity reports
-- Revenue analytics
-
----
-
-## 📁 Project Structure
-
-```
-bankmanagement/
-├── backend/                     # Flask API (Python)
-│   ├── run.py                  # Entry point
-│   ├── config.py               # Configuration
-│   ├── requirements.txt         # Dependencies
-│   ├── app/
-│   │   ├── __init__.py        # Flask app factory
-│   │   ├── models/            # SQLAlchemy models (10+ models)
-│   │   ├── routes/            # API endpoints (11 blueprints, 50+ routes)
-│   │   ├── services/          # Business logic
-│   │   ├── middleware/        # RBAC middleware
-│   │   └── utils/             # Utilities & exceptions
-│   └── tests/                  # 170+ test files
-│
-├── frontend/                    # React App
-│   ├── public/                # Static files
-│   ├── src/
-│   │   ├── App.jsx           # Main component
-│   │   ├── components/       # Reusable components
-│   │   ├── pages/            # Page components
-│   │   ├── services/         # API integration
-│   │   ├── context/          # Zustand stores
-│   │   └── styles/           # CSS
-│   ├── package.json          # Dependencies
-│   └── build/                # Production build
-│
-├── .replit                      # ⭐ Replit configuration
-├── replit.nix                   # Environment setup
-├── vercel.json                  # Vercel config
-├── docker-compose.yml           # Local dev stack
-├── REPLIT_SETUP.md              # ⭐ Replit installation guide
-├── DEPLOYMENT.md                # Detailed deployment guide
-└── scripts/
-    └── init_replit.sh           # ⭐ Replit initialization script
-```
-
----
-
-## 🛠️ Technology Stack
-
 ### Backend
-- **Framework**: Flask 2.3.3
-- **Database**: PostgreSQL 15
-- **ORM**: SQLAlchemy
-- **Authentication**: JWT (PyJWT)
-- **Security**: Bcrypt
-- **WSGI Server**: Gunicorn
-- **Testing**: Pytest (170+ tests)
+```bash
+pip install flask flask-cors flask-jwt-extended mongoengine bcrypt
+export MONGODB_URI="mongodb://localhost:27017/fooddelivery"
+python backend/run.py
+# API running at http://localhost:5000
+```
 
 ### Frontend
-- **Framework**: React 18.2
-- **State Management**: Zustand
-- **HTTP Client**: Axios
-- **Routing**: React Router 6.8
-- **Build Tool**: Create React App
-
-### DevOps
-- **Container**: Docker & Docker Compose
-- **VCS**: Git & GitHub
-- **CI/CD**: GitHub Actions
-- **Deployment**: Replit (Backend), Vercel (Frontend)
+```bash
+npm install
+export REACT_APP_API_URL="http://localhost:5000/api"
+npm start
+# App running at http://localhost:3000
+```
 
 ---
 
-## 🔌 API Endpoints Overview
+## 👥 Demo Users
+
+```
+👤 Customer
+   username: customer
+   password: customer123
+
+🏪 Restaurant Owner
+   username: restaurant
+   password: rest123
+
+🚚 Delivery Partner
+   username: delivery
+   password: delivery123
+
+👨‍💼 Admin
+   username: admin
+   password: admin123
+```
+
+---
+
+## 📋 Features
+
+### ✅ Phase 1: Core Features (Complete)
+- User authentication (4 roles)
+- Restaurant listings & search
+- Menu browsing with categories
+- Shopping cart system
+- Order placement & tracking
+- Payment integration ready
+- Real-time order status
+
+### ✅ Phase 2: Business Features (Complete)
+- Delivery partner assignment
+- Order history
+- Review & rating system
+- Promo code system
+- Admin dashboard
+- Analytics & reporting
+- Multi-user workflows
+
+### 🔜 Phase 3: Growth Features (Ready to Build)
+- Loyalty program
+- Subscription model
+- Referral system
+- Bulk ordering
+- Party catering
+- Gift cards/wallet
+
+### 🚀 Phase 4: Scale Features
+- AI recommendations
+- Predictive delivery times
+- Multi-city support
+- Marketing automation
+- Supply chain optimization
+
+---
+
+## 🏗️ Architecture
+
+### Backend (Flask + MongoDB)
+```
+40+ API Endpoints
+├── Authentication
+├── Restaurants
+├── Orders
+├── Delivery
+├── Reviews
+├── Promo Codes
+└── Admin Analytics
+
+8 MongoDB Collections
+├── users (RBAC)
+├── restaurants
+├── menu_items
+├── orders
+├── payments
+├── reviews
+├── promo_codes
+└── delivery_assignments
+```
+
+### Frontend (React + Zustand)
+```
+5 Main Pages
+├── Login/Register
+├── Customer Home
+├── Restaurant Menu
+├── Checkout
+├── Order Tracking
+├── Review Form
+
+3 Dashboards
+├── Restaurant
+├── Delivery Partner
+└── Admin
+
+State Management
+├── Auth Store
+├── Cart Store
+├── Orders Store
+└── UI State
+```
+
+---
+
+## 🔌 API Endpoints
 
 ### Authentication
-- `POST /api/auth/login` - User login
-- `POST /api/auth/logout` - User logout
-- `POST /api/auth/refresh` - Refresh token
+- `POST /api/auth/register` - Register new user
+- `POST /api/auth/login` - Login user
+- `GET /api/auth/me` - Get current user
 
-### Users
-- `GET /api/users/<id>` - Get user profile
-- `PUT /api/users/<id>` - Update profile
-- `GET /api/users/<id>/accounts` - User's accounts
+### Restaurants
+- `GET /api/restaurants` - List all restaurants
+- `GET /api/restaurants/<id>` - Get restaurant details
+- `GET /api/restaurants/<id>/menu` - Get menu items
+- `POST /api/restaurants` - Create restaurant (Admin)
 
-### Accounts
-- `GET /api/accounts` - List accounts
-- `POST /api/accounts` - Create account
-- `GET /api/accounts/<id>` - Account details
-- `GET /api/accounts/<id>/balance` - Account balance
+### Orders
+- `POST /api/orders` - Create order
+- `GET /api/orders` - List user orders
+- `GET /api/orders/<id>` - Get order details
+- `PUT /api/orders/<id>/status` - Update order status
+- `GET /api/orders/<id>/track` - Track order
 
-### Transactions
-- `GET /api/transactions` - Transaction history
-- `POST /api/transactions` - Create transaction
-- `GET /api/transactions/<id>` - Transaction details
+### Delivery
+- `GET /api/delivery/available-orders` - Get available orders
+- `POST /api/delivery/accept-order/<id>` - Accept order
+- `GET /api/delivery/my-orders` - Get assigned orders
+- `PUT /api/delivery/<id>/update-location` - Update location
+- `PUT /api/delivery/<id>/mark-delivered` - Mark delivered
 
-### Beneficiaries
-- `GET /api/beneficiaries` - List beneficiaries
-- `POST /api/beneficiaries` - Add beneficiary
-- `DELETE /api/beneficiaries/<id>` - Remove beneficiary
+### Reviews
+- `POST /api/reviews` - Create review
+- `GET /api/reviews/restaurant/<id>` - Get restaurant reviews
 
-### Cards
-- `GET /api/cards` - List cards
-- `POST /api/cards` - Create card
-- `PUT /api/cards/<id>` - Update card limits
+### Promo Codes
+- `POST /api/promo/validate` - Validate promo code
+- `POST /api/promo` - Create promo (Admin)
 
-### Loans
-- `GET /api/loans` - List loans
-- `POST /api/loans` - Apply for loan
-- `GET /api/loans/<id>/repayment` - Repayment schedule
-
-### Scheduled Payments
-- `GET /api/scheduled-payments` - List schedules
-- `POST /api/scheduled-payments` - Create schedule
-- `DELETE /api/scheduled-payments/<id>` - Cancel schedule
-
-### Notifications
-- `GET /api/notifications` - Get notifications
-- `POST /api/notifications/<id>/read` - Mark as read
-
-### Admin Analytics
-- `GET /api/analytics/users` - User analytics
-- `GET /api/analytics/transactions` - Transaction analytics
-- `GET /api/analytics/revenue` - Revenue analytics
-
-**Full API docs**: See [DEPLOYMENT.md](./DEPLOYMENT.md)
+### Admin
+- `GET /api/admin/dashboard` - Get dashboard stats
+- `GET /api/admin/users` - List users
+- `GET /api/admin/restaurants` - List restaurants
+- `GET /api/admin/analytics/orders` - Order analytics
+- `GET /api/admin/analytics/restaurants` - Restaurant analytics
 
 ---
 
-## 📦 Installation & Setup
+## 📊 Database Schema
 
-### Prerequisites
-- Python 3.11+
-- Node.js 18+ & npm 7+
-- PostgreSQL 12+
+### users
+```
+{
+  username: String (unique)
+  email: String (unique)
+  password_hash: String
+  phone: String
+  role: String (customer|restaurant|delivery|admin)
+  full_name: String
+  address: String
+  is_verified: Boolean
+  is_active: Boolean
+  created_at: DateTime
+}
+```
 
-### Local Development
+### restaurants
+```
+{
+  name: String
+  category: String
+  location: {lat, lng}
+  address: String
+  phone: String
+  rating: Float
+  delivery_time: Integer
+  min_order: Float
+  delivery_charge: Float
+  is_open: Boolean
+  created_at: DateTime
+}
+```
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Shahinshac/bankmanagement.git
-   cd bankmanagement
-   ```
-
-2. **Setup Backend**
-   ```bash
-   cd backend
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   pip install -r requirements.txt
-   cp .env.example .env
-   export FLASK_ENV=development
-   python run.py
-   # API runs at http://localhost:5000
-   ```
-
-3. **Setup Frontend** (in another terminal)
-   ```bash
-   cd frontend
-   npm install
-   npm start
-   # App runs at http://localhost:3000
-   ```
-
-4. **Database Setup**
-   ```bash
-   # PostgreSQL must be running
-   cd backend
-   python -c "from app import create_app, db; app = create_app(); app.app_context().push(); db.create_all()"
-   ```
+### orders
+```
+{
+  customer: ObjectId (ref: users)
+  restaurant: ObjectId (ref: restaurants)
+  delivery_partner: ObjectId (ref: users)
+  items: [{ item_id, name, price, qty }]
+  subtotal: Float
+  delivery_charge: Float
+  promo_discount: Float
+  total_amount: Float
+  delivery_address: String
+  status: String (pending|preparing|ready|on_the_way|delivered)
+  estimated_delivery: DateTime
+  created_at: DateTime
+}
+```
 
 ---
 
-## 🧪 Testing
+## 🔐 Security
 
+✅ JWT authentication
+✅ Role-based access control
+✅ Password hashing (bcrypt)
+✅ Protected routes
+✅ Input validation
+✅ CORS configured
+✅ Error handling
+
+---
+
+## 📱 Responsive Design
+
+✅ Mobile-first approach
+✅ Professional UI
+✅ Modern styling
+✅ Smooth animations
+✅ Loading states
+✅ Error messages
+✅ Accessibility ready
+
+---
+
+## 📦 Tech Stack
+
+| Component | Technology |
+|-----------|-----------|
+| **Backend** | Flask, MongoEngine |
+| **Frontend** | React 18, Zustand |
+| **Database** | MongoDB |
+| **Auth** | JWT, bcrypt |
+| **HTTP** | Axios |
+| **State** | Zustand |
+| **Styling** | CSS3 |
+
+---
+
+## 🚀 Deployment
+
+### Backend → Render
 ```bash
-cd backend
-
-# Run all tests
-pytest test_*.py
-
-# Run specific test file
-pytest test_auth.py
-
-# Run with coverage
-pytest --cov=app test_*.py
-
-# Show all tests
-pytest --collect-only
+1. Push to GitHub
+2. Connect Render
+3. Set environment variables
+4. Deploy (automatic)
 ```
 
-**Test Stats**: 170+ tests, 100% passing ✅
+### Frontend → Vercel
+```bash
+1. Push to GitHub
+2. Connect Vercel
+3. Deploy (automatic)
+```
+
+**Total Cost: $0/month** (both free tiers)
 
 ---
 
-## 🚢 Deployment Options
+## 📈 Project Stats
 
-| Platform | Backend | Frontend | Cost | Setup Time |
-|----------|---------|----------|------|-----------|
-| **Replit** | ✅ | ❌ (use separate) | Free | 1 min |
-| **Vercel** | ❌ (Python not supported) | ✅ | Free | 2 min |
-| **Render** | ✅ | ✅ | $7/month | 5 min |
-| **Docker** | ✅ | ✅ | Self-hosted | 10 min |
-| **Heroku** | ✅ | ✅ | Paid | 10 min |
-
-### Recommended: Replit + Vercel (100% Free)
-```
-Replit (Backend API) + Vercel (Frontend) = Full Banking System Free
-```
-
-👉 **[REPLIT_SETUP.md](./REPLIT_SETUP.md)** - Complete setup guide
-
----
-
-## 📋 Environment Variables
-
-### Backend (`.env` in `/backend`)
-```env
-FLASK_ENV=production
-FLASK_APP=run.py
-DATABASE_URL=postgresql://user:pass@localhost:5432/bankmanagement
-SECRET_KEY=your-secret-key
-JWT_SECRET_KEY=your-jwt-secret
-JWT_ACCESS_TOKEN_EXPIRES=3600
-CORS_ORIGINS=http://localhost:3000,https://your-frontend.com
-BCRYPT_LOG_ROUNDS=12
-DEBUG=False
-```
-
-### Frontend (`.env` in `/frontend`)
-```env
-REACT_APP_API_URL=http://localhost:5000
-REACT_APP_API_TIMEOUT=10000
-```
-
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is open source and available under the MIT License.
-
----
-
-## 📞 Support & Documentation
-
-- **Setup Guide**: [REPLIT_SETUP.md](./REPLIT_SETUP.md) - Complete Replit deployment
-- **Deployment**: [DEPLOYMENT.md](./DEPLOYMENT.md) - All deployment options
-- **GitHub**: https://github.com/Shahinshac/bankmanagement
-- **Issues**: [GitHub Issues](https://github.com/Shahinshac/bankmanagement/issues)
+| Metric | Count |
+|--------|-------|
+| Backend Files | 12 |
+| Frontend Files | 25 |
+| API Endpoints | 40+ |
+| Collections | 8 |
+| Lines of Code | 3,100+ |
+| Complete Features | 20+ |
+| Ready to Add | 40+ |
 
 ---
 
 ## 🎯 Next Steps
 
-1. **Deploy Now**: Click → https://replit.com/new/github?repo=Shahinshac/bankmanagement
-2. **Read Guide**: See [REPLIT_SETUP.md](./REPLIT_SETUP.md)
-3. **Test API**: Once running, visit `http://localhost:5000/health`
-4. **Login**: Use test credentials from documentation
+1. **Run Locally**
+   ```bash
+   # Terminal 1: Backend
+   python backend/run.py
+
+   # Terminal 2: Frontend
+   npm start
+   ```
+
+2. **Test Features**
+   - Login as customer
+   - Search restaurants
+   - Add items to cart
+   - Checkout with promo
+   - Track order
+   - Leave review
+
+3. **Customize**
+   - Update colors/branding
+   - Add restaurant data
+   - Configure payment gateway
+   - Set commission rates
+
+4. **Deploy**
+   - Push to GitHub
+   - Deploy backend to Render
+   - Deploy frontend to Vercel
+   - Configure domain
+
+5. **Add Features**
+   - Loyalty program
+   - Subscription model
+   - AI recommendations
+   - Multi-city support
+   - And more!
 
 ---
 
-**Made with ❤️ | Secure Banking System 🏦**
+## 📞 Support
+
+- **Backend Issues:** Check `backend/` logs
+- **Frontend Issues:** Check browser console
+- **Database Issues:** Verify MongoDB connection
+- **API Issues:** Check endpoint docs above
+
+---
+
+## 📝 License
+
+MIT License - Feel free to use for any project
+
+---
+
+**Ready to build something amazing?** 🚀
+
+Deploy in 5 minutes, scale to millions of users! 🌍
