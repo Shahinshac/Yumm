@@ -22,6 +22,4 @@ venv/
 .coverage
 htmlcov/
 dist/
-build/
-!frontend-mobile/build/
 *.egg-info/
