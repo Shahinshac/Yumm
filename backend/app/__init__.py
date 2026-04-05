@@ -75,9 +75,12 @@ def create_app(config_name=None):
 
     # Register blueprints
     _register_blueprints(app)
-    
+
     # CRITICAL: Ensure default admin exists
     _ensure_admin_exists(app)
+
+    # AUTO-HEAL: Fix any invalid roles in database
+    _fix_invalid_roles(app)
 
     app.logger.info(f"Application initialized in {config_name} mode")
 
@@ -183,3 +186,41 @@ def _ensure_admin_exists(app):
             app.logger.info(f"✅ Admin already exists")
     except Exception as e:
         app.logger.error(f"❌ Failed to ensure admin exists: {str(e)}")
+
+
+def _fix_invalid_roles(app):
+    """
+    AUTO-HEAL: Fix any users with invalid roles in database
+
+    This runs on every app startup to automatically fix invalid role values.
+    Converts 'manager' → 'admin', other invalid values → 'customer'
+    """
+    try:
+        from app.models.user import User
+
+        valid_roles = ["admin", "staff", "customer"]
+        role_mapping = {"manager": "admin"}
+
+        # Find users with invalid roles
+        all_users = User.objects()
+        fixed_count = 0
+
+        for user in all_users:
+            if user.role not in valid_roles:
+                old_role = user.role
+                new_role = role_mapping.get(user.role, "customer")
+
+                user.role = new_role
+                user.save()
+                fixed_count += 1
+
+                app.logger.warning(
+                    f"🔧 Fixed invalid role for user '{user.username}': "
+                    f"'{old_role}' → '{new_role}'"
+                )
+
+        if fixed_count > 0:
+            app.logger.info(f"✅ Fixed {fixed_count} user(s) with invalid roles")
+
+    except Exception as e:
+        app.logger.error(f"❌ Failed to fix invalid roles: {str(e)}")
