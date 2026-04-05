@@ -1,6 +1,6 @@
 /**
- * Professional Dashboard - All Features Accessible from One Hub
- * Hamburger Navigation + Responsive Design
+ * Professional Dashboard - Complete Admin & User Management
+ * Hamburger Navigation + Full CRUD Operations
  */
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../context/authStore';
@@ -15,6 +15,26 @@ export function DashboardPage() {
   const [accounts, setAccounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]);
+  const [showCreateAccount, setShowCreateAccount] = useState(false);
+  const [showCreateUser, setShowCreateUser] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+
+  // Form states
+  const [accountForm, setAccountForm] = useState({
+    account_type: 'savings',
+    initial_balance: 0,
+  });
+
+  const [userForm, setUserForm] = useState({
+    username: '',
+    email: '',
+    password: '',
+    first_name: '',
+    last_name: '',
+    phone_number: '',
+    role: 'customer',
+  });
 
   useEffect(() => {
     fetchData();
@@ -28,6 +48,23 @@ export function DashboardPage() {
       ]);
       setAccounts(Array.isArray(accountsRes.data) ? accountsRes.data : []);
       setTransactions(Array.isArray(txRes.data?.transactions) ? txRes.data.transactions : []);
+
+      // Fetch users if admin
+      if (user?.role === 'admin') {
+        try {
+          const usersRes = await fetch('/api/users', {
+            headers: {
+              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+            },
+          });
+          if (usersRes.ok) {
+            const data = await usersRes.json();
+            setUsers(Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : []);
+          }
+        } catch (err) {
+          console.error('Failed to fetch users:', err);
+        }
+      }
     } catch (error) {
       console.error('Failed to fetch data:', error);
       setAccounts([]);
@@ -37,21 +74,99 @@ export function DashboardPage() {
     }
   };
 
+  const handleCreateAccount = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/accounts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: JSON.stringify(accountForm),
+      });
+      if (response.ok) {
+        alert('Account created successfully!');
+        setShowCreateAccount(false);
+        setAccountForm({ account_type: 'savings', initial_balance: 0 });
+        fetchData();
+      }
+    } catch (error) {
+      alert('Failed to create account: ' + error.message);
+    }
+  };
+
+  const handleCreateUser = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: JSON.stringify(userForm),
+      });
+      if (response.ok) {
+        alert('User created successfully!');
+        setShowCreateUser(false);
+        setUserForm({
+          username: '',
+          email: '',
+          password: '',
+          first_name: '',
+          last_name: '',
+          phone_number: '',
+          role: 'customer',
+        });
+        fetchData();
+      } else {
+        const error = await response.json();
+        alert('Failed: ' + (error.message || 'Unknown error'));
+      }
+    } catch (error) {
+      alert('Failed to create user: ' + error.message);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    if (!window.confirm('Are you sure you want to delete this user?')) return;
+    try {
+      const response = await fetch(`/api/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+      });
+      if (response.ok) {
+        alert('User deleted successfully!');
+        fetchData();
+      }
+    } catch (error) {
+      alert('Failed to delete user: ' + error.message);
+    }
+  };
+
   const totalBalance = accounts.reduce((sum, acc) => sum + parseFloat(acc.balance || 0), 0);
 
   const menuItems = [
-    { id: 'overview', label: '📊 Overview', icon: '📊' },
-    { id: 'accounts', label: '💳 Accounts', icon: '💳' },
-    { id: 'transactions', label: '📝 Transactions', icon: '📝' },
-    { id: 'transfer', label: '💸 Transfer Money', icon: '💸' },
-    { id: 'bills', label: '📱 Pay Bills', icon: '📱' },
-    { id: 'cards', label: '🎫 Cards & ATM', icon: '🎫' },
-    { id: 'loans', label: '📊 Loans', icon: '📊' },
-    { id: 'beneficiaries', label: '👥 Beneficiaries', icon: '👥' },
-    { id: 'scheduled', label: '⏰ Scheduled Payments', icon: '⏰' },
-    { id: 'notifications', label: '🔔 Notifications', icon: '🔔' },
-    { id: 'settings', label: '⚙️ Settings', icon: '⚙️' },
+    { id: 'overview', label: '📊 Overview' },
+    { id: 'accounts', label: '💳 Accounts' },
+    { id: 'transactions', label: '📝 Transactions' },
+    { id: 'transfer', label: '💸 Transfer Money' },
+    { id: 'bills', label: '📱 Pay Bills' },
+    { id: 'cards', label: '🎫 Cards & ATM' },
+    { id: 'loans', label: '📊 Loans' },
+    { id: 'beneficiaries', label: '👥 Beneficiaries' },
+    { id: 'scheduled', label: '⏰ Scheduled Payments' },
+    { id: 'notifications', label: '🔔 Notifications' },
+    { id: 'settings', label: '⚙️ Settings' },
   ];
+
+  // Add admin menu item for admin users
+  if (user?.role === 'admin') {
+    menuItems.push({ id: 'users', label: '👨‍💼 User Management' });
+  }
 
   if (loading) {
     return (
@@ -67,13 +182,9 @@ export function DashboardPage() {
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
-          <h2>26-07</h2>
-          <button
-            className="close-btn"
-            onClick={() => setSidebarOpen(false)}
-          >
-            ✕
-          </button>
+          <div className="bank-logo">🏛️</div>
+          <h2>26-07 BANK</h2>
+          <button className="close-btn" onClick={() => setSidebarOpen(false)}>✕</button>
         </div>
 
         <nav className="sidebar-menu">
@@ -86,16 +197,14 @@ export function DashboardPage() {
                 if (window.innerWidth < 768) setSidebarOpen(false);
               }}
             >
-              <span className="menu-icon">{item.icon}</span>
+              <span className="menu-icon">{item.label.split(' ')[0]}</span>
               <span className="menu-label">{item.label}</span>
             </button>
           ))}
         </nav>
 
         <div className="sidebar-footer">
-          <button className="logout-btn" onClick={logout}>
-            🚪 Logout
-          </button>
+          <button className="logout-btn" onClick={logout}>🚪 Logout</button>
         </div>
       </aside>
 
@@ -103,15 +212,10 @@ export function DashboardPage() {
       <main className="main-content">
         {/* Top Bar */}
         <header className="top-bar">
-          <button
-            className="hamburger"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            ☰
-          </button>
+          <button className="hamburger" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button>
           <h1>Welcome, {user?.first_name}! 👋</h1>
           <div className="user-info">
-            <span className="user-role">{user?.role}</span>
+            <span className="user-role">{user?.role.toUpperCase()}</span>
           </div>
         </header>
 
@@ -120,7 +224,9 @@ export function DashboardPage() {
           {/* OVERVIEW SECTION */}
           {activeSection === 'overview' && (
             <section className="section">
-              <h2>Dashboard Overview</h2>
+              <div className="section-header">
+                <h2>Dashboard Overview</h2>
+              </div>
 
               <div className="cards-grid">
                 <div className="card total-balance">
@@ -194,28 +300,55 @@ export function DashboardPage() {
           {/* ACCOUNTS SECTION */}
           {activeSection === 'accounts' && (
             <section className="section">
-              <h2>Your Accounts</h2>
+              <div className="section-header">
+                <h2>Your Accounts</h2>
+                <button className="submit-btn" onClick={() => setShowCreateAccount(true)}>➕ Create Account</button>
+              </div>
+
+              {showCreateAccount && (
+                <div className="section-box form-container">
+                  <h3>Create New Account</h3>
+                  <form onSubmit={handleCreateAccount} className="form">
+                    <div className="form-group">
+                      <label>Account Type</label>
+                      <select value={accountForm.account_type} onChange={(e) => setAccountForm({...accountForm, account_type: e.target.value})}>
+                        <option value="savings">Savings Account</option>
+                        <option value="current">Current Account</option>
+                        <option value="salary">Salary Account</option>
+                      </select>
+                    </div>
+                    <div className="form-group">
+                      <label>Initial Balance</label>
+                      <input type="number" step="0.01" value={accountForm.initial_balance} onChange={(e) => setAccountForm({...accountForm, initial_balance: e.target.value})} />
+                    </div>
+                    <div className="form-actions">
+                      <button type="submit" className="submit-btn">Create Account</button>
+                      <button type="button" className="cancel-btn" onClick={() => setShowCreateAccount(false)}>Cancel</button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
               {accounts.length > 0 ? (
                 <div className="accounts-list">
                   {accounts.map((account) => (
                     <div key={account.id} className="account-item">
                       <div className="account-icon">💳</div>
                       <div className="account-details">
-                        <h4>{account.account_type.toUpperCase()}</h4>
+                        <h4>{account.account_type?.toUpperCase()}</h4>
                         <p>Account: {account.account_number}</p>
-                        <small>Status: {account.status}</small>
+                        <small>Status: <span className="badge">{account.status}</span></small>
                       </div>
                       <div className="account-balance">
-                        <p>₹{parseFloat(account.balance).toFixed(2)}</p>
+                        <p className="balance">₹{parseFloat(account.balance).toFixed(2)}</p>
                       </div>
-                      <button className="action-btn">View →</button>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div className="empty-state">
-                  <p>📭 No accounts found</p>
-                  <small>Contact administrator to create an account</small>
+                  <p>💳 No accounts yet</p>
+                  <button className="submit-btn" onClick={() => setShowCreateAccount(true)}>Create Your First Account</button>
                 </div>
               )}
             </section>
@@ -370,7 +503,8 @@ export function DashboardPage() {
                   <h4>Profile Information</h4>
                   <p>Name: {user?.first_name} {user?.last_name}</p>
                   <p>Email: {user?.email}</p>
-                  <p>Role: {user?.role}</p>
+                  <p>Phone: {user?.phone_number}</p>
+                  <p>Role: <span className="badge">{user?.role}</span></p>
                 </div>
                 <div className="setting-item">
                   <h4>Security</h4>
@@ -379,15 +513,111 @@ export function DashboardPage() {
               </div>
             </section>
           )}
+
+          {/* USER MANAGEMENT SECTION (Admin Only) */}
+          {activeSection === 'users' && user?.role === 'admin' && (
+            <section className="section">
+              <div className="section-header">
+                <h2>👨‍💼 User Management</h2>
+                <button className="submit-btn" onClick={() => setShowCreateUser(true)}>➕ Create User</button>
+              </div>
+
+              {showCreateUser && (
+                <div className="section-box form-container">
+                  <h3>Create New User</h3>
+                  <form onSubmit={handleCreateUser} className="form">
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>First Name</label>
+                        <input type="text" value={userForm.first_name} onChange={(e) => setUserForm({...userForm, first_name: e.target.value})} required />
+                      </div>
+                      <div className="form-group">
+                        <label>Last Name</label>
+                        <input type="text" value={userForm.last_name} onChange={(e) => setUserForm({...userForm, last_name: e.target.value})} required />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Username</label>
+                        <input type="text" value={userForm.username} onChange={(e) => setUserForm({...userForm, username: e.target.value})} required />
+                      </div>
+                      <div className="form-group">
+                        <label>Email</label>
+                        <input type="email" value={userForm.email} onChange={(e) => setUserForm({...userForm, email: e.target.value})} required />
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" value={userForm.phone_number} onChange={(e) => setUserForm({...userForm, phone_number: e.target.value})} required />
+                      </div>
+                      <div className="form-group">
+                        <label>Role</label>
+                        <select value={userForm.role} onChange={(e) => setUserForm({...userForm, role: e.target.value})}>
+                          <option value="customer">Customer</option>
+                          <option value="staff">Staff</option>
+                          <option value="admin">Admin</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Password</label>
+                      <input type="password" value={userForm.password} onChange={(e) => setUserForm({...userForm, password: e.target.value})} required />
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="submit" className="submit-btn">Create User</button>
+                      <button type="button" className="cancel-btn" onClick={() => setShowCreateUser(false)}>Cancel</button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              <div className="section-box">
+                <h3>All Users ({users.length})</h3>
+                {users.length > 0 ? (
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {users.map((u) => (
+                        <tr key={u.id}>
+                          <td><strong>{u.username}</strong></td>
+                          <td>{u.email}</td>
+                          <td>{u.first_name} {u.last_name}</td>
+                          <td><span className="badge">{u.role}</span></td>
+                          <td><span className={`badge ${u.is_active ? 'badge-success' : 'badge-error'}`}>{u.is_active ? 'Active' : 'Inactive'}</span></td>
+                          <td>
+                            <button className="action-btn-small edit">✏️ Edit</button>
+                            <button className="action-btn-small delete" onClick={() => handleDeleteUser(u.id)}>🗑️ Delete</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="empty">No users found</p>
+                )}
+              </div>
+            </section>
+          )}
         </div>
       </main>
 
       {/* Overlay for mobile */}
       {sidebarOpen && (
-        <div
-          className="overlay"
-          onClick={() => setSidebarOpen(false)}
-        ></div>
+        <div className="overlay" onClick={() => setSidebarOpen(false)}></div>
       )}
     </div>
   );
