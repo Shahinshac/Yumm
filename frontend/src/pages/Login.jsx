@@ -54,7 +54,18 @@ export function LoginPage() {
       <div className="login-card">
         {/* Logo & Title */}
         <div className="login-header">
-          <div className="logo-circle">26</div>
+          <div className="logo-circle">
+            <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+              {/* Bank Building Icon */}
+              <path d="M25 5L45 15V20H5V15L25 5Z" fill="currentColor" opacity="0.8"/>
+              <rect x="8" y="20" width="34" height="20" rx="2" fill="currentColor" opacity="0.9"/>
+              <rect x="12" y="24" width="5" height="8" rx="1" fill="white"/>
+              <rect x="22" y="24" width="5" height="8" rx="1" fill="white"/>
+              <rect x="32" y="24" width="5" height="8" rx="1" fill="white"/>
+              <circle cx="25" cy="20" r="3" fill="white" opacity="0.7"/>
+              <line x1="20" y1="40" x2="30" y2="40" stroke="white" strokeWidth="1.5" opacity="0.8"/>
+            </svg>
+          </div>
           <h1>26-07 BANK</h1>
           <p className="subtitle">Digital Banking</p>
         </div>
