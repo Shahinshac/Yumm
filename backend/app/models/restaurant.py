@@ -1,7 +1,7 @@
 """
 Restaurant and Menu Models
 """
-from mongoengine import Document, StringField, FloatField, DictField, ListField, ReferenceField, DateTimeField, IntField
+from mongoengine import Document, StringField, FloatField, DictField, ListField, ReferenceField, DateTimeField, IntField, BooleanField
 from datetime import datetime
 
 class Restaurant(Document):

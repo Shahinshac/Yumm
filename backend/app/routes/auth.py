@@ -2,7 +2,7 @@
 Authentication Routes
 """
 from flask import Blueprint, request, jsonify
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identity
 from datetime import datetime
 from backend.app.models.user import User
 from backend.app.utils.security import PasswordSecurity
@@ -79,8 +79,6 @@ def login():
 @jwt_required()
 def get_me():
     """Get current user (requires token)"""
-    from flask_jwt_extended import get_jwt_identity
-
     user_id = get_jwt_identity()
     user = User.objects(id=user_id).first()
     if not user:
