@@ -1,5 +1,6 @@
 {
-  "buildCommand": "flutter build web --release",
+  "buildCommand": "echo 'Build already done'",
   "outputDirectory": "build/web"
 }
+
 

@@ -56,44 +56,44 @@ def create_demo_data():
     if Restaurant.objects.count() == 0:
         restaurants_data = [
             {
-                'name': 'Dominos Pizza',
-                'category': 'Pizza',
-                'location': {'lat': 28.6139, 'lng': 77.2090},
-                'address': 'Delhi, India',
-                'rating': 4.5,
-                'image': '🍕',
+                'name': 'Paragon',
+                'category': 'Biryani & Kerala',
+                'location': {'lat': 11.0089, 'lng': 76.0305},
+                'address': 'Malappuram, Kerala',
+                'rating': 4.7,
+                'image': '🍛',
                 'delivery_time': 30,
                 'min_order': 200
             },
             {
-                'name': 'Burger King',
-                'category': 'Burgers',
-                'location': {'lat': 28.6139, 'lng': 77.2090},
-                'address': 'Delhi, India',
-                'rating': 4.3,
-                'image': '🍔',
-                'delivery_time': 25,
+                'name': 'Devi Prasad',
+                'category': 'Traditional Kerala',
+                'location': {'lat': 11.0089, 'lng': 76.0305},
+                'address': 'Malappuram, Kerala',
+                'rating': 4.5,
+                'image': '🥘',
+                'delivery_time': 35,
                 'min_order': 150
             },
             {
-                'name': 'Taj Indian',
-                'category': 'Indian',
-                'location': {'lat': 28.6139, 'lng': 77.2090},
-                'address': 'Delhi, India',
-                'rating': 4.7,
-                'image': '🍛',
-                'delivery_time': 35,
-                'min_order': 300
+                'name': 'Hot Spot',
+                'category': 'Multi-cuisine',
+                'location': {'lat': 11.0089, 'lng': 76.0305},
+                'address': 'Malappuram, Kerala',
+                'rating': 4.4,
+                'image': '🍴',
+                'delivery_time': 25,
+                'min_order': 250
             },
             {
-                'name': 'Sushi Master',
-                'category': 'Japanese',
-                'location': {'lat': 28.6139, 'lng': 77.2090},
-                'address': 'Delhi, India',
+                'name': 'Sree Bhagavathy Palace',
+                'category': 'Seafood & Kerala',
+                'location': {'lat': 11.0089, 'lng': 76.0305},
+                'address': 'Malappuram, Kerala',
                 'rating': 4.6,
-                'image': '🍱',
+                'image': '🦐',
                 'delivery_time': 40,
-                'min_order': 400
+                'min_order': 300
             }
         ]
 
@@ -101,12 +101,39 @@ def create_demo_data():
             restaurant = Restaurant(**rest_data)
             restaurant.save()
 
-            # Add menu items
-            items = [
+            # Add specific menu items based on restaurant
+            menus = {
+                'Paragon': [
+                    {'name': 'Chicken Biryani', 'price': 280, 'description': 'Fragrant basmati rice with tender chicken'},
+                    {'name': 'Mutton Biryani', 'price': 320, 'description': 'Premium mutton biryani'},
+                    {'name': 'Fish Curry', 'price': 250, 'description': 'Spiced fish in coconut gravy'},
+                    {'name': 'Paragon Biryanis Combo', 'price': 550, 'description': 'Chicken + Mutton + Naan'}
+                ],
+                'Devi Prasad': [
+                    {'name': 'Puttu Curry', 'price': 120, 'description': 'Traditional Kerala puttu'},
+                    {'name': 'Avial', 'price': 150, 'description': 'Mixed vegetables Kerala style'},
+                    {'name': 'Appam with Stew', 'price': 180, 'description': 'Soft appam with chicken stew'},
+                    {'name': 'Kerala Thali', 'price': 300, 'description': 'Complete Kerala meal'}
+                ],
+                'Hot Spot': [
+                    {'name': 'Biryanis - Chicken', 'price': 250, 'description': 'Fragrant biryani'},
+                    {'name': 'Murgh Makhani', 'price': 280, 'description': 'Creamy butter chicken'},
+                    {'name': 'Tandoori Chicken', 'price': 350, 'description': 'Spiced grilled chicken'},
+                    {'name': 'Mixed Grill', 'price': 450, 'description': 'Assorted kebabs and tandoori'}
+                ],
+                'Sree Bhagavathy Palace': [
+                    {'name': 'Fish Biryanis', 'price': 280, 'description': 'Fresh fish biryani'},
+                    {'name': 'Prawn Curry', 'price': 320, 'description': 'Cooking prawn in coconut gravy'},
+                    {'name': 'Squid Fry', 'price': 300, 'description': 'Crispy squid fry'},
+                    {'name': 'Seafood Special Thali', 'price': 400, 'description': 'Complete seafood meal'}
+                ]
+            }
+
+            items = menus.get(rest_data['name'], [
                 {'name': f'{rest_data["name"]} Special 1', 'price': 250, 'description': 'Popular item'},
                 {'name': f'{rest_data["name"]} Special 2', 'price': 350, 'description': 'Premium item'},
                 {'name': f'{rest_data["name"]} Special 3', 'price': 450, 'description': 'Deluxe item'},
-            ]
+            ])
 
             for item in items:
                 menu_item = MenuItem(

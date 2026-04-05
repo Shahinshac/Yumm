@@ -55,12 +55,13 @@ class FoodHubApp extends StatelessWidget {
         final isAuthenticated = authProvider.token != null;
 
         if (!isAuthenticated &&
-            state.location != '/login' &&
-            state.location != '/register') {
+            state.matchedLocation != '/login' &&
+            state.matchedLocation != '/register') {
           return '/login';
         }
         if (isAuthenticated &&
-            (state.location == '/login' || state.location == '/register')) {
+            (state.matchedLocation == '/login' ||
+                state.matchedLocation == '/register')) {
           return '/home';
         }
         return null;
