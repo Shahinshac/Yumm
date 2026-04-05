@@ -4,14 +4,14 @@ User management API routes
 from flask import Blueprint, request, jsonify
 from app.services.user_service import UserService
 from app.utils.exceptions import BankingException
-from app.middleware.rbac import require_role, require_authentication, get_current_user
+from app.middleware.rbac import role_required, require_authentication, get_current_user
 
 # Create blueprint
 users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
 
 @users_bp.route("", methods=["GET"])
-@require_role("admin", "manager")
+@role_required("admin", "manager")
 def list_users():
     """
     List all users (Admin/Manager only)
@@ -74,7 +74,7 @@ def get_user(user_id):
 
 
 @users_bp.route("/<user_id>", methods=["PUT"])
-@require_role("admin")
+@role_required("admin")
 def update_user(user_id):
     """
     Update user information (Admin only)
@@ -111,7 +111,7 @@ def update_user(user_id):
 
 
 @users_bp.route("/<user_id>/assign-role", methods=["POST"])
-@require_role("admin")
+@role_required("admin")
 def assign_role(user_id):
     """
     Assign role to user (Admin only)
@@ -150,7 +150,7 @@ def assign_role(user_id):
 
 
 @users_bp.route("/<user_id>/deactivate", methods=["POST"])
-@require_role("admin")
+@role_required("admin")
 def deactivate_user(user_id):
     """
     Deactivate user account (Admin only)
@@ -175,7 +175,7 @@ def deactivate_user(user_id):
 
 
 @users_bp.route("/<user_id>/activate", methods=["POST"])
-@require_role("admin")
+@role_required("admin")
 def activate_user(user_id):
     """
     Activate user account (Admin only)
@@ -200,7 +200,7 @@ def activate_user(user_id):
 
 
 @users_bp.route("/<user_id>", methods=["DELETE"])
-@require_role("admin")
+@role_required("admin")
 def delete_user(user_id):
     """
     Delete user account (Admin only)
@@ -239,7 +239,7 @@ def delete_user(user_id):
 
 
 @users_bp.route("/search", methods=["GET"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def search_users():
     """
     Search users by username, email, or phone

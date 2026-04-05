@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify
 from app.services.account_service import AccountService
 from app.services.user_service import UserService
 from app.utils.exceptions import BankingException
-from app.middleware.rbac import require_role, require_authentication, get_current_user
+from app.middleware.rbac import role_required, require_authentication, get_current_user
 
 # Create blueprint
 accounts_bp = Blueprint("accounts", __name__, url_prefix="/api/accounts")
@@ -207,7 +207,7 @@ def get_account_balance(account_id):
 
 
 @accounts_bp.route("/<account_id>/freeze", methods=["POST"])
-@require_role("admin", "manager")
+@role_required("admin", "manager")
 def freeze_account(account_id):
     """
     Freeze account (block transactions) - Admin/Manager only
@@ -233,7 +233,7 @@ def freeze_account(account_id):
 
 
 @accounts_bp.route("/<account_id>/unfreeze", methods=["POST"])
-@require_role("admin", "manager")
+@role_required("admin", "manager")
 def unfreeze_account(account_id):
     """
     Unfreeze account (allow transactions) - Admin/Manager only
@@ -259,7 +259,7 @@ def unfreeze_account(account_id):
 
 
 @accounts_bp.route("/<account_id>/close", methods=["POST"])
-@require_role("admin")
+@role_required("admin")
 def close_account(account_id):
     """
     Close account permanently - Admin only
@@ -355,7 +355,7 @@ def calculate_interest(account_id):
 
 
 @accounts_bp.route("/<account_id>/interest/accrue", methods=["POST"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def accrue_interest(account_id):
     """
     Manually accrue (credit) monthly interest to account (Admin/Manager/Staff only)
@@ -419,7 +419,7 @@ def get_interest_statistics(account_id):
 
 
 @accounts_bp.route("/interest/process-all", methods=["POST"])
-@require_role("admin")
+@role_required("admin")
 def process_interest_all_users():
     """
     Process monthly interest for all users in the system (Admin only)
@@ -444,7 +444,7 @@ def process_interest_all_users():
 
 
 @accounts_bp.route("/interest/process-user", methods=["POST"])
-@require_role("admin", "manager")
+@role_required("admin", "manager")
 def process_interest_user():
     """
     Process monthly interest for a specific user (Admin/Manager only)

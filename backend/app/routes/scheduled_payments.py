@@ -1,14 +1,14 @@
 """Scheduled Payments routes"""
 from flask import Blueprint, request, jsonify
 from app.services.scheduled_payment_service import ScheduledPaymentService
-from app.middleware.rbac import require_role, get_current_user
+from app.middleware.rbac import role_required, get_current_user
 from app.utils.exceptions import ValidationError
 from datetime import datetime
 
 scheduled_payments_bp = Blueprint("scheduled_payments", __name__, url_prefix="/api/scheduled-payments")
 
 @scheduled_payments_bp.route("", methods=["POST"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def schedule_payment():
     """Schedule a payment"""
     user = get_current_user()
@@ -32,7 +32,7 @@ def schedule_payment():
         return jsonify({"error": str(e)}), 500
 
 @scheduled_payments_bp.route("", methods=["GET"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def list_payments():
     """List scheduled payments"""
     account_id = request.args.get("account_id")
@@ -45,7 +45,7 @@ def list_payments():
     return jsonify([p.to_dict() for p in payments]), 200
 
 @scheduled_payments_bp.route("/<payment_id>", methods=["GET"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def get_payment(payment_id):
     """Get payment details"""
     try:
@@ -55,7 +55,7 @@ def get_payment(payment_id):
         return jsonify({"error": str(e)}), 404
 
 @scheduled_payments_bp.route("/<payment_id>/execute", methods=["POST"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def execute_payment(payment_id):
     """Execute payment manually"""
     try:
@@ -65,7 +65,7 @@ def execute_payment(payment_id):
         return jsonify({"error": str(e)}), 400
 
 @scheduled_payments_bp.route("/<payment_id>/cancel", methods=["POST"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def cancel_payment(payment_id):
     """Cancel scheduled payment"""
     try:
@@ -76,7 +76,7 @@ def cancel_payment(payment_id):
         return jsonify({"error": str(e)}), 400
 
 @scheduled_payments_bp.route("/statistics", methods=["GET"])
-@require_role("staff", "manager", "admin")
+@role_required("staff", "manager", "admin")
 def statistics():
     """Get statistics"""
     stats = ScheduledPaymentService.get_statistics()

@@ -4,7 +4,7 @@ Loan API routes
 from flask import Blueprint, request, jsonify
 from app.services.loan_service import LoanService
 from app.utils.exceptions import BankingException
-from app.middleware.rbac import require_authentication, get_current_user, require_role
+from app.middleware.rbac import require_authentication, get_current_user, role_required
 
 # Create blueprint
 loans_bp = Blueprint("loans", __name__, url_prefix="/api/loans")
@@ -123,7 +123,7 @@ def get_loan_details(loan_id):
 
 
 @loans_bp.route("/<loan_id>/approve", methods=["POST"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def approve_loan(loan_id):
     """
     Approve pending loan application
@@ -162,7 +162,7 @@ def approve_loan(loan_id):
 
 
 @loans_bp.route("/<loan_id>/reject", methods=["POST"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def reject_loan(loan_id):
     """
     Reject pending loan application
@@ -196,7 +196,7 @@ def reject_loan(loan_id):
 
 
 @loans_bp.route("/<loan_id>/disburse", methods=["POST"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def disburse_loan_endpoint(loan_id):
     """
     Disburse approved loan amount to account
@@ -329,7 +329,7 @@ def get_loan_summary_endpoint(loan_id):
 
 
 @loans_bp.route("/pending", methods=["GET"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def get_pending_approvals():
     """
     Get all pending loan applications (admin queue)
@@ -353,7 +353,7 @@ def get_pending_approvals():
 
 
 @loans_bp.route("/statistics", methods=["GET"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def get_statistics():
     """
     Get loan system statistics

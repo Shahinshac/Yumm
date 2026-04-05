@@ -1,7 +1,7 @@
 """
-Authentication service - Business logic for user authentication
+Authentication service - Business logic for user authentication - RBAC COMPLIANT
 """
-from app.models.user import User, Role, RoleEnum
+from app.models.user import User, RoleEnum
 from app.utils.security import PasswordSecurity, TokenManager
 from app.utils.validators import Validators
 from app.utils.exceptions import (
@@ -36,7 +36,7 @@ class AuthService:
             first_name: First name
             last_name: Last name
             phone_number: Phone number
-            role: User role (default: customer)
+            role: User role (admin, staff, customer - default: customer)
 
         Returns:
             Dictionary with user data
@@ -51,27 +51,21 @@ class AuthService:
         Validators.validate_password(password)
         Validators.validate_name(first_name, "First name")
         Validators.validate_name(last_name, "Last name")
-        Validators.validate_phone(phone_number)
+        if phone_number:
+            Validators.validate_phone(phone_number)
+
+        # Validate role
+        if role not in [e.value for e in RoleEnum]:
+            role = RoleEnum.CUSTOMER.value
 
         # Check if user already exists
-        existing_user = User.objects(
-            username=username
-        ).first() or User.objects(
-            email=email
-        ).first() or User.objects(
-            phone_number=phone_number
-        ).first()
-
+        existing_user = User.objects(username=username).first()
         if existing_user:
-            raise UserAlreadyExistsError(
-                "User with this email, username, or phone number already exists"
-            )
-
-        # Get role object
-        role_obj = Role.objects(name=role).first()
-        if not role_obj:
-            # Default to customer role if not found
-            role_obj = Role.objects(name=RoleEnum.CUSTOMER.value).first()
+            raise UserAlreadyExistsError("Username already exists")
+        
+        existing_email = User.objects(email=email).first()
+        if existing_email:
+            raise UserAlreadyExistsError("Email already exists")
 
         # Create new user
         password_hash = PasswordSecurity.hash_password(password)
@@ -82,8 +76,8 @@ class AuthService:
                 password_hash=password_hash,
                 first_name=first_name,
                 last_name=last_name,
-                phone_number=phone_number,
-                role=role_obj,
+                phone_number=phone_number or "",
+                role=role,
             )
             user.save()
         except Exception as e:
@@ -101,7 +95,7 @@ class AuthService:
             password: Plain text password
 
         Returns:
-            Dictionary with tokens and user data
+            Dictionary with tokens, user data, and role (for frontend routing)
 
         Raises:
             AuthenticationError: If credentials are invalid or user not found
@@ -123,12 +117,14 @@ class AuthService:
         user.last_login = datetime.utcnow()
         user.save()
 
-        # Create tokens
-        tokens = TokenManager.create_tokens(str(user.id), user.username, user.role.name)
+        # Create tokens with role in claims
+        tokens = TokenManager.create_tokens(str(user.id), user.username, user.role)
 
         return {
             "user": user.to_dict(),
             "tokens": tokens,
+            "role": user.role,  # For frontend routing
+            "user_id": str(user.id)
         }
 
     @staticmethod
@@ -157,9 +153,9 @@ class AuthService:
             raise AuthenticationError("Account is disabled")
 
         # Create new access token only
-        access_token = TokenManager.create_tokens(
-            str(user.id), user.username, user.role.name
-        )["access_token"]
+        access_token = TokenManager.create_access_token(
+            str(user.id), user.username, user.role
+        )
 
         return {
             "access_token": access_token,
@@ -223,23 +219,46 @@ class AuthService:
         return {"message": "Password changed successfully"}
 
 
-def initialize_roles():
+def ensure_default_admin_exists():
     """
-    Initialize default roles in database
+    Ensure default admin user exists
     Call this during app startup
-    """
-    roles_data = [
-        {"name": RoleEnum.ADMIN.value, "description": "Administrator with full access"},
-        {"name": RoleEnum.MANAGER.value, "description": "Manager can approve loans/accounts"},
-        {"name": RoleEnum.STAFF.value, "description": "Staff can create accounts and handle queries"},
-        {"name": RoleEnum.CUSTOMER.value, "description": "Regular customer"},
-    ]
 
-    for role_data in roles_data:
-        existing_role = Role.objects(name=role_data["name"]).first()
-        if not existing_role:
-            try:
-                role = Role(name=role_data["name"], description=role_data["description"])
-                role.save()
-            except Exception as e:
-                raise Exception(f"Failed to initialize roles: {str(e)}")
+    Creates admin@bank.com with password admin123 if no admin exists
+    """
+    try:
+        # Check if any admin exists
+        admin_exists = User.objects(role=RoleEnum.ADMIN.value).first()
+
+        if admin_exists:
+            return {
+                "created": False,
+                "message": "Admin already exists"
+            }
+
+        # Create default admin
+        admin_user = User(
+            username="admin",
+            email="admin@bank.com",
+            password_hash=PasswordSecurity.hash_password("admin123"),
+            first_name="System",
+            last_name="Admin",
+            phone_number="+1-000-000-0000",
+            role=RoleEnum.ADMIN.value,
+            is_active=True,
+            is_verified=True,
+            is_first_login=False
+        )
+        admin_user.save()
+
+        return {
+            "created": True,
+            "message": "Default admin created successfully",
+            "admin": {
+                "username": "admin",
+                "email": "admin@bank.com",
+                "password": "admin123"
+            }
+        }
+    except Exception as e:
+        raise Exception(f"Failed to ensure default admin: {str(e)}")

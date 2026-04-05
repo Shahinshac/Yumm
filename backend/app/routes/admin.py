@@ -3,7 +3,7 @@ Admin-only endpoints for user and customer management
 """
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt
-from app.middleware.rbac import require_role, get_current_user
+from app.middleware.rbac import role_required, get_current_user
 from app.models.user import User, Role
 from app.utils.exceptions import BankingException
 from app.utils.security import PasswordSecurity
@@ -15,7 +15,7 @@ admin_bp = Blueprint("admin", __name__, url_prefix="/api/admin")
 
 
 @admin_bp.route("/customers", methods=["POST"])
-@require_role("admin", "staff")
+@role_required("admin", "staff")
 def create_customer():
     """
     Create a new customer account (ADMIN/STAFF ONLY)
@@ -142,7 +142,7 @@ def create_customer():
 
 
 @admin_bp.route("/customers/<customer_id>/reset-password", methods=["POST"])
-@require_role("admin")
+@role_required("admin")
 def reset_customer_password(customer_id):
     """
     Reset customer password (ADMIN ONLY)
@@ -200,7 +200,7 @@ def reset_customer_password(customer_id):
 
 
 @admin_bp.route("/customers/<customer_id>/deactivate", methods=["POST"])
-@require_role("admin")
+@role_required("admin")
 def deactivate_customer(customer_id):
     """
     Deactivate a customer account (ADMIN ONLY)
@@ -234,7 +234,7 @@ def deactivate_customer(customer_id):
 
 
 @admin_bp.route("/customers/<customer_id>/activate", methods=["POST"])
-@require_role("admin")
+@role_required("admin")
 def activate_customer(customer_id):
     """
     Activate a customer account (ADMIN ONLY)
@@ -268,7 +268,7 @@ def activate_customer(customer_id):
 
 
 @admin_bp.route("/customers", methods=["GET"])
-@require_role("admin", "staff")
+@role_required("admin", "staff")
 def list_customers():
     """
     List all customers (ADMIN/STAFF ONLY)

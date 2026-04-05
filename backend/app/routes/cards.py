@@ -4,7 +4,7 @@ Card and ATM API routes
 from flask import Blueprint, request, jsonify
 from app.services.card_service import CardService, ATMService
 from app.utils.exceptions import BankingException
-from app.middleware.rbac import require_authentication, get_current_user, require_role
+from app.middleware.rbac import require_authentication, get_current_user, role_required
 
 # Create blueprints
 cards_bp = Blueprint("cards", __name__, url_prefix="/api/cards")
@@ -14,7 +14,7 @@ atm_bp = Blueprint("atm", __name__, url_prefix="/api/atm")
 # ===== CARDS ROUTES =====
 
 @cards_bp.route("", methods=["POST"])
-@require_role("admin", "staff")
+@role_required("admin", "staff")
 def generate_card():
     """
     Generate a new debit card (Admin/Staff only)
@@ -183,7 +183,7 @@ def set_pin(card_id):
 
 
 @cards_bp.route("/<card_id>/block", methods=["POST"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def block_card(card_id):
     """
     Block card (disable transactions)
@@ -209,7 +209,7 @@ def block_card(card_id):
 
 
 @cards_bp.route("/<card_id>/unblock", methods=["POST"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def unblock_card(card_id):
     """
     Unblock card (enable transactions)

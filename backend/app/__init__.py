@@ -75,6 +75,9 @@ def create_app(config_name=None):
 
     # Register blueprints
     _register_blueprints(app)
+    
+    # CRITICAL: Ensure default admin exists
+    _ensure_admin_exists(app)
 
     app.logger.info(f"Application initialized in {config_name} mode")
 
@@ -134,6 +137,11 @@ def _register_blueprints(app):
     from app.routes.analytics import analytics_bp
     from app.routes.admin import admin_bp
     from app.routes.messages import messages_bp
+    
+    # NEW: Role-specific routes
+    from app.routes.admin_routes import admin_routes
+    from app.routes.staff_routes import staff_routes
+    from app.routes.customer_routes import customer_routes
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(users_bp)
@@ -149,3 +157,29 @@ def _register_blueprints(app):
     app.register_blueprint(analytics_bp)
     app.register_blueprint(admin_bp)
     app.register_blueprint(messages_bp)
+
+    # Register role-specific routes
+    app.register_blueprint(admin_routes)
+    app.register_blueprint(staff_routes)
+    app.register_blueprint(customer_routes)
+
+
+def _ensure_admin_exists(app):
+    """
+    Ensure default admin user exists on app startup
+
+    If no admin exists, creates:
+        - username: admin
+        - email: admin@bank.com
+        - password: admin123
+    """
+    try:
+        from app.services.auth_service import ensure_default_admin_exists
+
+        result = ensure_default_admin_exists()
+        if result.get("created"):
+            app.logger.info(f"✅ Default admin created: {result['admin']['email']}")
+        else:
+            app.logger.info(f"✅ Admin already exists")
+    except Exception as e:
+        app.logger.error(f"❌ Failed to ensure admin exists: {str(e)}")

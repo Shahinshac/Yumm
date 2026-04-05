@@ -4,7 +4,7 @@ Beneficiary management API routes
 from flask import Blueprint, request, jsonify
 from app.services.beneficiary_service import BeneficiaryService
 from app.utils.exceptions import BankingException
-from app.middleware.rbac import require_role, require_authentication, get_current_user
+from app.middleware.rbac import role_required, require_authentication, get_current_user
 
 # Create blueprint
 beneficiaries_bp = Blueprint("beneficiaries", __name__, url_prefix="/api/beneficiaries")
@@ -155,7 +155,7 @@ def get_beneficiary(beneficiary_id):
 
 
 @beneficiaries_bp.route("/<beneficiary_id>/approve", methods=["POST"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def approve_beneficiary(beneficiary_id):
     """
     Approve a beneficiary (Admin/Manager/Staff only)
@@ -186,7 +186,7 @@ def approve_beneficiary(beneficiary_id):
 
 
 @beneficiaries_bp.route("/<beneficiary_id>/reject", methods=["POST"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def reject_beneficiary(beneficiary_id):
     """
     Reject a beneficiary (Remove pending approval)
@@ -244,7 +244,7 @@ def delete_beneficiary(beneficiary_id):
 
 
 @beneficiaries_bp.route("/pending", methods=["GET"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def get_pending_beneficiaries():
     """
     Get all pending beneficiaries (Admin/Manager/Staff only)
@@ -268,7 +268,7 @@ def get_pending_beneficiaries():
 
 
 @beneficiaries_bp.route("/statistics", methods=["GET"])
-@require_role("admin", "manager", "staff")
+@role_required("admin", "manager", "staff")
 def get_statistics():
     """
     Get beneficiary statistics (Admin/Manager/Staff only)

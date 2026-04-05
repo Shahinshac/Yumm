@@ -88,6 +88,25 @@ class TokenManager:
             "role": decoded_token.get("role"),
         }
 
+    @staticmethod
+    def create_access_token(user_id: str, username: str, role: str) -> str:
+        """
+        Create only access token (for refresh)
+
+        Args:
+            user_id: User ID
+            username: Username
+            role: User role
+
+        Returns:
+            Access token string
+        """
+        additional_claims = {"username": username, "role": role}
+        return create_access_token(
+            identity=user_id,
+            additional_claims=additional_claims
+        )
+
 
 class PINSecurity:
     """PIN hashing for cards and ATM"""

@@ -1,12 +1,12 @@
 """Notifications routes"""
 from flask import Blueprint, request, jsonify
 from app.services.notification_service import NotificationService
-from app.middleware.rbac import require_role, get_current_user
+from app.middleware.rbac import role_required, get_current_user
 
 notifications_bp = Blueprint("notifications", __name__, url_prefix="/api/notifications")
 
 @notifications_bp.route("", methods=["GET"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def list_notifications():
     """List user's notifications"""
     user = get_current_user()
@@ -22,7 +22,7 @@ def list_notifications():
     } for n in notifs]), 200
 
 @notifications_bp.route("/<notif_id>", methods=["GET"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def get_notification(notif_id):
     """Get specific notification"""
     try:
@@ -38,7 +38,7 @@ def get_notification(notif_id):
         return jsonify({"error": str(e)}), 404
 
 @notifications_bp.route("/<notif_id>/read", methods=["POST"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def mark_read(notif_id):
     """Mark notification as read"""
     try:
@@ -48,7 +48,7 @@ def mark_read(notif_id):
         return jsonify({"error": str(e)}), 400
 
 @notifications_bp.route("/mark-all-read", methods=["POST"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def mark_all_read():
     """Mark all as read"""
     user = get_current_user()
@@ -56,7 +56,7 @@ def mark_all_read():
     return jsonify({"message": "All marked as read"}), 200
 
 @notifications_bp.route("/<notif_id>", methods=["DELETE"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def delete_notification(notif_id):
     """Delete notification"""
     try:
@@ -66,7 +66,7 @@ def delete_notification(notif_id):
         return jsonify({"error": str(e)}), 400
 
 @notifications_bp.route("/statistics", methods=["GET"])
-@require_role("customer", "staff", "manager", "admin")
+@role_required("customer", "staff", "manager", "admin")
 def statistics():
     """Get notification stats"""
     user = get_current_user()

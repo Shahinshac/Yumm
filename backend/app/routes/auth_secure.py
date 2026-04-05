@@ -6,7 +6,7 @@ from flask_jwt_extended import jwt_required, get_jwt
 from app.services.auth_service import AuthService
 from app.utils.exceptions import BankingException, UserAlreadyExistsError, ValidationError
 from app.utils.security import TokenManager, PasswordSecurity
-from app.middleware.rbac import require_authentication, require_role, get_current_user
+from app.middleware.rbac import require_authentication, role_required, get_current_user
 from app.models.user import User
 
 # Create blueprint
