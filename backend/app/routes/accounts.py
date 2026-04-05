@@ -11,6 +11,21 @@ from app.middleware.rbac import require_role, require_authentication, get_curren
 accounts_bp = Blueprint("accounts", __name__, url_prefix="/api/accounts")
 
 
+def verify_account_access(account, current_user):
+    """
+    Verify if current user has access to account
+    Returns True if user has access, False otherwise
+    """
+    if current_user["role"] in ["admin", "manager", "staff"]:
+        return True
+
+    # Compare user IDs as strings (account.user_id is MongoEngine reference)
+    account_owner_id = str(account.user_id.id) if hasattr(account.user_id, 'id') else str(account.user_id)
+    current_user_id = str(current_user["user_id"])
+
+    return account_owner_id == current_user_id
+
+
 @accounts_bp.route("", methods=["POST"])
 @require_authentication
 def create_account():
@@ -138,8 +153,7 @@ def get_account(account_id):
         account = AccountService.get_account_by_id(account_id)
 
         # Check authorization
-        if (current_user["role"] not in ["admin", "manager", "staff"] and
-                account.user_id != current_user["user_id"]):
+        if not verify_account_access(account, current_user):
             return jsonify({"error": "You can only view your own accounts"}), 403
 
         # Get associated card if exists
