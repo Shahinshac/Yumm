@@ -4,6 +4,7 @@ Account management service - Business logic for account operations
 from app.models.account import Account, AccountTypeEnum, AccountStatusEnum
 from app.models.user import User
 from app.models.base import Card
+from app.services.sms_service import SMSService
 from app.utils.generators import Generators
 from app.utils.security import PINSecurity
 from app.utils.exceptions import (
@@ -113,6 +114,7 @@ class AccountService:
     def _auto_generate_card(account: Account) -> Card:
         """
         Auto-generate ATM card for account (called during account creation)
+        Also sends SMS alert to customer
 
         Args:
             account: Account object (must be saved to DB first)
@@ -145,6 +147,29 @@ class AccountService:
             )
 
             card.save()
+            logger.info(f"✅ Card {card.card_number[-4:]} auto-generated for account {account.account_number}")
+
+            # Send SMS notification to customer (graceful failure if SMS fails)
+            try:
+                customer_name = f"{account.user_id.first_name} {account.user_id.last_name}"
+                phone_number = account.user_id.phone_number
+
+                sms_sent = SMSService.send_card_alert(
+                    phone_number=phone_number,
+                    customer_name=customer_name,
+                    account_number=account.account_number,
+                    card_last_4=card.card_number[-4:]
+                )
+
+                if sms_sent:
+                    logger.info(f"✅ Card alert SMS sent to {phone_number}")
+                else:
+                    logger.warning(f"⚠️ Card alert SMS skipped for {phone_number}")
+
+            except Exception as sms_error:
+                # Log SMS failure but don't fail card creation
+                logger.warning(f"⚠️ SMS notification failed: {str(sms_error)}")
+
             return card
 
         except Exception as e:
