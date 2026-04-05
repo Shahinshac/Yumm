@@ -10,6 +10,8 @@ import { LoginPage } from './pages/Login';
 import { RegisterPage } from './pages/Register';
 import { ChangePasswordFirstLoginPage } from './pages/ChangePasswordFirstLogin';
 import { DashboardPage } from './pages/Dashboard';
+import { AdminDashboardPage } from './pages/AdminDashboard';
+import { StaffDashboardPage } from './pages/StaffDashboard';
 import './styles/App.css';
 
 function App() {
@@ -30,6 +32,22 @@ function App() {
           element={
             <ProtectedRoute>
               <DashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin-dashboard"
+          element={
+            <ProtectedRoute>
+              <AdminDashboardPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/staff-dashboard"
+          element={
+            <ProtectedRoute>
+              <StaffDashboardPage />
             </ProtectedRoute>
           }
         />
