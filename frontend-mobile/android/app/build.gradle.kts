@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.foodhub_app"
+    namespace = "com.foodhub.app"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
