@@ -11,7 +11,7 @@ users_bp = Blueprint("users", __name__, url_prefix="/api/users")
 
 
 @users_bp.route("", methods=["GET"])
-@role_required("admin", "manager")
+@role_required("admin", "admin")
 def list_users():
     """
     List all users (Admin/Manager only)
@@ -57,7 +57,7 @@ def get_user(user_id):
         current_user = get_current_user()
 
         # Check authorization
-        if current_user["role"] not in ["admin", "manager"] and current_user["user_id"] != user_id:
+        if current_user["role"] not in ["admin"] and current_user["user_id"] != user_id:
             return jsonify({"error": "You can only view your own profile"}), 403
 
         user = UserService.get_user_by_id(user_id)
@@ -118,10 +118,10 @@ def assign_role(user_id):
 
     Request body:
         {
-            "role": "manager"
+            "role": "admin"
         }
 
-    Valid roles: admin, manager, staff, customer
+    Valid roles: admin, staff, customer
 
     Returns:
         200: User with new role
@@ -239,7 +239,7 @@ def delete_user(user_id):
 
 
 @users_bp.route("/search", methods=["GET"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def search_users():
     """
     Search users by username, email, or phone

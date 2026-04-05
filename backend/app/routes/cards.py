@@ -79,7 +79,7 @@ def list_cards():
 
         account = AccountService.get_account_by_id(account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only view your own cards"}), 403
@@ -118,7 +118,7 @@ def get_card_details(card_id):
 
         account = AccountService.get_account_by_id(card.account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only view your own cards"}), 403
@@ -164,7 +164,7 @@ def set_pin(card_id):
 
         account = AccountService.get_account_by_id(card.account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only modify your own cards"}), 403
@@ -183,7 +183,7 @@ def set_pin(card_id):
 
 
 @cards_bp.route("/<card_id>/block", methods=["POST"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def block_card(card_id):
     """
     Block card (disable transactions)
@@ -209,7 +209,7 @@ def block_card(card_id):
 
 
 @cards_bp.route("/<card_id>/unblock", methods=["POST"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def unblock_card(card_id):
     """
     Unblock card (enable transactions)

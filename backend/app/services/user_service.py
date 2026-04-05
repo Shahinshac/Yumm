@@ -167,7 +167,7 @@ class UserService:
 
         Args:
             user_id: User ID
-            role_name: Role name (admin, manager, staff, customer)
+            role_name: Role name (admin, staff, customer)
 
         Returns:
             Updated user object

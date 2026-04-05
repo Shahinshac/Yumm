@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 analytics_bp = Blueprint("analytics", __name__, url_prefix="/api/analytics")
 
 @analytics_bp.route("/dashboard", methods=["GET"])
-@role_required("manager", "admin")
+@role_required("admin", "admin")
 def dashboard():
     """Get admin dashboard"""
     try:
@@ -34,7 +34,7 @@ def dashboard():
         return jsonify({"error": str(e)}), 500
 
 @analytics_bp.route("/users", methods=["GET"])
-@role_required("manager", "admin")
+@role_required("admin", "admin")
 def user_analytics():
     """User statistics"""
     try:
@@ -52,7 +52,7 @@ def user_analytics():
         return jsonify({"error": str(e)}), 500
 
 @analytics_bp.route("/accounts", methods=["GET"])
-@role_required("manager", "admin")
+@role_required("admin", "admin")
 def account_analytics():
     """Account statistics"""
     try:
@@ -76,7 +76,7 @@ def account_analytics():
         return jsonify({"error": str(e)}), 500
 
 @analytics_bp.route("/transactions", methods=["GET"])
-@role_required("manager", "admin")
+@role_required("admin", "admin")
 def transaction_analytics():
     """Transaction statistics"""
     try:
@@ -113,7 +113,7 @@ def transaction_analytics():
         return jsonify({"error": str(e)}), 500
 
 @analytics_bp.route("/loans", methods=["GET"])
-@role_required("manager", "admin")
+@role_required("admin", "admin")
 def loan_analytics():
     """Loan statistics"""
     try:
@@ -139,7 +139,7 @@ def loan_analytics():
         return jsonify({"error": str(e)}), 500
 
 @analytics_bp.route("/cards", methods=["GET"])
-@role_required("manager", "admin")
+@role_required("admin", "admin")
 def card_analytics():
     """Card statistics"""
     try:
@@ -156,7 +156,7 @@ def card_analytics():
         return jsonify({"error": str(e)}), 500
 
 @analytics_bp.route("/payments", methods=["GET"])
-@role_required("manager", "admin")
+@role_required("admin", "admin")
 def scheduled_payments_analytics():
     """Scheduled payments statistics"""
     try:
@@ -175,7 +175,7 @@ def scheduled_payments_analytics():
         return jsonify({"error": str(e)}), 500
 
 @analytics_bp.route("/daily-report", methods=["GET"])
-@role_required("manager", "admin")
+@role_required("admin", "admin")
 def daily_report():
     """Daily transaction report"""
     try:

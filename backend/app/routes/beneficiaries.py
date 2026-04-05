@@ -47,7 +47,7 @@ def add_beneficiary():
         from app.services.account_service import AccountService
         account = AccountService.get_account_by_id(account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only add beneficiaries to your own accounts"}), 403
@@ -99,7 +99,7 @@ def list_beneficiaries():
         from app.services.account_service import AccountService
         account = AccountService.get_account_by_id(account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only view your own beneficiaries"}), 403
@@ -141,7 +141,7 @@ def get_beneficiary(beneficiary_id):
         from app.services.account_service import AccountService
         account = AccountService.get_account_by_id(beneficiary.account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only view your own beneficiaries"}), 403
@@ -155,7 +155,7 @@ def get_beneficiary(beneficiary_id):
 
 
 @beneficiaries_bp.route("/<beneficiary_id>/approve", methods=["POST"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def approve_beneficiary(beneficiary_id):
     """
     Approve a beneficiary (Admin/Manager/Staff only)
@@ -186,7 +186,7 @@ def approve_beneficiary(beneficiary_id):
 
 
 @beneficiaries_bp.route("/<beneficiary_id>/reject", methods=["POST"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def reject_beneficiary(beneficiary_id):
     """
     Reject a beneficiary (Remove pending approval)
@@ -228,7 +228,7 @@ def delete_beneficiary(beneficiary_id):
         from app.services.account_service import AccountService
         account = AccountService.get_account_by_id(beneficiary.account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only delete your own beneficiaries"}), 403
@@ -244,7 +244,7 @@ def delete_beneficiary(beneficiary_id):
 
 
 @beneficiaries_bp.route("/pending", methods=["GET"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def get_pending_beneficiaries():
     """
     Get all pending beneficiaries (Admin/Manager/Staff only)
@@ -268,7 +268,7 @@ def get_pending_beneficiaries():
 
 
 @beneficiaries_bp.route("/statistics", methods=["GET"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def get_statistics():
     """
     Get beneficiary statistics (Admin/Manager/Staff only)

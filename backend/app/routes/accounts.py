@@ -16,7 +16,7 @@ def verify_account_access(account, current_user):
     Verify if current user has access to account
     Returns True if user has access, False otherwise
     """
-    if current_user["role"] in ["admin", "manager", "staff"]:
+    if current_user["role"] in ["admin", "staff"]:
         return True
 
     # Compare user IDs as strings (account.user_id is MongoEngine reference)
@@ -113,8 +113,8 @@ def list_user_accounts():
         user_id = request.args.get("user_id")
 
         # Authorization check
-        if user_id and current_user["role"] not in ["admin", "manager", "staff"]:
-            return jsonify({"error": "Only admin/manager/staff can view other users' accounts"}), 403
+        if user_id and current_user["role"] not in ["admin", "staff"]:
+            return jsonify({"error": "Only admin/staff can view other users' accounts"}), 403
 
         # Use requested user_id or current user
         target_user_id = user_id if user_id else current_user["user_id"]
@@ -207,7 +207,7 @@ def get_account_balance(account_id):
 
 
 @accounts_bp.route("/<account_id>/freeze", methods=["POST"])
-@role_required("admin", "manager")
+@role_required("admin", "admin")
 def freeze_account(account_id):
     """
     Freeze account (block transactions) - Admin/Manager only
@@ -233,7 +233,7 @@ def freeze_account(account_id):
 
 
 @accounts_bp.route("/<account_id>/unfreeze", methods=["POST"])
-@role_required("admin", "manager")
+@role_required("admin", "admin")
 def unfreeze_account(account_id):
     """
     Unfreeze account (allow transactions) - Admin/Manager only
@@ -355,7 +355,7 @@ def calculate_interest(account_id):
 
 
 @accounts_bp.route("/<account_id>/interest/accrue", methods=["POST"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def accrue_interest(account_id):
     """
     Manually accrue (credit) monthly interest to account (Admin/Manager/Staff only)
@@ -444,7 +444,7 @@ def process_interest_all_users():
 
 
 @accounts_bp.route("/interest/process-user", methods=["POST"])
-@role_required("admin", "manager")
+@role_required("admin", "admin")
 def process_interest_user():
     """
     Process monthly interest for a specific user (Admin/Manager only)
@@ -501,7 +501,7 @@ def delete_account(account_id):
         account_owner_id = str(account.user_id.id) if hasattr(account.user_id, 'id') else str(account.user_id)
         current_user_id = str(current_user["user_id"])
 
-        if (current_user["role"] not in ["admin", "manager", "staff"] and
+        if (current_user["role"] not in ["admin", "staff"] and
                 account_owner_id != current_user_id):
             return jsonify({"error": "You can only delete your own accounts"}), 403
 

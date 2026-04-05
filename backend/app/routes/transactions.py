@@ -47,7 +47,7 @@ def deposit():
 
         account = AccountService.get_account_by_id(account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only deposit to your own accounts"}), 403
@@ -106,7 +106,7 @@ def withdraw():
 
         account = AccountService.get_account_by_id(account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only withdraw from your own accounts"}), 403
@@ -173,7 +173,7 @@ def transfer():
 
         from_account = AccountService.get_account_by_id(from_account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and from_account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only transfer from your own accounts"}), 403
@@ -249,7 +249,7 @@ def get_transactions():
 
             account = AccountService.get_account_by_id(account_id)
             if (
-                current_user["role"] not in ["admin", "manager", "staff"]
+                current_user["role"] not in ["admin", "staff"]
                 and account.user_id != current_user["user_id"]
             ):
                 return jsonify({"error": "You can only view your own transactions"}), 403
@@ -299,7 +299,7 @@ def get_transaction(transaction_id):
 
         # Check authorization
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and transaction.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only view your own transactions"}), 403
@@ -335,7 +335,7 @@ def get_transaction_summary(account_id):
 
         account = AccountService.get_account_by_id(account_id)
         if (
-            current_user["role"] not in ["admin", "manager", "staff"]
+            current_user["role"] not in ["admin", "staff"]
             and account.user_id != current_user["user_id"]
         ):
             return jsonify({"error": "You can only view your own account summary"}), 403

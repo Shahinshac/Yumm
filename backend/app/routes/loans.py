@@ -108,7 +108,7 @@ def get_loan_details(loan_id):
         loan = LoanService.get_loan(loan_id)
 
         # Check authorization
-        if current_user["role"] not in ["admin", "manager", "staff"] and loan.user_id != current_user["user_id"]:
+        if current_user["role"] not in ["admin", "staff"] and loan.user_id != current_user["user_id"]:
             return jsonify({"error": "You can only view your own loans"}), 403
 
         return jsonify(loan.to_dict()), 200
@@ -123,7 +123,7 @@ def get_loan_details(loan_id):
 
 
 @loans_bp.route("/<loan_id>/approve", methods=["POST"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def approve_loan(loan_id):
     """
     Approve pending loan application
@@ -162,7 +162,7 @@ def approve_loan(loan_id):
 
 
 @loans_bp.route("/<loan_id>/reject", methods=["POST"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def reject_loan(loan_id):
     """
     Reject pending loan application
@@ -196,7 +196,7 @@ def reject_loan(loan_id):
 
 
 @loans_bp.route("/<loan_id>/disburse", methods=["POST"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def disburse_loan_endpoint(loan_id):
     """
     Disburse approved loan amount to account
@@ -279,7 +279,7 @@ def get_emi_schedule(loan_id):
         loan = LoanService.get_loan(loan_id)
 
         # Check authorization
-        if current_user["role"] not in ["admin", "manager", "staff"] and loan.user_id != current_user["user_id"]:
+        if current_user["role"] not in ["admin", "staff"] and loan.user_id != current_user["user_id"]:
             return jsonify({"error": "You can only view your own loan schedule"}), 403
 
         payments = LoanService.get_emi_schedule(loan_id)
@@ -312,7 +312,7 @@ def get_loan_summary_endpoint(loan_id):
         loan = LoanService.get_loan(loan_id)
 
         # Check authorization
-        if current_user["role"] not in ["admin", "manager", "staff"] and loan.user_id != current_user["user_id"]:
+        if current_user["role"] not in ["admin", "staff"] and loan.user_id != current_user["user_id"]:
             return jsonify({"error": "You can only view your own loan summary"}), 403
 
         summary = LoanService.get_loan_summary(loan_id)
@@ -329,7 +329,7 @@ def get_loan_summary_endpoint(loan_id):
 
 
 @loans_bp.route("/pending", methods=["GET"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def get_pending_approvals():
     """
     Get all pending loan applications (admin queue)
@@ -353,7 +353,7 @@ def get_pending_approvals():
 
 
 @loans_bp.route("/statistics", methods=["GET"])
-@role_required("admin", "manager", "staff")
+@role_required("admin", "admin", "staff")
 def get_statistics():
     """
     Get loan system statistics
