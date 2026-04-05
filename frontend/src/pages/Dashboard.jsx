@@ -1,10 +1,11 @@
 /**
  * Professional Dashboard - Complete Admin & User Management
- * Hamburger Navigation + Full CRUD Operations
+ * Hamburger Navigation + Full CRUD Operations + Auto-Generated Passwords
  */
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuthStore } from '../context/authStore';
 import { accountAPI, transactionAPI, userAPI, authAPI } from '../services/api';
+import { generatePassword, copyToClipboard, validateEmail, validatePhone } from '../utils/helpers';
 import '../styles/professional-dashboard.css';
 
 export function DashboardPage() {
@@ -18,6 +19,8 @@ export function DashboardPage() {
   const [users, setUsers] = useState([]);
   const [showCreateAccount, setShowCreateAccount] = useState(false);
   const [showCreateUser, setShowCreateUser] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Form states
   const [accountForm, setAccountForm] = useState({
@@ -28,7 +31,6 @@ export function DashboardPage() {
   const [userForm, setUserForm] = useState({
     username: '',
     email: '',
-    password: '',
     first_name: '',
     last_name: '',
     phone_number: '',
@@ -83,15 +85,32 @@ export function DashboardPage() {
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
+
+    // Validate inputs
+    if (!validateEmail(userForm.email)) {
+      alert('Invalid email address');
+      return;
+    }
+    if (!validatePhone(userForm.phone_number)) {
+      alert('Invalid phone number');
+      return;
+    }
+
+    // Auto-generate password
+    const tempPassword = generatedPassword || generatePassword();
+
     try {
-      const response = await authAPI.register(userForm);
+      const response = await authAPI.register({
+        ...userForm,
+        password: tempPassword,
+      });
       if (response.status === 201) {
-        alert('User created successfully!');
+        alert(`✅ User created successfully!\n\nUsername: ${userForm.username}\nPassword: ${tempPassword}\n\nPlease save the password securely.`);
         setShowCreateUser(false);
+        setGeneratedPassword('');
         setUserForm({
           username: '',
           email: '',
-          password: '',
           first_name: '',
           last_name: '',
           phone_number: '',
@@ -119,24 +138,29 @@ export function DashboardPage() {
 
   const totalBalance = accounts.reduce((sum, acc) => sum + parseFloat(acc.balance || 0), 0);
 
-  const menuItems = [
-    { id: 'overview', label: '📊 Overview' },
-    { id: 'accounts', label: '💳 Accounts' },
-    { id: 'transactions', label: '📝 Transactions' },
-    { id: 'transfer', label: '💸 Transfer Money' },
-    { id: 'bills', label: '📱 Pay Bills' },
-    { id: 'cards', label: '🎫 Cards & ATM' },
-    { id: 'loans', label: '📊 Loans' },
-    { id: 'beneficiaries', label: '👥 Beneficiaries' },
-    { id: 'scheduled', label: '⏰ Scheduled Payments' },
-    { id: 'notifications', label: '🔔 Notifications' },
-    { id: 'settings', label: '⚙️ Settings' },
-  ];
+  // Menu items with icons - FIX: Use useMemo to prevent duplication
+  const menuItems = useMemo(() => {
+    const baseItems = [
+      { id: 'overview', label: '📊 Overview', icon: '📊' },
+      { id: 'accounts', label: '💳 Accounts', icon: '💳' },
+      { id: 'transactions', label: '📝 Transactions', icon: '📝' },
+      { id: 'transfer', label: '💸 Transfer Money', icon: '💸' },
+      { id: 'bills', label: '📱 Pay Bills', icon: '📱' },
+      { id: 'cards', label: '🎫 Cards & ATM', icon: '🎫' },
+      { id: 'loans', label: '📊 Loans', icon: '📊' },
+      { id: 'beneficiaries', label: '👥 Beneficiaries', icon: '👥' },
+      { id: 'scheduled', label: '⏰ Scheduled Payments', icon: '⏰' },
+      { id: 'notifications', label: '🔔 Notifications', icon: '🔔' },
+      { id: 'settings', label: '⚙️ Settings', icon: '⚙️' },
+    ];
 
-  // Add admin menu item for admin users
-  if (user?.role === 'admin') {
-    menuItems.push({ id: 'users', label: '👨‍💼 User Management' });
-  }
+    // Add admin menu only once using useMemo
+    if (user?.role === 'admin') {
+      baseItems.push({ id: 'users', label: '👨‍💼 User Management', icon: '👨‍💼' });
+    }
+
+    return baseItems;
+  }, [user?.role]);
 
   if (loading) {
     return (
@@ -167,7 +191,7 @@ export function DashboardPage() {
                 if (window.innerWidth < 768) setSidebarOpen(false);
               }}
             >
-              <span className="menu-icon">{item.label.split(' ')[0]}</span>
+              <span className="menu-icon">{item.icon}</span>
               <span className="menu-label">{item.label}</span>
             </button>
           ))}
@@ -489,7 +513,10 @@ export function DashboardPage() {
             <section className="section">
               <div className="section-header">
                 <h2>👨‍💼 User Management</h2>
-                <button className="submit-btn" onClick={() => setShowCreateUser(true)}>➕ Create User</button>
+                <button className="submit-btn" onClick={() => {
+                  setGeneratedPassword(generatePassword());
+                  setShowCreateUser(true);
+                }}>➕ Create User</button>
               </div>
 
               {showCreateUser && (
@@ -498,33 +525,33 @@ export function DashboardPage() {
                   <form onSubmit={handleCreateUser} className="form">
                     <div className="form-row">
                       <div className="form-group">
-                        <label>First Name</label>
+                        <label>First Name *</label>
                         <input type="text" value={userForm.first_name} onChange={(e) => setUserForm({...userForm, first_name: e.target.value})} required />
                       </div>
                       <div className="form-group">
-                        <label>Last Name</label>
+                        <label>Last Name *</label>
                         <input type="text" value={userForm.last_name} onChange={(e) => setUserForm({...userForm, last_name: e.target.value})} required />
                       </div>
                     </div>
 
                     <div className="form-row">
                       <div className="form-group">
-                        <label>Username</label>
+                        <label>Username *</label>
                         <input type="text" value={userForm.username} onChange={(e) => setUserForm({...userForm, username: e.target.value})} required />
                       </div>
                       <div className="form-group">
-                        <label>Email</label>
+                        <label>Email *</label>
                         <input type="email" value={userForm.email} onChange={(e) => setUserForm({...userForm, email: e.target.value})} required />
                       </div>
                     </div>
 
                     <div className="form-row">
                       <div className="form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" value={userForm.phone_number} onChange={(e) => setUserForm({...userForm, phone_number: e.target.value})} required />
+                        <label>Phone Number *</label>
+                        <input type="tel" value={userForm.phone_number} onChange={(e) => setUserForm({...userForm, phone_number: e.target.value})} placeholder="+91-1234567890" required />
                       </div>
                       <div className="form-group">
-                        <label>Role</label>
+                        <label>Role *</label>
                         <select value={userForm.role} onChange={(e) => setUserForm({...userForm, role: e.target.value})}>
                           <option value="customer">Customer</option>
                           <option value="staff">Staff</option>
@@ -533,14 +560,52 @@ export function DashboardPage() {
                       </div>
                     </div>
 
-                    <div className="form-group">
-                      <label>Password</label>
-                      <input type="password" value={userForm.password} onChange={(e) => setUserForm({...userForm, password: e.target.value})} required />
+                    {/* Auto Generated Password Display */}
+                    <div className="section-box password-display">
+                      <h4>🔐 Auto-Generated Password</h4>
+                      <div className="password-field">
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          value={generatedPassword}
+                          readOnly
+                          className="password-input"
+                        />
+                        <button
+                          type="button"
+                          className="icon-btn"
+                          onClick={() => setShowPassword(!showPassword)}
+                          title={showPassword ? "Hide password" : "Show password"}
+                        >
+                          {showPassword ? '🙈' : '👁️'}
+                        </button>
+                        <button
+                          type="button"
+                          className="icon-btn copy-btn"
+                          onClick={() => {
+                            copyToClipboard(generatedPassword);
+                            alert('Password copied to clipboard!');
+                          }}
+                          title="Copy password"
+                        >
+                          📋
+                        </button>
+                      </div>
+                      <button
+                        type="button"
+                        className="secondary-btn"
+                        onClick={() => setGeneratedPassword(generatePassword())}
+                      >
+                        🔄 Regenerate Password
+                      </button>
+                      <p className="hint">💡 Share this password securely with the user. They can change it after first login.</p>
                     </div>
 
                     <div className="form-actions">
                       <button type="submit" className="submit-btn">Create User</button>
-                      <button type="button" className="cancel-btn" onClick={() => setShowCreateUser(false)}>Cancel</button>
+                      <button type="button" className="cancel-btn" onClick={() => {
+                        setShowCreateUser(false);
+                        setGeneratedPassword('');
+                      }}>Cancel</button>
                     </div>
                   </form>
                 </div>
@@ -555,6 +620,7 @@ export function DashboardPage() {
                         <th>Username</th>
                         <th>Email</th>
                         <th>Name</th>
+                        <th>Phone</th>
                         <th>Role</th>
                         <th>Status</th>
                         <th>Actions</th>
@@ -566,6 +632,7 @@ export function DashboardPage() {
                           <td><strong>{u.username}</strong></td>
                           <td>{u.email}</td>
                           <td>{u.first_name} {u.last_name}</td>
+                          <td>{u.phone_number}</td>
                           <td><span className="badge">{u.role}</span></td>
                           <td><span className={`badge ${u.is_active ? 'badge-success' : 'badge-error'}`}>{u.is_active ? 'Active' : 'Inactive'}</span></td>
                           <td>

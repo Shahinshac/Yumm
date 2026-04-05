@@ -1000,6 +1000,10 @@ body {
    RESPONSIVE SIDEBAR
    =========================== */
 
+/* ===========================
+   RESPONSIVE SIDEBAR
+   =========================== */
+
 @media (max-width: 768px) {
   .sidebar {
     width: 280px;
@@ -1039,4 +1043,153 @@ body {
     grid-column: 2;
     order: 3;
   }
+}
+
+/* ===========================
+   PASSWORD DISPLAY SECTION
+   =========================== */
+
+.password-display {
+  background: linear-gradient(135deg, #f0f9ff 0%, #f5f3ff 100%) !important;
+  border: 2px solid #dbeafe;
+  padding: 20px;
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.password-display h4 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  color: var(--primary);
+  font-size: 16px;
+}
+
+.password-field {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  align-items: center;
+}
+
+.password-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #bfdbfe;
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: 'Courier New', monospace;
+  background: white;
+  color: var(--primary);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.password-input:focus {
+  outline: none;
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  border: 2px solid #bfdbfe;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: all 0.2s;
+}
+
+.icon-btn:hover {
+  border-color: var(--primary-accent);
+  background: #f0f9ff;
+  transform: scale(1.05);
+}
+
+.icon-btn.copy-btn {
+  position: relative;
+}
+
+.secondary-btn {
+  width: 100%;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: var(--primary);
+  border: 1px solid #7dd3fc;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 12px;
+}
+
+.secondary-btn:hover {
+  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+}
+
+.hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--gray-600);
+  line-height: 1.5;
+  background: rgba(59, 130, 246, 0.05);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 3px solid var(--primary-accent);
+}
+
+/* ===========================
+   FORM IMPROVEMENTS
+   =========================== */
+
+.form-row input[type="tel"]::placeholder {
+  color: #adb5bd;
+}
+
+.form input[required]::after {
+  content: ' *';
+  color: var(--error);
+}
+
+/* ===========================
+   TABLE IMPROVEMENTS
+   =========================== */
+
+.data-table td:last-child {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.action-btn-small {
+  white-space: nowrap;
+}
+
+/* ===========================
+   EMPTY STATE IMPROVEMENTS
+   =========================== */
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, var(--gray-50) 0%, #f9fafb 100%);
+  border-radius: 12px;
+  border: 2px dashed var(--gray-300);
+}
+
+.empty-state p {
+  font-size: 16px;
+  color: var(--gray-600);
+  margin-bottom: 20px;
+}
+
+.empty-state button {
+  margin-top: 16px;
 }
