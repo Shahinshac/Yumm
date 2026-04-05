@@ -76,16 +76,13 @@ def login():
     }), 200
 
 @bp.route('/me', methods=['GET'])
+@jwt_required()
 def get_me():
     """Get current user (requires token)"""
-    from flask_jwt_extended import jwt_required, get_jwt_identity
+    from flask_jwt_extended import get_jwt_identity
 
-    @jwt_required()
-    def _get_me():
-        user_id = get_jwt_identity()
-        user = User.objects(id=user_id).first()
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
-        return jsonify(user.to_dict()), 200
-
-    return _get_me()
+    user_id = get_jwt_identity()
+    user = User.objects(id=user_id).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
+    return jsonify(user.to_dict()), 200

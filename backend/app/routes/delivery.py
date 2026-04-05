@@ -38,7 +38,7 @@ def accept_order(order_id):
 
     try:
         order = Order.objects(id=order_id).first()
-    except:
+    except Exception:
         order = None
 
     if not order:
@@ -94,7 +94,7 @@ def update_delivery_location(order_id):
 
     try:
         order = Order.objects(id=order_id).first()
-    except:
+    except Exception:
         order = None
 
     if not order:
@@ -123,7 +123,7 @@ def mark_delivered(order_id):
 
     try:
         order = Order.objects(id=order_id).first()
-    except:
+    except Exception:
         order = None
 
     if not order:

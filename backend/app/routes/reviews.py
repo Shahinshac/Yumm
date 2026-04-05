@@ -19,7 +19,7 @@ def create_review():
 
     try:
         order = Order.objects(id=data.get('order_id')).first()
-    except:
+    except Exception:
         order = None
 
     if not order:

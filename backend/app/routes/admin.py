@@ -78,7 +78,7 @@ def list_users():
     }), 200
 
 @bp.route('/restaurants', methods=['GET'])
-@role_required('admin'))
+@role_required('admin')
 def list_restaurants():
     """List all restaurants"""
     restaurants = Restaurant.objects()

@@ -23,7 +23,7 @@ def create_order():
 
     try:
         restaurant = Restaurant.objects(id=data['restaurant_id']).first()
-    except:
+    except Exception:
         restaurant = None
 
     if not restaurant:
@@ -114,7 +114,7 @@ def get_order(order_id):
     """Get order details"""
     try:
         order = Order.objects(id=order_id).first()
-    except:
+    except Exception:
         order = None
 
     if not order:
@@ -133,7 +133,7 @@ def update_order_status(order_id):
     """Update order status"""
     try:
         order = Order.objects(id=order_id).first()
-    except:
+    except Exception:
         order = None
 
     if not order:
@@ -165,7 +165,7 @@ def track_order(order_id):
     """Real-time order tracking"""
     try:
         order = Order.objects(id=order_id).first()
-    except:
+    except Exception:
         order = None
 
     if not order:

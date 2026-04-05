@@ -34,7 +34,7 @@ def get_restaurant(restaurant_id):
     """Get restaurant details with menu items"""
     try:
         restaurant = Restaurant.objects(id=restaurant_id).first()
-    except:
+    except Exception:
         restaurant = None
 
     if not restaurant:
@@ -53,7 +53,7 @@ def get_restaurant_menu(restaurant_id):
     """Get restaurant menu items grouped by category"""
     try:
         restaurant = Restaurant.objects(id=restaurant_id).first()
-    except:
+    except Exception:
         restaurant = None
 
     if not restaurant:
