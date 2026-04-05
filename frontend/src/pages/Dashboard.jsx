@@ -4,7 +4,7 @@
  */
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../context/authStore';
-import { accountAPI, transactionAPI } from '../services/api';
+import { accountAPI, transactionAPI, userAPI, authAPI } from '../services/api';
 import '../styles/professional-dashboard.css';
 
 export function DashboardPage() {
@@ -52,15 +52,8 @@ export function DashboardPage() {
       // Fetch users if admin
       if (user?.role === 'admin') {
         try {
-          const usersRes = await fetch('/api/users', {
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-            },
-          });
-          if (usersRes.ok) {
-            const data = await usersRes.json();
-            setUsers(Array.isArray(data) ? data : Array.isArray(data.data) ? data.data : []);
-          }
+          const usersRes = await userAPI.getAll();
+          setUsers(Array.isArray(usersRes.data) ? usersRes.data : Array.isArray(usersRes.data?.users) ? usersRes.data.users : Array.isArray(usersRes.data?.data) ? usersRes.data.data : []);
         } catch (err) {
           console.error('Failed to fetch users:', err);
         }
@@ -77,37 +70,23 @@ export function DashboardPage() {
   const handleCreateAccount = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/accounts', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        body: JSON.stringify(accountForm),
-      });
-      if (response.ok) {
+      const response = await accountAPI.create(accountForm);
+      if (response.status === 201) {
         alert('Account created successfully!');
         setShowCreateAccount(false);
         setAccountForm({ account_type: 'savings', initial_balance: 0 });
         fetchData();
       }
     } catch (error) {
-      alert('Failed to create account: ' + error.message);
+      alert('Failed to create account: ' + (error.response?.data?.error || error.message));
     }
   };
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
-        body: JSON.stringify(userForm),
-      });
-      if (response.ok) {
+      const response = await authAPI.register(userForm);
+      if (response.status === 201) {
         alert('User created successfully!');
         setShowCreateUser(false);
         setUserForm({
@@ -120,30 +99,22 @@ export function DashboardPage() {
           role: 'customer',
         });
         fetchData();
-      } else {
-        const error = await response.json();
-        alert('Failed: ' + (error.message || 'Unknown error'));
       }
     } catch (error) {
-      alert('Failed to create user: ' + error.message);
+      alert('Failed to create user: ' + (error.response?.data?.error || error.message));
     }
   };
 
   const handleDeleteUser = async (userId) => {
     if (!window.confirm('Are you sure you want to delete this user?')) return;
     try {
-      const response = await fetch(`/api/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-        },
-      });
-      if (response.ok) {
+      const response = await userAPI.delete(userId);
+      if (response.status === 200) {
         alert('User deleted successfully!');
         fetchData();
       }
     } catch (error) {
-      alert('Failed to delete user: ' + error.message);
+      alert('Failed to delete user: ' + (error.response?.data?.error || error.message));
     }
   };
 

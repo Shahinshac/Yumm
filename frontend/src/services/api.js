@@ -89,4 +89,15 @@ export const analyticsAPI = {
   getTransactions: (params) => api.get('/analytics/transactions', { params }),
 };
 
+// User management endpoints
+export const userAPI = {
+  getAll: (params) => api.get('/users', { params }),
+  getById: (id) => api.get(`/users/${id}`),
+  update: (id, data) => api.put(`/users/${id}`, data),
+  delete: (id) => api.delete(`/users/${id}`),
+  assignRole: (id, data) => api.post(`/users/${id}/assign-role`, data),
+  activate: (id) => api.post(`/users/${id}/activate`),
+  deactivate: (id) => api.post(`/users/${id}/deactivate`),
+};
+
 export default api;
