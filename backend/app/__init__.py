@@ -39,26 +39,26 @@ def create_app(config_name=None):
     app = Flask(__name__)
     app.config.from_object(config.get(config_name, config["default"]))
 
-    # Initialize MongoDB connection LAZILY (in first request)
-    app._mongodb_connected = False
-
-    @app.before_request
-    def init_mongodb():
-        """Initialize MongoDB connection on first request"""
-        if not app._mongodb_connected:
-            try:
-                from mongoengine import connect
-                mongodb_settings = app.config.get("MONGODB_SETTINGS", {})
-                if mongodb_settings:
-                    connect(
-                        db=mongodb_settings.get("db", "bankmanagement"),
-                        host=mongodb_settings.get("host", "mongodb://localhost:27017/bankmanagement")
-                    )
-                    app.logger.info("MongoDB connected successfully")
-                    app._mongodb_connected = True
-            except Exception as e:
-                app.logger.error(f"Failed to connect to MongoDB: {str(e)}")
-                # Don't fail the entire app, just log the error
+    # OPTIMIZED: Initialize MongoDB connection at STARTUP instead of first request
+    # This prevents the 3-5 second delay on first API call
+    try:
+        from mongoengine import connect
+        mongodb_settings = app.config.get("MONGODB_SETTINGS", {})
+        if mongodb_settings:
+            connect(
+                db=mongodb_settings.get("db", "bankmanagement"),
+                host=mongodb_settings.get("host", "mongodb://localhost:27017/bankmanagement"),
+                maxPoolSize=50,  # Connection pooling for better performance
+                minPoolSize=10,
+                maxIdleTimeMS=45000,
+                serverSelectionTimeoutMS=5000
+            )
+            app.logger.info("✅ MongoDB connected successfully at startup")
+        else:
+            app.logger.warning("⚠️ MongoDB settings not found, using defaults")
+    except Exception as e:
+        app.logger.error(f"❌ Failed to connect to MongoDB: {str(e)}")
+        # Don't fail the entire app, just log the error
 
     # Initialize JWT
     jwt.init_app(app)

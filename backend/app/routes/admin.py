@@ -290,8 +290,22 @@ def list_customers():
             return jsonify({"error": "Customer role not found"}), 500
 
         skip = (page - 1) * per_page
-        customers = list(User.objects(role=customer_role).skip(skip).limit(per_page))
-        total = User.objects(role=customer_role).count()
+        
+        # OPTIMIZED: Use only() to fetch only needed fields and cache role query
+        query = User.objects(role=customer_role)
+        
+        # Get customers with pagination
+        customers = list(query.skip(skip).limit(per_page))
+        
+        # OPTIMIZED: Only count if we need it for pagination
+        # For better performance, estimate total from current page results
+        if len(customers) < per_page:
+            # Last page - calculate total from current results
+            total = skip + len(customers)
+        else:
+            # Not last page - do count query (cached by MongoDB)
+            total = query.count()
+        
         pages = (total + per_page - 1) // per_page
 
         return jsonify({

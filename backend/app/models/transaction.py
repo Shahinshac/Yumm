@@ -33,7 +33,16 @@ class Transaction(Document):
             'reference_id',
             'account_id',
             'user_id',
-            'created_at'
+            'created_at',
+            'transaction_type',
+            'status',
+            'recipient_account_id',
+            # Compound indexes for common queries
+            ('account_id', '-created_at'),  # Account history queries
+            ('user_id', '-created_at'),  # User transaction history
+            ('account_id', 'transaction_type', '-created_at'),  # Filtered account queries
+            ('transaction_type', 'status'),  # Analytics queries
+            ('created_at', 'transaction_type'),  # Time-based analytics
         ]
     }
 

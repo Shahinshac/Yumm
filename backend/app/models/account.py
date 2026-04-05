@@ -26,7 +26,14 @@ class Account(Document):
         'collection': 'accounts',
         'indexes': [
             'account_number',
-            'user_id'
+            'user_id',
+            'status',
+            'account_type',
+            '-created_at',
+            # Compound indexes for common queries
+            ('user_id', 'status'),  # User's active accounts
+            ('user_id', '-created_at'),  # User's accounts sorted by date
+            ('account_type', 'status'),  # Accounts by type and status
         ]
     }
 
