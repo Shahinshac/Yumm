@@ -1321,3 +1321,298 @@ textarea:focus {
   cursor: not-allowed !important;
 }
 
+/* ===========================
+   PASSBOOK STYLES
+   =========================== */
+
+.passbook-container {
+  background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+  border: 2px solid #dbeafe;
+  border-radius: 12px;
+  padding: 30px;
+  margin-top: 20px;
+}
+
+.passbook-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid var(--primary-accent);
+}
+
+.passbook-header h3 {
+  color: var(--success);
+  font-size: 20px;
+  margin: 0;
+}
+
+.close-btn-small {
+  background: transparent;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--error);
+  padding: 5px;
+}
+
+.passbook {
+  background: white;
+  border: 3px solid var(--primary);
+  border-radius: 15px;
+  padding: 40px;
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  page-break-inside: avoid;
+}
+
+.passbook-cover {
+  text-align: center;
+  padding-bottom: 30px;
+  border-bottom: 3px dashed var(--gray-300);
+  margin-bottom: 30px;
+}
+
+.bank-header {
+  margin-bottom: 25px;
+}
+
+.bank-header h2 {
+  color: var(--primary);
+  font-size: 28px;
+  margin: 0 0 5px 0;
+  letter-spacing: 1px;
+}
+
+.tagline {
+  color: var(--primary-accent);
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.passbook-info {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  border-radius: 10px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.info-row:last-child {
+  border-bottom: none;
+}
+
+.info-row .label {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 13px;
+}
+
+.info-row .value {
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+.badge-success {
+  background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+  color: white !important;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px !important;
+}
+
+.passbook-section {
+  margin-bottom: 25px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--gray-200);
+}
+
+.passbook-section:last-child {
+  border-bottom: none;
+}
+
+.passbook-section h4 {
+  color: var(--primary);
+  margin: 0 0 15px 0;
+  font-size: 16px;
+  border-left: 4px solid var(--primary-accent);
+  padding-left: 12px;
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-item .label {
+  font-weight: 600;
+  color: var(--gray-600);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 5px;
+}
+
+.detail-item .value {
+  color: var(--primary);
+  font-size: 15px;
+  font-weight: 500;
+  background: var(--gray-50);
+  padding: 8px 12px;
+  border-left: 3px solid var(--primary-accent);
+  border-radius: 4px;
+}
+
+.passbook-id {
+  font-family: 'Courier New', monospace !important;
+  font-weight: 700 !important;
+  color: var(--primary-accent) !important;
+}
+
+.terms-list {
+  list-style-position: inside;
+  color: var(--gray-600);
+  line-height: 1.8;
+}
+
+.terms-list li {
+  margin-bottom: 12px;
+  padding-left: 10px;
+}
+
+.terms-list strong {
+  color: var(--primary);
+}
+
+.passbook-footer {
+  text-align: center;
+  padding-top: 30px;
+  border-top: 3px solid var(--gray-300);
+  margin-top: 30px;
+}
+
+.signature-line {
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 0;
+}
+
+.signature-line p {
+  color: var(--gray-600);
+  font-size: 12px;
+  margin: 0 0 10px 0;
+}
+
+.signature-box {
+  width: 150px;
+  height: 60px;
+  border-top: 2px solid var(--primary);
+  border-left: 2px solid var(--primary);
+  border-right: 2px solid var(--primary);
+}
+
+.footer-text {
+  color: var(--gray-600);
+  font-size: 12px;
+  margin: 10px 0;
+  font-style: italic;
+}
+
+.passbook-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.print-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.print-btn:hover {
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+}
+
+.download-btn {
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.download-btn:hover {
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+  transform: translateY(-2px);
+}
+
+.close-btn {
+  padding: 12px 24px;
+  background: var(--gray-200);
+  color: var(--primary);
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.close-btn:hover {
+  background: var(--gray-300);
+}
+
+@media print {
+  .passbook-actions {
+    display: none;
+  }
+
+  .passbook-container {
+    background: white;
+    border: none;
+  }
+
+  .passbook {
+    box-shadow: none;
+    page-break-after: always;
+  }
+}
+

@@ -51,6 +51,9 @@ export function DashboardPage() {
     description: '',
   });
 
+  // Passbook state
+  const [createdPassbook, setCreatedPassbook] = useState(null);
+
   const fetchData = useCallback(async () => {
     try {
       const [accountsRes, txRes] = await Promise.all([
@@ -87,7 +90,28 @@ export function DashboardPage() {
     try {
       const response = await accountAPI.create(accountForm);
       if (response.status === 201) {
-        alert('Account created successfully!');
+        const newAccount = response.data;
+
+        // Generate passbook
+        const passbook = {
+          passbook_id: `PB-${Date.now()}`,
+          account_id: newAccount.id,
+          account_number: newAccount.account_number,
+          account_type: accountForm.account_type.toUpperCase(),
+          customer_name: user.first_name + ' ' + user.last_name,
+          customer_email: user.email,
+          customer_phone: user.phone_number,
+          opening_balance: parseFloat(accountForm.initial_balance),
+          opening_date: new Date().toLocaleDateString(),
+          bank_name: '26-07 RESERVE BANK',
+          bank_code: '26-07',
+          ifsc_code: 'BANK26070001',
+          branch: 'Main Branch',
+          issued_date: new Date().toLocaleDateString(),
+          status: 'ACTIVE',
+        };
+
+        setCreatedPassbook(passbook);
         setShowCreateAccount(false);
         setAccountForm({ account_type: 'savings', initial_balance: 0 });
         fetchData();
@@ -380,25 +404,167 @@ export function DashboardPage() {
 
               {showCreateAccount && (
                 <div className="section-box form-container">
-                  <h3>Create New Account</h3>
+                  <h3>📋 Create New Account</h3>
                   <form onSubmit={handleCreateAccount} className="form">
                     <div className="form-group">
-                      <label>Account Type</label>
+                      <label>Account Type *</label>
                       <select value={accountForm.account_type} onChange={(e) => setAccountForm({...accountForm, account_type: e.target.value})}>
-                        <option value="savings">Savings Account</option>
-                        <option value="current">Current Account</option>
-                        <option value="salary">Salary Account</option>
+                        <option value="savings">💳 Savings Account</option>
+                        <option value="current">🏢 Current Account</option>
+                        <option value="salary">💰 Salary Account</option>
                       </select>
+                      <small className="hint">Select the type of account you want to create</small>
                     </div>
                     <div className="form-group">
-                      <label>Initial Balance</label>
-                      <input type="number" step="0.01" value={accountForm.initial_balance} onChange={(e) => setAccountForm({...accountForm, initial_balance: e.target.value})} />
+                      <label>Opening Balance (₹) *</label>
+                      <input
+                        type="number"
+                        step="0.01"
+                        value={accountForm.initial_balance}
+                        onChange={(e) => setAccountForm({...accountForm, initial_balance: e.target.value})}
+                        placeholder="Enter opening balance"
+                        min="0"
+                      />
+                      <small className="hint">Minimum opening balance required</small>
                     </div>
                     <div className="form-actions">
-                      <button type="submit" className="submit-btn">Create Account</button>
+                      <button type="submit" className="submit-btn">✓ Create Account & Generate Passbook</button>
                       <button type="button" className="cancel-btn" onClick={() => setShowCreateAccount(false)}>Cancel</button>
                     </div>
                   </form>
+                </div>
+              )}
+
+              {/* Passbook Display */}
+              {createdPassbook && (
+                <div className="section-box passbook-container">
+                  <div className="passbook-header">
+                    <h3>✓ Account Created Successfully!</h3>
+                    <button
+                      className="close-btn-small"
+                      onClick={() => setCreatedPassbook(null)}
+                    >
+                      ✕
+                    </button>
+                  </div>
+
+                  <div className="passbook">
+                    {/* Passbook Cover */}
+                    <div className="passbook-cover">
+                      <div className="bank-header">
+                        <h2>🏛️ 26-07 RESERVE BANK</h2>
+                        <p className="tagline">Trust & Excellence in Banking</p>
+                      </div>
+
+                      <div className="passbook-info">
+                        <div className="info-row">
+                          <span className="label">Account Number:</span>
+                          <span className="value">{createdPassbook.account_number}</span>
+                        </div>
+                        <div className="info-row">
+                          <span className="label">Account Type:</span>
+                          <span className="value">{createdPassbook.account_type}</span>
+                        </div>
+                        <div className="info-row">
+                          <span className="label">Status:</span>
+                          <span className="value badge-success">🟢 {createdPassbook.status}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Customer Details */}
+                    <div className="passbook-section">
+                      <h4>📝 Customer Details</h4>
+                      <div className="details-grid">
+                        <div className="detail-item">
+                          <span className="label">Customer Name:</span>
+                          <span className="value">{createdPassbook.customer_name}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">Email:</span>
+                          <span className="value">{createdPassbook.customer_email}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">Phone:</span>
+                          <span className="value">{createdPassbook.customer_phone}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Bank Details */}
+                    <div className="passbook-section">
+                      <h4>🏦 Bank Details</h4>
+                      <div className="details-grid">
+                        <div className="detail-item">
+                          <span className="label">Bank Name:</span>
+                          <span className="value">{createdPassbook.bank_name}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">Bank Code:</span>
+                          <span className="value">{createdPassbook.bank_code}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">IFSC Code:</span>
+                          <span className="value">{createdPassbook.ifsc_code}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">Branch:</span>
+                          <span className="value">{createdPassbook.branch}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Account Opening Details */}
+                    <div className="passbook-section">
+                      <h4>📅 Account Opening Details</h4>
+                      <div className="details-grid">
+                        <div className="detail-item">
+                          <span className="label">Opening Date:</span>
+                          <span className="value">{createdPassbook.opening_date}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">Opening Balance:</span>
+                          <span className="value" style={{color: '#10b981', fontWeight: 'bold'}}>₹{createdPassbook.opening_balance.toFixed(2)}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">Passbook ID:</span>
+                          <span className="value passbook-id">{createdPassbook.passbook_id}</span>
+                        </div>
+                        <div className="detail-item">
+                          <span className="label">Issued Date:</span>
+                          <span className="value">{createdPassbook.issued_date}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Terms & Conditions */}
+                    <div className="passbook-section">
+                      <h4>📋 Terms & Conditions</h4>
+                      <ul className="terms-list">
+                        <li>Keep your passbook safe. Do not share with unauthorized persons.</li>
+                        <li>Update your contact details with the bank if changed.</li>
+                        <li>Report any discrepancies within 30 days of receiving your statement.</li>
+                        <li>For account-related queries, contact your nearest branch.</li>
+                        <li>This account is subject to <strong>Reserve Bank of India</strong> rules and regulations.</li>
+                      </ul>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="passbook-footer">
+                      <div className="signature-line">
+                        <p>Authorized Signature</p>
+                        <div className="signature-box"></div>
+                      </div>
+                      <p className="footer-text">This is a digitally issued passbook. Please keep it safe for future reference.</p>
+                      <p className="footer-text">For assistance: 1800-26-07-BANK or visit your nearest branch</p>
+                    </div>
+                  </div>
+
+                  <div className="passbook-actions">
+                    <button className="print-btn" onClick={() => window.print()}>🖨️ Print Passbook</button>
+                    <button className="download-btn" onClick={() => alert('📥 Passbook saved locally. You can download it from your account.')}>📥 Save as PDF</button>
+                    <button className="close-btn" onClick={() => setCreatedPassbook(null)}>Close</button>
+                  </div>
                 </div>
               )}
 
