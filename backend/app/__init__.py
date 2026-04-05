@@ -133,6 +133,7 @@ def _register_blueprints(app):
     from app.routes.notifications import notifications_bp
     from app.routes.analytics import analytics_bp
     from app.routes.admin import admin_bp
+    from app.routes.messages import messages_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(users_bp)
@@ -147,3 +148,4 @@ def _register_blueprints(app):
     app.register_blueprint(notifications_bp)
     app.register_blueprint(analytics_bp)
     app.register_blueprint(admin_bp)
+    app.register_blueprint(messages_bp)

@@ -249,6 +249,45 @@ class Notification(Document):
         }
 
 
+class Message(Document):
+    """Support Message/Ticket model"""
+    meta = {
+        'collection': 'messages',
+        'indexes': [
+            'user_id',
+            'created_at',
+            'status'
+        ]
+    }
+
+    user_id = ReferenceField('User', required=True)
+    subject = StringField(required=True, max_length=255)
+    message = StringField(required=True)
+    category = StringField(required=True, max_length=50, default='general')  # general, account, card, loan, etc.
+    status = StringField(required=True, max_length=20, default='open')  # open, in_progress, resolved, closed
+    priority = StringField(max_length=20, default='normal')  # low, normal, high, urgent
+    admin_reply = StringField()
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
+    resolved_at = DateTimeField()
+
+    def to_dict(self):
+        """Convert to dictionary"""
+        return {
+            "id": str(self.id),
+            "user_id": str(self.user_id.id) if self.user_id else None,
+            "subject": self.subject,
+            "message": self.message,
+            "category": self.category,
+            "status": self.status,
+            "priority": self.priority,
+            "admin_reply": self.admin_reply,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
+            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
+            "resolved_at": self.resolved_at.isoformat() if self.resolved_at else None,
+        }
+
+
 class ScheduledPayment(Document):
     """Scheduled Payment model"""
     meta = {

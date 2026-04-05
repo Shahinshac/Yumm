@@ -4,7 +4,7 @@
  */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuthStore } from '../context/authStore';
-import { accountAPI, transactionAPI, userAPI, authAPI, billAPI } from '../services/api';
+import { accountAPI, transactionAPI, userAPI, authAPI, billAPI, messageAPI } from '../services/api';
 import { generatePassword, copyToClipboard, validateEmail, validatePhone, escapeHTML, normalizeApiData } from '../utils/helpers';
 import '../styles/professional-dashboard.css';
 
@@ -71,6 +71,7 @@ export function DashboardPage() {
   const [showAccountClosure, setShowAccountClosure] = useState(false);
   const [profileForm, setProfileForm] = useState({ email: user?.email || '', phone_number: user?.phone_number || '', password: '', newPassword: '', confirmPassword: '' });
   const [securityLog, setSecurityLog] = useState([]);
+  const [supportForm, setSupportForm] = useState({ subject: '', message: '', category: 'general' });
 
   // MPIN states
   const [showMPINSetup, setShowMPINSetup] = useState(user?.is_first_login && user?.role === 'customer');
@@ -370,6 +371,31 @@ export function DashboardPage() {
       setShowBillingForm(false);
     } catch (error) {
       alert('Failed to create bill: ' + error.message);
+    }
+  };
+
+  const handleSubmitSupportTicket = async (e) => {
+    e.preventDefault();
+    if (!supportForm.subject || !supportForm.message) {
+      alert('Please fill in both subject and message');
+      return;
+    }
+    try {
+      const response = await messageAPI.create({
+        subject: supportForm.subject,
+        message: supportForm.message,
+        category: supportForm.category || 'general'
+      });
+      
+      const ticketId = response.data?.ticket?.id || 'TKT-' + Date.now();
+      alert(`✅ Support ticket created successfully! Reference ID: ${ticketId}\n\nOur team will respond within 24 hours.`);
+      
+      // Reset form
+      setSupportForm({ subject: '', message: '', category: 'general' });
+      setShowSupport(false);
+    } catch (error) {
+      console.error('Failed to create support ticket:', error);
+      alert('Failed to create support ticket. Please try again.');
     }
   };
 
@@ -1902,11 +1928,41 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                 <div className="support-options">
                   <button className="support-btn" onClick={() => setShowSupport(!showSupport)}>💬 Contact Support</button>
                   {showSupport && (
-                    <div className="support-form">
-                      <input type="text" placeholder="Your email" className="support-input" />
-                      <textarea placeholder="Describe your issue..." className="support-input" rows="4"></textarea>
-                      <button className="submit-btn" onClick={() => {alert('✅ Support ticket created! Reference ID: TKT-' + Date.now() ); setShowSupport(false); }}>Submit Ticket</button>
-                    </div>
+                    <form className="support-form" onSubmit={handleSubmitSupportTicket}>
+                      <select 
+                        className="support-input" 
+                        value={supportForm.category} 
+                        onChange={(e) => setSupportForm({...supportForm, category: e.target.value})}
+                      >
+                        <option value="general">General Inquiry</option>
+                        <option value="account">Account Issue</option>
+                        <option value="card">Card Issue</option>
+                        <option value="loan">Loan Support</option>
+                        <option value="transaction">Transaction Issue</option>
+                        <option value="technical">Technical Support</option>
+                        <option value="other">Other</option>
+                      </select>
+                      <input 
+                        type="text" 
+                        placeholder="Subject (e.g., Unable to transfer funds)" 
+                        className="support-input" 
+                        value={supportForm.subject}
+                        onChange={(e) => setSupportForm({...supportForm, subject: e.target.value})}
+                        required
+                      />
+                      <textarea 
+                        placeholder="Describe your issue in detail..." 
+                        className="support-input" 
+                        rows="4"
+                        value={supportForm.message}
+                        onChange={(e) => setSupportForm({...supportForm, message: e.target.value})}
+                        required
+                      ></textarea>
+                      <div style={{display: 'flex', gap: '10px'}}>
+                        <button type="submit" className="submit-btn">📨 Submit Ticket</button>
+                        <button type="button" className="cancel-btn" onClick={() => setShowSupport(false)}>Cancel</button>
+                      </div>
+                    </form>
                   )}
                 </div>
               </div>

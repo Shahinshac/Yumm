@@ -75,7 +75,7 @@ class AccountService:
             account_type=account_type,
             balance=Decimal(str(balance_float)),
             status=AccountStatusEnum.ACTIVE.value,
-            user_id=user_id,
+            user_id=user,
         )
 
         try:

@@ -185,4 +185,12 @@ export const userAPI = {
   deactivate: (id) => api.post(`/users/${id}/deactivate`),
 };
 
+// Message/Support ticket endpoints
+export const messageAPI = {
+  create: (data) => api.post('/messages', data),
+  getAll: (params) => api.get('/messages', { params }),
+  getById: (id) => api.get(`/messages/${id}`),
+  delete: (id) => api.delete(`/messages/${id}`),
+};
+
 export default api;
