@@ -28,7 +28,7 @@ def create_account():
         }
 
     Returns:
-        201: Account created
+        201: Account created (with auto-generated ATM card)
         400: Validation error
         403: Unauthorized
     """
@@ -50,16 +50,29 @@ def create_account():
         account_type = data.get("account_type", "savings")
         initial_balance = data.get("initial_balance", 0.0)
 
-        account = AccountService.create_account(
+        # Create account and auto-generate ATM card
+        account, card = AccountService.create_account(
             user_id=user_id,
             account_type=account_type,
             initial_balance=initial_balance
         )
 
-        return jsonify({
-            "message": "Account created successfully",
+        # Build response with card info if card was generated
+        response_data = {
+            "message": "Account created successfully. ATM card auto-generated.",
             "account": account.to_dict()
-        }), 201
+        }
+
+        # Include card info if it was created
+        if card:
+            response_data["card"] = {
+                "id": str(card.id),
+                "card_number": f"****{card.card_number[-4:]}",  # Masked
+                "expiry_date": card.expiry_date,
+                "message": "Your ATM card is ready. Please set your PIN before first use."
+            }
+
+        return jsonify(response_data), 201
 
     except BankingException as e:
         return jsonify({"error": e.message}), e.status_code
@@ -109,14 +122,14 @@ def list_user_accounts():
 @require_authentication
 def get_account(account_id):
     """
-    Get account details
+    Get account details with optional card information
 
     Authorization:
         - Account owner can view
         - Admin/Manager/Staff can view any account
 
     Returns:
-        200: Account details
+        200: Account details with associated card
         404: Account not found
         403: Unauthorized
     """
@@ -129,10 +142,20 @@ def get_account(account_id):
                 account.user_id != current_user["user_id"]):
             return jsonify({"error": "You can only view your own accounts"}), 403
 
-        return jsonify({
+        # Get associated card if exists
+        from app.models.base import Card
+        card = Card.objects(account_id=account_id).first()
+
+        response = {
             "account": account.to_dict(),
             "owner": account.user.to_dict()
-        }), 200
+        }
+
+        # Include card info if card exists
+        if card:
+            response["card"] = card.to_dict()
+
+        return jsonify(response), 200
 
     except BankingException as e:
         return jsonify({"error": e.message}), e.status_code

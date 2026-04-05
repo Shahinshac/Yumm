@@ -3,7 +3,9 @@ Account management service - Business logic for account operations
 """
 from app.models.account import Account, AccountTypeEnum, AccountStatusEnum
 from app.models.user import User
+from app.models.base import Card
 from app.utils.generators import Generators
+from app.utils.security import PINSecurity
 from app.utils.exceptions import (
     ResourceNotFoundError,
     ValidationError,
@@ -11,6 +13,9 @@ from app.utils.exceptions import (
 )
 from datetime import datetime
 from decimal import Decimal
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class AccountService:
@@ -21,9 +26,9 @@ class AccountService:
         user_id: str,
         account_type: str = "savings",
         initial_balance: float = 0.0,
-    ) -> Account:
+    ) -> tuple:
         """
-        Create a new bank account for a user
+        Create a new bank account for a user with auto-generated ATM card
 
         Args:
             user_id: User ID
@@ -31,7 +36,7 @@ class AccountService:
             initial_balance: Initial balance
 
         Returns:
-            Created account object
+            Tuple of (account, card) objects
 
         Raises:
             ResourceNotFoundError: If user not found
@@ -77,7 +82,17 @@ class AccountService:
         except Exception as e:
             raise ValidationError(f"Failed to create account: {str(e)}")
 
-        return account
+        # Auto-generate ATM card for account
+        card = None
+        try:
+            card = AccountService._auto_generate_card(account)
+            logger.info(f"✅ Auto-generated card {card.card_number[-4:]} for account {account.account_number}")
+        except Exception as e:
+            # Log error but don't fail account creation
+            logger.error(f"⚠️ Card generation failed for account {account.account_number}: {str(e)}")
+            # Card can be generated manually later via CardService
+
+        return account, card
 
     @staticmethod
     def _generate_unique_account_number() -> str:
@@ -93,6 +108,47 @@ class AccountService:
             existing = Account.objects(account_number=account_number).first()
             if not existing:
                 return account_number
+
+    @staticmethod
+    def _auto_generate_card(account: Account) -> Card:
+        """
+        Auto-generate ATM card for account (called during account creation)
+
+        Args:
+            account: Account object (must be saved to DB first)
+
+        Returns:
+            Generated Card object
+
+        Raises:
+            ValidationError: If card generation fails
+        """
+        try:
+            # Generate card details
+            card_number = Generators.generate_card_number()
+            expiry_date = Generators.generate_card_expiry()
+
+            # Initialize PIN as "0000" (temporary - user must set their own)
+            initial_pin = "0000"
+            pin_hash = PINSecurity.hash_pin(initial_pin)
+
+            # Create card with both account_id and user_id (required by Card model)
+            card = Card(
+                card_number=card_number,
+                card_type="debit",
+                pin_hash=pin_hash,
+                expiry_date=expiry_date,
+                is_active=True,
+                is_blocked=False,
+                account_id=account.id,
+                user_id=account.user_id,
+            )
+
+            card.save()
+            return card
+
+        except Exception as e:
+            raise ValidationError(f"Failed to auto-generate card: {str(e)}")
 
     @staticmethod
     def get_account_by_id(account_id: str) -> Account:

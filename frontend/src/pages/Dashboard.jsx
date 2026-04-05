@@ -25,10 +25,6 @@ export function DashboardPage() {
 
   // Form states
   const [accountForm, setAccountForm] = useState({
-    first_name: '',
-    last_name: '',
-    email: '',
-    phone_number: '',
     account_type: 'savings',
     initial_balance: 0,
   });
@@ -81,7 +77,7 @@ export function DashboardPage() {
       ]);
 
       // Normalize API responses to handle different response structures
-      setAccounts(normalizeApiData(accountsRes));
+      setAccounts(normalizeApiData(accountsRes, 'accounts'));
       setTransactions(normalizeApiData(txRes, 'transactions'));
 
       // Fetch users if admin
@@ -109,29 +105,26 @@ export function DashboardPage() {
   const handleCreateAccount = async (e) => {
     e.preventDefault();
     try {
-      // Generate 11-digit account number automatically
-      const generatedAccountNumber = generateAccountNumber();
-
-      // Add account number to form data
-      const accountFormWithNumber = {
-        ...accountForm,
-        account_number: generatedAccountNumber,
+      // Create account with simplified payload (backend generates account number)
+      const accountPayload = {
+        account_type: accountForm.account_type,
+        initial_balance: parseFloat(accountForm.initial_balance) || 0,
       };
 
-      const response = await accountAPI.create(accountFormWithNumber);
+      const response = await accountAPI.create(accountPayload);
       if (response.status === 201) {
-        const newAccount = response.data;
+        const { account, card } = response.data;
 
-        // Generate passbook
+        // Generate passbook using User data (not form data)
         const passbook = {
           passbook_id: `PB-${Date.now()}`,
-          account_id: newAccount.id,
-          account_number: newAccount.account_number || generatedAccountNumber,
-          account_type: accountForm.account_type.toUpperCase(),
-          customer_name: accountForm.first_name + ' ' + accountForm.last_name,
-          customer_email: accountForm.email,
-          customer_phone: accountForm.phone_number,
-          opening_balance: parseFloat(accountForm.initial_balance),
+          account_id: account.id,
+          account_number: account.account_number,
+          account_type: account.account_type.toUpperCase(),
+          customer_name: `${user.first_name} ${user.last_name}`,
+          customer_email: user.email,
+          customer_phone: user.phone_number,
+          opening_balance: parseFloat(accountForm.initial_balance) || 0,
           opening_date: new Date().toLocaleDateString(),
           bank_name: '26-07 RESERVE BANK',
           bank_code: '26-07',
@@ -139,18 +132,24 @@ export function DashboardPage() {
           branch: 'Main Branch',
           issued_date: new Date().toLocaleDateString(),
           status: 'ACTIVE',
+          card_number: card?.card_number || 'Not Generated',
         };
 
         setCreatedPassbook(passbook);
         setShowCreateAccount(false);
-        setAccountForm({ first_name: '', last_name: '', email: '', phone_number: '', account_type: 'savings', initial_balance: 0 });
+        setAccountForm({ account_type: 'savings', initial_balance: 0 });
 
-        // Refresh accounts list after a short delay to allow backend to process
+        // Show notification about card
+        if (card) {
+          alert(`✅ Account created successfully!\n\nAccount Number: ${account.account_number}\n\n💳 ATM Card: ${card.card_number}\n\n${card.message}`);
+        } else {
+          alert(`✅ Account created successfully!\n\nAccount Number: ${account.account_number}`);
+        }
+
+        // Refresh accounts list after a short delay
         setTimeout(() => {
           fetchData();
         }, 500);
-
-        alert('✅ Account created successfully!\n\nAccount Number: ' + (newAccount.account_number || generatedAccountNumber));
       }
     } catch (error) {
       alert('Failed to create account: ' + (error.response?.data?.error || error.message));
@@ -875,56 +874,6 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                 <div className="section-box form-container">
                   <h3>📋 Create New Account</h3>
                   <form onSubmit={handleCreateAccount} className="form">
-                    {/* Customer Details Section */}
-                    <div className="form-section">
-                      <h4>👤 Customer Details</h4>
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>First Name *</label>
-                          <input
-                            type="text"
-                            value={accountForm.first_name}
-                            onChange={(e) => setAccountForm({...accountForm, first_name: e.target.value})}
-                            placeholder="Enter first name"
-                            required
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Last Name *</label>
-                          <input
-                            type="text"
-                            value={accountForm.last_name}
-                            onChange={(e) => setAccountForm({...accountForm, last_name: e.target.value})}
-                            placeholder="Enter last name"
-                            required
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-row">
-                        <div className="form-group">
-                          <label>Email Address *</label>
-                          <input
-                            type="email"
-                            value={accountForm.email}
-                            onChange={(e) => setAccountForm({...accountForm, email: e.target.value})}
-                            placeholder="Enter email address"
-                            required
-                          />
-                        </div>
-                        <div className="form-group">
-                          <label>Phone Number *</label>
-                          <input
-                            type="tel"
-                            value={accountForm.phone_number}
-                            onChange={(e) => setAccountForm({...accountForm, phone_number: e.target.value})}
-                            placeholder="Enter phone number"
-                            required
-                          />
-                        </div>
-                      </div>
-                    </div>
-
                     {/* Account Details Section */}
                     <div className="form-section">
                       <h4>💳 Account Details</h4>
@@ -956,7 +905,7 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                       <button type="submit" className="submit-btn">✓ Create Account & Generate Passbook</button>
                       <button type="button" className="cancel-btn" onClick={() => {
                         setShowCreateAccount(false);
-                        setAccountForm({first_name: '', last_name: '', email: '', phone_number: '', account_type: 'savings', initial_balance: 0});
+                        setAccountForm({account_type: 'savings', initial_balance: 0});
                       }}>Cancel</button>
                     </div>
                   </form>
