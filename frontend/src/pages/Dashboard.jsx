@@ -35,10 +35,6 @@ export function DashboardPage() {
     role: 'customer',
   });
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
   const fetchData = useCallback(async () => {
     try {
       const [accountsRes, txRes] = await Promise.all([
@@ -65,6 +61,10 @@ export function DashboardPage() {
       setLoading(false);
     }
   }, [user]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
 
   const handleCreateAccount = async (e) => {
     e.preventDefault();
