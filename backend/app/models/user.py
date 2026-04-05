@@ -1,27 +1,34 @@
 """
-User Model - RBAC System
+User Models - Customer, Restaurant, Delivery Partner
 """
-from mongoengine import Document, StringField, BooleanField, DateTimeField, ListField, ReferenceField
+from mongoengine import Document, StringField, BooleanField, DateTimeField, ListField
 from datetime import datetime
 
 class User(Document):
-    """User model with role-based access control"""
+    """User model for all roles"""
 
     username = StringField(required=True, unique=True, max_length=80)
     email = StringField(required=True, unique=True, max_length=120)
     password_hash = StringField(required=True)
+    phone = StringField(required=True, max_length=20)
 
-    first_name = StringField(required=True, max_length=100)
-    last_name = StringField(required=True, max_length=100)
-    phone_number = StringField(max_length=20)
+    # User type
+    role = StringField(required=True, choices=['customer', 'restaurant', 'delivery', 'admin'], default='customer')
 
-    role = StringField(required=True, choices=['admin', 'staff', 'customer'], default='customer')
+    # Profile
+    full_name = StringField(max_length=100)
+    profile_image = StringField()
+    address = StringField()
 
-    is_active = BooleanField(default=True)
+    # Status
     is_verified = BooleanField(default=False)
-    is_first_login = BooleanField(default=True)
-    mpin_set = BooleanField(default=False)
+    is_active = BooleanField(default=True)
 
+    # Preferences
+    favorite_restaurants = ListField()
+    saved_addresses = ListField()
+
+    # Metadata
     created_at = DateTimeField(default=datetime.utcnow)
     last_login = DateTimeField()
 
@@ -36,16 +43,14 @@ class User(Document):
             'id': str(self.id),
             'username': self.username,
             'email': self.email,
-            'first_name': self.first_name,
-            'last_name': self.last_name,
-            'phone_number': self.phone_number,
+            'phone': self.phone,
             'role': self.role,
-            'is_active': self.is_active,
+            'full_name': self.full_name,
+            'profile_image': self.profile_image,
             'is_verified': self.is_verified,
-            'is_first_login': self.is_first_login,
-            'mpin_set': self.mpin_set,
+            'is_active': self.is_active,
+            'address': self.address,
             'created_at': self.created_at.isoformat() if self.created_at else None,
-            'last_login': self.last_login.isoformat() if self.last_login else None,
         }
 
     def __repr__(self):

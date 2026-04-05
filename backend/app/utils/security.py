@@ -1,5 +1,5 @@
 """
-Security utilities - Password hashing and verification
+Security utilities
 """
 from bcrypt import hashpw, checkpw, gensalt
 

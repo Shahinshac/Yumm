@@ -1,5 +1,5 @@
 """
-Backend Application Entry Point
+Food Delivery App - Backend Entry Point
 """
 import os
 from backend.app import create_app
@@ -7,4 +7,5 @@ from backend.app import create_app
 if __name__ == '__main__':
     app = create_app()
     port = int(os.getenv('PORT', 5000))
-    app.run(debug=os.getenv('FLASK_ENV') == 'development', host='0.0.0.0', port=port)
+    debug = os.getenv('FLASK_ENV') == 'development'
+    app.run(debug=debug, host='0.0.0.0', port=port)

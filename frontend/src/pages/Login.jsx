@@ -1,39 +1,40 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../context/authStore';
-import '../styles/login.css';
+import { useAuthStore } from '../store/store';
+import '../styles/auth.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const login = useAuthStore((state) => state.login);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const loading = useAuthStore((state) => state.loading);
+
   const [form, setForm] = useState({ username: '', password: '' });
+  const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    const result = await login(form);
-    setLoading(false);
+    setError('');
 
+    const result = await login(form.username, form.password);
     if (result.success) {
-      if (result.role === 'admin') navigate('/admin');
-      else if (result.role === 'staff') navigate('/staff');
-      else navigate('/dashboard');
+      if (result.role === 'admin') navigate('/admin/dashboard');
+      else if (result.role === 'restaurant') navigate('/restaurant/dashboard');
+      else if (result.role === 'delivery') navigate('/delivery/home');
+      else navigate('/customer/home');
     } else {
-      setError(result.message);
+      setError(result.error);
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h1>🏦 26-07 BANK</h1>
-        <p className="subtitle">Digital Banking</p>
+    <div className="auth-container">
+      <div className="auth-card">
+        <h1>🍕 FoodHub</h1>
+        <p className="subtitle">Food Delivery App</p>
 
         {error && <div className="error-msg">{error}</div>}
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleLogin}>
           <div className="form-group">
             <label>Username</label>
             <input
@@ -41,7 +42,7 @@ export default function LoginPage() {
               value={form.username}
               onChange={(e) => setForm({ ...form, username: e.target.value })}
               placeholder="Enter username"
-              disabled={loading}
+              required
             />
           </div>
 
@@ -52,16 +53,26 @@ export default function LoginPage() {
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               placeholder="Enter password"
-              disabled={loading}
+              required
             />
           </div>
 
-          <button type="submit" disabled={loading}>
+          <button type="submit" disabled={loading} className="btn-primary">
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
-        <p className="demo-text">Demo: shahinsha / 262007</p>
+        <div className="demo-users">
+          <h3>Demo Users:</h3>
+          <p>👤 customer / customer123</p>
+          <p>🏪 restaurant / rest123</p>
+          <p>🚚 delivery / delivery123</p>
+          <p>👨‍💼 admin / admin123</p>
+        </div>
+
+        <p className="auth-link">
+          Don't have account? <a href="/register">Register here</a>
+        </p>
       </div>
     </div>
   );

@@ -16,66 +16,57 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// Handle token refresh
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const { config, response } = error;
-    if (response?.status === 401 && !config.__isRetry) {
-      config.__isRetry = true;
-      try {
-        const { data } = await axios.post(`${API_URL}/auth/refresh`, {
-          refresh_token: localStorage.getItem('refresh_token')
-        });
-        localStorage.setItem('access_token', data.access_token);
-        config.headers.Authorization = `Bearer ${data.access_token}`;
-        return api(config);
-      } catch {
-        localStorage.clear();
-        window.location.href = '/login';
-      }
-    }
-    return Promise.reject(error);
-  }
-);
-
+// Auth APIs
 export const authAPI = {
-  login: (creds) => api.post('/auth/login', creds),
   register: (data) => api.post('/auth/register', data),
+  login: (data) => api.post('/auth/login', data),
   getMe: () => api.get('/auth/me'),
-  refresh: () => api.post('/auth/refresh'),
 };
 
-export const userAPI = {
-  getAll: (params) => api.get('/users', { params }),
-  getById: (id) => api.get(`/users/${id}`),
-  getCustomers: (search = '') => api.get('/users/customers', { params: { search } }),
-  update: (id, data) => api.put(`/users/${id}`, data),
-  delete: (id) => api.delete(`/users/${id}`),
+// Restaurant APIs
+export const restaurantAPI = {
+  getAll: () => api.get('/restaurants'),
+  getById: (id) => api.get(`/restaurants/${id}`),
+  getMenu: (id) => api.get(`/restaurants/${id}/menu`),
+  getCategories: () => api.get('/restaurants/categories'),
 };
 
-export const accountAPI = {
-  create: (data) => api.post('/accounts', data),
-  getAll: (params) => api.get('/accounts', { params }),
-  getById: (id) => api.get(`/accounts/${id}`),
-  delete: (id) => api.delete(`/accounts/${id}`),
+// Order APIs
+export const orderAPI = {
+  create: (data) => api.post('/orders', data),
+  getAll: () => api.get('/orders'),
+  getById: (id) => api.get(`/orders/${id}`),
+  track: (id) => api.get(`/orders/${id}/track`),
+  updateStatus: (id, status) => api.put(`/orders/${id}/status`, { status }),
 };
 
-export const transactionAPI = {
-  getAll: (params) => api.get('/transactions', { params }),
-  create: (data) => api.post('/transactions', data),
+// Delivery APIs
+export const deliveryAPI = {
+  getAvailableOrders: () => api.get('/delivery/available-orders'),
+  acceptOrder: (id) => api.post(`/delivery/accept-order/${id}`),
+  getMyOrders: () => api.get('/delivery/my-orders'),
+  updateLocation: (id, location) => api.put(`/delivery/${id}/update-location`, location),
+  markDelivered: (id) => api.put(`/delivery/${id}/mark-delivered`),
+  getStats: () => api.get('/delivery/stats'),
 };
 
-export const loanAPI = {
-  getAll: (params) => api.get('/loans', { params }),
-  create: (data) => api.post('/loans', data),
+// Review APIs
+export const reviewAPI = {
+  create: (data) => api.post('/reviews', data),
+  getByRestaurant: (id) => api.get(`/reviews/restaurant/${id}`),
 };
 
-export const cardAPI = {
-  getAll: (params) => api.get('/cards', { params }),
+// Promo APIs
+export const promoAPI = {
+  validate: (code) => api.post('/promo/validate', { code }),
 };
 
-export const billAPI = {
-  getAll: (params) => api.get('/bills', { params }),
-  create: (data) => api.post('/bills', data),
+// Admin APIs
+export const adminAPI = {
+  getDashboard: () => api.get('/admin/dashboard'),
+  getUsers: (role) => api.get('/admin/users', { params: { role } }),
+  getRestaurants: () => api.get('/admin/restaurants'),
+  getOrders: () => api.get('/admin/orders'),
+  orderAnalytics: (period) => api.get('/admin/analytics/orders', { params: { period } }),
+  restaurantAnalytics: () => api.get('/admin/analytics/restaurants'),
 };

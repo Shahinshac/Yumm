@@ -1,79 +1,219 @@
 """
-Card, Loan, and Bill Models
+Order, Payment, Review, PromoCode, and Delivery Models
 """
-from mongoengine import Document, StringField, FloatField, ReferenceField, DateTimeField, IntField, BooleanField
+from mongoengine import Document, StringField, FloatField, ListField, DictField, ReferenceField, DateTimeField, IntField, BooleanField
 from datetime import datetime
 
-class Card(Document):
-    """Debit/Credit Card model"""
-    user = ReferenceField('User', required=True)
-    account = ReferenceField('Account', required=True)
-    card_number = StringField(required=True, unique=True)
-    card_type = StringField(default='debit')
-    cvv_hash = StringField()
-    expiry_date = StringField()
+class Order(Document):
+    """Order model"""
+
+    customer = ReferenceField('User', required=True)
+    restaurant = ReferenceField('Restaurant', required=True)
+    delivery_partner = ReferenceField('User')  # Assigned later
+
+    # Items in order
+    items = ListField(DictField())  # [{'item_id': str, 'name': str, 'price': float, 'qty': int}]
+
+    # Order details
+    subtotal = FloatField(required=True)
+    delivery_charge = FloatField(default=50)
+    promo_discount = FloatField(default=0)
+    total_amount = FloatField(required=True)
+
+    # Addresses
+    delivery_address = StringField()
+    special_instructions = StringField()
+
+    # Order status
+    status = StringField(
+        required=True,
+        choices=['pending', 'confirmed', 'preparing', 'ready', 'on_the_way', 'delivered', 'cancelled'],
+        default='pending'
+    )
+
+    # Tracking
+    current_location = DictField()  # {'lat': float, 'lng': float}
+    estimated_delivery = DateTimeField()
+
+    # Metadata
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
+    delivered_at = DateTimeField()
+
+    meta = {
+        'collection': 'orders',
+        'indexes': ['customer', 'restaurant', 'status'],
+        'strict': False
+    }
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'customer_id': str(self.customer.id),
+            'restaurant_id': str(self.restaurant.id),
+            'delivery_partner_id': str(self.delivery_partner.id) if self.delivery_partner else None,
+            'items': self.items,
+            'subtotal': self.subtotal,
+            'delivery_charge': self.delivery_charge,
+            'promo_discount': self.promo_discount,
+            'total_amount': self.total_amount,
+            'delivery_address': self.delivery_address,
+            'special_instructions': self.special_instructions,
+            'status': self.status,
+            'current_location': self.current_location,
+            'estimated_delivery': self.estimated_delivery.isoformat() if self.estimated_delivery else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+class Payment(Document):
+    """Payment model"""
+
+    order = ReferenceField(Order, required=True)
+    amount = FloatField(required=True)
+    method = StringField(choices=['card', 'upi', 'wallet', 'cash'], default='card')
+    status = StringField(choices=['pending', 'completed', 'failed', 'refunded'], default='pending')
+
+    # Payment gateway
+    gateway = StringField()  # razorpay, stripe
+    gateway_order_id = StringField()
+    gateway_payment_id = StringField()
+
+    # Metadata
+    created_at = DateTimeField(default=datetime.utcnow)
+    completed_at = DateTimeField()
+
+    meta = {
+        'collection': 'payments',
+        'indexes': ['order', 'status'],
+        'strict': False
+    }
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'order_id': str(self.order.id),
+            'amount': self.amount,
+            'method': self.method,
+            'status': self.status,
+            'gateway': self.gateway,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+class Review(Document):
+    """Review and Rating model"""
+
+    order = ReferenceField(Order, required=True)
+    customer = ReferenceField('User', required=True)
+    restaurant = ReferenceField('Restaurant', required=True)
+
+    rating = IntField(required=True, min_value=1, max_value=5)
+    review_text = StringField()
+
+    # Review aspects
+    food_quality = IntField()
+    delivery_speed = IntField()
+    packaging = IntField()
+
+    created_at = DateTimeField(default=datetime.utcnow)
+
+    meta = {
+        'collection': 'reviews',
+        'indexes': ['order', 'restaurant'],
+        'strict': False
+    }
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'order_id': str(self.order.id),
+            'customer_id': str(self.customer.id),
+            'restaurant_id': str(self.restaurant.id),
+            'rating': self.rating,
+            'review_text': self.review_text,
+            'food_quality': self.food_quality,
+            'delivery_speed': self.delivery_speed,
+            'packaging': self.packaging,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+class PromoCode(Document):
+    """Promo code model"""
+
+    code = StringField(required=True, unique=True, max_length=20)
+    discount_type = StringField(choices=['percentage', 'fixed'], default='percentage')
+    discount_value = FloatField(required=True)  # percentage or amount
+    min_order_amount = FloatField(default=0)
+    max_discount = FloatField()  # Cap on discount
+
+    valid_from = DateTimeField()
+    valid_till = DateTimeField()
+
+    max_uses = IntField()  # Total uses
+    max_uses_per_user = IntField(default=1)
+    current_uses = IntField(default=0)
+
+    applicable_restaurants = ListField()  # Empty = all
     is_active = BooleanField(default=True)
-    is_blocked = BooleanField(default=False)
-    pin_hash = StringField()
+
     created_at = DateTimeField(default=datetime.utcnow)
 
-    meta = {'collection': 'cards', 'indexes': ['card_number']}
+    meta = {
+        'collection': 'promo_codes',
+        'indexes': ['code', 'is_active'],
+        'strict': False
+    }
 
     def to_dict(self):
         return {
             'id': str(self.id),
-            'user_id': str(self.user.id),
-            'card_number': f"****{self.card_number[-4:]}",
-            'expiry_date': self.expiry_date,
+            'code': self.code,
+            'discount_type': self.discount_type,
+            'discount_value': self.discount_value,
+            'min_order_amount': self.min_order_amount,
+            'max_discount': self.max_discount,
+            'valid_from': self.valid_from.isoformat() if self.valid_from else None,
+            'valid_till': self.valid_till.isoformat() if self.valid_till else None,
             'is_active': self.is_active,
-            'is_blocked': self.is_blocked,
         }
 
-class Loan(Document):
-    """Loan model"""
-    user = ReferenceField('User', required=True)
-    account = ReferenceField('Account', required=True)
-    loan_type = StringField(required=True, choices=['personal', 'home', 'auto', 'education'])
-    amount = FloatField(required=True)
-    rate_of_interest = FloatField(default=8.5)
-    tenure_months = IntField(default=12)
-    status = StringField(default='approved', choices=['pending', 'approved', 'rejected', 'closed'])
-    balance = FloatField()
-    created_at = DateTimeField(default=datetime.utcnow)
+class DeliveryAssignment(Document):
+    """Delivery assignment tracking"""
 
-    meta = {'collection': 'loans', 'indexes': ['user']}
+    order = ReferenceField(Order, required=True)
+    delivery_partner = ReferenceField('User', required=True)
+
+    status = StringField(
+        choices=['assigned', 'accepted', 'rejected', 'picked_up', 'delivered'],
+        default='assigned'
+    )
+
+    # Location tracking
+    current_location = DictField()  # {'lat': float, 'lng': float}
+    pickup_location = DictField()
+    delivery_location = DictField()
+
+    # Times
+    assigned_at = DateTimeField(default=datetime.utcnow)
+    accepted_at = DateTimeField()
+    picked_up_at = DateTimeField()
+    delivered_at = DateTimeField()
+
+    # Rating
+    delivery_rating = IntField()
+
+    meta = {
+        'collection': 'delivery_assignments',
+        'indexes': ['order', 'delivery_partner'],
+        'strict': False
+    }
 
     def to_dict(self):
         return {
             'id': str(self.id),
-            'user_id': str(self.user.id),
-            'loan_type': self.loan_type,
-            'amount': self.amount,
-            'balance': self.balance or self.amount,
+            'order_id': str(self.order.id),
+            'delivery_partner_id': str(self.delivery_partner.id),
             'status': self.status,
-            'created_at': self.created_at.isoformat(),
-        }
-
-class Bill(Document):
-    """Bill payment model"""
-    user = ReferenceField('User', required=True)
-    account = ReferenceField('Account', required=True)
-    bill_type = StringField(required=True, choices=['mobile', 'electricity', 'internet', 'other'])
-    amount = FloatField(required=True)
-    status = StringField(default='pending', choices=['pending', 'paid', 'failed'])
-    bill_date = DateTimeField(default=datetime.utcnow)
-    due_date = DateTimeField()
-    paid_date = DateTimeField()
-    created_at = DateTimeField(default=datetime.utcnow)
-
-    meta = {'collection': 'bills', 'indexes': ['user']}
-
-    def to_dict(self):
-        return {
-            'id': str(self.id),
-            'user_id': str(self.user.id),
-            'bill_type': self.bill_type,
-            'amount': self.amount,
-            'status': self.status,
-            'created_at': self.created_at.isoformat(),
+            'current_location': self.current_location,
+            'assigned_at': self.assigned_at.isoformat() if self.assigned_at else None,
         }
