@@ -111,6 +111,7 @@ export const accountAPI = {
   getAll: () => api.get('/accounts'),
   getById: (id) => api.get(`/accounts/${id}`),
   getBalance: (id) => api.get(`/accounts/${id}/balance`),
+  delete: (id) => api.delete(`/accounts/${id}`),
 };
 
 // Transaction endpoints

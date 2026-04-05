@@ -468,6 +468,48 @@ def process_interest_user():
         return jsonify({"error": str(e)}), 500
 
 
+@accounts_bp.route("/<account_id>", methods=["DELETE"])
+@require_authentication
+def delete_account(account_id):
+    """
+    Delete an account
+
+    Authorization:
+        - Customer can only delete their own accounts
+        - Admin/Manager/Staff can delete any account
+
+    Returns:
+        200: Account deleted successfully
+        404: Account not found
+        403: Unauthorized
+    """
+    try:
+        current_user = get_current_user()
+        account = AccountService.get_account_by_id(account_id)
+
+        # Check authorization
+        if (current_user["role"] not in ["admin", "manager", "staff"] and
+                account.user_id != current_user["user_id"]):
+            return jsonify({"error": "You can only delete your own accounts"}), 403
+
+        # Delete associated card first
+        from app.models.base import Card
+        Card.objects(account_id=account_id).delete()
+
+        # Delete account
+        account.delete()
+
+        return jsonify({
+            "message": "Account deleted successfully",
+            "account_id": account_id
+        }), 200
+
+    except BankingException as e:
+        return jsonify({"error": e.message}), e.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @accounts_bp.errorhandler(BankingException)
 def handle_banking_exception(error):
     """Handle custom banking exceptions"""

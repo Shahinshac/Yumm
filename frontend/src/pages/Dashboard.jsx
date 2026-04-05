@@ -22,6 +22,8 @@ export function DashboardPage() {
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
+  const [showAccountDetail, setShowAccountDetail] = useState(false);
 
   // Form states
   const [accountForm, setAccountForm] = useState({
@@ -101,6 +103,38 @@ export function DashboardPage() {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Handle opening account details
+  const handleOpenAccountDetail = async (account) => {
+    try {
+      const response = await accountAPI.getById(account.id);
+      setSelectedAccount(response.data);
+      setShowAccountDetail(true);
+    } catch (error) {
+      console.error('Error loading account details:', error);
+      alert('Failed to load account details');
+    }
+  };
+
+  // Handle deleting account
+  const handleDeleteAccount = async () => {
+    if (!selectedAccount) return;
+
+    if (!window.confirm(`Are you sure you want to delete account ${selectedAccount.account?.account_number}? This action cannot be undone.`)) {
+      return;
+    }
+
+    try {
+      await accountAPI.delete(selectedAccount.account?.id);
+      alert('✓ Account deleted successfully');
+      setShowAccountDetail(false);
+      setSelectedAccount(null);
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      alert('❌ Failed to delete account: ' + (error.response?.data?.error || error.message));
+    }
+  };
 
   const handleCreateAccount = async (e) => {
     e.preventDefault();
@@ -1048,7 +1082,7 @@ CLOSING BALANCE: ₹${account?.balance || 0}
               {accounts.length > 0 ? (
                 <div className="accounts-list">
                   {accounts.map((account) => (
-                    <div key={account.id} className="account-item">
+                    <div key={account.id} className="account-item" onClick={() => handleOpenAccountDetail(account)} style={{cursor: 'pointer'}}>
                       <div className="account-icon">💳</div>
                       <div className="account-details">
                         <h4>{account.account_type?.toUpperCase()}</h4>
@@ -1058,6 +1092,17 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                       <div className="account-balance">
                         <p className="balance">₹{parseFloat(account.balance).toFixed(2)}</p>
                       </div>
+                      <button
+                        className="delete-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedAccount({ account });
+                          handleDeleteAccount();
+                        }}
+                        title="Delete account"
+                      >
+                        🗑️
+                      </button>
                     </div>
                   ))}
                 </div>
@@ -1065,6 +1110,102 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                 <div className="empty-state">
                   <p>💳 No accounts yet</p>
                   <button className="submit-btn" onClick={() => setShowCreateAccount(true)}>Create Your First Account</button>
+                </div>
+              )}
+
+              {/* Account Detail Modal */}
+              {showAccountDetail && selectedAccount && (
+                <div className="modal-overlay" onClick={() => setShowAccountDetail(false)}>
+                  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <div className="modal-header">
+                      <h3>📋 Account Details</h3>
+                      <button className="close-btn" onClick={() => setShowAccountDetail(false)}>✕</button>
+                    </div>
+
+                    <div className="modal-body">
+                      {/* Customer Details */}
+                      <div className="detail-section">
+                        <h4>👤 Customer Information</h4>
+                        <div className="detail-grid">
+                          <div className="detail-row">
+                            <span className="label">Customer Name:</span>
+                            <span className="value">{selectedAccount.owner?.first_name} {selectedAccount.owner?.last_name}</span>
+                          </div>
+                          <div className="detail-row">
+                            <span className="label">Email:</span>
+                            <span className="value">{selectedAccount.owner?.email}</span>
+                          </div>
+                          <div className="detail-row">
+                            <span className="label">Phone:</span>
+                            <span className="value">{selectedAccount.owner?.phone_number}</span>
+                          </div>
+                          <div className="detail-row">
+                            <span className="label">Username:</span>
+                            <span className="value">{selectedAccount.owner?.username}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Account Details */}
+                      <div className="detail-section">
+                        <h4>💳 Account Details</h4>
+                        <div className="detail-grid">
+                          <div className="detail-row">
+                            <span className="label">Account Number:</span>
+                            <span className="value">{selectedAccount.account?.account_number}</span>
+                          </div>
+                          <div className="detail-row">
+                            <span className="label">Account Type:</span>
+                            <span className="value">{selectedAccount.account?.account_type?.toUpperCase()}</span>
+                          </div>
+                          <div className="detail-row">
+                            <span className="label">Balance:</span>
+                            <span className="value">₹{parseFloat(selectedAccount.account?.balance).toFixed(2)}</span>
+                          </div>
+                          <div className="detail-row">
+                            <span className="label">Status:</span>
+                            <span className={`value badge badge-${selectedAccount.account?.status}`}>{selectedAccount.account?.status}</span>
+                          </div>
+                          <div className="detail-row">
+                            <span className="label">Opened:</span>
+                            <span className="value">{new Date(selectedAccount.account?.created_at).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Card Details */}
+                      {selectedAccount.card && (
+                        <div className="detail-section">
+                          <h4>🎴 ATM Card Details</h4>
+                          <div className="detail-grid">
+                            <div className="detail-row">
+                              <span className="label">Card Number:</span>
+                              <span className="value">****{selectedAccount.card?.card_number?.slice(-4)}</span>
+                            </div>
+                            <div className="detail-row">
+                              <span className="label">Expiry Date:</span>
+                              <span className="value">{selectedAccount.card?.expiry_date}</span>
+                            </div>
+                            <div className="detail-row">
+                              <span className="label">Card Status:</span>
+                              <span className={`value badge ${selectedAccount.card?.is_active ? 'badge-success' : 'badge-danger'}`}>
+                                {selectedAccount.card?.is_active ? '🟢 Active' : '🔴 Inactive'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="modal-footer">
+                      <button className="delete-btn" onClick={handleDeleteAccount}>
+                        🗑️ Delete Account
+                      </button>
+                      <button className="cancel-btn" onClick={() => setShowAccountDetail(false)}>
+                        Close
+                      </button>
+                    </div>
+                  </div>
                 </div>
               )}
             </section>
