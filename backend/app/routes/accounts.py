@@ -193,8 +193,7 @@ def get_account_balance(account_id):
         account = AccountService.get_account_by_id(account_id)
 
         # Check authorization
-        if (current_user["role"] not in ["admin", "manager", "staff"] and
-                account.user_id != current_user["user_id"]):
+        if not verify_account_access(account, current_user):
             return jsonify({"error": "Unauthorized"}), 403
 
         balance = AccountService.get_account_balance(account_id)
@@ -305,8 +304,7 @@ def get_account_status(account_id):
         account = AccountService.get_account_by_id(account_id)
 
         # Check authorization
-        if (current_user["role"] not in ["admin", "manager", "staff"] and
-                account.user_id != current_user["user_id"]):
+        if not verify_account_access(account, current_user):
             return jsonify({"error": "Unauthorized"}), 403
 
         status = AccountService.get_account_status(account_id)
@@ -342,8 +340,7 @@ def calculate_interest(account_id):
         account = AccountService.get_account_by_id(account_id)
 
         # Check authorization
-        if (current_user["role"] not in ["admin", "manager", "staff"] and
-                account.user_id != current_user["user_id"]):
+        if not verify_account_access(account, current_user):
             return jsonify({"error": "Unauthorized"}), 403
 
         from app.services.interest_service import InterestService
@@ -407,8 +404,7 @@ def get_interest_statistics(account_id):
         account = AccountService.get_account_by_id(account_id)
 
         # Check authorization
-        if (current_user["role"] not in ["admin", "manager", "staff"] and
-                account.user_id != current_user["user_id"]):
+        if not verify_account_access(account, current_user):
             return jsonify({"error": "Unauthorized"}), 403
 
         from app.services.interest_service import InterestService
