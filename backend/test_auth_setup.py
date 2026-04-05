@@ -38,7 +38,7 @@ try:
     from app.middleware.rbac import require_role, require_authentication
     print("✓ RBAC middleware imported")
 
-    from app.routes.auth import auth_bp
+    from app.routes.auth_secure import auth_bp
     print("✓ Auth routes imported")
 
     # Test the app factory
