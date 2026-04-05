@@ -29,8 +29,13 @@ export function DashboardPage() {
   const [accountForm, setAccountForm] = useState({
     account_type: 'savings',
     initial_balance: 0,
-    selected_customer_id: null,  // For admin/staff creating for customers
-    customer_search: '',  // Search field for finding customers
+  });
+
+  const [newCustomerForm, setNewCustomerForm] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone_number: '',
   });
 
   const [userForm, setUserForm] = useState({
@@ -151,43 +156,68 @@ export function DashboardPage() {
     e.preventDefault();
     try {
       const isStaffOrAdmin = ['staff', 'admin'].includes(user?.role);
+      let customerName = `${user.first_name} ${user.last_name}`;
+      let customerEmail = user.email;
+      let customerPhone = user.phone_number;
+      let createdUserId = null;
 
-      // For staff/admin creating account for customer
-      if (isStaffOrAdmin && accountForm.selected_customer_id) {
-        if (!window.confirm('Create account for this customer?')) {
+      // If staff/admin entering NEW customer details
+      if (isStaffOrAdmin && newCustomerForm.first_name) {
+        // Validate customer form
+        if (!validateEmail(newCustomerForm.email)) {
+          alert('⚠️ Invalid email address');
+          return;
+        }
+        if (!validatePhone(newCustomerForm.phone_number)) {
+          alert('⚠️ Invalid phone number (must be 10+ digits)');
+          return;
+        }
+
+        // Generate username from email
+        const username = newCustomerForm.email.split('@')[0] + Date.now().toString().slice(-4);
+
+        // Create customer account first
+        try {
+          const userResponse = await authAPI.register({
+            username: username,
+            email: newCustomerForm.email,
+            first_name: newCustomerForm.first_name,
+            last_name: newCustomerForm.last_name,
+            phone_number: newCustomerForm.phone_number,
+            role: 'customer',
+          });
+
+          if (userResponse.status === 201) {
+            createdUserId = userResponse.data.user.id;
+            customerName = `${newCustomerForm.first_name} ${newCustomerForm.last_name}`;
+            customerEmail = newCustomerForm.email;
+            customerPhone = newCustomerForm.phone_number;
+            alert(`✅ Customer account created!\n\nUsername: ${username}\n\nShare these credentials with customer.`);
+          }
+        } catch (userError) {
+          alert('❌ Failed to create customer account: ' + (userError.response?.data?.error || userError.message));
           return;
         }
       }
 
-      // Create account with simplified payload
+      // Create bank account
       const accountPayload = {
         account_type: accountForm.account_type,
         initial_balance: parseFloat(accountForm.initial_balance) || 0,
       };
 
-      // If staff/admin is creating for a customer, include their user_id
-      if (isStaffOrAdmin && accountForm.selected_customer_id) {
-        accountPayload.user_id = accountForm.selected_customer_id;
+      // If created new customer or selecting existing, use that customer's ID
+      if (createdUserId) {
+        accountPayload.user_id = createdUserId;
+      } else if (isStaffOrAdmin && !newCustomerForm.first_name) {
+        // If staff/admin but no customer details, must fill them
+        alert('⚠️ Please enter customer details or you can only create account for yourself');
+        return;
       }
 
       const response = await accountAPI.create(accountPayload);
       if (response.status === 201) {
         const { account, card } = response.data;
-
-        // Get customer details for passbook
-        let customerName = `${user.first_name} ${user.last_name}`;
-        let customerEmail = user.email;
-        let customerPhone = user.phone_number;
-
-        // If creating for another customer, get their details
-        if (isStaffOrAdmin && accountForm.selected_customer_id) {
-          const selectedCustomer = users.find(u => u.id === accountForm.selected_customer_id);
-          if (selectedCustomer) {
-            customerName = `${selectedCustomer.first_name} ${selectedCustomer.last_name}`;
-            customerEmail = selectedCustomer.email;
-            customerPhone = selectedCustomer.phone_number;
-          }
-        }
 
         // Generate passbook
         const passbook = {
@@ -211,7 +241,8 @@ export function DashboardPage() {
 
         setCreatedPassbook(passbook);
         setShowCreateAccount(false);
-        setAccountForm({ account_type: 'savings', initial_balance: 0, selected_customer_id: null, customer_search: '' });
+        setAccountForm({ account_type: 'savings', initial_balance: 0 });
+        setNewCustomerForm({ first_name: '', last_name: '', email: '', phone_number: '' });
 
         // Show notification about card
         if (card) {
@@ -949,100 +980,59 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                 <div className="section-box form-container">
                   <h3>📋 Create New Account</h3>
                   <form onSubmit={handleCreateAccount} className="form">
-                    {/* Customer Selection Section - Staff/Admin Only */}
+                    {/* Customer Details Section - For Staff/Admin Entering New Customer */}
                     {['staff', 'admin'].includes(user?.role) && (
                       <div className="form-section">
-                        <h4>🔍 Select Customer</h4>
+                        <h4>👤 Customer Details</h4>
                         <div className="form-group">
-                          <label>Search Customer *</label>
+                          <label>First Name *</label>
                           <input
                             type="text"
-                            value={accountForm.customer_search}
-                            onChange={(e) => setAccountForm({...accountForm, customer_search: e.target.value})}
-                            placeholder="Search by name, email, or phone..."
+                            value={newCustomerForm.first_name}
+                            onChange={(e) => setNewCustomerForm({...newCustomerForm, first_name: e.target.value})}
+                            placeholder="Enter customer's first name"
+                            required
                           />
-                          <small className="hint">Start typing to search for customer</small>
                         </div>
-
-                        {/* Customer Dropdown - Filtered Results */}
-                        {accountForm.customer_search && users.filter(u => u.role === 'customer').filter(u =>
-                          u.first_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
-                          u.last_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
-                          u.email?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
-                          u.phone_number?.includes(accountForm.customer_search)
-                        ).length > 0 && (
-                          <div className="customer-dropdown">
-                            {users.filter(u => u.role === 'customer').filter(u =>
-                              u.first_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
-                              u.last_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
-                              u.email?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
-                              u.phone_number?.includes(accountForm.customer_search)
-                            ).map(customer => (
-                              <button
-                                key={customer.id}
-                                type="button"
-                                className="customer-option"
-                                onClick={() => setAccountForm({
-                                  ...accountForm,
-                                  selected_customer_id: customer.id,
-                                  customer_search: ''
-                                })}
-                              >
-                                <div className="customer-name">{customer.first_name} {customer.last_name}</div>
-                                <div className="customer-contact">{customer.email} | {customer.phone_number}</div>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-
-                        {accountForm.customer_search && users.filter(u => u.role === 'customer').filter(u =>
-                          u.first_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
-                          u.last_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
-                          u.email?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
-                          u.phone_number?.includes(accountForm.customer_search)
-                        ).length === 0 && (
-                          <div className="no-results">⚠️ No customers found</div>
-                        )}
+                        <div className="form-group">
+                          <label>Last Name *</label>
+                          <input
+                            type="text"
+                            value={newCustomerForm.last_name}
+                            onChange={(e) => setNewCustomerForm({...newCustomerForm, last_name: e.target.value})}
+                            placeholder="Enter customer's last name"
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Email Address *</label>
+                          <input
+                            type="email"
+                            value={newCustomerForm.email}
+                            onChange={(e) => setNewCustomerForm({...newCustomerForm, email: e.target.value})}
+                            placeholder="Enter customer's email"
+                            required
+                          />
+                          <small className="hint">✓ This will be used to create customer account</small>
+                        </div>
+                        <div className="form-group">
+                          <label>Phone Number *</label>
+                          <input
+                            type="tel"
+                            value={newCustomerForm.phone_number}
+                            onChange={(e) => setNewCustomerForm({...newCustomerForm, phone_number: e.target.value})}
+                            placeholder="Enter 10-digit phone number"
+                            required
+                          />
+                          <small className="hint">Format: 9876543210 or +919876543210</small>
+                        </div>
                       </div>
                     )}
 
-                    {/* Customer Details Section - Read Only */}
-                    <div className="form-section">
-                      <h4>👤 {['staff', 'admin'].includes(user?.role) ? 'Selected Customer Details' : 'Your Details'}</h4>
-                      {['staff', 'admin'].includes(user?.role) && accountForm.selected_customer_id ? (
-                        (() => {
-                          const selectedCustomer = users.find(u => u.id === accountForm.selected_customer_id);
-                          return selectedCustomer ? (
-                            <div className="detail-info">
-                              <div className="detail-field">
-                                <label>Full Name</label>
-                                <p className="field-value">{selectedCustomer.first_name} {selectedCustomer.last_name}</p>
-                              </div>
-                              <div className="detail-field">
-                                <label>Email Address</label>
-                                <p className="field-value">{selectedCustomer.email}</p>
-                              </div>
-                              <div className="detail-field">
-                                <label>Phone Number</label>
-                                <p className="field-value">{selectedCustomer.phone_number}</p>
-                              </div>
-                              <div className="detail-field">
-                                <label>Username</label>
-                                <p className="field-value">{selectedCustomer.username}</p>
-                              </div>
-                              <button
-                                type="button"
-                                className="cancel-btn"
-                                onClick={() => setAccountForm({...accountForm, selected_customer_id: null})}
-                              >
-                                ✕ Change Customer
-                              </button>
-                            </div>
-                          ) : null;
-                        })()
-                      ) : ['staff', 'admin'].includes(user?.role) ? (
-                        <div className="alert-info">📋 Please search and select a customer above</div>
-                      ) : (
+                    {/* For Customer Creating Own Account */}
+                    {!['staff', 'admin'].includes(user?.role) && (
+                      <div className="form-section">
+                        <h4>👤 Your Details</h4>
                         <div className="detail-info">
                           <div className="detail-field">
                             <label>Full Name</label>
@@ -1056,13 +1046,9 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                             <label>Phone Number</label>
                             <p className="field-value">{user?.phone_number}</p>
                           </div>
-                          <div className="detail-field">
-                            <label>Username</label>
-                            <p className="field-value">{user?.username}</p>
-                          </div>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    )}
 
                     {/* Account Details Section */}
                     <div className="form-section">
@@ -1095,13 +1081,14 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                       <button
                         type="submit"
                         className="submit-btn"
-                        disabled={['staff', 'admin'].includes(user?.role) && !accountForm.selected_customer_id}
+                        disabled={['staff', 'admin'].includes(user?.role) && !newCustomerForm.first_name}
                       >
                         ✓ Create Account & Generate Passbook
                       </button>
                       <button type="button" className="cancel-btn" onClick={() => {
                         setShowCreateAccount(false);
-                        setAccountForm({account_type: 'savings', initial_balance: 0, selected_customer_id: null, customer_search: ''});
+                        setAccountForm({account_type: 'savings', initial_balance: 0});
+                        setNewCustomerForm({ first_name: '', last_name: '', email: '', phone_number: '' });
                       }}>Cancel</button>
                     </div>
                   </form>
