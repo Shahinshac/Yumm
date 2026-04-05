@@ -5,7 +5,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuthStore } from '../context/authStore';
 import { accountAPI, transactionAPI, userAPI, authAPI, billAPI } from '../services/api';
-import { generatePassword, generateAccountNumber, copyToClipboard, validateEmail, validatePhone, escapeHTML } from '../utils/helpers';
+import { generatePassword, generateAccountNumber, copyToClipboard, validateEmail, validatePhone, escapeHTML, normalizeApiData } from '../utils/helpers';
 import '../styles/professional-dashboard.css';
 
 export function DashboardPage() {
@@ -79,14 +79,16 @@ export function DashboardPage() {
         accountAPI.getAll(),
         transactionAPI.getAll({ limit: 10 }),
       ]);
-      setAccounts(Array.isArray(accountsRes.data) ? accountsRes.data : []);
-      setTransactions(Array.isArray(txRes.data?.transactions) ? txRes.data.transactions : []);
+
+      // Normalize API responses to handle different response structures
+      setAccounts(normalizeApiData(accountsRes));
+      setTransactions(normalizeApiData(txRes, 'transactions'));
 
       // Fetch users if admin
       if (user?.role === 'admin') {
         try {
           const usersRes = await userAPI.getAll();
-          setUsers(Array.isArray(usersRes.data) ? usersRes.data : Array.isArray(usersRes.data?.users) ? usersRes.data.users : Array.isArray(usersRes.data?.data) ? usersRes.data.data : []);
+          setUsers(normalizeApiData(usersRes));
         } catch (err) {
           console.error('Failed to fetch users:', err);
         }

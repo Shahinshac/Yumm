@@ -92,3 +92,32 @@ export const escapeHTML = (text) => {
   };
   return String(text).replace(/[&<>"']/g, (char) => map[char]);
 };
+
+// Normalize API response data structure
+// Handles multiple response formats: data, data.items, data.users, data.data
+export const normalizeApiData = (response, dataKey = null) => {
+  if (!response || !response.data) return [];
+
+  let data = response.data;
+
+  // If a specific data key is provided, try to extract it
+  if (dataKey) {
+    data = response.data[dataKey];
+    if (Array.isArray(data)) return data;
+  }
+
+  // If data is already an array, return it
+  if (Array.isArray(data)) return data;
+
+  // Try common nested structures
+  const commonKeys = ['items', 'users', 'data', 'records', 'results'];
+  for (const key of commonKeys) {
+    if (Array.isArray(data[key])) {
+      return data[key];
+    }
+  }
+
+  // If nothing found, return empty array
+  return [];
+};
+
