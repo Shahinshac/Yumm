@@ -192,11 +192,6 @@ export function LoginPage() {
                 'Sign In'
               )}
             </button>
-
-            {/* Demo Credentials */}
-            <div className="demo-info">
-              <p><strong>Demo Admin:</strong> shahinsha / 262007</p>
-            </div>
           </form>
 
           {/* Footer */}
