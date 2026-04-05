@@ -6,6 +6,7 @@
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { authAPI } from '../services/api';
 import '../styles/change-password-first-login.css';
 
 export function ChangePasswordFirstLoginPage() {
@@ -59,32 +60,22 @@ export function ChangePasswordFirstLoginPage() {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem('access_token');
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL || 'http://localhost:5000/api'}/auth/change-password-first-login`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            new_password: form.newPassword,
-          }),
-        }
-      );
+      const response = await authAPI.changePasswordFirstLogin({
+        new_password: form.newPassword,
+      });
 
-      if (response.ok) {
+      if (response.status === 200 || response.status === 201) {
         setSuccess(true);
         setTimeout(() => {
           navigate('/dashboard');
         }, 2000);
-      } else {
-        const data = await response.json();
-        setErrors({ form: data.error || 'Failed to change password' });
       }
     } catch (error) {
-      setErrors({ form: 'Connection error. Please try again.' });
+      const errorMessage = error.response?.data?.error ||
+                          error.response?.data?.message ||
+                          'Failed to change password';
+      setErrors({ form: errorMessage });
+      console.error('Password change error:', error);
     } finally {
       setLoading(false);
     }

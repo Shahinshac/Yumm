@@ -100,6 +100,7 @@ export const authAPI = {
   refresh: () => api.post('/auth/refresh'),
   getMe: () => api.get('/auth/me'),
   changePassword: (data) => api.post('/auth/change-password', data),
+  changePasswordFirstLogin: (data) => api.post('/auth/change-password-first-login', data),
   setMPIN: (mpin) => api.post('/auth/set-mpin', { mpin }),
   verifyMPIN: (mpin) => api.post('/auth/verify-mpin', { mpin }),
 };
