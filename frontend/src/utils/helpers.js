@@ -69,8 +69,8 @@ export const validateEmail = (email) => {
 // Validate phone number - improved regex for international formats
 export const validatePhone = (phone) => {
   // Accepts: +1234567890, 1234567890, +1 234-567-8900, (123) 456-7890
-  const regex = /^[\+]?[(]?[0-9]{1,4}[)]?[-\s\.]?[(]?[0-9]{1,4}[)]?[-\s\.]?[0-9]{1,9}$/;
-  const cleaned = phone.replace(/[^\d\+]/g, '');
+  const regex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/;
+  const cleaned = phone.replace(/[^\d+]/g, '');
   return regex.test(phone) && cleaned.length >= 10 && cleaned.length <= 15;
 };
 
