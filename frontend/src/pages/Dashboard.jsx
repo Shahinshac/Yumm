@@ -4,7 +4,7 @@
  */
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuthStore } from '../context/authStore';
-import { accountAPI, transactionAPI, userAPI, authAPI } from '../services/api';
+import { accountAPI, transactionAPI, userAPI, authAPI, billAPI } from '../services/api';
 import { generatePassword, generateAccountNumber, copyToClipboard, validateEmail, validatePhone, escapeHTML } from '../utils/helpers';
 import '../styles/professional-dashboard.css';
 
@@ -275,30 +275,62 @@ export function DashboardPage() {
 
   const handlePayBill = async (billId) => {
     const bill = bills.find(b => b.id === billId);
-    if (!bill) return;
+    if (!bill) {
+      alert('❌ Bill not found');
+      return;
+    }
 
     if (!window.confirm(`Pay ₹${bill.amount} for ${bill.bill_type}?`)) return;
 
+    // Optimistically update UI
+    const originalBills = bills;
+    const originalPayments = billPayments;
+
     try {
-      // Mark bill as paid locally
+      // Mark bill as processing
       setBills(bills.map(b =>
         b.id === billId
-          ? { ...b, status: 'success' }
+          ? { ...b, status: 'processing' }
           : b
       ));
 
-      // Add to payment history
-      setBillPayments([{
-        payment_id: `PAY-${Date.now()}`,
+      // Call API to process payment
+      const response = await billAPI.pay({
         bill_id: billId,
-        ...bill,
-        status: 'success',
-        paid_at: new Date().toISOString(),
-      }, ...billPayments]);
+        amount: bill.amount,
+        bill_type: bill.bill_type,
+      });
 
-      alert('✅ Bill paid successfully!');
+      if (response.status === 200 || response.status === 201) {
+        // Update UI with success
+        setBills(bills.map(b =>
+          b.id === billId
+            ? { ...b, status: 'success' }
+            : b
+        ));
+
+        // Add to payment history
+        setBillPayments([{
+          payment_id: response.data?.payment_id || `PAY-${Date.now()}`,
+          bill_id: billId,
+          ...bill,
+          status: 'success',
+          paid_at: new Date().toISOString(),
+        }, ...billPayments]);
+
+        alert('✅ Bill paid successfully!');
+      }
     } catch (error) {
-      alert('Failed to pay bill: ' + error.message);
+      // Revert to original state on error
+      setBills(originalBills);
+      setBillPayments(originalPayments);
+
+      const errorMessage = error.response?.data?.error ||
+                          error.response?.data?.message ||
+                          error.message ||
+                          'Failed to pay bill';
+      alert(`❌ Payment failed: ${errorMessage}`);
+      console.error('Bill payment error:', error);
     }
   };
 
