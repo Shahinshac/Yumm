@@ -37,6 +37,20 @@ export function DashboardPage() {
     role: 'customer',
   });
 
+  // Billing states
+  const [showBillingForm, setShowBillingForm] = useState(false);
+  const [bills, setBills] = useState([]);
+  const [billPayments, setBillPayments] = useState([]);
+  const [billForm, setBillForm] = useState({
+    bill_id: `BILL-${Date.now()}`,
+    bill_type: 'mobile_recharge',
+    amount: '',
+    recipient_name: '',
+    recipient_identifier: '',
+    customer_id: '',
+    description: '',
+  });
+
   const fetchData = useCallback(async () => {
     try {
       const [accountsRes, txRes] = await Promise.all([
@@ -136,6 +150,68 @@ export function DashboardPage() {
     }
   };
 
+  // Billing handlers for admin
+  const handleCreateBill = async (e) => {
+    e.preventDefault();
+    if (!billForm.customer_id || !billForm.amount || !billForm.recipient_identifier) {
+      alert('Please fill all required fields');
+      return;
+    }
+    try {
+      // Create dummy bill locally for demo
+      const newBill = {
+        id: `BILL-${Date.now()}`,
+        ...billForm,
+        amount: parseFloat(billForm.amount),
+        status: 'pending',
+        created_at: new Date().toISOString(),
+      };
+      setBills([newBill, ...bills]);
+      alert('✅ Bill created successfully!');
+      setBillForm({
+        bill_id: `BILL-${Date.now()}`,
+        bill_type: 'mobile_recharge',
+        amount: '',
+        recipient_name: '',
+        recipient_identifier: '',
+        customer_id: '',
+        description: '',
+      });
+      setShowBillingForm(false);
+    } catch (error) {
+      alert('Failed to create bill: ' + error.message);
+    }
+  };
+
+  const handlePayBill = async (billId) => {
+    const bill = bills.find(b => b.id === billId);
+    if (!bill) return;
+
+    if (!window.confirm(`Pay ₹${bill.amount} for ${bill.bill_type}?`)) return;
+
+    try {
+      // Mark bill as paid locally
+      setBills(bills.map(b =>
+        b.id === billId
+          ? { ...b, status: 'success' }
+          : b
+      ));
+
+      // Add to payment history
+      setBillPayments([{
+        payment_id: `PAY-${Date.now()}`,
+        bill_id: billId,
+        ...bill,
+        status: 'success',
+        paid_at: new Date().toISOString(),
+      }, ...billPayments]);
+
+      alert('✅ Bill paid successfully!');
+    } catch (error) {
+      alert('Failed to pay bill: ' + error.message);
+    }
+  };
+
   const totalBalance = accounts.reduce((sum, acc) => sum + parseFloat(acc.balance || 0), 0);
 
   // Menu items with icons - FIX: Use useMemo to prevent duplication
@@ -156,7 +232,10 @@ export function DashboardPage() {
 
     // Add admin menu only once using useMemo
     if (user?.role === 'admin') {
-      baseItems.push({ id: 'users', label: '👨‍💼 User Management', icon: '👨‍💼' });
+      baseItems.push(
+        { id: 'users', label: '👨‍💼 User Management', icon: '👨‍💼' },
+        { id: 'billing', label: '💰 Billing Management', icon: '💰' }
+      );
     }
 
     return baseItems;
@@ -645,6 +724,168 @@ export function DashboardPage() {
                   </table>
                 ) : (
                   <p className="empty">No users found</p>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* BILLING MANAGEMENT SECTION - ADMIN ONLY */}
+          {activeSection === 'billing' && user?.role === 'admin' && (
+            <section className="section">
+              <div className="section-header">
+                <h2>💰 Billing Management</h2>
+                <button className="submit-btn" onClick={() => setShowBillingForm(!showBillingForm)}>
+                  {showBillingForm ? '✕ Cancel' : '➕ Create Bill'}
+                </button>
+              </div>
+
+              {/* Create Bill Form */}
+              {showBillingForm && (
+                <div className="section-box form-container">
+                  <h3>Create New Bill</h3>
+                  <form onSubmit={handleCreateBill} className="form">
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Bill ID (Auto)</label>
+                        <input type="text" value={billForm.bill_id} disabled className="disabled-field" />
+                      </div>
+                      <div className="form-group">
+                        <label>Bill Type *</label>
+                        <select value={billForm.bill_type} onChange={(e) => setBillForm({...billForm, bill_type: e.target.value})}>
+                          <option value="mobile_recharge">📱 Mobile Recharge</option>
+                          <option value="electricity">⚡ Electricity Bill</option>
+                          <option value="internet">🌐 Internet Bill</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Amount (₹) *</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={billForm.amount}
+                          onChange={(e) => setBillForm({...billForm, amount: e.target.value})}
+                          placeholder="Enter amount"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Customer (User ID) *</label>
+                        <select
+                          value={billForm.customer_id}
+                          onChange={(e) => setBillForm({...billForm, customer_id: e.target.value})}
+                        >
+                          <option value="">Select customer...</option>
+                          {users.filter(u => u.role === 'customer').map(u => (
+                            <option key={u.id} value={u.id}>{u.first_name} {u.last_name} ({u.username})</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Recipient Name *</label>
+                        <input
+                          type="text"
+                          value={billForm.recipient_name}
+                          onChange={(e) => setBillForm({...billForm, recipient_name: e.target.value})}
+                          placeholder="e.g., Jio, BCCL, Airtel"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>
+                          {billForm.bill_type === 'mobile_recharge' ? 'Phone Number' : 'Account Number'} *
+                        </label>
+                        <input
+                          type="text"
+                          value={billForm.recipient_identifier}
+                          onChange={(e) => setBillForm({...billForm, recipient_identifier: e.target.value})}
+                          placeholder={billForm.bill_type === 'mobile_recharge' ? '+91-9876543210' : '12345678'}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        value={billForm.description}
+                        onChange={(e) => setBillForm({...billForm, description: e.target.value})}
+                        placeholder="Optional notes"
+                        rows="2"
+                      />
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="submit" className="submit-btn">Create Bill</button>
+                      <button type="button" className="cancel-btn" onClick={() => setShowBillingForm(false)}>Cancel</button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Bills Grid */}
+              <div className="section-box">
+                <h3>Pending Bills ({bills.filter(b => b.status === 'pending').length})</h3>
+                {bills.filter(b => b.status === 'pending').length > 0 ? (
+                  <div className="bills-grid">
+                    {bills.filter(b => b.status === 'pending').map((bill) => (
+                      <div key={bill.id} className="bill-card">
+                        <div className="bill-header">
+                          <span className="bill-id">ID: {bill.bill_id}</span>
+                          <span className={`badge badge-${bill.status}`}>{bill.status.toUpperCase()}</span>
+                        </div>
+                        <div className="bill-details">
+                          <p><strong>{bill.bill_type.replace('_', ' ').toUpperCase()}</strong></p>
+                          <p>📋 {bill.recipient_name} - {bill.recipient_identifier}</p>
+                          <p>💵 Amount: <strong>₹{parseFloat(bill.amount).toFixed(2)}</strong></p>
+                          <p className="date">{new Date(bill.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <button
+                          className="pay-btn"
+                          onClick={() => handlePayBill(bill.id)}
+                        >
+                          ✓ Pay Bill
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="empty">No pending bills</p>
+                )}
+              </div>
+
+              {/* Paid Bills */}
+              <div className="section-box">
+                <h3>Payment History ({billPayments.length})</h3>
+                {billPayments.length > 0 ? (
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Payment ID</th>
+                        <th>Bill Type</th>
+                        <th>Amount</th>
+                        <th>Recipient</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {billPayments.map((payment) => (
+                        <tr key={payment.payment_id}>
+                          <td><strong>{payment.payment_id}</strong></td>
+                          <td>{payment.bill_type}</td>
+                          <td>₹{payment.amount.toFixed(2)}</td>
+                          <td>{payment.recipient_name}</td>
+                          <td><span className="badge badge-success">✓ PAID</span></td>
+                          <td>{new Date(payment.paid_at).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="empty">No payment history</p>
                 )}
               </div>
             </section>
