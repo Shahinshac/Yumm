@@ -230,9 +230,6 @@ export function DashboardPage() {
       alert('❌ Failed to create account: ' + (error.response?.data?.error || error.message));
     }
   };
-      alert('Failed to create account: ' + (error.response?.data?.error || error.message));
-    }
-  };
 
   const handleCreateUser = async (e) => {
     e.preventDefault();
