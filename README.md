@@ -1,8 +1,8 @@
 # 🍕 FoodHub - Food Delivery App
 
-A modern, production-ready food delivery application built with Flask + React + MongoDB.
+A modern, production-ready food delivery application with Web + Mobile apps.
 
-**Status:** ✅ Complete | **Phase:** 1 & 2 Done | **Features:** 20+ | **Ready to Deploy:** Yes
+**Status:** ✅ PRODUCTION READY | **Platforms:** Web (React) + Mobile (Flutter/APK) | **Backend:** Flask | **Features:** 30+ | **Database:** MongoDB
 
 ---
 
@@ -16,12 +16,27 @@ python backend/run.py
 # API running at http://localhost:5000
 ```
 
-### Frontend
+### Frontend (Web)
 ```bash
 npm install
 export REACT_APP_API_URL="http://localhost:5000/api"
 npm start
 # App running at http://localhost:3000
+```
+
+### Mobile (Flutter/Android)
+```bash
+cd frontend-mobile
+flutter pub get
+flutter run
+# App running on emulator/device
+```
+
+### Build APK for Distribution
+```bash
+cd frontend-mobile
+flutter build apk --release
+# APK at: build/app/outputs/flutter-app.apk
 ```
 
 ---
@@ -90,16 +105,16 @@ npm start
 ### Backend (Flask + MongoDB)
 ```
 40+ API Endpoints
-├── Authentication
-├── Restaurants
-├── Orders
-├── Delivery
-├── Reviews
-├── Promo Codes
-└── Admin Analytics
+├── Authentication (login, register, JWT)
+├── Restaurants (list, search, menu)
+├── Orders (create, track, status)
+├── Delivery (assignment, tracking)
+├── Reviews (rating, comments)
+├── Promo Codes (validation, discount)
+└── Admin (analytics, user management)
 
 8 MongoDB Collections
-├── users (RBAC)
+├── users (RBAC: admin, staff, customer, delivery)
 ├── restaurants
 ├── menu_items
 ├── orders
@@ -109,26 +124,42 @@ npm start
 └── delivery_assignments
 ```
 
-### Frontend (React + Zustand)
+### Frontend - Web (React + Zustand)
 ```
-5 Main Pages
+5+ Main Pages
 ├── Login/Register
 ├── Customer Home
 ├── Restaurant Menu
 ├── Checkout
-├── Order Tracking
-├── Review Form
+└── Order Tracking
 
-3 Dashboards
-├── Restaurant
-├── Delivery Partner
-└── Admin
-
-State Management
+Zustand State Management
 ├── Auth Store
 ├── Cart Store
-├── Orders Store
-└── UI State
+└── Orders Store
+```
+
+### Frontend - Mobile (Flutter)
+```
+10 Complete Pages
+├── Login/Register (with demo users)
+├── Customer Home (restaurants list)
+├── Restaurant Menu (browsing)
+├── Checkout (cart, promo, billing)
+├── My Orders (order history)
+├── Order Tracking (status + review)
+├── Delivery Dashboard
+├── Restaurant Dashboard
+├── Admin Dashboard
+└── Settings
+
+Provider State Management
+├── AuthProvider
+├── RestaurantProvider
+└── OrderProvider
+
+GoRouter Navigation
+HTTP API Client
 ```
 
 ---
@@ -261,33 +292,35 @@ State Management
 | Component | Technology |
 |-----------|-----------|
 | **Backend** | Flask, MongoEngine |
-| **Frontend** | React 18, Zustand |
-| **Database** | MongoDB |
-| **Auth** | JWT, bcrypt |
-| **HTTP** | Axios |
-| **State** | Zustand |
-| **Styling** | CSS3 |
+| **Web Frontend** | React 18, Zustand, Axios |
+| **Mobile Frontend** | Flutter, Dart, Provider, GoRouter |
+| **Database** | MongoDB (Atlas ready) |
+| **Authentication** | JWT + bcrypt |
+| **State Management** | Zustand (web), Provider (mobile) |
+| **Navigation** | React Router (web), GoRouter (mobile) |
+| **Deployment** | Render + Vercel + GitHub/Play Store |
+| **Cost** | 100% FREE (up to 1M users) |
 
 ---
 
-## 🚀 Deployment
+## 🌐 DEPLOYMENT
 
-### Backend → Render
+### Web + Mobile Deployment Guide
+See **DEPLOYMENT_GUIDE.md** for complete instructions on deploying to:
+- ✅ **Backend:** Render (free)
+- ✅ **Web Frontend:** Vercel (free)
+- ✅ **Mobile APK:** GitHub Releases (free) or Google Play Store ($25)
+
+### Quick Deployment
 ```bash
-1. Push to GitHub
-2. Connect Render
-3. Set environment variables
-4. Deploy (automatic)
-```
+# Web: Push to GitHub → Vercel auto-deploys
+git push origin main
 
-### Frontend → Vercel
-```bash
-1. Push to GitHub
-2. Connect Vercel
-3. Deploy (automatic)
+# Mobile: Build APK → Upload to GitHub Releases
+cd frontend-mobile
+flutter build apk --release
+# Share download link from GitHub Releases
 ```
-
-**Total Cost: $0/month** (both free tiers)
 
 ---
 
@@ -345,12 +378,24 @@ State Management
 
 ---
 
+## 📚 Documentation
+
+| Document | Purpose |
+|----------|---------|
+| **DEPLOYMENT_GUIDE.md** | Complete deployment guide for Web + APK |
+| **FLUTTER_QUICK_START.md** | Flutter mobile app setup and build instructions |
+| **API Endpoints** | See endpoint docs above (40+ routes) |
+| **Database Schema** | See schema section above |
+
+---
+
 ## 📞 Support
 
 - **Backend Issues:** Check `backend/` logs
 - **Frontend Issues:** Check browser console
 - **Database Issues:** Verify MongoDB connection
 - **API Issues:** Check endpoint docs above
+- **Mobile App:** See FLUTTER_QUICK_START.md
 
 ---
 
