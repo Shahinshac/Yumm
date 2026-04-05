@@ -21,14 +21,19 @@ export function DashboardPage() {
 
   const fetchData = async () => {
     try {
-      const [accountsRes, txRes] = await Promise.all([
-        accountAPI.getAll(),
-        transactionAPI.getAll({ limit: 10 }),
-      ]);
-      setAccounts(accountsRes.data || []);
-      setTransactions(txRes.data?.transactions || []);
+      console.log('Fetching dashboard data...');
+      const accountsRes = await accountAPI.getAll();
+      console.log('Accounts response:', accountsRes);
+      const txRes = await transactionAPI.getAll({ limit: 10 });
+      console.log('Transactions response:', txRes);
+
+      setAccounts(Array.isArray(accountsRes.data) ? accountsRes.data : []);
+      setTransactions(Array.isArray(txRes.data?.transactions) ? txRes.data.transactions : []);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error('Failed to fetch dashboard data:', error);
+      // Show error but allow dashboard to render
+      setAccounts([]);
+      setTransactions([]);
     } finally {
       setLoading(false);
     }
@@ -42,6 +47,7 @@ export function DashboardPage() {
         <div className="loading-container">
           <div className="spinner"></div>
           <p>Loading your dashboard...</p>
+          <small>Connecting to bank accounts...</small>
         </div>
       </div>
     );
