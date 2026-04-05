@@ -5,12 +5,13 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuthStore } from '../context/authStore';
 import { accountAPI, transactionAPI, userAPI, authAPI } from '../services/api';
-import { generatePassword, copyToClipboard, validateEmail, validatePhone } from '../utils/helpers';
+import { generatePassword, generateAccountNumber, copyToClipboard, validateEmail, validatePhone, escapeHTML } from '../utils/helpers';
 import '../styles/professional-dashboard.css';
 
 export function DashboardPage() {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const setMPIN = useAuthStore((state) => state.setMPIN);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [activeSection, setActiveSection] = useState('overview');
   const [accounts, setAccounts] = useState([]);
@@ -106,7 +107,16 @@ export function DashboardPage() {
   const handleCreateAccount = async (e) => {
     e.preventDefault();
     try {
-      const response = await accountAPI.create(accountForm);
+      // Generate 11-digit account number automatically
+      const generatedAccountNumber = generateAccountNumber();
+
+      // Add account number to form data
+      const accountFormWithNumber = {
+        ...accountForm,
+        account_number: generatedAccountNumber,
+      };
+
+      const response = await accountAPI.create(accountFormWithNumber);
       if (response.status === 201) {
         const newAccount = response.data;
 
@@ -114,11 +124,11 @@ export function DashboardPage() {
         const passbook = {
           passbook_id: `PB-${Date.now()}`,
           account_id: newAccount.id,
-          account_number: newAccount.account_number,
+          account_number: newAccount.account_number || generatedAccountNumber,
           account_type: accountForm.account_type.toUpperCase(),
-          customer_name: user.first_name + ' ' + user.last_name,
-          customer_email: user.email,
-          customer_phone: user.phone_number,
+          customer_name: accountForm.first_name + ' ' + accountForm.last_name,
+          customer_email: accountForm.email,
+          customer_phone: accountForm.phone_number,
           opening_balance: parseFloat(accountForm.initial_balance),
           opening_date: new Date().toLocaleDateString(),
           bank_name: '26-07 RESERVE BANK',
@@ -131,8 +141,14 @@ export function DashboardPage() {
 
         setCreatedPassbook(passbook);
         setShowCreateAccount(false);
-        setAccountForm({ account_type: 'savings', initial_balance: 0 });
-        fetchData();
+        setAccountForm({ first_name: '', last_name: '', email: '', phone_number: '', account_type: 'savings', initial_balance: 0 });
+
+        // Refresh accounts list after a short delay to allow backend to process
+        setTimeout(() => {
+          fetchData();
+        }, 500);
+
+        alert('✅ Account created successfully!\n\nAccount Number: ' + (newAccount.account_number || generatedAccountNumber));
       }
     } catch (error) {
       alert('Failed to create account: ' + (error.response?.data?.error || error.message));
@@ -161,7 +177,8 @@ export function DashboardPage() {
         password: tempPassword,
       });
       if (response.status === 201) {
-        alert(`✅ User created successfully!\n\nUsername: ${userForm.username}\nPassword: ${tempPassword}\n\nPlease save the password securely.`);
+        // Don't show password in alert - show only username
+        alert(`✅ User created successfully!\n\nUsername: ${userForm.username}\n\nA temporary password has been sent to: ${userForm.email}\n\nThe staff member should communicate the password securely to the user.`);
         setShowCreateUser(false);
         setGeneratedPassword('');
         setUserForm({
@@ -241,8 +258,7 @@ export function DashboardPage() {
     }
 
     try {
-      const setMPINAction = useAuthStore.getState().setMPIN;
-      const result = await setMPINAction(mpin);
+      const result = await setMPIN(mpin);
 
       if (result.success) {
         alert('✅ MPIN set successfully!\n\nYou will need to enter this MPIN to perform transactions.');
@@ -283,6 +299,225 @@ export function DashboardPage() {
       alert('✅ Bill paid successfully!');
     } catch (error) {
       alert('Failed to pay bill: ' + error.message);
+    }
+  };
+
+  // Print passbook function - safe text-based printing
+  const handlePrintPassbook = () => {
+    try {
+      const printWindow = window.open('', '_blank');
+      if (!printWindow) {
+        alert('Pop-up blocked. Please allow pop-ups for this site.');
+        return;
+      }
+
+      // Build HTML from data object instead of using innerHTML (prevents XSS)
+      const html = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Passbook - 26-07 Bank</title>
+            <style>
+              * { margin: 0; padding: 0; box-sizing: border-box; }
+              body { font-family: Arial, sans-serif; background: white; padding: 20px; }
+              .passbook { max-width: 900px; margin: 0 auto; padding: 40px; background: white; }
+              .passbook-cover { border: 2px solid #1e40af; border-radius: 8px; padding: 30px; background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white; margin-bottom: 30px; text-align: center; }
+              .bank-header h2 { font-size: 28px; margin-bottom: 5px; }
+              .tagline { font-size: 14px; opacity: 0.9; }
+              .passbook-section { margin: 30px 0; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px; }
+              .passbook-section h4 { color: #1e40af; margin-bottom: 15px; font-size: 16px; border-bottom: 2px solid #3b82f6; padding-bottom: 10px; }
+              .details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+              .detail-item { padding: 10px; background: #f9fafb; border-radius: 4px; }
+              .detail-item .label { font-weight: bold; color: #374151; display: block; font-size: 12px; }
+              .detail-item .value { color: #111827; margin-top: 5px; font-size: 14px; word-break: break-word; }
+              .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.3); }
+              .info-row .label { font-weight: bold; }
+              .terms-list { list-style: none; padding: 0; }
+              .terms-list li { padding: 8px 0; color: #374151; font-size: 13px; border-bottom: 1px solid #e5e7eb; }
+              .passbook-footer { margin-top: 40px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center; }
+              .footer-text { font-size: 12px; color: #6b7280; margin-top: 10px; }
+              @media print { body { margin: 0; padding: 10px; } .passbook { margin: 0; padding: 20px; } }
+            </style>
+          </head>
+          <body>
+            <div class="passbook">
+              <div class="passbook-cover">
+                <div class="bank-header">
+                  <h2>🏛️ 26-07 RESERVE BANK</h2>
+                  <p class="tagline">Trust & Excellence in Banking</p>
+                </div>
+                <div class="passbook-info">
+                  <div class="info-row">
+                    <span class="label">Account Number:</span>
+                    <span class="value">${escapeHTML(createdPassbook.account_number)}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Account Type:</span>
+                    <span class="value">${escapeHTML(createdPassbook.account_type)}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Status:</span>
+                    <span class="value">🟢 ${escapeHTML(createdPassbook.status)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="passbook-section">
+                <h4>📝 Customer Details</h4>
+                <div class="details-grid">
+                  <div class="detail-item">
+                    <span class="label">Customer Name:</span>
+                    <span class="value">${escapeHTML(createdPassbook.customer_name)}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="label">Email:</span>
+                    <span class="value">${escapeHTML(createdPassbook.customer_email)}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="label">Phone:</span>
+                    <span class="value">${escapeHTML(createdPassbook.customer_phone)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="passbook-section">
+                <h4>🏦 Bank Details</h4>
+                <div class="details-grid">
+                  <div class="detail-item">
+                    <span class="label">Bank Name:</span>
+                    <span class="value">${escapeHTML(createdPassbook.bank_name)}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="label">Bank Code:</span>
+                    <span class="value">${escapeHTML(createdPassbook.bank_code)}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="label">IFSC Code:</span>
+                    <span class="value">${escapeHTML(createdPassbook.ifsc_code)}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="label">Branch:</span>
+                    <span class="value">${escapeHTML(createdPassbook.branch)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="passbook-section">
+                <h4>📅 Account Opening Details</h4>
+                <div class="details-grid">
+                  <div class="detail-item">
+                    <span class="label">Opening Date:</span>
+                    <span class="value">${escapeHTML(createdPassbook.opening_date)}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="label">Opening Balance:</span>
+                    <span class="value">₹${createdPassbook.opening_balance.toFixed(2)}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="label">Passbook ID:</span>
+                    <span class="value">${escapeHTML(createdPassbook.passbook_id)}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="label">Issued Date:</span>
+                    <span class="value">${escapeHTML(createdPassbook.issued_date)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="passbook-section">
+                <h4>📋 Terms & Conditions</h4>
+                <ul class="terms-list">
+                  <li>Keep your passbook safe. Do not share with unauthorized persons.</li>
+                  <li>Update your contact details with the bank if changed.</li>
+                  <li>Report any discrepancies within 30 days of receiving your statement.</li>
+                  <li>For account-related queries, contact your nearest branch.</li>
+                  <li>This account is subject to Reserve Bank of India rules and regulations.</li>
+                </ul>
+              </div>
+
+              <div class="passbook-footer">
+                <p class="footer-text">This is a digitally issued passbook. Please keep it safe for future reference.</p>
+                <p class="footer-text">For assistance: 1800-26-07-BANK or visit your nearest branch</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `;
+
+      printWindow.document.write(html);
+      printWindow.document.close();
+      setTimeout(() => printWindow.print(), 250);
+    } catch (error) {
+      console.error('Print error:', error);
+      alert('Failed to open print window. Please check your browser settings.');
+    }
+  };
+
+  // PDF download function
+  const handleDownloadPassbookPDF = async () => {
+    try {
+      const passbookElement = document.querySelector('.passbook');
+      if (!passbookElement) {
+        alert('Passbook not found');
+        return;
+      }
+
+      // Simple text-based PDF export
+      const lines = [
+        '26-07 RESERVE BANK - PASSBOOK',
+        '================================',
+        '',
+        'PASSBOOK ID: ' + createdPassbook.passbook_id,
+        'ACCOUNT NUMBER: ' + createdPassbook.account_number,
+        'ACCOUNT TYPE: ' + createdPassbook.account_type,
+        '',
+        'CUSTOMER DETAILS',
+        '================',
+        'Name: ' + createdPassbook.customer_name,
+        'Email: ' + createdPassbook.customer_email,
+        'Phone: ' + createdPassbook.customer_phone,
+        '',
+        'BANK DETAILS',
+        '============',
+        'Bank Name: ' + createdPassbook.bank_name,
+        'Bank Code: ' + createdPassbook.bank_code,
+        'IFSC Code: ' + createdPassbook.ifsc_code,
+        'Branch: ' + createdPassbook.branch,
+        '',
+        'ACCOUNT OPENING DETAILS',
+        '=======================',
+        'Opening Date: ' + createdPassbook.opening_date,
+        'Opening Balance: ₹' + createdPassbook.opening_balance.toFixed(2),
+        'Issued Date: ' + createdPassbook.issued_date,
+        'Status: ' + createdPassbook.status,
+        '',
+        'TERMS & CONDITIONS',
+        '==================',
+        '1. Keep your passbook safe. Do not share with unauthorized persons.',
+        '2. Update your contact details with the bank if changed.',
+        '3. Report any discrepancies within 30 days of receiving your statement.',
+        '4. For account-related queries, contact your nearest branch.',
+        '5. This account is subject to Reserve Bank of India rules and regulations.',
+        '',
+        'This is a digitally issued passbook. Please keep it safe for future reference.',
+        'For assistance: 1800-26-07-BANK or visit your nearest branch',
+        '================================',
+      ].join('\n');
+
+      // Create blob and download
+      const blob = new Blob([lines], { type: 'text/plain' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `passbook-${createdPassbook.account_number}-${Date.now()}.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      alert('✅ Passbook downloaded successfully!');
+    } catch (error) {
+      alert('Failed to download passbook: ' + error.message);
     }
   };
 
@@ -820,8 +1055,8 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                   </div>
 
                   <div className="passbook-actions">
-                    <button className="print-btn" onClick={() => window.print()}>🖨️ Print Passbook</button>
-                    <button className="download-btn" onClick={() => alert('📥 Passbook saved locally. You can download it from your account.')}>📥 Save as PDF</button>
+                    <button className="print-btn" onClick={handlePrintPassbook}>🖨️ Print Passbook</button>
+                    <button className="download-btn" onClick={handleDownloadPassbookPDF}>📥 Download as File</button>
                     <button className="close-btn" onClick={() => setCreatedPassbook(null)}>Close</button>
                   </div>
                 </div>

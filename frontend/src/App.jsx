@@ -18,6 +18,7 @@ function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
   useEffect(() => {
+    // Check if user has existing session
     checkAuth();
   }, [checkAuth]);
 
