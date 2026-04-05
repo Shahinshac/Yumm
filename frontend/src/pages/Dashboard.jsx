@@ -2,7 +2,7 @@
  * Professional Dashboard - Complete Admin & User Management
  * Hamburger Navigation + Full CRUD Operations
  */
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '../context/authStore';
 import { accountAPI, transactionAPI, userAPI, authAPI } from '../services/api';
 import '../styles/professional-dashboard.css';
@@ -18,7 +18,6 @@ export function DashboardPage() {
   const [users, setUsers] = useState([]);
   const [showCreateAccount, setShowCreateAccount] = useState(false);
   const [showCreateUser, setShowCreateUser] = useState(false);
-  const [editingUser, setEditingUser] = useState(null);
 
   // Form states
   const [accountForm, setAccountForm] = useState({
@@ -38,9 +37,9 @@ export function DashboardPage() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [accountsRes, txRes] = await Promise.all([
         accountAPI.getAll(),
@@ -65,7 +64,7 @@ export function DashboardPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
 
   const handleCreateAccount = async (e) => {
     e.preventDefault();
