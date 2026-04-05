@@ -18,9 +18,9 @@ function App() {
   const checkAuth = useAuthStore((state) => state.checkAuth);
 
   useEffect(() => {
-    // Check if user has existing session
+    // Check auth session only once on app mount
     checkAuth();
-  }, [checkAuth]);
+  }, []); // Empty dependency array - run only on mount
 
   return (
     <BrowserRouter>

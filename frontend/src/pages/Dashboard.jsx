@@ -5,7 +5,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuthStore } from '../context/authStore';
 import { accountAPI, transactionAPI, userAPI, authAPI, billAPI } from '../services/api';
-import { generatePassword, generateAccountNumber, copyToClipboard, validateEmail, validatePhone, escapeHTML, normalizeApiData } from '../utils/helpers';
+import { generatePassword, copyToClipboard, validateEmail, validatePhone, escapeHTML, normalizeApiData } from '../utils/helpers';
 import '../styles/professional-dashboard.css';
 
 export function DashboardPage() {

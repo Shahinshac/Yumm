@@ -62,8 +62,14 @@ export const useAuthStore = create((set) => ({
       const { data } = await authAPI.getMe();
       set({ user: data, isAuthenticated: true });
     } catch (error) {
-      set({ isAuthenticated: false, user: null });
-      localStorage.removeItem('access_token');
+      // Only logout on 401/403 (invalid token)
+      // On other errors (network, server error), keep user logged in
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        set({ isAuthenticated: false, user: null });
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+      }
+      // Silently pass on other errors - user stays logged in
     }
   },
 
