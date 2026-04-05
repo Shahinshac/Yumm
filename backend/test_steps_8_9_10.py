@@ -17,7 +17,7 @@ def app():
         db.create_all()
         # Create default roles
         from app.models.user import Role
-        for role_name in ["customer", "staff", "manager", "admin"]:
+        for role_name in ["customer", "staff", "admin"]:
             if not Role.query.filter_by(name=role_name).first():
                 role = Role(name=role_name, description=f"{role_name} role")
                 db.session.add(role)
