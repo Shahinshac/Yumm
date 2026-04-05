@@ -335,3 +335,102 @@ def logout():
         200: Logout successful
     """
     return jsonify({"message": "Logged out successfully"}), 200
+
+
+@auth_bp.route("/set-mpin", methods=["POST"])
+@jwt_required()
+def set_mpin():
+    """
+    Set 6-digit MPIN for first time after login
+
+    Headers:
+        Authorization: Bearer <access_token>
+
+    Request body:
+        {
+            "mpin": "123456"  # 6 digits only
+        }
+
+    Returns:
+        200: MPIN set successfully
+        400: Invalid MPIN format
+        401: Unauthorized
+    """
+    try:
+        user_id = get_jwt()["sub"]
+        data = request.get_json()
+
+        # Validate MPIN
+        mpin = data.get("mpin", "").strip()
+        if not mpin or len(mpin) != 6 or not mpin.isdigit():
+            return jsonify({"error": "MPIN must be exactly 6 digits"}), 400
+
+        # Get user
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Hash and set MPIN
+        mpin_hash = PasswordSecurity.hash_password(mpin)
+        user.mpin_hash = mpin_hash
+        user.mpin_set = True
+        user.save()
+
+        return jsonify({"message": "MPIN set successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@auth_bp.route("/verify-mpin", methods=["POST"])
+@jwt_required()
+def verify_mpin():
+    """
+    Verify MPIN before performing transactions
+
+    Headers:
+        Authorization: Bearer <access_token>
+
+    Request body:
+        {
+            "mpin": "123456"  # User's 6-digit MPIN
+        }
+
+    Returns:
+        200: MPIN verified successfully
+        400: Invalid MPIN
+        401: MPIN not set
+    """
+    try:
+        user_id = get_jwt()["sub"]
+        data = request.get_json()
+
+        mpin = data.get("mpin", "")
+        if not mpin:
+            return jsonify({"error": "MPIN is required"}), 400
+
+        # Get user
+        try:
+            user = User.objects(id=user_id).first()
+        except Exception:
+            user = None
+
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Check if MPIN is set
+        if not user.mpin_set or not user.mpin_hash:
+            return jsonify({"error": "MPIN not set. Please set MPIN first."}), 401
+
+        # Verify MPIN
+        if not PasswordSecurity.verify_password(mpin, user.mpin_hash):
+            return jsonify({"error": "Invalid MPIN"}), 400
+
+        return jsonify({"message": "MPIN verified successfully", "verified": True}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500

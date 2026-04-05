@@ -2019,3 +2019,217 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+
+/* Form Sections for Account Creation */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #f8fafc 100%);
+  border-radius: 10px;
+  border-left: 4px solid var(--primary-accent);
+}
+
+.form-section h4 {
+  color: var(--primary);
+  margin: 0 0 5px 0;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .form {
+    max-width: 100%;
+  }
+  
+  .form-section {
+    padding: 15px;
+  }
+}
+
+/* ===========================
+   MPIN SETUP MODAL
+   =========================== */
+
+.mpin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(2px);
+}
+
+.mpin-modal {
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.mpin-modal-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.mpin-modal-header h2 {
+  color: var(--primary);
+  margin: 0 0 8px 0;
+  font-size: 24px;
+}
+
+.mpin-subtitle {
+  color: var(--gray-600);
+  margin: 0;
+  font-size: 14px;
+}
+
+.mpin-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.mpin-info {
+  background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 4px solid var(--primary-accent);
+  margin-bottom: 10px;
+}
+
+.mpin-info p {
+  margin: 0;
+  color: var(--primary);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.mpin-error {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 12px;
+  color: #991b1b;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mpin-input {
+  width: 100%;
+  padding: 14px;
+  text-align: center;
+  font-size: 20px;
+  letter-spacing: 8px;
+  border: 2px solid var(--gray-300);
+  border-radius: 8px;
+  font-weight: 600;
+  font-family: 'Courier New', monospace;
+  transition: all 0.3s;
+}
+
+.mpin-input:focus {
+  outline: none;
+  border-color: var(--primary-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.mpin-tips {
+  background: linear-gradient(135deg, #fef3c7 0%, #FEF08A 100%);
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 4px solid #f59e0b;
+}
+
+.mpin-tips h4 {
+  color: #b45309;
+  margin: 0 0 10px 0;
+  font-size: 13px;
+}
+
+.mpin-tips ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #92400e;
+  font-size: 12px;
+}
+
+.mpin-tips li {
+  margin-bottom: 6px;
+  line-height: 1.4;
+}
+
+.mpin-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.mpin-submit-btn {
+  flex: 1;
+  padding: 14px;
+  background: linear-gradient(135deg, var(--primary-accent) 0%, #2563eb 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.mpin-submit-btn:hover {
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  transform: translateY(-2px);
+}
+
+.mpin-submit-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .mpin-modal {
+    padding: 30px 20px;
+    border-radius: 12px;
+  }
+
+  .mpin-modal-header h2 {
+    font-size: 20px;
+  }
+
+  .mpin-input {
+    font-size: 18px;
+    letter-spacing: 6px;
+  }
+}

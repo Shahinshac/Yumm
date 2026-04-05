@@ -76,4 +76,32 @@ export const useAuthStore = create((set) => ({
       return { success: false };
     }
   },
+
+  setMPIN: async (mpin) => {
+    try {
+      const response = await authAPI.setMPIN(mpin);
+      return {
+        success: true,
+        message: response.data?.message || 'MPIN set successfully'
+      };
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || 'Failed to set MPIN';
+      set({ error: errorMessage });
+      return { success: false, message: errorMessage };
+    }
+  },
+
+  verifyMPIN: async (mpin) => {
+    try {
+      const response = await authAPI.verifyMPIN(mpin);
+      return {
+        success: true,
+        verified: response.data?.verified || true,
+        message: response.data?.message || 'MPIN verified'
+      };
+    } catch (error) {
+      const errorMessage = error.response?.data?.error || 'MPIN verification failed';
+      return { success: false, message: errorMessage };
+    }
+  },
 }));

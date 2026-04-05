@@ -51,8 +51,13 @@ class AccountService:
             valid_types = ", ".join([e.value for e in AccountTypeEnum])
             raise ValidationError(f"Invalid account type. Valid: {valid_types}")
 
-        # Validate initial balance
-        if initial_balance < 0:
+        # Convert and validate initial balance
+        try:
+            balance_float = float(initial_balance)
+        except (ValueError, TypeError):
+            raise ValidationError(f"Invalid balance value: {initial_balance}")
+
+        if balance_float < 0:
             raise ValidationError("Initial balance cannot be negative")
 
         # Generate unique account number
@@ -62,7 +67,7 @@ class AccountService:
         account = Account(
             account_number=account_number,
             account_type=account_type,
-            balance=Decimal(str(initial_balance)),
+            balance=Decimal(str(balance_float)),
             status=AccountStatusEnum.ACTIVE.value,
             user_id=user_id,
         )

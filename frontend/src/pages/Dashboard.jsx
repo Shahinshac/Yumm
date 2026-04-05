@@ -24,6 +24,10 @@ export function DashboardPage() {
 
   // Form states
   const [accountForm, setAccountForm] = useState({
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone_number: '',
     account_type: 'savings',
     initial_balance: 0,
   });
@@ -61,6 +65,12 @@ export function DashboardPage() {
   const [showAccountClosure, setShowAccountClosure] = useState(false);
   const [profileForm, setProfileForm] = useState({ email: user?.email || '', phone_number: user?.phone_number || '', password: '', newPassword: '', confirmPassword: '' });
   const [securityLog, setSecurityLog] = useState([]);
+
+  // MPIN states
+  const [showMPINSetup, setShowMPINSetup] = useState(user?.is_first_login && user?.role === 'customer');
+  const [mpin, setMPIN] = useState('');
+  const [confirmMPIN, setConfirmMPIN] = useState('');
+  const [mpinError, setMPINError] = useState('');
 
   const fetchData = useCallback(async () => {
     try {
@@ -215,6 +225,38 @@ export function DashboardPage() {
     }
   };
 
+  const handleMPINSetup = async (e) => {
+    e.preventDefault();
+    setMPINError('');
+
+    // Validation
+    if (!mpin || mpin.length !== 6 || !/^\d{6}$/.test(mpin)) {
+      setMPINError('MPIN must be exactly 6 digits');
+      return;
+    }
+
+    if (mpin !== confirmMPIN) {
+      setMPINError('MPINs do not match');
+      return;
+    }
+
+    try {
+      const setMPINAction = useAuthStore.getState().setMPIN;
+      const result = await setMPINAction(mpin);
+
+      if (result.success) {
+        alert('✅ MPIN set successfully!\n\nYou will need to enter this MPIN to perform transactions.');
+        setShowMPINSetup(false);
+        setMPIN('');
+        setConfirmMPIN('');
+      } else {
+        setMPINError(result.message || 'Failed to set MPIN');
+      }
+    } catch (error) {
+      setMPINError('Error setting MPIN: ' + error.message);
+    }
+  };
+
   const handlePayBill = async (billId) => {
     const bill = bills.find(b => b.id === billId);
     if (!bill) return;
@@ -350,8 +392,7 @@ CLOSING BALANCE: ₹${account?.balance || 0}
     // Add admin menu only once using useMemo
     if (user?.role === 'admin') {
       baseItems.push(
-        { id: 'users', label: '👨‍💼 User Management', icon: '👨‍💼' },
-        { id: 'billing', label: '💰 Billing Management', icon: '💰' }
+        { id: 'users', label: '👨‍💼 User Management', icon: '👨‍💼' }
       );
     }
 
@@ -369,6 +410,72 @@ CLOSING BALANCE: ₹${account?.balance || 0}
 
   return (
     <div className="professional-dashboard">
+      {/* MPIN Setup Modal */}
+      {showMPINSetup && (
+        <div className="mpin-modal-overlay">
+          <div className="mpin-modal">
+            <div className="mpin-modal-header">
+              <h2>🔐 Set Your 6-Digit MPIN</h2>
+              <p className="mpin-subtitle">Required for secure transactions</p>
+            </div>
+
+            <form onSubmit={handleMPINSetup} className="mpin-form">
+              <div className="mpin-info">
+                <p>Your MPIN is a 6-digit security code that you'll need to enter before performing any transactions.</p>
+              </div>
+
+              {mpinError && (
+                <div className="mpin-error">
+                  <span>❌ {mpinError}</span>
+                </div>
+              )}
+
+              <div className="form-group">
+                <label>Enter 6-Digit MPIN *</label>
+                <input
+                  type="text"
+                  maxLength="6"
+                  value={mpin}
+                  onChange={(e) => setMPIN(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="000000"
+                  className="mpin-input"
+                  required
+                />
+                <small className="hint">Only numbers 0-9</small>
+              </div>
+
+              <div className="form-group">
+                <label>Confirm MPIN *</label>
+                <input
+                  type="text"
+                  maxLength="6"
+                  value={confirmMPIN}
+                  onChange={(e) => setConfirmMPIN(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="000000"
+                  className="mpin-input"
+                  required
+                />
+                <small className="hint">Re-enter your MPIN</small>
+              </div>
+
+              <div className="mpin-tips">
+                <h4>💡 MPIN Tips:</h4>
+                <ul>
+                  <li>Memorize your MPIN - don't share it with anyone</li>
+                  <li>Never use obvious numbers like 111111 or 123456</li>
+                  <li>Use a combination that's easy to remember but hard to guess</li>
+                  <li>You can change it later in Security settings</li>
+                </ul>
+              </div>
+
+              <div className="mpin-actions">
+                <button type="submit" className="mpin-submit-btn">✓ Set MPIN</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
@@ -499,30 +606,89 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                 <div className="section-box form-container">
                   <h3>📋 Create New Account</h3>
                   <form onSubmit={handleCreateAccount} className="form">
-                    <div className="form-group">
-                      <label>Account Type *</label>
-                      <select value={accountForm.account_type} onChange={(e) => setAccountForm({...accountForm, account_type: e.target.value})}>
-                        <option value="savings">💳 Savings Account</option>
-                        <option value="current">🏢 Current Account</option>
-                        <option value="salary">💰 Salary Account</option>
-                      </select>
-                      <small className="hint">Select the type of account you want to create</small>
+                    {/* Customer Details Section */}
+                    <div className="form-section">
+                      <h4>👤 Customer Details</h4>
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>First Name *</label>
+                          <input
+                            type="text"
+                            value={accountForm.first_name}
+                            onChange={(e) => setAccountForm({...accountForm, first_name: e.target.value})}
+                            placeholder="Enter first name"
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Last Name *</label>
+                          <input
+                            type="text"
+                            value={accountForm.last_name}
+                            onChange={(e) => setAccountForm({...accountForm, last_name: e.target.value})}
+                            placeholder="Enter last name"
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="form-row">
+                        <div className="form-group">
+                          <label>Email Address *</label>
+                          <input
+                            type="email"
+                            value={accountForm.email}
+                            onChange={(e) => setAccountForm({...accountForm, email: e.target.value})}
+                            placeholder="Enter email address"
+                            required
+                          />
+                        </div>
+                        <div className="form-group">
+                          <label>Phone Number *</label>
+                          <input
+                            type="tel"
+                            value={accountForm.phone_number}
+                            onChange={(e) => setAccountForm({...accountForm, phone_number: e.target.value})}
+                            placeholder="Enter phone number"
+                            required
+                          />
+                        </div>
+                      </div>
                     </div>
-                    <div className="form-group">
-                      <label>Opening Balance (₹) *</label>
-                      <input
-                        type="number"
-                        step="0.01"
-                        value={accountForm.initial_balance}
-                        onChange={(e) => setAccountForm({...accountForm, initial_balance: e.target.value})}
-                        placeholder="Enter opening balance"
-                        min="0"
-                      />
-                      <small className="hint">Minimum opening balance required</small>
+
+                    {/* Account Details Section */}
+                    <div className="form-section">
+                      <h4>💳 Account Details</h4>
+                      <div className="form-group">
+                        <label>Account Type *</label>
+                        <select value={accountForm.account_type} onChange={(e) => setAccountForm({...accountForm, account_type: e.target.value})}>
+                          <option value="savings">💳 Savings Account</option>
+                          <option value="current">🏢 Current Account</option>
+                          <option value="salary">💰 Salary Account</option>
+                        </select>
+                        <small className="hint">Select the type of account you want to create</small>
+                      </div>
+                      <div className="form-group">
+                        <label>Opening Balance (₹) *</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={accountForm.initial_balance}
+                          onChange={(e) => setAccountForm({...accountForm, initial_balance: e.target.value})}
+                          placeholder="Enter opening balance"
+                          min="0"
+                          required
+                        />
+                        <small className="hint">Minimum opening balance: ₹0</small>
+                      </div>
                     </div>
+
                     <div className="form-actions">
                       <button type="submit" className="submit-btn">✓ Create Account & Generate Passbook</button>
-                      <button type="button" className="cancel-btn" onClick={() => setShowCreateAccount(false)}>Cancel</button>
+                      <button type="button" className="cancel-btn" onClick={() => {
+                        setShowCreateAccount(false);
+                        setAccountForm({first_name: '', last_name: '', email: '', phone_number: '', account_type: 'savings', initial_balance: 0});
+                      }}>Cancel</button>
                     </div>
                   </form>
                 </div>
@@ -755,20 +921,161 @@ CLOSING BALANCE: ₹${account?.balance || 0}
           {/* BILLS SECTION */}
           {activeSection === 'bills' && (
             <section className="section">
-              <h2>Pay Bills</h2>
-              <div className="bills-grid">
-                <div className="bill-card">
-                  <h3>📱 Mobile Recharge</h3>
-                  <button className="bill-btn">Pay Now →</button>
+              <div className="section-header">
+                <h2>💰 Pay & Manage Bills</h2>
+                <button className="submit-btn" onClick={() => setShowBillingForm(!showBillingForm)}>
+                  {showBillingForm ? '✕ Cancel' : '➕ Create Bill'}
+                </button>
+              </div>
+
+              {/* Create Bill Form */}
+              {showBillingForm && (
+                <div className="section-box form-container">
+                  <h3>Create New Bill</h3>
+                  <form onSubmit={handleCreateBill} className="form">
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Bill ID (Auto)</label>
+                        <input type="text" value={billForm.bill_id} disabled className="disabled-field" />
+                      </div>
+                      <div className="form-group">
+                        <label>Bill Type *</label>
+                        <select value={billForm.bill_type} onChange={(e) => setBillForm({...billForm, bill_type: e.target.value})}>
+                          <option value="mobile_recharge">📱 Mobile Recharge</option>
+                          <option value="electricity">⚡ Electricity Bill</option>
+                          <option value="internet">🌐 Internet Bill</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Amount (₹) *</label>
+                        <input
+                          type="number"
+                          step="0.01"
+                          value={billForm.amount}
+                          onChange={(e) => setBillForm({...billForm, amount: e.target.value})}
+                          placeholder="Enter amount"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Customer (User ID) *</label>
+                        <select
+                          value={billForm.customer_id}
+                          onChange={(e) => setBillForm({...billForm, customer_id: e.target.value})}
+                        >
+                          <option value="">Select customer...</option>
+                          {users.filter(u => u.role === 'customer').map(u => (
+                            <option key={u.id} value={u.id}>{u.first_name} {u.last_name} ({u.username})</option>
+                          ))}
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group">
+                        <label>Recipient Name *</label>
+                        <input
+                          type="text"
+                          value={billForm.recipient_name}
+                          onChange={(e) => setBillForm({...billForm, recipient_name: e.target.value})}
+                          placeholder="e.g., Jio, BCCL, Airtel"
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>
+                          {billForm.bill_type === 'mobile_recharge' ? 'Phone Number' : 'Account Number'} *
+                        </label>
+                        <input
+                          type="text"
+                          value={billForm.recipient_identifier}
+                          onChange={(e) => setBillForm({...billForm, recipient_identifier: e.target.value})}
+                          placeholder={billForm.bill_type === 'mobile_recharge' ? '+91-9876543210' : '12345678'}
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        value={billForm.description}
+                        onChange={(e) => setBillForm({...billForm, description: e.target.value})}
+                        placeholder="Optional notes"
+                        rows="2"
+                      />
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="submit" className="submit-btn">Create Bill</button>
+                      <button type="button" className="cancel-btn" onClick={() => setShowBillingForm(false)}>Cancel</button>
+                    </div>
+                  </form>
                 </div>
-                <div className="bill-card">
-                  <h3>⚡ Electricity Bill</h3>
-                  <button className="bill-btn">Pay Now →</button>
-                </div>
-                <div className="bill-card">
-                  <h3>🌐 Internet Bill</h3>
-                  <button className="bill-btn">Pay Now →</button>
-                </div>
+              )}
+
+              {/* Bills Grid */}
+              <div className="section-box">
+                <h3>Pending Bills ({bills.filter(b => b.status === 'pending').length})</h3>
+                {bills.filter(b => b.status === 'pending').length > 0 ? (
+                  <div className="bills-grid">
+                    {bills.filter(b => b.status === 'pending').map((bill) => (
+                      <div key={bill.id} className="bill-card">
+                        <div className="bill-header">
+                          <span className="bill-id">ID: {bill.bill_id}</span>
+                          <span className={`badge badge-${bill.status}`}>{bill.status.toUpperCase()}</span>
+                        </div>
+                        <div className="bill-details">
+                          <p><strong>{bill.bill_type.replace('_', ' ').toUpperCase()}</strong></p>
+                          <p>📋 {bill.recipient_name} - {bill.recipient_identifier}</p>
+                          <p>💵 Amount: <strong>₹{parseFloat(bill.amount).toFixed(2)}</strong></p>
+                          <p className="date">{new Date(bill.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <button
+                          className="pay-btn"
+                          onClick={() => handlePayBill(bill.id)}
+                        >
+                          ✓ Pay Bill
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="empty">No pending bills</p>
+                )}
+              </div>
+
+              {/* Paid Bills */}
+              <div className="section-box">
+                <h3>Payment History ({billPayments.length})</h3>
+                {billPayments.length > 0 ? (
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Payment ID</th>
+                        <th>Bill Type</th>
+                        <th>Amount</th>
+                        <th>Recipient</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {billPayments.map((payment) => (
+                        <tr key={payment.payment_id}>
+                          <td><strong>{payment.payment_id}</strong></td>
+                          <td>{payment.bill_type}</td>
+                          <td>₹{parseFloat(payment.amount).toFixed(2)}</td>
+                          <td>{payment.recipient_name}</td>
+                          <td><span className="badge badge-success">✓ PAID</span></td>
+                          <td>{new Date(payment.paid_at).toLocaleDateString()}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <p className="empty">No payment history</p>
+                )}
               </div>
             </section>
           )}

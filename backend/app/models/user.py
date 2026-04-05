@@ -64,6 +64,10 @@ class User(Document):
     is_verified = BooleanField(default=False)
     is_first_login = BooleanField(default=True)
 
+    # MPIN Security
+    mpin_hash = StringField(max_length=255)  # Hashed 6-digit MPIN
+    mpin_set = BooleanField(default=False)  # Track if MPIN is set
+
     # Role Reference
     role = ReferenceField(Role, required=True)
 
@@ -85,6 +89,7 @@ class User(Document):
             "is_active": self.is_active,
             "is_verified": self.is_verified,
             "is_first_login": self.is_first_login,
+            "mpin_set": self.mpin_set,  # Include MPIN status
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "last_login": self.last_login.isoformat() if self.last_login else None,
         }
