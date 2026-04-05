@@ -176,6 +176,9 @@ export function DashboardPage() {
         // Generate username from email
         const username = newCustomerForm.email.split('@')[0] + Date.now().toString().slice(-4);
 
+        // Generate secure password for customer
+        const generatedPassword = generatePassword();
+
         // Create customer account first
         try {
           const userResponse = await authAPI.register({
@@ -184,6 +187,7 @@ export function DashboardPage() {
             first_name: newCustomerForm.first_name,
             last_name: newCustomerForm.last_name,
             phone_number: newCustomerForm.phone_number,
+            password: generatedPassword,  // Include generated password
             role: 'customer',
           });
 
@@ -192,7 +196,9 @@ export function DashboardPage() {
             customerName = `${newCustomerForm.first_name} ${newCustomerForm.last_name}`;
             customerEmail = newCustomerForm.email;
             customerPhone = newCustomerForm.phone_number;
-            alert(`✅ Customer account created!\n\nUsername: ${username}\n\nShare these credentials with customer.`);
+
+            // Show customer credentials to staff
+            alert(`✅ Customer account created!\n\nUsername: ${username}\nPassword: ${generatedPassword}\n\nShare these with customer securely.`);
           }
         } catch (userError) {
           alert('❌ Failed to create customer account: ' + (userError.response?.data?.error || userError.message));
