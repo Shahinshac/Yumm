@@ -98,17 +98,28 @@ class AccountService:
     @staticmethod
     def _generate_unique_account_number() -> str:
         """
-        Generate a unique account number
+        Generate a unique account number with retry limit
 
         Returns:
             Unique 18-digit account number
+
+        Raises:
+            ValidationError: If unable to generate unique number after max retries
         """
-        while True:
+        MAX_RETRIES = 10
+        for attempt in range(MAX_RETRIES):
             account_number = Generators.generate_account_number()
             # Check if it already exists
             existing = Account.objects(account_number=account_number).first()
             if not existing:
                 return account_number
+            logger.warning(f"Account number collision on attempt {attempt + 1}/{MAX_RETRIES}")
+        
+        # If we've exhausted retries, raise an error
+        raise ValidationError(
+            f"Failed to generate unique account number after {MAX_RETRIES} attempts. "
+            "Please try again or contact support."
+        )
 
     @staticmethod
     def _auto_generate_card(account: Account) -> Card:
