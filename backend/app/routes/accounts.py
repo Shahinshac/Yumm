@@ -487,9 +487,12 @@ def delete_account(account_id):
         current_user = get_current_user()
         account = AccountService.get_account_by_id(account_id)
 
-        # Check authorization
+        # Check authorization - compare user IDs as strings
+        account_owner_id = str(account.user_id.id) if hasattr(account.user_id, 'id') else str(account.user_id)
+        current_user_id = str(current_user["user_id"])
+
         if (current_user["role"] not in ["admin", "manager", "staff"] and
-                account.user_id != current_user["user_id"]):
+                account_owner_id != current_user_id):
             return jsonify({"error": "You can only delete your own accounts"}), 403
 
         # Delete associated card first
@@ -507,6 +510,8 @@ def delete_account(account_id):
     except BankingException as e:
         return jsonify({"error": e.message}), e.status_code
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
 

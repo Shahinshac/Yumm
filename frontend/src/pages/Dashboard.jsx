@@ -117,15 +117,24 @@ export function DashboardPage() {
   };
 
   // Handle deleting account
-  const handleDeleteAccount = async () => {
-    if (!selectedAccount) return;
+  const handleDeleteAccount = async (accountToDelete = null) => {
+    // If no account passed, use selectedAccount from modal
+    const accountData = accountToDelete || selectedAccount;
 
-    if (!window.confirm(`Are you sure you want to delete account ${selectedAccount.account?.account_number}? This action cannot be undone.`)) {
+    if (!accountData) {
+      alert('No account selected');
+      return;
+    }
+
+    const accountId = accountToDelete ? accountToDelete.id : selectedAccount.account?.id;
+    const accountNumber = accountToDelete ? accountToDelete.account_number : selectedAccount.account?.account_number;
+
+    if (!window.confirm(`Are you sure you want to delete account ${accountNumber}? This action cannot be undone.`)) {
       return;
     }
 
     try {
-      await accountAPI.delete(selectedAccount.account?.id);
+      await accountAPI.delete(accountId);
       alert('✓ Account deleted successfully');
       setShowAccountDetail(false);
       setSelectedAccount(null);
@@ -908,6 +917,30 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                 <div className="section-box form-container">
                   <h3>📋 Create New Account</h3>
                   <form onSubmit={handleCreateAccount} className="form">
+                    {/* Customer Details Section - Read Only */}
+                    <div className="form-section">
+                      <h4>👤 Customer Details</h4>
+                      <div className="detail-info">
+                        <div className="detail-field">
+                          <label>Full Name</label>
+                          <p className="field-value">{user?.first_name} {user?.last_name}</p>
+                        </div>
+                        <div className="detail-field">
+                          <label>Email Address</label>
+                          <p className="field-value">{user?.email}</p>
+                        </div>
+                        <div className="detail-field">
+                          <label>Phone Number</label>
+                          <p className="field-value">{user?.phone_number}</p>
+                        </div>
+                        <div className="detail-field">
+                          <label>Username</label>
+                          <p className="field-value">{user?.username}</p>
+                        </div>
+                      </div>
+                      <small className="hint">👆 These are your registered details. Contact support to update.</small>
+                    </div>
+
                     {/* Account Details Section */}
                     <div className="form-section">
                       <h4>💳 Account Details</h4>
@@ -1096,8 +1129,7 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                         className="delete-btn"
                         onClick={(e) => {
                           e.stopPropagation();
-                          setSelectedAccount({ account });
-                          handleDeleteAccount();
+                          handleDeleteAccount(account);
                         }}
                         title="Delete account"
                       >

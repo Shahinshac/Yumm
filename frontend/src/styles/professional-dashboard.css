@@ -2493,6 +2493,57 @@ textarea:focus {
   color: var(--primary);
 }
 
+/* Customer Details Info Block */
+.detail-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  padding: 16px;
+  background: #f0f9ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+
+.detail-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-field label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gray-600);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-field .field-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0;
+  word-break: break-word;
+}
+
+.form-section {
+  margin-bottom: 24px;
+  padding: 20px;
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 8px;
+}
+
+.form-section h4 {
+  margin: 0 0 16px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--primary);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--gray-200);
+}
+
 @media (max-width: 600px) {
   .modal-content {
     width: 95%;
