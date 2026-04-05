@@ -178,6 +178,7 @@ export const analyticsAPI = {
 export const userAPI = {
   getAll: (params) => api.get('/users', { params }),
   getById: (id) => api.get(`/users/${id}`),
+  getCustomers: (search = '') => api.get('/users/customers', { params: { search } }),
   update: (id, data) => api.put(`/users/${id}`, data),
   delete: (id) => api.delete(`/users/${id}`),
   assignRole: (id, data) => api.post(`/users/${id}/assign-role`, data),

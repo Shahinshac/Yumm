@@ -32,50 +32,89 @@ def create_account():
     """
     Create a new bank account
 
-    - Authenticated users can create accounts for themselves (no user_id required)
-    - Admin/Staff can create accounts for other users by providing user_id
+    - Customers: CANNOT create accounts
+    - Admin/Staff: MUST provide customer_id
+      - Validates customer exists and has role="customer"
+      - Cannot create account for themselves
+      - Creates account FOR the selected customer
 
     Request body:
         {
+            "customer_id": "user_object_id",  # Required for admin/staff
             "account_type": "savings",  # savings, current, salary
-            "initial_balance": 1000.00,
-            "user_id": "str_id"  # Optional - Admin/Staff only, for creating accounts for others
+            "initial_balance": 1000.00
         }
 
     Returns:
         201: Account created (with auto-generated ATM card)
         400: Validation error
         403: Unauthorized
+        404: Customer not found
     """
     try:
         data = request.get_json()
         current_user = get_current_user()
 
-        # Determine which user to create account for
-        user_id = data.get("user_id")
+        # SECURITY: Customers cannot create accounts
+        if current_user["role"] == "customer":
+            return jsonify({
+                "error": "Customers cannot create accounts",
+                "message": "Only admin/staff can create accounts"
+            }), 403
 
-        # If no user_id provided, use current user's ID
-        if not user_id:
-            user_id = current_user["user_id"]
-        # If user_id differs from current user, only allow admin/staff
-        elif user_id != current_user["user_id"]:
-            if current_user["role"] not in ["admin", "staff"]:
-                return jsonify({"error": "Only admin/staff can create accounts for other users"}), 403
+        # SECURITY: Admin/Staff must provide customer_id
+        customer_id = data.get("customer_id")
+        if not customer_id:
+            return jsonify({
+                "error": "customer_id is required",
+                "message": "Admin/Staff must select a customer for account creation"
+            }), 400
 
+        # SECURITY: Fetch and validate target customer
+        from app.models.user import User as UserModel
+        target_customer = UserModel.objects(id=customer_id).first()
+
+        if not target_customer:
+            return jsonify({
+                "error": "Customer not found",
+                "message": f"User with ID '{customer_id}' does not exist"
+            }), 404
+
+        # SECURITY: Ensure target user is a customer (not admin/staff)
+        if target_customer.role != "customer":
+            return jsonify({
+                "error": "Invalid target user",
+                "message": f"Target user '{target_customer.username}' has role '{target_customer.role}', not 'customer'"
+            }), 400
+
+        # SECURITY: Prevent admin/staff from creating accounts for themselves
+        if str(target_customer.id) == current_user["user_id"]:
+            return jsonify({
+                "error": "Self-account creation not allowed",
+                "message": "Admin/Staff cannot create accounts for themselves"
+            }), 403
+
+        # Account creation parameters
         account_type = data.get("account_type", "savings")
         initial_balance = data.get("initial_balance", 0.0)
 
         # Create account and auto-generate ATM card
         account, card = AccountService.create_account(
-            user_id=user_id,
+            user_id=str(target_customer.id),
             account_type=account_type,
             initial_balance=initial_balance
         )
 
         # Build response with card info if card was generated
         response_data = {
-            "message": "Account created successfully. ATM card auto-generated.",
-            "account": account.to_dict()
+            "message": f"Account created successfully for {target_customer.first_name} {target_customer.last_name}",
+            "account": account.to_dict(),
+            "customer": {
+                "id": str(target_customer.id),
+                "username": target_customer.username,
+                "first_name": target_customer.first_name,
+                "last_name": target_customer.last_name
+            }
         }
 
         # Include card info if it was created

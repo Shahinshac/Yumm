@@ -38,7 +38,57 @@ def list_users():
         return jsonify({"error": str(e)}), 500
 
 
-@users_bp.route("/<user_id>", methods=["GET"])
+@users_bp.route("/customers", methods=["GET"])
+@role_required("admin", "staff")
+def get_customers():
+    """
+    Get all customers (for account creation dropdown)
+
+    Admin/Staff only - used to select customer for account creation
+
+    Query parameters (optional):
+        search: Filter by username, first_name, last_name, or email
+
+    Returns:
+        200: List of customers with basic info
+        403: Unauthorized (customers/invalid users can't access)
+    """
+    try:
+        search = request.args.get("search", "").strip()
+
+        # Fetch all customers
+        from app.models.user import User as UserModel
+        query = UserModel.objects(role="customer")
+
+        # Optional: filter by search term
+        if search:
+            from mongoengine import Q
+            query = query.filter(
+                Q(username__icontains=search) |
+                Q(first_name__icontains=search) |
+                Q(last_name__icontains=search) |
+                Q(email__icontains=search)
+            )
+
+        customers = query
+
+        return jsonify({
+            "customers": [
+                {
+                    "id": str(c.id),
+                    "username": c.username,
+                    "first_name": c.first_name,
+                    "last_name": c.last_name,
+                    "email": c.email,
+                    "phone_number": c.phone_number
+                }
+                for c in customers
+            ],
+            "count": len(customers)
+        }), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 @require_authentication
 def get_user(user_id):
     """
