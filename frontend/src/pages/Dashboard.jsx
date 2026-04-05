@@ -173,8 +173,26 @@ export function DashboardPage() {
           return;
         }
 
-        // Generate username from email
-        const username = newCustomerForm.email.split('@')[0] + Date.now().toString().slice(-4);
+        // Generate username from email - sanitize to match backend requirements
+        // Backend only allows alphanumeric and underscore, 3-30 characters
+        let emailPrefix = newCustomerForm.email.split('@')[0];
+        // Replace any non-alphanumeric character (except underscore) with underscore
+        let sanitizedUsername = emailPrefix.replace(/[^a-zA-Z0-9_]/g, '_');
+        // Remove leading/trailing underscores
+        sanitizedUsername = sanitizedUsername.replace(/^_+|_+$/g, '');
+        // Ensure minimum 3 characters - pad with random alphanumeric if needed
+        if (sanitizedUsername.length < 3) {
+          const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+          while (sanitizedUsername.length < 3) {
+            sanitizedUsername += chars[Math.floor(Math.random() * chars.length)];
+          }
+        }
+        // Ensure max 25 characters so we can add timestamp suffix
+        if (sanitizedUsername.length > 25) {
+          sanitizedUsername = sanitizedUsername.substring(0, 25);
+        }
+        // Add timestamp suffix for uniqueness (max 30 chars total)
+        const username = sanitizedUsername + Date.now().toString().slice(-4);
 
         // Generate secure password for customer
         const generatedPassword = generatePassword();
