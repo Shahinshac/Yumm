@@ -1,11 +1,4 @@
 {
-  "buildCommand": "cd frontend && rm -rf node_modules && npm install && npm run build",
-  "outputDirectory": "frontend/build",
-  "framework": "create-react-app",
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ]
+  "buildCommand": "cd frontend-mobile && flutter build web --release",
+  "outputDirectory": "frontend-mobile/build/web"
 }
