@@ -23,4 +23,5 @@ venv/
 htmlcov/
 dist/
 build/
+!frontend-mobile/build/
 *.egg-info/
