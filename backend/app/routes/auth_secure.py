@@ -14,9 +14,13 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/api/auth")
 
 
 @auth_bp.route("/register", methods=["POST"])
+@require_authentication
 def register():
     """
     Register a new user account
+
+    - Public users: Can only register as 'customer'
+    - Admin users: Can register users with any role (admin, staff, customer)
 
     Request body:
         {
@@ -25,16 +29,19 @@ def register():
             "password": "SecurePass123",
             "first_name": "John",
             "last_name": "Doe",
-            "phone_number": "+1-234-567-8900"  (optional)
+            "phone_number": "+1-234-567-8900",  # optional
+            "role": "customer"  # optional, admin-only for non-customer roles
         }
 
     Returns:
-        201: Registration successful with tokens and user info
+        201: Registration successful with user info
         400: Validation error
         409: User already exists
+        403: Unauthorized (for non-admin assigning non-customer roles)
     """
     try:
         data = request.get_json()
+        current_user = get_current_user()
 
         # Validate required fields
         required_fields = ["username", "email", "password", "first_name", "last_name"]
@@ -42,10 +49,16 @@ def register():
             if not data.get(field):
                 return jsonify({"error": f"{field.replace('_', ' ').title()} is required"}), 400
 
+        # Determine role
+        requested_role = data.get("role", "customer")
+
+        # Non-admin users can only create 'customer' accounts
+        if current_user["role"] != "admin" and requested_role != "customer":
+            return jsonify({"error": "Only admins can create non-customer accounts"}), 403
+
         # Generate default phone if not provided
         phone_number = data.get("phone_number", "")
         if not phone_number:
-            # Generate a unique phone number (UUID-based)
             import uuid
             phone_num = str(uuid.uuid4()).replace('-', '')[:10]
             phone_number = f"+1-{phone_num[:3]}-{phone_num[3:6]}-{phone_num[6:10]}"
@@ -58,16 +71,12 @@ def register():
             first_name=data["first_name"],
             last_name=data["last_name"],
             phone_number=phone_number,
-            role="customer"
+            role=requested_role
         )
 
-        # Create tokens for auto-login after registration
-        tokens = TokenManager.create_tokens(user["id"], user["username"], "customer")
-
         return jsonify({
-            "user": user,
-            "access_token": tokens["access_token"],
-            "refresh_token": tokens["refresh_token"]
+            "message": "User registered successfully",
+            "user": user
         }), 201
 
     except UserAlreadyExistsError as e:

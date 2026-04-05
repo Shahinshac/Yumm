@@ -12,16 +12,19 @@ accounts_bp = Blueprint("accounts", __name__, url_prefix="/api/accounts")
 
 
 @accounts_bp.route("", methods=["POST"])
-@require_role("admin", "staff")
+@require_authentication
 def create_account():
     """
-    Create a new bank account (Admin/Staff only)
+    Create a new bank account
+
+    - Authenticated users can create accounts for themselves (no user_id required)
+    - Admin/Staff can create accounts for other users by providing user_id
 
     Request body:
         {
-            "user_id": "str_id",
             "account_type": "savings",  # savings, current, salary
-            "initial_balance": 1000.00
+            "initial_balance": 1000.00,
+            "user_id": "str_id"  # Optional - Admin/Staff only, for creating accounts for others
         }
 
     Returns:
@@ -31,12 +34,19 @@ def create_account():
     """
     try:
         data = request.get_json()
+        current_user = get_current_user()
 
-        # Validate required fields
-        if "user_id" not in data:
-            return jsonify({"error": "user_id is required"}), 400
-
+        # Determine which user to create account for
         user_id = data.get("user_id")
+
+        # If no user_id provided, use current user's ID
+        if not user_id:
+            user_id = current_user["user_id"]
+        # If user_id differs from current user, only allow admin/staff
+        elif user_id != current_user["user_id"]:
+            if current_user["role"] not in ["admin", "staff"]:
+                return jsonify({"error": "Only admin/staff can create accounts for other users"}), 403
+
         account_type = data.get("account_type", "savings")
         initial_balance = data.get("initial_balance", 0.0)
 

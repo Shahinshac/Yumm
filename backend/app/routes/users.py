@@ -199,6 +199,45 @@ def activate_user(user_id):
         return jsonify({"error": str(e)}), 500
 
 
+@users_bp.route("/<user_id>", methods=["DELETE"])
+@require_role("admin")
+def delete_user(user_id):
+    """
+    Delete user account (Admin only)
+
+    WARNING: This will permanently delete the user and all associated data
+
+    Returns:
+        200: User deleted
+        404: User not found
+        403: Unauthorized
+        400: Cannot delete self
+    """
+    try:
+        current_user = get_current_user()
+
+        # Prevent deleting oneself
+        if current_user["user_id"] == user_id:
+            return jsonify({"error": "You cannot delete your own account"}), 400
+
+        user = UserService.get_user_by_id(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Delete user
+        user.delete()
+
+        return jsonify({
+            "message": "User deleted successfully",
+            "deleted_user_id": user_id
+        }), 200
+
+    except BankingException as e:
+        return jsonify({"error": e.message}), e.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 @users_bp.route("/search", methods=["GET"])
 @require_role("admin", "manager", "staff")
 def search_users():
