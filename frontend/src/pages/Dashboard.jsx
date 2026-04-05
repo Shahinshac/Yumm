@@ -69,8 +69,8 @@ export function DashboardPage() {
 
   // MPIN states
   const [showMPINSetup, setShowMPINSetup] = useState(user?.is_first_login && user?.role === 'customer');
-  const [mpin, setMPIN] = useState('');
-  const [confirmMPIN, setConfirmMPIN] = useState('');
+  const [mpin, setMPINInput] = useState('');
+  const [confirmMPIN, setConfirmMPINInput] = useState('');
   const [mpinError, setMPINError] = useState('');
 
   const fetchData = useCallback(async () => {
@@ -265,8 +265,8 @@ export function DashboardPage() {
       if (result.success) {
         alert('✅ MPIN set successfully!\n\nYou will need to enter this MPIN to perform transactions.');
         setShowMPINSetup(false);
-        setMPIN('');
-        setConfirmMPIN('');
+        setMPINInput('');
+        setConfirmMPINInput('');
       } else {
         setMPINError(result.message || 'Failed to set MPIN');
       }
@@ -705,7 +705,7 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                   type="text"
                   maxLength="6"
                   value={mpin}
-                  onChange={(e) => setMPIN(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={(e) => setMPINInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000"
                   className="mpin-input"
                   required
@@ -719,7 +719,7 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                   type="text"
                   maxLength="6"
                   value={confirmMPIN}
-                  onChange={(e) => setConfirmMPIN(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  onChange={(e) => setConfirmMPINInput(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="000000"
                   className="mpin-input"
                   required
