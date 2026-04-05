@@ -15,13 +15,11 @@ import { StaffDashboardPage } from './pages/StaffDashboard';
 import './styles/App.css';
 
 function App() {
-  const checkAuth = useAuthStore((state) => state.checkAuth);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     // Check auth session only once on app mount
-    checkAuth();
-  }, []); // Empty dependency array - run only on mount
+    // Call directly from store to avoid dependency issues
+    useAuthStore.getState().checkAuth();
+  }, []);
 
   return (
     <BrowserRouter>
