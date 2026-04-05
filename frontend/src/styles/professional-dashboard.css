@@ -2573,3 +2573,84 @@ textarea:focus {
     text-align: left;
   }
 }
+
+/* ===========================
+   CUSTOMER SELECTION FOR STAFF/ADMIN
+   =========================== */
+
+.form-group {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.customer-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid var(--gray-300);
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 300px;
+  overflow-y: auto;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  margin-top: -4px;
+}
+
+.customer-option {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 12px 16px;
+  background: white;
+  border: none;
+  border-bottom: 1px solid var(--gray-200);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+
+.customer-option:hover {
+  background: #f0f9ff;
+}
+
+.customer-option:last-child {
+  border-bottom: none;
+}
+
+.customer-option .customer-name {
+  font-weight: 600;
+  color: var(--primary);
+  font-size: 14px;
+}
+
+.customer-option .customer-contact {
+  font-size: 12px;
+  color: var(--gray-600);
+  margin-top: 4px;
+}
+
+.no-results {
+  padding: 16px;
+  text-align: center;
+  color: var(--gray-600);
+  font-size: 13px;
+}
+
+.alert-info {
+  padding: 16px;
+  background: #fef3cd;
+  border: 1px solid #ffc107;
+  border-radius: 8px;
+  color: #856404;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

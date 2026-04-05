@@ -29,6 +29,8 @@ export function DashboardPage() {
   const [accountForm, setAccountForm] = useState({
     account_type: 'savings',
     initial_balance: 0,
+    selected_customer_id: null,  // For admin/staff creating for customers
+    customer_search: '',  // Search field for finding customers
   });
 
   const [userForm, setUserForm] = useState({
@@ -148,25 +150,54 @@ export function DashboardPage() {
   const handleCreateAccount = async (e) => {
     e.preventDefault();
     try {
-      // Create account with simplified payload (backend generates account number)
+      const isStaffOrAdmin = ['staff', 'admin'].includes(user?.role);
+
+      // For staff/admin creating account for customer
+      if (isStaffOrAdmin && accountForm.selected_customer_id) {
+        if (!window.confirm('Create account for this customer?')) {
+          return;
+        }
+      }
+
+      // Create account with simplified payload
       const accountPayload = {
         account_type: accountForm.account_type,
         initial_balance: parseFloat(accountForm.initial_balance) || 0,
       };
 
+      // If staff/admin is creating for a customer, include their user_id
+      if (isStaffOrAdmin && accountForm.selected_customer_id) {
+        accountPayload.user_id = accountForm.selected_customer_id;
+      }
+
       const response = await accountAPI.create(accountPayload);
       if (response.status === 201) {
         const { account, card } = response.data;
 
-        // Generate passbook using User data (not form data)
+        // Get customer details for passbook
+        let customerName = `${user.first_name} ${user.last_name}`;
+        let customerEmail = user.email;
+        let customerPhone = user.phone_number;
+
+        // If creating for another customer, get their details
+        if (isStaffOrAdmin && accountForm.selected_customer_id) {
+          const selectedCustomer = users.find(u => u.id === accountForm.selected_customer_id);
+          if (selectedCustomer) {
+            customerName = `${selectedCustomer.first_name} ${selectedCustomer.last_name}`;
+            customerEmail = selectedCustomer.email;
+            customerPhone = selectedCustomer.phone_number;
+          }
+        }
+
+        // Generate passbook
         const passbook = {
           passbook_id: `PB-${Date.now()}`,
           account_id: account.id,
           account_number: account.account_number,
           account_type: account.account_type.toUpperCase(),
-          customer_name: `${user.first_name} ${user.last_name}`,
-          customer_email: user.email,
-          customer_phone: user.phone_number,
+          customer_name: customerName,
+          customer_email: customerEmail,
+          customer_phone: customerPhone,
           opening_balance: parseFloat(accountForm.initial_balance) || 0,
           opening_date: new Date().toLocaleDateString(),
           bank_name: '26-07 RESERVE BANK',
@@ -180,13 +211,13 @@ export function DashboardPage() {
 
         setCreatedPassbook(passbook);
         setShowCreateAccount(false);
-        setAccountForm({ account_type: 'savings', initial_balance: 0 });
+        setAccountForm({ account_type: 'savings', initial_balance: 0, selected_customer_id: null, customer_search: '' });
 
         // Show notification about card
         if (card) {
-          alert(`✅ Account created successfully!\n\nAccount Number: ${account.account_number}\n\n💳 ATM Card: ${card.card_number}\n\n${card.message}`);
+          alert(`✅ Account created successfully!\n\nCustomer: ${customerName}\nAccount Number: ${account.account_number}\n\n💳 ATM Card: ${card.card_number}\n\n${card.message}`);
         } else {
-          alert(`✅ Account created successfully!\n\nAccount Number: ${account.account_number}`);
+          alert(`✅ Account created successfully!\n\nCustomer: ${customerName}\nAccount Number: ${account.account_number}`);
         }
 
         // Refresh accounts list after a short delay
@@ -195,6 +226,10 @@ export function DashboardPage() {
         }, 500);
       }
     } catch (error) {
+      console.error('Error creating account:', error);
+      alert('❌ Failed to create account: ' + (error.response?.data?.error || error.message));
+    }
+  };
       alert('Failed to create account: ' + (error.response?.data?.error || error.message));
     }
   };
@@ -917,28 +952,119 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                 <div className="section-box form-container">
                   <h3>📋 Create New Account</h3>
                   <form onSubmit={handleCreateAccount} className="form">
+                    {/* Customer Selection Section - Staff/Admin Only */}
+                    {['staff', 'admin'].includes(user?.role) && (
+                      <div className="form-section">
+                        <h4>🔍 Select Customer</h4>
+                        <div className="form-group">
+                          <label>Search Customer *</label>
+                          <input
+                            type="text"
+                            value={accountForm.customer_search}
+                            onChange={(e) => setAccountForm({...accountForm, customer_search: e.target.value})}
+                            placeholder="Search by name, email, or phone..."
+                          />
+                          <small className="hint">Start typing to search for customer</small>
+                        </div>
+
+                        {/* Customer Dropdown - Filtered Results */}
+                        {accountForm.customer_search && users.filter(u => u.role === 'customer').filter(u =>
+                          u.first_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
+                          u.last_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
+                          u.email?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
+                          u.phone_number?.includes(accountForm.customer_search)
+                        ).length > 0 && (
+                          <div className="customer-dropdown">
+                            {users.filter(u => u.role === 'customer').filter(u =>
+                              u.first_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
+                              u.last_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
+                              u.email?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
+                              u.phone_number?.includes(accountForm.customer_search)
+                            ).map(customer => (
+                              <button
+                                key={customer.id}
+                                type="button"
+                                className="customer-option"
+                                onClick={() => setAccountForm({
+                                  ...accountForm,
+                                  selected_customer_id: customer.id,
+                                  customer_search: ''
+                                })}
+                              >
+                                <div className="customer-name">{customer.first_name} {customer.last_name}</div>
+                                <div className="customer-contact">{customer.email} | {customer.phone_number}</div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
+                        {accountForm.customer_search && users.filter(u => u.role === 'customer').filter(u =>
+                          u.first_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
+                          u.last_name?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
+                          u.email?.toLowerCase().includes(accountForm.customer_search.toLowerCase()) ||
+                          u.phone_number?.includes(accountForm.customer_search)
+                        ).length === 0 && (
+                          <div className="no-results">⚠️ No customers found</div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Customer Details Section - Read Only */}
                     <div className="form-section">
-                      <h4>👤 Customer Details</h4>
-                      <div className="detail-info">
-                        <div className="detail-field">
-                          <label>Full Name</label>
-                          <p className="field-value">{user?.first_name} {user?.last_name}</p>
+                      <h4>👤 {['staff', 'admin'].includes(user?.role) ? 'Selected Customer Details' : 'Your Details'}</h4>
+                      {['staff', 'admin'].includes(user?.role) && accountForm.selected_customer_id ? (
+                        (() => {
+                          const selectedCustomer = users.find(u => u.id === accountForm.selected_customer_id);
+                          return selectedCustomer ? (
+                            <div className="detail-info">
+                              <div className="detail-field">
+                                <label>Full Name</label>
+                                <p className="field-value">{selectedCustomer.first_name} {selectedCustomer.last_name}</p>
+                              </div>
+                              <div className="detail-field">
+                                <label>Email Address</label>
+                                <p className="field-value">{selectedCustomer.email}</p>
+                              </div>
+                              <div className="detail-field">
+                                <label>Phone Number</label>
+                                <p className="field-value">{selectedCustomer.phone_number}</p>
+                              </div>
+                              <div className="detail-field">
+                                <label>Username</label>
+                                <p className="field-value">{selectedCustomer.username}</p>
+                              </div>
+                              <button
+                                type="button"
+                                className="cancel-btn"
+                                onClick={() => setAccountForm({...accountForm, selected_customer_id: null})}
+                              >
+                                ✕ Change Customer
+                              </button>
+                            </div>
+                          ) : null;
+                        })()
+                      ) : ['staff', 'admin'].includes(user?.role) ? (
+                        <div className="alert-info">📋 Please search and select a customer above</div>
+                      ) : (
+                        <div className="detail-info">
+                          <div className="detail-field">
+                            <label>Full Name</label>
+                            <p className="field-value">{user?.first_name} {user?.last_name}</p>
+                          </div>
+                          <div className="detail-field">
+                            <label>Email Address</label>
+                            <p className="field-value">{user?.email}</p>
+                          </div>
+                          <div className="detail-field">
+                            <label>Phone Number</label>
+                            <p className="field-value">{user?.phone_number}</p>
+                          </div>
+                          <div className="detail-field">
+                            <label>Username</label>
+                            <p className="field-value">{user?.username}</p>
+                          </div>
                         </div>
-                        <div className="detail-field">
-                          <label>Email Address</label>
-                          <p className="field-value">{user?.email}</p>
-                        </div>
-                        <div className="detail-field">
-                          <label>Phone Number</label>
-                          <p className="field-value">{user?.phone_number}</p>
-                        </div>
-                        <div className="detail-field">
-                          <label>Username</label>
-                          <p className="field-value">{user?.username}</p>
-                        </div>
-                      </div>
-                      <small className="hint">👆 These are your registered details. Contact support to update.</small>
+                      )}
                     </div>
 
                     {/* Account Details Section */}
@@ -969,10 +1095,16 @@ CLOSING BALANCE: ₹${account?.balance || 0}
                     </div>
 
                     <div className="form-actions">
-                      <button type="submit" className="submit-btn">✓ Create Account & Generate Passbook</button>
+                      <button
+                        type="submit"
+                        className="submit-btn"
+                        disabled={['staff', 'admin'].includes(user?.role) && !accountForm.selected_customer_id}
+                      >
+                        ✓ Create Account & Generate Passbook
+                      </button>
                       <button type="button" className="cancel-btn" onClick={() => {
                         setShowCreateAccount(false);
-                        setAccountForm({account_type: 'savings', initial_balance: 0});
+                        setAccountForm({account_type: 'savings', initial_balance: 0, selected_customer_id: null, customer_search: ''});
                       }}>Cancel</button>
                     </div>
                   </form>
