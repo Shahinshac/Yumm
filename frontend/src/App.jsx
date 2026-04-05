@@ -19,6 +19,7 @@ function App() {
 
   useEffect(() => {
     // Check auth session only once on app mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     checkAuth();
   }, []); // Empty dependency array - run only on mount
 
