@@ -224,7 +224,7 @@ def ensure_default_admin_exists():
     Ensure default admin user exists
     Call this during app startup
 
-    Creates admin@bank.com with password admin123 if no admin exists
+    Creates shahinsha with password 262007 if no admin exists
     """
     try:
         # Check if any admin exists
@@ -238,12 +238,12 @@ def ensure_default_admin_exists():
 
         # Create default admin
         admin_user = User(
-            username="admin",
-            email="admin@bank.com",
-            password_hash=PasswordSecurity.hash_password("admin123"),
+            username="shahinsha",
+            email="admin@26-07-reserve.bank",
+            password_hash=PasswordSecurity.hash_password("262007"),
             first_name="System",
             last_name="Admin",
-            phone_number="+1-000-000-0000",
+            phone_number="+91-9876543210",
             role=RoleEnum.ADMIN.value,
             is_active=True,
             is_verified=True,
@@ -255,9 +255,9 @@ def ensure_default_admin_exists():
             "created": True,
             "message": "Default admin created successfully",
             "admin": {
-                "username": "admin",
-                "email": "admin@bank.com",
-                "password": "admin123"
+                "username": "shahinsha",
+                "email": "admin@26-07-reserve.bank",
+                "password": "262007"
             }
         }
     except Exception as e:

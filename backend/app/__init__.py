@@ -172,16 +172,16 @@ def _ensure_admin_exists(app):
     Ensure default admin user exists on app startup
 
     If no admin exists, creates:
-        - username: admin
-        - email: admin@bank.com
-        - password: admin123
+        - username: shahinsha
+        - email: admin@26-07-reserve.bank
+        - password: 262007
     """
     try:
         from app.services.auth_service import ensure_default_admin_exists
 
         result = ensure_default_admin_exists()
         if result.get("created"):
-            app.logger.info(f"✅ Default admin created: {result['admin']['email']}")
+            app.logger.info(f"✅ Default admin created: {result['admin']['username']}")
         else:
             app.logger.info(f"✅ Admin already exists")
     except Exception as e:
