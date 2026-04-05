@@ -1,357 +1,157 @@
 """
-Transaction API routes
+Transaction, Loan, Card, Bill Routes
 """
 from flask import Blueprint, request, jsonify
-from datetime import datetime
-from app.services.transaction_service import TransactionService
-from app.utils.exceptions import BankingException
-from app.middleware.rbac import require_authentication, get_current_user
+from flask_jwt_extended import jwt_required
+from backend.app.models.transaction import Transaction
+from backend.app.models.account import Account
+from backend.app.middleware.auth import role_required, get_current_user
+import uuid
 
-# Create blueprint
-transactions_bp = Blueprint("transactions", __name__, url_prefix="/api/transactions")
+# Transaction routes
+txn_bp = Blueprint('transactions', __name__, url_prefix='/api/transactions')
 
+@txn_bp.route('', methods=['GET'])
+@jwt_required()
+def list_transactions():
+    """List transactions"""
+    current = get_current_user()
+    account_id = request.args.get('account_id')
 
-@transactions_bp.route("/deposit", methods=["POST"])
-@require_authentication
-def deposit():
-    """
-    Deposit money into account
+    if account_id:
+        txns = Transaction.objects(account=account_id)
+    else:
+        accounts = Account.objects(user=current['user_id']if not current['is_admin'] else None)
+        account_ids = [a.id for a in accounts]
+        txns = Transaction.objects(account__in=account_ids)
 
-    Request body:
-        {
-            "account_id": "str_id",
-            "amount": 5000.00,
-            "description": "Monthly salary"  # Optional
-        }
+    return jsonify({'transactions': [t.to_dict() for t in txns]}), 200
 
-    Returns:
-        201: Transaction completed
-        400: Validation error
-        404: Account not found
-        403: Unauthorized
-    """
-    try:
-        current_user = get_current_user()
-        data = request.get_json()
+@txn_bp.route('', methods=['POST'])
+@role_required('admin', 'staff', 'customer')
+def create_transaction():
+    """Create transaction"""
+    data = request.get_json()
+    current = get_current_user()
 
-        # Validate required fields
-        if "account_id" not in data or "amount" not in data:
-            return jsonify({"error": "account_id and amount are required"}), 400
+    account = Account.objects(id=data.get('account_id')).first()
+    if not account:
+        return jsonify({'error': 'Account not found'}), 404
 
-        account_id = data.get("account_id")
-        amount = data.get("amount")
-        description = data.get("description", "")
+    if not current['is_admin'] and str(account.user.id) != current['user_id']:
+        return jsonify({'error': 'Forbidden'}), 403
 
-        # Check authorization (own account or staff/admin)
-        from app.services.account_service import AccountService
+    txn = Transaction(
+        account=account,
+        type=data.get('type', 'deposit'),
+        amount=float(data.get('amount', 0)),
+        description=data.get('description', ''),
+        reference_id=f"TXN{uuid.uuid4().hex[:12].upper()}",
+        status='completed'
+    )
+    txn.save()
 
-        account = AccountService.get_account_by_id(account_id)
-        if (
-            current_user["role"] not in ["admin", "staff"]
-            and account.user_id != current_user["user_id"]
-        ):
-            return jsonify({"error": "You can only deposit to your own accounts"}), 403
+    account.balance += txn.amount if txn.type == 'deposit' else -txn.amount
+    account.transactions_count += 1
+    account.save()
 
-        # Process deposit
-        transaction = TransactionService.deposit(account_id, amount, description)
+    return jsonify(txn.to_dict()), 201
 
-        return (
-            jsonify({
-                "message": "Deposit successful",
-                "transaction": transaction.to_dict(),
-                "new_balance": float(account.balance),
-            }),
-            201,
-        )
+# Loan routes
+loan_bp = Blueprint('loans', __name__, url_prefix='/api/loans')
 
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@loan_bp.route('', methods=['GET'])
+@jwt_required()
+def list_loans():
+    """List loans"""
+    from backend.app.models.models import Loan
+    current = get_current_user()
 
+    loans = Loan.objects(user=current['user_id']) if not current['is_admin'] else Loan.objects()
+    return jsonify({'loans': [l.to_dict() for l in loans]}), 200
 
-@transactions_bp.route("/withdraw", methods=["POST"])
-@require_authentication
-def withdraw():
-    """
-    Withdraw money from account
+@loan_bp.route('', methods=['POST'])
+@jwt_required()
+def apply_loan():
+    """Apply for loan"""
+    from backend.app.models.models import Loan
+    data = request.get_json()
+    current = get_current_user()
 
-    Request body:
-        {
-            "account_id": "str_id",
-            "amount": 1000.00,
-            "description": "ATM withdrawal"  # Optional
-        }
+    user = User.objects(id=current['user_id']).first()
+    account = Account.objects(id=data.get('account_id')).first()
 
-    Returns:
-        201: Transaction completed
-        400: Validation error or insufficient balance
-        404: Account not found
-        403: Unauthorized
-    """
-    try:
-        current_user = get_current_user()
-        data = request.get_json()
+    if not account or str(account.user.id) != current['user_id']:
+        return jsonify({'error': 'Invalid account'}), 400
 
-        # Validate required fields
-        if "account_id" not in data or "amount" not in data:
-            return jsonify({"error": "account_id and amount are required"}), 400
+    loan = Loan(
+        user=user,
+        account=account,
+        loan_type=data.get('loan_type', 'personal'),
+        amount=float(data.get('amount', 0)),
+        rate_of_interest=float(data.get('rate', 8.5)),
+        tenure_months=int(data.get('tenure', 12)),
+        status='approved'
+    )
+    loan.save()
 
-        account_id = data.get("account_id")
-        amount = data.get("amount")
-        description = data.get("description", "")
+    return jsonify(loan.to_dict()), 201
 
-        # Check authorization
-        from app.services.account_service import AccountService
+# Card routes
+card_bp = Blueprint('cards', __name__, url_prefix='/api/cards')
 
-        account = AccountService.get_account_by_id(account_id)
-        if (
-            current_user["role"] not in ["admin", "staff"]
-            and account.user_id != current_user["user_id"]
-        ):
-            return jsonify({"error": "You can only withdraw from your own accounts"}), 403
+@card_bp.route('', methods=['GET'])
+@jwt_required()
+def list_cards():
+    """List cards"""
+    from backend.app.models.models import Card
+    current = get_current_user()
 
-        # Process withdrawal
-        transaction = TransactionService.withdraw(account_id, amount, description)
+    cards = Card.objects(user=current['user_id']) if not current['is_admin'] else Card.objects()
+    return jsonify({'cards': [c.to_dict() for c in cards]}), 200
 
-        return (
-            jsonify({
-                "message": "Withdrawal successful",
-                "transaction": transaction.to_dict(),
-                "new_balance": float(account.balance),
-            }),
-            201,
-        )
+# Bill routes
+bill_bp = Blueprint('bills', __name__, url_prefix='/api/bills')
 
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+@bill_bp.route('', methods=['GET'])
+@jwt_required()
+def list_bills():
+    """List bills"""
+    from backend.app.models.models import Bill
+    current = get_current_user()
 
+    bills = Bill.objects(user=current['user_id']) if not current['is_admin'] else Bill.objects()
+    return jsonify({'bills': [b.to_dict() for b in bills]}), 200
 
-@transactions_bp.route("/transfer", methods=["POST"])
-@require_authentication
-def transfer():
-    """
-    Transfer money between accounts
+@bill_bp.route('', methods=['POST'])
+@jwt_required()
+def pay_bill():
+    """Pay bill"""
+    from backend.app.models.models import Bill
+    from datetime import datetime
 
-    Request body:
-        {
-            "from_account_id": "str_id",
-            "to_account_id": "str_id",
-            "amount": 5000.00,
-            "description": "Payment to John"  # Optional
-        }
+    data = request.get_json()
+    current = get_current_user()
 
-    Returns:
-        201: Transfer completed
-        400: Validation error or insufficient balance
-        404: Account not found
-        403: Unauthorized
-    """
-    try:
-        current_user = get_current_user()
-        data = request.get_json()
+    account = Account.objects(id=data.get('account_id')).first()
+    if not account or str(account.user.id) != current['user_id']:
+        return jsonify({'error': 'Invalid account'}), 400
 
-        # Validate required fields
-        required = ["from_account_id", "to_account_id", "amount"]
-        if not all(field in data for field in required):
-            return (
-                jsonify({
-                    "error": "from_account_id, to_account_id, and amount are required"
-                }),
-                400,
-            )
+    if account.balance < float(data.get('amount', 0)):
+        return jsonify({'error': 'Insufficient balance'}), 400
 
-        from_account_id = data.get("from_account_id")
-        to_account_id = data.get("to_account_id")
-        amount = data.get("amount")
-        description = data.get("description", "")
+    bill = Bill(
+        user=account.user,
+        account=account,
+        bill_type=data.get('bill_type', 'other'),
+        amount=float(data.get('amount', 0)),
+        status='paid',
+        paid_date=datetime.utcnow()
+    )
+    bill.save()
 
-        # Check authorization (can only transfer from own account)
-        from app.services.account_service import AccountService
+    account.balance -= bill.amount
+    account.transactions_count += 1
+    account.save()
 
-        from_account = AccountService.get_account_by_id(from_account_id)
-        if (
-            current_user["role"] not in ["admin", "staff"]
-            and from_account.user_id != current_user["user_id"]
-        ):
-            return jsonify({"error": "You can only transfer from your own accounts"}), 403
-
-        # Process transfer
-        result = TransactionService.transfer(from_account_id, to_account_id, amount, description)
-
-        return (
-            jsonify({
-                "message": "Transfer successful",
-                "reference_id": result["reference_id"],
-                "from_transaction": result["from_transaction"],
-                "to_transaction": result["to_transaction"],
-                "status": result["status"],
-            }),
-            201,
-        )
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@transactions_bp.route("", methods=["GET"])
-@require_authentication
-def get_transactions():
-    """
-    Get transaction history for current user (all accounts)
-
-    Query parameters:
-        type: Filter by transaction type (deposit, withdrawal, transfer)
-        start_date: Start date (YYYY-MM-DD)
-        end_date: End date (YYYY-MM-DD)
-        account_id: Filter by specific account (optional)
-        page: Page number (default: 1)
-        per_page: Items per page (default: 20)
-
-    Returns:
-        200: List of transactions
-        400: Invalid parameters
-        403: Unauthorized
-    """
-    try:
-        current_user = get_current_user()
-
-        # Get parameters
-        account_id = request.args.get("account_id")
-        transaction_type = request.args.get("type")
-        start_date_str = request.args.get("start_date")
-        end_date_str = request.args.get("end_date")
-        page = request.args.get("page", 1, type=int)
-        per_page = request.args.get("per_page", 20, type=int)
-
-        # Parse dates
-        start_date = None
-        end_date = None
-        if start_date_str:
-            try:
-                start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
-            except ValueError:
-                return jsonify({"error": "Invalid start_date format. Use YYYY-MM-DD"}), 400
-
-        if end_date_str:
-            try:
-                end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
-            except ValueError:
-                return jsonify({"error": "Invalid end_date format. Use YYYY-MM-DD"}), 400
-
-        # If filtering by account, check authorization
-        if account_id:
-            from app.services.account_service import AccountService
-
-            account = AccountService.get_account_by_id(account_id)
-            if (
-                current_user["role"] not in ["admin", "staff"]
-                and account.user_id != current_user["user_id"]
-            ):
-                return jsonify({"error": "You can only view your own transactions"}), 403
-
-            # Get account transactions
-            result = TransactionService.get_account_transactions(
-                account_id=account_id,
-                transaction_type=transaction_type,
-                start_date=start_date,
-                end_date=end_date,
-                page=page,
-                per_page=per_page,
-            )
-        else:
-            # Get all user transactions
-            result = TransactionService.get_user_transactions(
-                user_id=current_user["user_id"],
-                transaction_type=transaction_type,
-                start_date=start_date,
-                end_date=end_date,
-                page=page,
-                per_page=per_page,
-            )
-
-        return jsonify(result), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@transactions_bp.route("/<transaction_id>", methods=["GET"])
-@require_authentication
-def get_transaction(transaction_id):
-    """
-    Get specific transaction details
-
-    Returns:
-        200: Transaction details
-        404: Transaction not found
-        403: Unauthorized
-    """
-    try:
-        current_user = get_current_user()
-        transaction = TransactionService.get_transaction(transaction_id)
-
-        # Check authorization
-        if (
-            current_user["role"] not in ["admin", "staff"]
-            and transaction.user_id != current_user["user_id"]
-        ):
-            return jsonify({"error": "You can only view your own transactions"}), 403
-
-        return jsonify(transaction.to_dict()), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@transactions_bp.route("/summary/<account_id>", methods=["GET"])
-@require_authentication
-def get_transaction_summary(account_id):
-    """
-    Get transaction summary for account
-
-    Query parameters:
-        days: Number of days to include (default: 30)
-
-    Returns:
-        200: Summary statistics
-        404: Account not found
-        403: Unauthorized
-    """
-    try:
-        current_user = get_current_user()
-        days = request.args.get("days", 30, type=int)
-
-        # Check authorization
-        from app.services.account_service import AccountService
-
-        account = AccountService.get_account_by_id(account_id)
-        if (
-            current_user["role"] not in ["admin", "staff"]
-            and account.user_id != current_user["user_id"]
-        ):
-            return jsonify({"error": "You can only view your own account summary"}), 403
-
-        # Get summary
-        summary = TransactionService.get_transaction_summary(account_id, days)
-
-        return jsonify(summary), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@transactions_bp.errorhandler(BankingException)
-def handle_banking_exception(error):
-    """Handle custom banking exceptions"""
-    return jsonify({"error": error.message}), error.status_code
+    return jsonify(bill.to_dict()), 201

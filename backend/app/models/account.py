@@ -1,79 +1,45 @@
 """
-Account model for bank accounts using MongoEngine
+Account Model
 """
-from mongoengine import Document, StringField, DecimalField, DateTimeField, ReferenceField
+from mongoengine import Document, StringField, FloatField, ReferenceField, DateTimeField, BooleanField, IntField
 from datetime import datetime
-from enum import Enum
-
-
-class AccountTypeEnum(Enum):
-    """Bank account types"""
-    SAVINGS = "savings"
-    CURRENT = "current"
-    SALARY = "salary"
-
-
-class AccountStatusEnum(Enum):
-    """Account status"""
-    ACTIVE = "active"
-    FROZEN = "frozen"
-    CLOSED = "closed"
-
+import uuid
 
 class Account(Document):
-    """Bank Account model"""
-    meta = {
-        'collection': 'accounts',
-        'indexes': [
-            'account_number',
-            'user_id',
-            'status',
-            'account_type',
-            '-created_at',
-            # Compound indexes for common queries
-            ('user_id', 'status'),  # User's active accounts
-            ('user_id', '-created_at'),  # User's accounts sorted by date
-            ('account_type', 'status'),  # Accounts by type and status
-        ]
-    }
+    """Bank account model"""
 
-    # Account Identification
-    account_number = StringField(required=True, unique=True, max_length=20)
-    account_type = StringField(
-        required=True,
-        max_length=20,
-        default=AccountTypeEnum.SAVINGS.value,
-        choices=[e.value for e in AccountTypeEnum]
-    )
+    account_number = StringField(required=True, unique=True)
+    user = ReferenceField('User', required=True)
+    account_type = StringField(required=True, choices=['savings', 'current', 'salary'])
+    balance = FloatField(default=0.0)
+    status = StringField(default='active', choices=['active', 'frozen', 'closed'])
 
-    # Account Balance and Status
-    balance = DecimalField(default=0.00, precision=2)
-    status = StringField(
-        required=True,
-        max_length=20,
-        default=AccountStatusEnum.ACTIVE.value,
-        choices=[e.value for e in AccountStatusEnum]
-    )
+    monthly_limit = FloatField(default=100000)
+    transactions_count = IntField(default=0)
 
-    # Foreign Key - User Reference
-    user_id = ReferenceField('User', required=True)
-
-    # Timestamps
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
 
-    def to_dict(self):
-        """Convert to dictionary"""
-        return {
-            "id": str(self.id),
-            "account_number": self.account_number,
-            "account_type": self.account_type,
-            "balance": float(self.balance) if self.balance else 0.0,
-            "status": self.status,
-            "user_id": str(self.user_id.id) if self.user_id else None,
-            "created_at": self.created_at.isoformat() if self.created_at else None,
-            "updated_at": self.updated_at.isoformat() if self.updated_at else None,
-        }
+    meta = {
+        'collection': 'accounts',
+        'indexes': ['account_number', 'user'],
+        'strict': False
+    }
 
-    def __repr__(self):
-        return f"<Account {self.account_number}>"
+    @staticmethod
+    def generate_account_number():
+        return f"ACC{int(uuid.uuid4().int / 1000000000)}"
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'account_number': self.account_number,
+            'user_id': str(self.user.id),
+            'account_type': self.account_type,
+            'balance': self.balance,
+            'status': self.status,
+            'monthly_limit': self.monthly_limit,
+            'transactions_count': self.transactions_count,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat(),
+        }

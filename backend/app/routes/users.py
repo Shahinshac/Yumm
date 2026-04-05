@@ -1,331 +1,111 @@
 """
-User management API routes
+User Management Routes
 """
 from flask import Blueprint, request, jsonify
-from app.services.user_service import UserService
-from app.utils.exceptions import BankingException
-from app.middleware.rbac import role_required, require_authentication, get_current_user
+from flask_jwt_extended import jwt_required
+from backend.app.models.user import User
+from backend.app.utils.security import PasswordSecurity
+from backend.app.middleware.auth import role_required, get_current_user
 
-# Create blueprint
-users_bp = Blueprint("users", __name__, url_prefix="/api/users")
+bp = Blueprint('users', __name__, url_prefix='/api/users')
 
-
-@users_bp.route("", methods=["GET"])
-@role_required("admin", "admin")
+@bp.route('', methods=['GET'])
+@role_required('admin', 'staff')
 def list_users():
-    """
-    List all users (Admin/Manager only)
+    """List all users"""
+    page = request.args.get('page', 1, type=int)
+    per_page = request.args.get('per_page', 20, type=int)
 
-    Query parameters:
-        page: Page number (default: 1)
-        per_page: Items per page (default: 20)
+    users = User.objects().paginate(page, per_page)
 
-    Returns:
-        200: List of users with pagination
-        403: Unauthorized
-    """
-    try:
-        page = request.args.get("page", 1, type=int)
-        per_page = request.args.get("per_page", 20, type=int)
+    return jsonify({
+        'users': [u.to_dict() for u in users.items],
+        'total': users.total,
+        'pages': users.pages
+    }), 200
 
-        result = UserService.get_all_users(page=page, per_page=per_page)
-
-        return jsonify(result), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@users_bp.route("/customers", methods=["GET"])
-@role_required("admin", "staff")
+@bp.route('/customers', methods=['GET'])
+@role_required('admin', 'staff')
 def get_customers():
-    """
-    Get all customers (for account creation dropdown)
+    """Get all customers for dropdown"""
+    search = request.args.get('search', '').strip()
 
-    Admin/Staff only - used to select customer for account creation
+    query = User.objects(role='customer')
 
-    Query parameters (optional):
-        search: Filter by username, first_name, last_name, or email
+    if search:
+        from mongoengine import Q
+        query = query.filter(
+            Q(username__icontains=search) |
+            Q(first_name__icontains=search) |
+            Q(last_name__icontains=search) |
+            Q(email__icontains=search)
+        )
 
-    Returns:
-        200: List of customers with basic info
-        403: Unauthorized (customers/invalid users can't access)
-    """
-    try:
-        search = request.args.get("search", "").strip()
+    customers = list(query)
 
-        # Fetch all customers
-        from app.models.user import User as UserModel
-        query = UserModel.objects(role="customer")
+    return jsonify({
+        'customers': [
+            {
+                'id': str(c.id),
+                'username': c.username,
+                'first_name': c.first_name,
+                'last_name': c.last_name,
+                'email': c.email,
+                'phone_number': c.phone_number
+            }
+            for c in customers
+        ],
+        'count': len(customers)
+    }), 200
 
-        # Optional: filter by search term
-        if search:
-            from mongoengine import Q
-            query = query.filter(
-                Q(username__icontains=search) |
-                Q(first_name__icontains=search) |
-                Q(last_name__icontains=search) |
-                Q(email__icontains=search)
-            )
-
-        customers = query
-
-        return jsonify({
-            "customers": [
-                {
-                    "id": str(c.id),
-                    "username": c.username,
-                    "first_name": c.first_name,
-                    "last_name": c.last_name,
-                    "email": c.email,
-                    "phone_number": c.phone_number
-                }
-                for c in customers
-            ],
-            "count": len(customers)
-        }), 200
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-@require_authentication
+@bp.route('/<user_id>', methods=['GET'])
+@jwt_required()
 def get_user(user_id):
-    """
-    Get user details
+    """Get user details"""
+    current = get_current_user()
+    if current['role'] == 'customer' and current['user_id'] != user_id:
+        return jsonify({'error': 'Forbidden'}), 403
 
-    Restrictions:
-        - Admin/Manager: Can view any user
-        - Customer: Can only view own profile
+    user = User.objects(id=user_id).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
 
-    Returns:
-        200: User details
-        404: User not found
-        403: Unauthorized
-    """
-    try:
-        current_user = get_current_user()
+    return jsonify(user.to_dict()), 200
 
-        # Check authorization
-        if current_user["role"] not in ["admin"] and current_user["user_id"] != user_id:
-            return jsonify({"error": "You can only view your own profile"}), 403
-
-        user = UserService.get_user_by_id(user_id)
-
-        return jsonify({
-            "user": user.to_dict(),
-            "role": user.role.name
-        }), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@users_bp.route("/<user_id>", methods=["PUT"])
-@role_required("admin")
+@bp.route('/<user_id>', methods=['PUT'])
+@role_required('admin')
 def update_user(user_id):
-    """
-    Update user information (Admin only)
+    """Update user (Admin only)"""
+    user = User.objects(id=user_id).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
 
-    Request body:
-        {
-            "first_name": "John",
-            "last_name": "Doe",
-            "phone_number": "+91-9876543210",
-            "is_active": true,
-            "is_verified": true
-        }
+    data = request.get_json()
 
-    Returns:
-        200: Updated user
-        400: Validation error
-        404: User not found
-        403: Unauthorized
-    """
-    try:
-        data = request.get_json()
+    if 'first_name' in data:
+        user.first_name = data['first_name']
+    if 'last_name' in data:
+        user.last_name = data['last_name']
+    if 'phone_number' in data:
+        user.phone_number = data['phone_number']
+    if 'role' in data:
+        if data['role'] in ['admin', 'staff', 'customer']:
+            user.role = data['role']
 
-        user = UserService.update_user(user_id, **data)
+    user.save()
+    return jsonify(user.to_dict()), 200
 
-        return jsonify({
-            "message": "User updated successfully",
-            "user": user.to_dict()
-        }), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@users_bp.route("/<user_id>/assign-role", methods=["POST"])
-@role_required("admin")
-def assign_role(user_id):
-    """
-    Assign role to user (Admin only)
-
-    Request body:
-        {
-            "role": "admin"
-        }
-
-    Valid roles: admin, staff, customer
-
-    Returns:
-        200: User with new role
-        400: Invalid role
-        404: User not found
-        403: Unauthorized
-    """
-    try:
-        data = request.get_json()
-
-        if not data.get("role"):
-            return jsonify({"error": "Role is required"}), 400
-
-        user = UserService.assign_role(user_id, data["role"])
-
-        return jsonify({
-            "message": "Role assigned successfully",
-            "user": user.to_dict(),
-            "role": user.role.name
-        }), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@users_bp.route("/<user_id>/deactivate", methods=["POST"])
-@role_required("admin")
-def deactivate_user(user_id):
-    """
-    Deactivate user account (Admin only)
-
-    Returns:
-        200: User deactivated
-        404: User not found
-        403: Unauthorized
-    """
-    try:
-        user = UserService.deactivate_user(user_id)
-
-        return jsonify({
-            "message": "User deactivated successfully",
-            "user": user.to_dict()
-        }), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@users_bp.route("/<user_id>/activate", methods=["POST"])
-@role_required("admin")
-def activate_user(user_id):
-    """
-    Activate user account (Admin only)
-
-    Returns:
-        200: User activated
-        404: User not found
-        403: Unauthorized
-    """
-    try:
-        user = UserService.activate_user(user_id)
-
-        return jsonify({
-            "message": "User activated successfully",
-            "user": user.to_dict()
-        }), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@users_bp.route("/<user_id>", methods=["DELETE"])
-@role_required("admin")
+@bp.route('/<user_id>', methods=['DELETE'])
+@role_required('admin')
 def delete_user(user_id):
-    """
-    Delete user account (Admin only)
+    """Delete user (Admin only)"""
+    user = User.objects(id=user_id).first()
+    if not user:
+        return jsonify({'error': 'User not found'}), 404
 
-    WARNING: This will permanently delete the user and all associated data
+    current = get_current_user()
+    if current['user_id'] == user_id:
+        return jsonify({'error': 'Cannot delete yourself'}), 400
 
-    Returns:
-        200: User deleted
-        404: User not found
-        403: Unauthorized
-        400: Cannot delete self
-    """
-    try:
-        current_user = get_current_user()
-
-        # Prevent deleting oneself
-        if current_user["user_id"] == user_id:
-            return jsonify({"error": "You cannot delete your own account"}), 400
-
-        user = UserService.get_user_by_id(user_id)
-        if not user:
-            return jsonify({"error": "User not found"}), 404
-
-        # Delete user
-        user.delete()
-
-        return jsonify({
-            "message": "User deleted successfully",
-            "deleted_user_id": user_id
-        }), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@users_bp.route("/search", methods=["GET"])
-@role_required("admin", "admin", "staff")
-def search_users():
-    """
-    Search users by username, email, or phone
-
-    Query parameters:
-        q: Search query (required)
-        type: Search type - username, email, phone (default: username)
-
-    Returns:
-        200: List of matching users
-        400: Bad request
-        403: Unauthorized
-    """
-    try:
-        query = request.args.get("q")
-        search_type = request.args.get("type", "username")
-
-        if not query:
-            return jsonify({"error": "Query parameter 'q' is required"}), 400
-
-        users = UserService.search_users(query, search_type)
-
-        return jsonify({
-            "query": query,
-            "type": search_type,
-            "count": len(users),
-            "users": [user.to_dict() for user in users]
-        }), 200
-
-    except BankingException as e:
-        return jsonify({"error": e.message}), e.status_code
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-
-@users_bp.errorhandler(BankingException)
-def handle_banking_exception(error):
-    """Handle custom banking exceptions"""
-    return jsonify({"error": error.message}), error.status_code
+    user.delete()
+    return jsonify({'message': 'User deleted'}), 200

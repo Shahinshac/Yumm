@@ -1,1 +1,3 @@
-# Utils package - Helper functions
+"""
+Utils package
+"""
