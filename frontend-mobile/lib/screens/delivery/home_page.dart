@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:geolocator/geolocator.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_spacing.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
 import '../../services/socket_service.dart';
@@ -35,8 +37,6 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
 
   Timer? _pollTimer;
   Timer? _locationTimer;
-
-  static const Color _brand = Color(0xFFff6b35);
 
   @override
   void initState() {
@@ -177,8 +177,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: _brand,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
         title: const Text('🚴 Delivery Dashboard'),
         actions: [
           // GPS status indicator
@@ -264,7 +264,7 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
         children: [
           _statChip(Icons.check_circle, 'Delivered', '${_stats!['delivered_orders'] ?? 0}', Colors.green),
           _statChip(Icons.pending, 'Active', '${_stats!['active_orders'] ?? 0}', Colors.orange),
-          _statChip(Icons.currency_rupee, 'Earnings', '₹${_stats!['total_earnings'] ?? 0}', _brand),
+          _statChip(Icons.currency_rupee, 'Earnings', '₹${_stats!['total_earnings'] ?? 0}', AppColors.primary),
         ],
       ),
     );
@@ -329,7 +329,7 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                         style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            color: _brand),
+                            color: AppColors.primary),
                       ),
                     ],
                   ),
@@ -352,7 +352,7 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                          backgroundColor: _brand,
+                          backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white),
                       icon: const Icon(Icons.check),
                       label: const Text('Accept Delivery'),
@@ -450,7 +450,7 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                       Text(
                         '₹${o['total_amount'] ?? 0}',
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15, color: _brand),
+                            fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.primary),
                       ),
                       if (isActive)
                         ElevatedButton.icon(

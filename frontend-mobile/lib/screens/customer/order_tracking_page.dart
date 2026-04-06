@@ -150,7 +150,8 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
             return const Center(child: Text('Order not found'));
           }
 
-          final status = _currentStatus.isNotEmpty ? _currentStatus : order.status;
+          final status =
+              _currentStatus.isNotEmpty ? _currentStatus : order.status;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
@@ -193,7 +194,11 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       margin: const EdgeInsets.only(bottom: AppSpacing.xxl),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.12), blurRadius: AppSpacing.elevationMd)],
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.black.withOpacity(0.12),
+              blurRadius: AppSpacing.elevationMd)
+        ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
@@ -219,7 +224,14 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
   }
 
   Widget _buildStatusTimeline(String currentStatus) {
-    const steps = ['pending', 'confirmed', 'preparing', 'ready', 'on_the_way', 'delivered'];
+    const steps = [
+      'pending',
+      'confirmed',
+      'preparing',
+      'ready',
+      'on_the_way',
+      'delivered'
+    ];
     final labels = {
       'pending': 'Order Placed',
       'confirmed': 'Confirmed',
@@ -244,14 +256,19 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.12), blurRadius: AppSpacing.elevationMd)],
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.black.withOpacity(0.12),
+              blurRadius: AppSpacing.elevationMd)
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Order Status',
-            style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary),
+            style: AppTypography.titleMedium
+                .copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.lg),
           ...List.generate(steps.length, (index) {
@@ -269,7 +286,11 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                         shape: BoxShape.circle,
                         color: isActive ? AppColors.primary : AppColors.gray100,
                         boxShadow: isCurrent
-                            ? [BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: AppSpacing.elevationMd)]
+                            ? [
+                                BoxShadow(
+                                    color: AppColors.primary.withOpacity(0.4),
+                                    blurRadius: AppSpacing.elevationMd)
+                              ]
                             : null,
                       ),
                       child: Center(
@@ -287,7 +308,9 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                         style: TextStyle(
                           fontWeight:
                               isCurrent ? FontWeight.bold : FontWeight.normal,
-                          color: isActive ? AppColors.textPrimary : AppColors.textSecondary,
+                          color: isActive
+                              ? AppColors.textPrimary
+                              : AppColors.textSecondary,
                           fontSize: isCurrent ? 15 : 13,
                         ),
                       ),
@@ -298,7 +321,8 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                             horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderRadius:
+                              BorderRadius.circular(AppSpacing.radiusMd),
                         ),
                         child: Text(
                           'Current',
@@ -316,7 +340,9 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                     child: SizedBox(
                       height: 20,
                       child: VerticalDivider(
-                        color: index < currentIndex ? AppColors.primary : AppColors.gray200,
+                        color: index < currentIndex
+                            ? AppColors.primary
+                            : AppColors.gray200,
                         thickness: 2,
                       ),
                     ),
@@ -335,15 +361,21 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.12), blurRadius: AppSpacing.elevationMd)],
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.black.withOpacity(0.12),
+              blurRadius: AppSpacing.elevationMd)
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Order Details',
-              style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary)),
+              style: AppTypography.titleMedium
+                  .copyWith(color: AppColors.textPrimary)),
           const Divider(),
-          _detailRow('Order ID', '#${order.id.padRight(12).substring(0, 12).trimRight()}...'),
+          _detailRow('Order ID',
+              '#${order.id.padRight(12).substring(0, 12).trimRight()}...'),
           _detailRow('Restaurant', order.restaurantName),
           _detailRow('Items', '${order.items.length} item(s)'),
           _detailRow('Total', '₹${order.totalAmount.toStringAsFixed(2)}'),
@@ -363,38 +395,46 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.12), blurRadius: AppSpacing.elevationMd)],
+        boxShadow: [
+          BoxShadow(
+              color: AppColors.black.withOpacity(0.12),
+              blurRadius: AppSpacing.elevationMd)
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('Items Ordered',
-              style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary)),
+              style: AppTypography.titleMedium
+                  .copyWith(color: AppColors.textPrimary)),
           const Divider(),
           ...order.items.map<Widget>((item) => Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(item.name,
-                          style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
-                      Text('${item.quantity} × ₹${item.price}',
-                          style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
-                    ],
-                  ),
+                padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.name,
+                              style: AppTypography.bodyMedium
+                                  .copyWith(fontWeight: FontWeight.w600)),
+                          Text('${item.quantity} × ₹${item.price}',
+                              style: AppTypography.bodySmall
+                                  .copyWith(color: AppColors.textSecondary)),
+                        ],
+                      ),
+                    ),
+                    Text(
+                      '₹${(item.price * item.quantity).toStringAsFixed(2)}',
+                      style: AppTypography.bodyMedium.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary),
+                    ),
+                  ],
                 ),
-                Text(
-                  '₹${(item.price * item.quantity).toStringAsFixed(2)}',
-                  style: AppTypography.bodyMedium.copyWith(
-                      fontWeight: FontWeight.bold, color: AppColors.primary),
-                ),
-              ],
-            ),
-          )),
+              )),
         ],
       ),
     );
@@ -407,12 +447,15 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: AppTypography.bodyMedium.copyWith(color: AppColors.textSecondary)),
+          Text(label,
+              style: AppTypography.bodyMedium
+                  .copyWith(color: AppColors.textSecondary)),
           Expanded(
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600),
+              style: AppTypography.bodyMedium
+                  .copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -475,7 +518,8 @@ class _ReviewSectionState extends State<_ReviewSection> {
         children: [
           Text(
             'Share Your Feedback',
-            style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary),
+            style: AppTypography.titleMedium
+                .copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.lg),
           Text('Rate your experience', style: AppTypography.bodyMedium),
@@ -486,7 +530,8 @@ class _ReviewSectionState extends State<_ReviewSection> {
               (index) => GestureDetector(
                 onTap: () => setState(() => _rating = index + 1),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                   child: Icon(
                     index < _rating ? Icons.star : Icons.star_border,
                     size: 36,
@@ -503,7 +548,8 @@ class _ReviewSectionState extends State<_ReviewSection> {
             maxLines: 5,
             decoration: InputDecoration(
               hintText: 'Share your comments...',
-              border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
@@ -529,8 +575,10 @@ class _ReviewSectionState extends State<_ReviewSection> {
                     )
                     .then((_) => setState(() => _submitted = true));
               },
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-              child: const Text('Submit Review', style: TextStyle(color: Colors.white)),
+              style:
+                  ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+              child: const Text('Submit Review',
+                  style: TextStyle(color: Colors.white)),
             ),
           ),
         ],
