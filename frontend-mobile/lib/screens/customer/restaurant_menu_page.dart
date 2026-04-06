@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_spacing.dart';
+import '../../core/constants/app_typography.dart';
+import '../../core/widgets/food_item_card.dart';
+import '../../core/widgets/custom_loading.dart';
+import '../../core/widgets/rating_widget.dart';
 import '../../providers/restaurant_provider.dart';
 import '../../providers/order_provider.dart';
 
@@ -27,8 +33,10 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
         title: const Text('Menu'),
+        elevation: AppSpacing.elevationMd,
         actions: [
           Consumer<OrderProvider>(
             builder: (context, orderProvider, _) {
@@ -43,19 +51,12 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
                       right: 0,
                       top: 0,
                       child: Container(
-                        padding: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(AppSpacing.xs),
                         decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10),
+                          color: AppColors.error,
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
                         ),
-                        child: Text(
-                          '${orderProvider.cartItemCount}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+                        child: Text('${orderProvider.cartItemCount}', style: AppTypography.labelSmall.copyWith(color: AppColors.white)),
                       ),
                     ),
                 ],
@@ -67,7 +68,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
       body: Consumer2<RestaurantProvider, OrderProvider>(
         builder: (context, restaurantProvider, orderProvider, _) {
           if (restaurantProvider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
+            return const CustomLoading(message: 'Loading menu...');
           }
 
           final restaurant = restaurantProvider.selectedRestaurant;
@@ -81,150 +82,81 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Restaurant Header
                 Container(
                   width: double.infinity,
-                  color: Colors.grey[200],
-                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.1), blurRadius: AppSpacing.elevationMd, offset: const Offset(0, 2))],
+                  ),
+                  padding: const EdgeInsets.all(AppSpacing.lg),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        width: 100,
-                        height: 100,
+                        width: 120,
+                        height: 120,
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFff6b35), Color(0xFFf7931e)],
-                          ),
-                          borderRadius: BorderRadius.circular(8),
+                          gradient: const LinearGradient(colors: [AppColors.primary, AppColors.secondary]),
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
                         ),
-                        child: const Center(
-                          child: Text('🍕', style: TextStyle(fontSize: 48)),
-                        ),
+                        child: const Center(child: Text('🍕', style: TextStyle(fontSize: 64))),
                       ),
-                      const SizedBox(height: 12),
-                      Text(
-                        restaurant.name,
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(restaurant.category),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.lg),
+                      Text(restaurant.name, style: AppTypography.headlineSmall.copyWith(color: AppColors.textPrimary)),
+                      const SizedBox(height: AppSpacing.sm),
+                      Text(restaurant.category ?? 'Restaurant', style: AppTypography.bodyMedium.copyWith(color: AppColors.textSecondary)),
+                      const SizedBox(height: AppSpacing.md),
                       Row(
                         children: [
-                          const Icon(
-                            Icons.star,
-                            color: Color(0xFFff6b35),
-                            size: 16,
-                          ),
-                          Text('  ${restaurant.rating}'),
-                          const SizedBox(width: 16),
-                          const Icon(
-                            Icons.timer,
-                            color: Color(0xFFff6b35),
-                            size: 16,
-                          ),
-                          Text('  ${restaurant.deliveryTime}m'),
-                          const SizedBox(width: 16),
-                          const Icon(
-                            Icons.local_shipping,
-                            color: Color(0xFFff6b35),
-                            size: 16,
-                          ),
-                          Text('  \₹${restaurant.deliveryCharge}'),
+                          RatingWidget(rating: (restaurant.rating ?? 4.5).toDouble(), reviewCount: restaurant.reviewCount ?? 0),
+                          const SizedBox(width: AppSpacing.lg),
+                          Icon(Icons.access_time, color: AppColors.textTertiary, size: 18),
+                          const SizedBox(width: AppSpacing.xs),
+                          Text('${restaurant.deliveryTime ?? 30} min', style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiary)),
                         ],
                       ),
                     ],
                   ),
                 ),
-
-                // Menu Items
+                const SizedBox(height: AppSpacing.xxl),
                 Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Menu Items',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
+                      Text('Menu', style: AppTypography.headlineSmall.copyWith(color: AppColors.textPrimary)),
+                      const SizedBox(height: AppSpacing.lg),
                       if (menuItems.isEmpty)
-                        const Text('No menu items available')
+                        const Center(child: Padding(padding: EdgeInsets.all(AppSpacing.xxl), child: Text('No menu items')))
                       else
-                        ListView.builder(
+                        GridView.builder(
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.75,
+                            mainAxisSpacing: AppSpacing.lg,
+                            crossAxisSpacing: AppSpacing.lg,
+                          ),
                           itemCount: menuItems.length,
                           itemBuilder: (context, index) {
                             final item = menuItems[index];
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 12),
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            item.name,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 4),
-                                          Text(
-                                            item.description,
-                                            style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.grey,
-                                            ),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            '\₹${item.price}',
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFFff6b35),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    ElevatedButton(
-                                      onPressed: () =>
-                                          orderProvider.addToCart(item),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                          0xFFff6b35,
-                                        ),
-                                      ),
-                                      child: const Text('Add'),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                            return FoodItemCard(
+                              name: item.name ?? 'Item',
+                              description: item.description ?? '',
+                              price: (item.price ?? 0).toDouble(),
+                              rating: (item.rating ?? 4.0).toDouble(),
+                              imageUrl: item.imageUrl ?? '',
+                              quantity: 0,
+                              onAddToCart: () => orderProvider.addToCart(item),
+                              onQuantityChanged: (qty) => orderProvider.updateQuantity(item.id, qty),
                             );
                           },
                         ),
                     ],
                   ),
                 ),
+                const SizedBox(height: AppSpacing.xxl),
               ],
             ),
           );
