@@ -1,0 +1,122 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f5f5;
+  color: #333;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-size: 18px;
+  color: #666;
+}
+
+.error {
+  color: #d32f2f;
+  padding: 20px;
+  text-align: center;
+}
+
+.error-msg {
+  background: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  padding: 10px 16px;
+  transition: all 0.3s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: #ff6b35;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #e55a24;
+}
+
+input, select, textarea {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.header {
+  background: white;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 24px;
+  color: #ff6b35;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.btn-back, .btn-logout {
+  background: #6c757d;
+  color: white;
+  padding: 8px 16px;
+}
+
+.btn-back:hover, .btn-logout:hover {
+  background: #5a6268;
+}
+
+.dashboard {
+  min-height: 100vh;
+  background: #f5f5f5;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.content h2, .content p {
+  margin: 10px 0;
+}

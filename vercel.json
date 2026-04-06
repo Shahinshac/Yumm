@@ -1,0 +1,4 @@
+{
+  "buildCommand": "echo 'Build already done'",
+  "outputDirectory": "frontend-mobile/build/web"
+}

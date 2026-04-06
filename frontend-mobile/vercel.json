@@ -1,0 +1,6 @@
+{
+  "buildCommand": "echo 'Build already done'",
+  "outputDirectory": "build/web"
+}
+
+

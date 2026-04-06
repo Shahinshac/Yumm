@@ -1,0 +1,62 @@
+# Flutter
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+*.iml
+*.lock
+
+# iOS/macOS
+ios/
+macos/
+
+# Build
+build/
+dist/
+
+# Emulator
+.android/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Logs
+*.log
+*.iml
+
+# Pubspec lock
+pubspec.lock
+
+# Generated wrapper jar file is ignored
+!gradle-wrapper.jar
+
+# Android generated files and folders
+.gradle/
+.classpath
+.c9/
+*.class
+*.dex
+*.jar
+*.jks
+*.zip
+*.rar
+*.7z
+
+# gradle
+.gradle
+build/
+
+# APK files (except for release uploads)
+*.apk
+
+# Local configuration file
+local.properties
+
+# Signing files
+*.jks
+*.keystore
