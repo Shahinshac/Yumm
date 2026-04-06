@@ -15,7 +15,8 @@ class RegisterPage extends StatefulWidget {
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderStateMixin {
+class _RegisterPageState extends State<RegisterPage>
+    with SingleTickerProviderStateMixin {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -75,7 +76,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
             ),
           ),
         );
@@ -89,7 +90,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
             ),
           ),
         );
@@ -113,7 +114,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
         ),
         child: SafeArea(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.paddingLg),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: FadeTransition(
               opacity: _fadeAnimation,
               child: Container(
@@ -129,7 +130,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                     ),
                   ],
                 ),
-                padding: const EdgeInsets.all(AppSpacing.paddingXxl),
+                padding: const EdgeInsets.all(AppSpacing.xxl),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -156,7 +157,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         color: AppColors.textSecondary,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.paddingXxl),
+                    const SizedBox(height: AppSpacing.xxl),
 
                     // Full Name Field
                     CustomTextField(
@@ -167,7 +168,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                       keyboardType: TextInputType.name,
                       textInputAction: TextInputAction.next,
                     ),
-                    const SizedBox(height: AppSpacing.paddingLg),
+                    const SizedBox(height: AppSpacing.lg),
 
                     // Username Field
                     CustomTextField(
@@ -178,7 +179,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                       keyboardType: TextInputType.text,
                       textInputAction: TextInputAction.next,
                     ),
-                    const SizedBox(height: AppSpacing.paddingLg),
+                    const SizedBox(height: AppSpacing.lg),
 
                     // Email Field
                     CustomTextField(
@@ -189,7 +190,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
                     ),
-                    const SizedBox(height: AppSpacing.paddingLg),
+                    const SizedBox(height: AppSpacing.lg),
 
                     // Phone Field
                     CustomTextField(
@@ -200,7 +201,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                       keyboardType: TextInputType.phone,
                       textInputAction: TextInputAction.next,
                     ),
-                    const SizedBox(height: AppSpacing.paddingLg),
+                    const SizedBox(height: AppSpacing.lg),
 
                     // Password Field
                     CustomTextField(
@@ -212,7 +213,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                       keyboardType: TextInputType.visiblePassword,
                       textInputAction: TextInputAction.next,
                     ),
-                    const SizedBox(height: AppSpacing.paddingLg),
+                    const SizedBox(height: AppSpacing.lg),
 
                     // Role Selector
                     Column(
@@ -228,7 +229,8 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         Container(
                           decoration: BoxDecoration(
                             border: Border.all(color: AppColors.border),
-                            borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.inputRadius),
                             fillColor: AppColors.gray100,
                           ),
                           padding: const EdgeInsets.symmetric(
@@ -238,7 +240,12 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                             isExpanded: true,
                             underline: const SizedBox(),
                             value: _selectedRole,
-                            items: ['customer', 'restaurant', 'delivery', 'admin']
+                            items: [
+                              'customer',
+                              'restaurant',
+                              'delivery',
+                              'admin'
+                            ]
                                 .map(
                                   (role) => DropdownMenuItem(
                                     value: role,
@@ -252,13 +259,14 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                                 )
                                 .toList(),
                             onChanged: (value) {
-                              setState(() => _selectedRole = value ?? 'customer');
+                              setState(
+                                  () => _selectedRole = value ?? 'customer');
                             },
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: AppSpacing.paddingXxl),
+                    const SizedBox(height: AppSpacing.xxl),
 
                     // Register Button
                     Consumer<AuthProvider>(
@@ -272,7 +280,7 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
                         );
                       },
                     ),
-                    const SizedBox(height: AppSpacing.paddingLg),
+                    const SizedBox(height: AppSpacing.lg),
 
                     // Login Link
                     Row(

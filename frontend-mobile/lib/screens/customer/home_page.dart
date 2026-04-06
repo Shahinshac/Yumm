@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_spacing.dart';
+import '../../core/constants/app_typography.dart';
+import '../../core/widgets/custom_text_field.dart';
+import '../../core/widgets/restaurant_card.dart';
+import '../../core/widgets/custom_loading.dart';
+import '../../core/widgets/custom_empty_state.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/restaurant_provider.dart';
 import '../../providers/order_provider.dart';
@@ -45,9 +52,10 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.surface,
       appBar: AppBar(
         title: const Text('🍕 FoodHub'),
-        elevation: 2,
+        elevation: AppSpacing.elevationMd,
         actions: [
           Consumer<OrderProvider>(
             builder: (context, orderProvider, _) {
@@ -62,17 +70,15 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                       right: 0,
                       top: 0,
                       child: Container(
-                        padding: const EdgeInsets.all(4),
+                        padding: const EdgeInsets.all(AppSpacing.xs),
                         decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10),
+                          color: AppColors.error,
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
                         ),
                         child: Text(
                           '${orderProvider.cartItemCount}',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
+                          style: AppTypography.labelSmall.copyWith(
+                            color: AppColors.white,
                           ),
                         ),
                       ),
@@ -106,7 +112,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
         builder: (context, restaurantProvider, _) {
           if (restaurantProvider.isLoading &&
               restaurantProvider.restaurants.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return const CustomLoading(message: 'Loading restaurants...');
           }
 
           if (_filteredRestaurants.isEmpty &&
@@ -115,53 +121,58 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
           }
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Search Bar
-                TextField(
+                CustomTextField(
+                  label: 'Search Restaurants',
+                  hint: 'Find your favorite restaurant...',
                   controller: _searchController,
+                  prefixIcon: Icons.search,
+                  keyboardType: TextInputType.text,
                   onChanged: (value) =>
                       _filterRestaurants(value, restaurantProvider.restaurants),
-                  decoration: InputDecoration(
-                    hintText: 'Search restaurants...',
-                    prefixIcon: const Icon(Icons.search),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
+                ),
+                const SizedBox(height: AppSpacing.xxl),
+
+                Text(
+                  'Popular Restaurants',
+                  style: AppTypography.headlineSmall.copyWith(
+                    color: AppColors.textPrimary,
                   ),
                 ),
-                const SizedBox(height: 20),
-
-                // Restaurants Section
-                const Text(
-                  'Popular Restaurants',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.lg),
 
                 if (_filteredRestaurants.isEmpty)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Text('No restaurants found'),
-                    ),
+                  CustomEmptyState(
+                    icon: Icons.restaurant,
+                    title: 'No Restaurants Found',
+                    description: 'Try adjusting your search criteria',
                   )
                 else
-                  ListView.builder(
+                  GridView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 1,
+                      childAspectRatio: 1.2,
+                      mainAxisSpacing: AppSpacing.lg,
+                    ),
                     itemCount: _filteredRestaurants.length,
                     itemBuilder: (context, index) {
                       final restaurant = _filteredRestaurants[index];
-                      return _RestaurantCard(
-                        restaurant: restaurant,
-                        onTap: () => context.go('/restaurant/${restaurant.id}'),
+                      return RestaurantCard(
+                        name: restaurant.name ?? 'Unknown',
+                        description: restaurant.cuisine ?? 'Restaurant',
+                        rating: (restaurant.rating ?? 4.5).toDouble(),
+                        reviewCount: restaurant.reviewCount ?? 0,
+                        imageUrl: restaurant.imageUrl ?? '',
+                        deliveryTime: '${restaurant.deliveryTime ?? 30} min',
+                        deliveryFee: '${restaurant.deliveryCharge ?? 0}',
+                        onTap: () {
+                          context.go('/restaurant/${restaurant.id}');
+                        },
                       );
                     },
                   ),
@@ -169,118 +180,6 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             ),
           );
         },
-      ),
-    );
-  }
-}
-
-class _RestaurantCard extends StatelessWidget {
-  final dynamic restaurant;
-  final VoidCallback onTap;
-
-  const _RestaurantCard({required this.restaurant, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: SizedBox(
-          height: 200,
-          child: Row(
-            children: [
-              // Image
-              Container(
-                width: 120,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFFff6b35), Color(0xFFf7931e)],
-                  ),
-                  borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(8),
-                    bottomLeft: Radius.circular(8),
-                  ),
-                ),
-                child: const Center(
-                  child: Text('🍕', style: TextStyle(fontSize: 48)),
-                ),
-              ),
-              // Info
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            restaurant.name,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            restaurant.category,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            restaurant.address,
-                            style: const TextStyle(
-                              fontSize: 11,
-                              color: Colors.grey,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star,
-                                color: Color(0xFFff6b35),
-                                size: 16,
-                              ),
-                              const SizedBox(width: 4),
-                              Text('${restaurant.rating}'),
-                            ],
-                          ),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.timer,
-                                color: Color(0xFFff6b35),
-                                size: 16,
-                              ),
-                              const SizedBox(width: 4),
-                              Text('${restaurant.deliveryTime}m'),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
