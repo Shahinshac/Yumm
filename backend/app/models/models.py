@@ -50,7 +50,10 @@ class Order(Document):
         return {
             'id': str(self.id),
             'customer_id': str(self.customer.id),
+            'customer_username': self.customer.username if self.customer else '',
             'restaurant_id': str(self.restaurant.id),
+            'restaurant_name': self.restaurant.name if self.restaurant else '',
+            'restaurant': str(self.restaurant.id),
             'delivery_partner_id': str(self.delivery_partner.id) if self.delivery_partner else None,
             'items': self.items,
             'subtotal': self.subtotal,

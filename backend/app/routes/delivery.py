@@ -6,6 +6,7 @@ from datetime import datetime
 from backend.app.models.user import User
 from backend.app.models.models import Order, DeliveryAssignment
 from backend.app.middleware.auth import required_auth, get_current_user, role_required
+from backend.app.routes.socket_events import emit_delivery_location_update, emit_order_status_update
 
 bp = Blueprint('delivery', __name__, url_prefix='/api/delivery')
 
@@ -110,6 +111,13 @@ def update_delivery_location(order_id):
     }
     order.save()
 
+    # Broadcast live location to all order watchers via SocketIO
+    emit_delivery_location_update(
+        order_id=str(order.id),
+        lat=order.current_location['lat'],
+        lng=order.current_location['lng'],
+    )
+
     return jsonify({
         'message': 'Location updated',
         'location': order.current_location
@@ -136,6 +144,14 @@ def mark_delivered(order_id):
     order.delivered_at = datetime.utcnow()
     order.save()
 
+    # Notify order watchers of delivery completion
+    emit_order_status_update(
+        order_id=str(order.id),
+        status='delivered',
+        restaurant_id=str(order.restaurant.id),
+        customer_id=str(order.customer.id),
+    )
+
     return jsonify({
         'message': 'Order marked as delivered',
         'order': order.to_dict()
@@ -156,3 +172,28 @@ def get_delivery_stats():
         'active_orders': active,
         'total_earnings': total_earnings
     }), 200
+
+@bp.route('/update-location', methods=['PUT'])
+@role_required('delivery')
+def update_my_location():
+    """Update delivery partner's current location (bulk update across active orders).
+    Payload: { lat: float, lng: float }
+    """
+    current = get_current_user()
+    data = request.get_json()
+
+    lat = float(data.get('lat', data.get('latitude', 0)))
+    lng = float(data.get('lng', data.get('longitude', 0)))
+
+    # Update location on all active orders assigned to this partner
+    active_orders = Order.objects(
+        delivery_partner=current['user_id'],
+        status__in=['on_the_way']
+    )
+
+    for order in active_orders:
+        order.current_location = {'lat': lat, 'lng': lng}
+        order.save()
+        emit_delivery_location_update(str(order.id), lat, lng)
+
+    return jsonify({'message': 'Location updated', 'lat': lat, 'lng': lng}), 200

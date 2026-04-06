@@ -61,6 +61,8 @@ class AuthProvider extends ChangeNotifier {
         role,
       );
       _token = response['access_token'];
+      // Persist token so future requests are authenticated
+      if (_token != null) await apiService.setToken(_token!);
       _user = User.fromJson(response['user']);
       _isLoading = false;
       notifyListeners();
@@ -76,7 +78,8 @@ class AuthProvider extends ChangeNotifier {
   Future<void> getCurrentUser() async {
     try {
       final response = await apiService.getCurrentUser();
-      _user = User.fromJson(response['user']);
+      // /api/auth/me returns the user dict directly (not wrapped in 'user')
+      _user = User.fromJson(response);
       notifyListeners();
     } catch (e) {
       _error = e.toString();

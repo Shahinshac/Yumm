@@ -41,8 +41,12 @@ def register():
     )
     user.save()
 
+    # Return access token so the client can log in immediately
+    access_token = create_access_token(identity=str(user.id))
+
     return jsonify({
         'message': 'Registration successful',
+        'access_token': access_token,
         'user': user.to_dict()
     }), 201
 

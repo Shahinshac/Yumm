@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
   static const String baseUrl = 'http://localhost:5000/api';
-  // For production: 'https://bankmanagement-api.onrender.com/api'
+  // For production: 'https://your-render-app.onrender.com/api'
 
   String? _token;
 
@@ -62,7 +62,8 @@ class ApiService {
     if (response.statusCode == 201 || response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Registration failed: ${response.body}');
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Registration failed');
     }
   }
 
@@ -78,7 +79,8 @@ class ApiService {
       await setToken(data['access_token']);
       return data;
     } else {
-      throw Exception('Login failed: ${response.body}');
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Login failed');
     }
   }
 
@@ -116,7 +118,7 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body)['restaurant'];
+      return jsonDecode(response.body);
     } else {
       throw Exception('Failed to get restaurant');
     }
@@ -129,9 +131,77 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body)['menu_items'] ?? [];
+      final data = jsonDecode(response.body);
+      return data['menu_items'] ?? [];
     } else {
       throw Exception('Failed to fetch menu');
+    }
+  }
+
+  // ===== RESTAURANT MENU MANAGEMENT =====
+  Future<Map<String, dynamic>> addMenuItem(
+    String restaurantId,
+    Map<String, dynamic> itemData,
+  ) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/restaurants/$restaurantId/menu'),
+      headers: _getHeaders(),
+      body: jsonEncode(itemData),
+    );
+
+    if (response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Failed to add menu item');
+    }
+  }
+
+  Future<Map<String, dynamic>> updateMenuItem(
+    String restaurantId,
+    String itemId,
+    Map<String, dynamic> itemData,
+  ) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/restaurants/$restaurantId/menu/$itemId'),
+      headers: _getHeaders(),
+      body: jsonEncode(itemData),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Failed to update menu item');
+    }
+  }
+
+  Future<void> deleteMenuItem(String restaurantId, String itemId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/restaurants/$restaurantId/menu/$itemId'),
+      headers: _getHeaders(),
+    );
+
+    if (response.statusCode != 200) {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Failed to delete menu item');
+    }
+  }
+
+  /// Get all orders for a restaurant
+  Future<List<dynamic>> getRestaurantOrders(String restaurantId, {String? status}) async {
+    var url = '$baseUrl/restaurants/$restaurantId/orders';
+    if (status != null) url += '?status=$status';
+
+    final response = await http.get(
+      Uri.parse(url),
+      headers: _getHeaders(),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['orders'] ?? [];
+    } else {
+      throw Exception('Failed to fetch restaurant orders');
     }
   }
 
@@ -148,7 +218,8 @@ class ApiService {
     if (response.statusCode == 201 || response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to create order: ${response.body}');
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Failed to create order');
     }
   }
 
@@ -172,7 +243,8 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return jsonDecode(response.body)['order'];
+      // Backend returns the order dict directly (not wrapped)
+      return jsonDecode(response.body);
     } else {
       throw Exception('Failed to get order');
     }
@@ -188,6 +260,24 @@ class ApiService {
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to track order');
+    }
+  }
+
+  Future<Map<String, dynamic>> updateOrderStatus(
+    String orderId,
+    String status,
+  ) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/orders/$orderId/status'),
+      headers: _getHeaders(),
+      body: jsonEncode({'status': status}),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Failed to update order status');
     }
   }
 
@@ -252,7 +342,8 @@ class ApiService {
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
-      throw Exception('Failed to accept order');
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Failed to accept order');
     }
   }
 
@@ -269,6 +360,7 @@ class ApiService {
     }
   }
 
+  /// Update delivery partner location across all active orders
   Future<Map<String, dynamic>> updateDeliveryLocation(
     double lat,
     double lng,
@@ -276,13 +368,59 @@ class ApiService {
     final response = await http.put(
       Uri.parse('$baseUrl/delivery/update-location'),
       headers: _getHeaders(),
-      body: jsonEncode({'latitude': lat, 'longitude': lng}),
+      body: jsonEncode({'lat': lat, 'lng': lng}),
     );
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
     } else {
       throw Exception('Failed to update location');
+    }
+  }
+
+  /// Update location for a specific order (more precise)
+  Future<Map<String, dynamic>> updateOrderDeliveryLocation(
+    String orderId,
+    double lat,
+    double lng,
+  ) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/delivery/$orderId/update-location'),
+      headers: _getHeaders(),
+      body: jsonEncode({'lat': lat, 'lng': lng}),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to update order location');
+    }
+  }
+
+  Future<Map<String, dynamic>> markOrderDelivered(String orderId) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/delivery/$orderId/mark-delivered'),
+      headers: _getHeaders(),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Failed to mark order as delivered');
+    }
+  }
+
+  Future<Map<String, dynamic>> getDeliveryStats() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/delivery/stats'),
+      headers: _getHeaders(),
+    );
+
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      throw Exception('Failed to fetch delivery stats');
     }
   }
 

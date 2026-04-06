@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'services/api_service.dart';
+import 'services/socket_service.dart';
 import 'providers/auth_provider.dart';
 import 'providers/restaurant_provider.dart';
 import 'providers/order_provider.dart';
@@ -26,12 +27,19 @@ class FoodHubApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final apiService = ApiService();
+    final socketService = SocketService();
+
     return MultiProvider(
       providers: [
-        Provider<ApiService>(create: (_) => ApiService()),
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
-        ChangeNotifierProvider(create: (_) => RestaurantProvider()),
-        ChangeNotifierProvider(create: (_) => OrderProvider()),
+        Provider<ApiService>(create: (_) => apiService),
+        Provider<SocketService>(create: (_) => socketService),
+        ChangeNotifierProvider(
+            create: (_) => AuthProvider(apiService: apiService)),
+        ChangeNotifierProvider(
+            create: (_) => RestaurantProvider()),
+        ChangeNotifierProvider(
+            create: (_) => OrderProvider(apiService: apiService)),
       ],
       child: MaterialApp.router(
         title: '🍕 FoodHub',
@@ -42,80 +50,89 @@ class FoodHubApp extends StatelessWidget {
           colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFff6b35)),
           fontFamily: 'Segoe UI',
         ),
-        routerConfig: _buildRouter(context),
+        routerConfig: _buildRouter(),
       ),
     );
   }
 
-  GoRouter _buildRouter(BuildContext context) {
+  GoRouter _buildRouter() {
     return GoRouter(
       initialLocation: '/login',
       redirect: (context, state) {
         final authProvider = context.read<AuthProvider>();
         final isAuthenticated = authProvider.token != null;
+        final loc = state.matchedLocation;
 
-        if (!isAuthenticated &&
-            state.matchedLocation != '/login' &&
-            state.matchedLocation != '/register') {
+        // Unauthenticated → go to login
+        if (!isAuthenticated && loc != '/login' && loc != '/register') {
           return '/login';
         }
-        if (isAuthenticated &&
-            (state.matchedLocation == '/login' ||
-                state.matchedLocation == '/register')) {
-          return '/home';
+
+        // Authenticated on auth pages → redirect to role home
+        if (isAuthenticated && (loc == '/login' || loc == '/register')) {
+          return _roleHome(authProvider.user?.role);
         }
+
         return null;
       },
       routes: [
-        // Auth Routes
-        GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
-        GoRoute(
-          path: '/register',
-          builder: (context, state) => const RegisterPage(),
-        ),
+        // ── Auth ──────────────────────────────────────────────────────────
+        GoRoute(path: '/login', builder: (_, __) => const LoginPage()),
+        GoRoute(path: '/register', builder: (_, __) => const RegisterPage()),
 
-        // Customer Routes
+        // ── Generic home: redirect by role ────────────────────────────────
         GoRoute(
           path: '/home',
-          builder: (context, state) => const CustomerHomePage(),
+          redirect: (context, __) {
+            final role = context.read<AuthProvider>().user?.role;
+            return _roleHome(role);
+          },
         ),
+
+        // ── Customer ──────────────────────────────────────────────────────
+        GoRoute(
+            path: '/customer-home', builder: (_, __) => const CustomerHomePage()),
         GoRoute(
           path: '/restaurant/:id',
-          builder: (context, state) =>
+          builder: (_, state) =>
               RestaurantMenuPage(restaurantId: state.pathParameters['id']!),
         ),
-        GoRoute(
-          path: '/checkout',
-          builder: (context, state) => const CheckoutPage(),
-        ),
-        GoRoute(
-          path: '/my-orders',
-          builder: (context, state) => const MyOrdersPage(),
-        ),
+        GoRoute(path: '/checkout', builder: (_, __) => const CheckoutPage()),
+        GoRoute(path: '/my-orders', builder: (_, __) => const MyOrdersPage()),
         GoRoute(
           path: '/order-tracking/:id',
-          builder: (context, state) =>
+          builder: (_, state) =>
               OrderTrackingPage(orderId: state.pathParameters['id']!),
         ),
 
-        // Restaurant Routes
+        // ── Restaurant ────────────────────────────────────────────────────
         GoRoute(
           path: '/restaurant-dashboard',
-          builder: (context, state) => const RestaurantDashboardPage(),
+          builder: (_, __) => const RestaurantDashboardPage(),
         ),
 
-        // Delivery Routes
+        // ── Delivery ──────────────────────────────────────────────────────
         GoRoute(
           path: '/delivery-home',
-          builder: (context, state) => const delivery.DeliveryHomePage(),
+          builder: (_, __) => const delivery.DeliveryHomePage(),
         ),
 
-        // Admin Routes
+        // ── Admin ─────────────────────────────────────────────────────────
         GoRoute(
           path: '/admin-dashboard',
-          builder: (context, state) => const admin.AdminDashboardPage(),
+          builder: (_, __) => const admin.AdminDashboardPage(),
         ),
       ],
     );
+  }
+
+  /// Return the home route for a given role
+  static String _roleHome(String? role) {
+    switch (role) {
+      case 'restaurant': return '/restaurant-dashboard';
+      case 'delivery':   return '/delivery-home';
+      case 'admin':      return '/admin-dashboard';
+      default:           return '/customer-home';
+    }
   }
 }

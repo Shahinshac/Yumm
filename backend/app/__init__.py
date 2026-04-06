@@ -5,11 +5,14 @@ Food Delivery App - Complete System
 from flask import Flask
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
+from flask_socketio import SocketIO
 from mongoengine import connect
 import os
 from datetime import timedelta
 
 jwt = JWTManager()
+# socketio instance shared across the app
+socketio = SocketIO(cors_allowed_origins="*", async_mode='eventlet')
 
 def create_app():
     """Application factory"""
@@ -30,6 +33,9 @@ def create_app():
     # JWT
     jwt.init_app(app)
 
+    # Initialize SocketIO with the app
+    socketio.init_app(app)
+
     # Register blueprints
     from backend.app.routes import auth, restaurants, orders, delivery, admin, reviews, promo
 
@@ -40,6 +46,9 @@ def create_app():
     app.register_blueprint(admin.bp)
     app.register_blueprint(reviews.bp)
     app.register_blueprint(promo.bp)
+
+    # Register SocketIO event handlers
+    from backend.app.routes import socket_events  # noqa: F401
 
     # Create default admin & demo data
     create_demo_data()

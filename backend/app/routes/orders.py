@@ -7,6 +7,7 @@ from backend.app.models.user import User
 from backend.app.models.restaurant import Restaurant
 from backend.app.models.models import Order, Payment
 from backend.app.middleware.auth import required_auth, get_current_user, role_required
+from backend.app.routes.socket_events import emit_order_status_update, emit_new_order
 
 bp = Blueprint('orders', __name__, url_prefix='/api/orders')
 
@@ -76,6 +77,9 @@ def create_order():
         status='completed'  # Auto-complete for demo
     )
     payment.save()
+
+    # Notify the restaurant panel about the new order via SocketIO
+    emit_new_order(order.to_dict(), str(restaurant.id))
 
     return jsonify({
         'message': 'Order placed successfully',
@@ -153,6 +157,14 @@ def update_order_status(order_id):
         order.delivered_at = datetime.utcnow()
 
     order.save()
+
+    # Emit real-time status update to all watchers
+    emit_order_status_update(
+        order_id=str(order.id),
+        status=new_status,
+        restaurant_id=str(order.restaurant.id),
+        customer_id=str(order.customer.id),
+    )
 
     return jsonify({
         'message': f'Order status updated to {new_status}',

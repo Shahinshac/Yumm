@@ -37,6 +37,13 @@ dependencies:
   # JWT & Security
   jwt_decoder: ^2.0.1
 
+  # Real-time communication (Socket.IO)
+  socket_io_client: ^2.0.3
+
+  # Maps & Location
+  google_maps_flutter: ^2.5.3
+  geolocator: ^10.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

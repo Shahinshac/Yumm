@@ -46,7 +46,13 @@ class RestaurantProvider extends ChangeNotifier {
 
     try {
       final response = await apiService.getRestaurant(id);
-      _selectedRestaurant = Restaurant.fromJson(response);
+      // Response format: { 'restaurant': {...}, 'menu_items': [...], 'menu_count': N }
+      _selectedRestaurant = Restaurant.fromJson(response['restaurant']);
+      if (response['menu_items'] != null) {
+        _menuItems = (response['menu_items'] as List)
+            .map((item) => MenuItem.fromJson(item))
+            .toList();
+      }
       _isLoading = false;
       notifyListeners();
     } catch (e) {
