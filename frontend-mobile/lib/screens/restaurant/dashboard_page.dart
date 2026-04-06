@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_spacing.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
 import '../../services/socket_service.dart';
@@ -35,8 +37,6 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
   String? _restaurantId;
 
   Timer? _pollTimer;
-
-  static const Color _brand = Color(0xFFff6b35);
 
   @override
   void initState() {
@@ -368,8 +368,8 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: _brand,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
         title: const Text('🍽️  Restaurant Panel'),
         actions: [
           IconButton(
@@ -395,9 +395,9 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
         ],
         bottom: TabBar(
           controller: _tabController,
-          indicatorColor: Colors.white,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white70,
+          indicatorColor: AppColors.white,
+          labelColor: AppColors.white,
+          unselectedLabelColor: AppColors.white.withOpacity(0.7),
           tabs: [
             Tab(
               icon: const Icon(Icons.receipt_long),
