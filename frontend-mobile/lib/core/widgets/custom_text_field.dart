@@ -3,53 +3,49 @@ import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_typography.dart';
 
-/// Professional text input field with validation and icons
+/// Custom Text Field with Icons and Validation
 class CustomTextField extends StatefulWidget {
   final String label;
   final String? hint;
-  final String? initialValue;
   final TextEditingController? controller;
   final TextInputType keyboardType;
-  final TextInputAction textInputAction;
-  final int maxLines;
-  final int minLines;
-  final int? maxLength;
   final bool obscureText;
   final IconData? prefixIcon;
   final IconData? suffixIcon;
-  final VoidCallback? onSuffixIconPressed;
   final String? Function(String?)? validator;
   final void Function(String)? onChanged;
-  final void Function(String)? onSubmitted;
+  final int maxLines;
+  final int minLines;
   final bool readOnly;
-  final bool enabled;
-  final Color? fillColor;
+  final VoidCallback? onTap;
   final String? errorText;
-  final FocusNode? focusNode;
+  final bool showPassword;
+  final VoidCallback? onPasswordToggle;
+  final Color? borderColor;
+  final TextInputAction textInputAction;
+  final void Function(String)? onSubmitted;
 
   const CustomTextField({
     Key? key,
     required this.label,
     this.hint,
-    this.initialValue,
     this.controller,
     this.keyboardType = TextInputType.text,
-    this.textInputAction = TextInputAction.done,
-    this.maxLines = 1,
-    this.minLines = 1,
-    this.maxLength,
     this.obscureText = false,
     this.prefixIcon,
     this.suffixIcon,
-    this.onSuffixIconPressed,
     this.validator,
     this.onChanged,
-    this.onSubmitted,
+    this.maxLines = 1,
+    this.minLines = 1,
     this.readOnly = false,
-    this.enabled = true,
-    this.fillColor,
+    this.onTap,
     this.errorText,
-    this.focusNode,
+    this.showPassword = false,
+    this.onPasswordToggle,
+    this.borderColor,
+    this.textInputAction = TextInputAction.next,
+    this.onSubmitted,
   }) : super(key: key);
 
   @override
@@ -71,141 +67,121 @@ class _CustomTextFieldState extends State<CustomTextField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Label
-        Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.paddingSm),
-          child: Text(
-            widget.label,
-            style: AppTypography.labelMedium.copyWith(
-              color: widget.enabled ? AppColors.textPrimary : AppColors.disabled,
-            ),
+        Text(
+          widget.label,
+          style: AppTypography.labelMedium.copyWith(
+            color: AppColors.textPrimary,
           ),
         ),
-        // Input Field
-        TextFormField(
+        const SizedBox(height: AppSpacing.sm),
+
+        // Text Field
+        TextField(
           controller: widget.controller,
-          initialValue: widget.initialValue,
           keyboardType: widget.keyboardType,
-          textInputAction: widget.textInputAction,
-          maxLines: widget.obscureText ? 1 : widget.maxLines,
-          minLines: widget.minLines,
-          maxLength: widget.maxLength,
           obscureText: _obscurePassword,
+          maxLines: _obscurePassword ? 1 : widget.maxLines,
+          minLines: widget.minLines,
           readOnly: widget.readOnly,
-          enabled: widget.enabled,
-          focusNode: widget.focusNode,
-          validator: widget.validator,
+          onTap: widget.onTap,
           onChanged: widget.onChanged,
-          onFieldSubmitted: widget.onSubmitted,
-          style: AppTypography.bodyMedium.copyWith(
-            color: widget.enabled ? AppColors.textPrimary : AppColors.disabled,
-          ),
+          textInputAction: widget.textInputAction,
+          onSubmitted: widget.onSubmitted,
+          style: AppTypography.bodyMedium,
           decoration: InputDecoration(
             hintText: widget.hint,
-            hintStyle: AppTypography.hint,
-            labelText: null, // We handle label separately
-            filled: true,
-            fillColor: widget.fillColor ??
-                (widget.enabled ? AppColors.gray100 : AppColors.gray200),
-            contentPadding: EdgeInsets.only(
-              left: widget.prefixIcon != null
-                  ? AppSpacing.paddingMd
-                  : AppSpacing.paddingLg,
-              right: widget.suffixIcon != null
-                  ? AppSpacing.paddingMd
-                  : AppSpacing.paddingLg,
-              top: AppSpacing.paddingMd,
-              bottom: AppSpacing.paddingMd,
+            hintStyle: AppTypography.bodyMedium.copyWith(
+              color: AppColors.hint,
             ),
+            prefixIcon: widget.prefixIcon != null
+                ? Icon(
+                    widget.prefixIcon,
+                    color: AppColors.textSecondary,
+                  )
+                : null,
+            suffixIcon: widget.suffixIcon != null ||
+                    (widget.keyboardType == TextInputType.visiblePassword)
+                ? Padding(
+                    padding: const EdgeInsets.only(right: AppSpacing.md),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (widget.keyboardType ==
+                            TextInputType.visiblePassword)
+                          IconButton(
+                            icon: Icon(
+                              _obscurePassword
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                              color: AppColors.textSecondary,
+                            ),
+                            onPressed: widget.onPasswordToggle ??
+                                () {
+                                  setState(() {
+                                    _obscurePassword = !_obscurePassword;
+                                  });
+                                },
+                          )
+                        else if (widget.suffixIcon != null)
+                          Icon(
+                            widget.suffixIcon,
+                            color: AppColors.textSecondary,
+                          ),
+                      ],
+                    ),
+                  )
+                : null,
+            filled: true,
+            fillColor: AppColors.gray100,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
-              borderSide: const BorderSide(
-                color: AppColors.border,
-                width: 1,
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+              borderSide: BorderSide(
+                color: widget.borderColor ?? AppColors.border,
               ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
-              borderSide: const BorderSide(
-                color: AppColors.border,
-                width: 1,
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+              borderSide: BorderSide(
+                color: widget.borderColor ?? AppColors.border,
               ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
               borderSide: const BorderSide(
                 color: AppColors.primary,
                 width: 2,
               ),
             ),
             errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
               borderSide: const BorderSide(
                 color: AppColors.error,
-                width: 1,
               ),
             ),
             focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
               borderSide: const BorderSide(
                 color: AppColors.error,
                 width: 2,
               ),
             ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.inputRadius),
-              borderSide: const BorderSide(
-                color: AppColors.border,
-                width: 1,
-              ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.lg,
             ),
-            errorText: widget.errorText,
-            errorStyle: AppTypography.error.copyWith(fontSize: 12),
-            prefixIcon: widget.prefixIcon != null
-                ? Icon(
-                    widget.prefixIcon,
-                    color: AppColors.textSecondary,
-                    size: AppSpacing.iconMd,
-                  )
-                : null,
-            prefixIconConstraints: const BoxConstraints(
-              minWidth: 40,
-              minHeight: 40,
-            ),
-            suffixIcon: widget.suffixIcon != null
-                ? Padding(
-                    padding: const EdgeInsets.only(right: AppSpacing.paddingSm),
-                    child: widget.obscureText
-                        ? IconButton(
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_off
-                                  : Icons.visibility,
-                              color: AppColors.textSecondary,
-                              size: AppSpacing.iconMd,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _obscurePassword = !_obscurePassword;
-                              });
-                            },
-                          )
-                        : IconButton(
-                            icon: Icon(
-                              widget.suffixIcon,
-                              color: AppColors.textSecondary,
-                              size: AppSpacing.iconMd,
-                            ),
-                            onPressed: widget.onSuffixIconPressed,
-                          ),
-                  )
-                : null,
-            suffixIconConstraints: const BoxConstraints(
-              minWidth: 40,
-              minHeight: 40,
-            ),
-            counter: null, // Hide default counter
           ),
         ),
+
+        // Error Text
+        if (widget.errorText != null) ...[
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            widget.errorText!,
+            style: AppTypography.bodySmall.copyWith(
+              color: AppColors.error,
+            ),
+          ),
+        ],
       ],
     );
   }

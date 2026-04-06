@@ -3,31 +3,31 @@ import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_typography.dart';
 
-/// Restaurant card for displaying restaurants in a list/grid
+/// Restaurant Card - Lists restaurants with images, rating, delivery info
 class RestaurantCard extends StatelessWidget {
-  final String restaurantName;
-  final String cuisineType;
+  final String name;
+  final String imageUrl;
   final double rating;
   final int reviewCount;
   final String deliveryTime;
   final String deliveryFee;
-  final String imageUrl;
-  final bool isFavorite;
+  final String? cuisineType;
+  final bool isOpen;
   final VoidCallback onTap;
-  final VoidCallback? onFavoriteTap;
+  final double? imageHeight;
 
   const RestaurantCard({
     Key? key,
-    required this.restaurantName,
-    required this.cuisineType,
+    required this.name,
+    required this.imageUrl,
     required this.rating,
     required this.reviewCount,
     required this.deliveryTime,
     required this.deliveryFee,
-    required this.imageUrl,
+    this.cuisineType,
+    this.isOpen = true,
     required this.onTap,
-    this.isFavorite = false,
-    this.onFavoriteTap,
+    this.imageHeight = 180,
   }) : super(key: key);
 
   @override
@@ -35,140 +35,136 @@ class RestaurantCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 2,
+        elevation: AppSpacing.elevationLow,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image with Favorite Button
+            // Image with overlay
             Stack(
               children: [
-                // Image
                 Container(
+                  height: imageHeight,
                   width: double.infinity,
-                  height: 160,
                   decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(AppSpacing.cardRadius),
-                      topRight: Radius.circular(AppSpacing.cardRadius),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(AppSpacing.radiusLg),
                     ),
                     color: AppColors.gray200,
-                    image: imageUrl.isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage(imageUrl),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
                   ),
-                  child: imageUrl.isEmpty
-                      ? Icon(
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Icon(
                           Icons.restaurant,
-                          size: 60,
-                          color: AppColors.textTertiary,
-                        )
-                      : null,
+                          size: 48,
+                          color: AppColors.gray400,
+                        ),
+                      );
+                    },
+                  ),
                 ),
-                // Favorite Button
-                Positioned(
-                  right: AppSpacing.paddingSm,
-                  top: AppSpacing.paddingSm,
-                  child: GestureDetector(
-                    onTap: onFavoriteTap,
-                    child: Container(
-                      padding: const EdgeInsets.all(AppSpacing.paddingXs),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColors.black.withOpacity(0.1),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                if (!isOpen)
+                  Container(
+                    height: imageHeight,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(AppSpacing.radiusLg),
                       ),
-                      child: Icon(
-                        isFavorite ? Icons.favorite : Icons.favorite_border,
-                        color: isFavorite ? AppColors.error : AppColors.gray600,
-                        size: 20,
+                      color: AppColors.textPrimary.withOpacity(0.5),
+                    ),
+                    child: Center(
+                      child: Text(
+                        'CLOSED',
+                        style: AppTypography.headlineSmall.copyWith(
+                          color: AppColors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
               ],
             ),
+
             // Content
             Padding(
-              padding: const EdgeInsets.all(AppSpacing.paddingMd),
+              padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Restaurant Name
+                  // Name
                   Text(
-                    restaurantName,
-                    style: AppTypography.headline6,
+                    name,
+                    style: AppTypography.titleMedium,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: AppSpacing.paddingXs),
-                  // Cuisine Type
-                  Text(
-                    cuisineType,
-                    style: AppTypography.bodySmall,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: AppSpacing.paddingMd),
-                  // Rating and Info Row
+                  const SizedBox(height: AppSpacing.sm),
+
+                  // Cuisine type
+                  if (cuisineType != null)
+                    Text(
+                      cuisineType!,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.textTertiary,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // Rating row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Rating
                       Row(
                         children: [
-                          Icon(
-                            Icons.star,
+                          const Icon(
+                            Icons.star_rounded,
                             color: AppColors.rating,
                             size: 18,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppSpacing.sm),
                           Text(
-                            rating.toStringAsFixed(1),
-                            style: AppTypography.labelMedium.copyWith(
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '($reviewCount)',
-                            style: AppTypography.caption,
+                            '${rating.toStringAsFixed(1)} ($reviewCount)',
+                            style: AppTypography.labelMedium,
                           ),
                         ],
                       ),
-                      // Delivery Fee
-                      Text(
-                        deliveryFee,
-                        style: AppTypography.labelMedium.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.paddingSm),
-                  // Delivery Time
+                  const SizedBox(height: AppSpacing.md),
+
+                  // Delivery info
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        Icons.timer,
-                        color: AppColors.textSecondary,
-                        size: 16,
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.schedule,
+                            size: 16,
+                            color: AppColors.textTertiary,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Text(
+                            deliveryTime,
+                            style: AppTypography.labelSmall.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 4),
                       Text(
-                        deliveryTime,
-                        style: AppTypography.bodySmall,
+                        deliveryFee,
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),

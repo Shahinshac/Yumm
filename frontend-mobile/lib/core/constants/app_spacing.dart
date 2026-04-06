@@ -1,206 +1,139 @@
-/// FoodHub Professional Spacing System
+import 'package:flutter/material.dart';
+
+/// FoodHub Spacing System
 /// Based on 8px base unit for consistent, predictable layouts
 class AppSpacing {
   AppSpacing._(); // Prevent instantiation
 
   // ─────────────────────────────────────────────────────────
-  // BASE SPACING SCALE
+  // BASE SPACING UNIT
   // ─────────────────────────────────────────────────────────
-  /// 4px - Icon padding, tight spacing
+  /// Base spacing unit - 8px
+  static const double baseUnit = 8.0;
+
+  // ─────────────────────────────────────────────────────────
+  // ABSOLUTE SPACING VALUES
+  // ─────────────────────────────────────────────────────────
+  /// 4px - Minimal spacing
   static const double xs = 4.0;
 
-  /// 8px - Base unit, component spacing
+  /// 8px - Extra small spacing
   static const double sm = 8.0;
 
-  /// 12px - Increased spacing
+  /// 12px - Small spacing
   static const double md = 12.0;
 
-  /// 16px - Standard spacing between sections
+  /// 16px - Medium spacing (1x base)
   static const double lg = 16.0;
 
   /// 20px - Large spacing
   static const double xl = 20.0;
 
-  /// 24px - Extra large spacing
+  /// 24px - Extra large spacing (3x base)
   static const double xxl = 24.0;
 
-  /// 32px - Heading spacing
+  /// 32px - Very large spacing (4x base)
   static const double xxxl = 32.0;
 
-  /// 48px - Page-level spacing
+  /// 48px - Huge spacing (6x base)
   static const double huge = 48.0;
 
-  // ─────────────────────────────────────────────────────────
-  // PADDING: Common padding values
-  // ─────────────────────────────────────────────────────────
-  /// Extra small padding
-  static const double paddingXs = xs;
-
-  /// Small padding (8px)
-  static const double paddingSm = sm;
-
-  /// Medium padding (12px)
-  static const double paddingMd = md;
-
-  /// Standard padding (16px)
-  static const double paddingLg = lg;
-
-  /// Large padding (20px)
-  static const double paddingXl = xl;
-
-  /// Extra large padding (24px)
-  static const double paddingXxl = xxl;
-
-  /// Huge padding (32px)
-  static const double paddingHuge = xxxl;
+  /// 64px - Massive spacing (8x base)
+  static const double massive = 64.0;
 
   // ─────────────────────────────────────────────────────────
-  // MARGINS: Common margin values
+  // RESPONSIVE PADDING
   // ─────────────────────────────────────────────────────────
-  /// Extra small margin
-  static const double marginXs = xs;
+  /// Page/screen padding
+  static const EdgeInsets pagePadding = EdgeInsets.all(lg);
 
-  /// Small margin (8px)
-  static const double marginSm = sm;
+  /// Card padding
+  static const EdgeInsets cardPadding = EdgeInsets.all(lg);
 
-  /// Medium margin (12px)
-  static const double marginMd = md;
+  /// Button padding
+  static const EdgeInsets buttonPadding = EdgeInsets.symmetric(
+    horizontal: lg,
+    vertical: md,
+  );
 
-  /// Standard margin (16px)
-  static const double marginLg = lg;
+  /// Text field padding
+  static const EdgeInsets textFieldPadding = EdgeInsets.symmetric(
+    horizontal: lg,
+    vertical: lg,
+  );
 
-  /// Large margin (20px)
-  static const double marginXl = xl;
+  /// List item padding
+  static const EdgeInsets listItemPadding = EdgeInsets.symmetric(
+    horizontal: lg,
+    vertical: md,
+  );
 
-  /// Extra large margin (24px)
-  static const double marginXxl = xxl;
+  /// Dialog padding
+  static const EdgeInsets dialogPadding = EdgeInsets.all(xxl);
 
-  /// Huge margin (32px)
-  static const double marginHuge = xxxl;
-
-  // ─────────────────────────────────────────────────────────
-  // COMPONENTS: Spacing for specific UI elements
-  // ─────────────────────────────────────────────────────────
-  /// Button height
-  static const double buttonHeight = 48.0;
-
-  /// Input field height
-  static const double inputHeight = 48.0;
-
-  /// App bar height
-  static const double appBarHeight = 56.0;
-
-  /// Bottom navigation height
-  static const double bottomNavHeight = 56.0;
-
-  /// Icon size (small)
-  static const double iconSm = 20.0;
-
-  /// Icon size (standard)
-  static const double iconMd = 24.0;
-
-  /// Icon size (large)
-  static const double iconLg = 32.0;
-
-  /// Icon button size (min touch target)
-  static const double iconButtonSize = 48.0;
-
-  /// Card border radius
-  static const double cardRadius = 12.0;
-
-  /// Input border radius
-  static const double inputRadius = 8.0;
-
-  /// Button border radius
-  static const double buttonRadius = 8.0;
-
-  /// Dialog border radius
-  static const double dialogRadius = 16.0;
+  /// Bottom sheet padding
+  static const EdgeInsets bottomSheetPadding = EdgeInsets.fromLTRB(lg, lg, lg, lg);
 
   // ─────────────────────────────────────────────────────────
-  // PAGE/SCREEN LAYOUTS
+  // SPACING FOR GAPS
   // ─────────────────────────────────────────────────────────
-  /// Standard page padding (horizontal)
-  static const double pageHorizontalPadding = lg;
+  /// Minimal gap between items
+  static const SizedBox gapXs = SizedBox(height: xs, width: xs);
 
-  /// Standard page padding (vertical)
-  static const double pageVerticalPadding = lg;
+  /// Small gap between items
+  static const SizedBox gapSm = SizedBox(height: sm, width: sm);
 
-  /// Maximum content width for web/tablet
-  static const double maxContentWidth = 600.0;
+  /// Medium gap between items
+  static const SizedBox gapMd = SizedBox(height: md, width: md);
 
-  // ─────────────────────────────────────────────────────────
-  // GAPS: Spacing between items (Column, Row)
-  // ─────────────────────────────────────────────────────────
-  /// Extra small gap (tight list items)
-  static const double gapXs = xs;
+  /// Large gap between items
+  static const SizedBox gapLg = SizedBox(height: lg, width: lg);
 
-  /// Small gap (compact list items)
-  static const double gapSm = sm;
+  /// Extra large gap between items
+  static const SizedBox gapXl = SizedBox(height: xl, width: xl);
 
-  /// Medium gap (normal list items)
-  static const double gapMd = md;
+  /// Very large gap between items
+  static const SizedBox gapXxl = SizedBox(height: xxl, width: xxl);
 
-  /// Standard gap (between sections)
-  static const double gapLg = lg;
+  /// Horizontal gap LG
+  static const SizedBox gapHLg = SizedBox(width: lg);
 
-  /// Large gap (significant spacing)
-  static const double gapXl = xl;
-
-  /// Extra large gap (major section separation)
-  static const double gapXxl = xxl;
+  /// Vertical gap LG
+  static const SizedBox gapVLg = SizedBox(height: lg);
 
   // ─────────────────────────────────────────────────────────
-  // DIVIDER SPACING
+  // BORDER RADIUS
   // ─────────────────────────────────────────────────────────
-  /// Divider vertical padding
-  static const double dividerVerticalPadding = md;
+  /// Small border radius (8px)
+  static const double radiusMd = 8.0;
 
-  /// Divider height
-  static const double dividerHeight = 1.0;
+  /// Medium border radius (12px)
+  static const double radiusLg = 12.0;
 
-  // ─────────────────────────────────────────────────────────
-  // SHADOW/ELEVATION SPACING
-  // ─────────────────────────────────────────────────────────
-  /// Small shadow blur
-  static const double shadowSm = 4.0;
-
-  /// Medium shadow blur
-  static const double shadowMd = 8.0;
-
-  /// Large shadow blur
-  static const double shadowLg = 12.0;
-
-  /// Extra large shadow blur
-  static const double shadowXl = 16.0;
+  /// Large border radius (16px)
+  static const double radiusXl = 16.0;
 
   // ─────────────────────────────────────────────────────────
-  // ANIMATION DURATIONS (milliseconds)
+  // ELEVATION/SHADOWS
   // ─────────────────────────────────────────────────────────
-  /// Quick animation (100ms)
-  static const Duration durationQuick = Duration(milliseconds: 100);
+  /// Low elevation (subtle shadow)
+  static const double elevationLow = 2.0;
 
-  /// Standard animation (300ms)
-  static const Duration durationStandard = Duration(milliseconds: 300);
+  /// Medium elevation (standard shadow)
+  static const double elevationMd = 4.0;
 
-  /// Medium animation (500ms)
-  static const Duration durationMedium = Duration(milliseconds: 500);
-
-  /// Long animation (800ms)
-  static const Duration durationLong = Duration(milliseconds: 800);
+  /// High elevation (prominent shadow)
+  static const double elevationHigh = 8.0;
 
   // ─────────────────────────────────────────────────────────
-  // RESPONSIVE BREAKPOINTS
+  // ANIMATION DURATIONS
   // ─────────────────────────────────────────────────────────
-  /// Mobile breakpoint width
-  static const double breakpointMobile = 480.0;
+  /// Standard duration (300ms) - normal interactions
+  static const Duration durationMd = Duration(milliseconds: 300);
 
-  /// Tablet breakpoint width
-  static const double breakpointTablet = 768.0;
+  /// Long duration (500ms) - deliberate
+  static const Duration durationLg = Duration(milliseconds: 500);
 
-  /// Desktop breakpoint width
-  static const double breakpointDesktop = 1024.0;
-
-  /// Large desktop breakpoint width
-  static const double breakpointLargeDesktop = 1440.0;
+  /// Extra long duration (800ms) - slow transitions
+  static const Duration durationXl = Duration(milliseconds: 800);
 }

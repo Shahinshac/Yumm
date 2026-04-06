@@ -45,7 +45,7 @@ class FoodHubApp extends StatelessWidget {
       child: MaterialApp.router(
         title: '🍕 FoodHub',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme(),
+        theme: AppTheme.lightTheme,
         routerConfig: _buildRouter(),
       ),
     );

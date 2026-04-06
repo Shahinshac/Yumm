@@ -3,72 +3,156 @@ import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_typography.dart';
 
-/// Custom app bar with consistent styling for FoodHub
+/// Custom App Bar - Professional consistent headers
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final String title;
-  final bool showBack;
-  final VoidCallback? onBackPressed;
   final List<Widget>? actions;
-  final IconData? leadingIcon;
-  final VoidCallback? onLeadingPressed;
-  final Color? backgroundColor;
-  final Color? titleColor;
-  final double elevation;
   final bool centerTitle;
+  final bool showBackButton;
+  final VoidCallback? onBackPressed;
+  final Widget? leading;
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final double elevation;
+  final bool showShadow;
+  final PreferredSizeWidget? bottom;
+  final double toolbarHeight;
 
   const CustomAppBar({
     Key? key,
     required this.title,
-    this.showBack = false,
-    this.onBackPressed,
     this.actions,
-    this.leadingIcon,
-    this.onLeadingPressed,
-    this.backgroundColor,
-    this.titleColor,
-    this.elevation = 2,
     this.centerTitle = false,
+    this.showBackButton = true,
+    this.onBackPressed,
+    this.leading,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.elevation = AppSpacing.elevationMd,
+    this.showShadow = true,
+    this.bottom,
+    this.toolbarHeight = kToolbarHeight,
   }) : super(key: key);
-
-  @override
-  Size get preferredSize => const Size.fromHeight(AppSpacing.appBarHeight);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      elevation: elevation,
-      backgroundColor: backgroundColor ?? AppColors.primary,
-      foregroundColor: titleColor ?? AppColors.textOnPrimary,
-      centerTitle: centerTitle,
       title: Text(
         title,
-        style: AppTypography.headline6.copyWith(
-          color: titleColor ?? AppColors.textOnPrimary,
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
+        style: AppTypography.headlineSmall.copyWith(
+          color: foregroundColor ?? AppColors.white,
         ),
       ),
-      leading: showBack
-          ? IconButton(
-              icon: Icon(
-                leadingIcon ?? Icons.arrow_back,
-                color: titleColor ?? AppColors.textOnPrimary,
-              ),
-              onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
-            )
-          : leadingIcon != null
+      leading: leading ??
+          (showBackButton
               ? IconButton(
                   icon: Icon(
-                    leadingIcon,
-                    color: titleColor ?? AppColors.textOnPrimary,
+                    Icons.arrow_back_ios_new,
+                    color: foregroundColor ?? AppColors.white,
                   ),
-                  onPressed: onLeadingPressed,
+                  onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
                 )
-              : null,
+              : null),
       actions: actions,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.zero,
+      backgroundColor: backgroundColor ?? AppColors.primary,
+      foregroundColor: foregroundColor ?? AppColors.white,
+      elevation: showShadow ? elevation : 0,
+      centerTitle: centerTitle,
+      toolbarHeight: toolbarHeight,
+      bottom: bottom,
+      iconTheme: IconThemeData(
+        color: foregroundColor ?? AppColors.white,
       ),
     );
   }
+
+  @override
+  Size get preferredSize => Size.fromHeight(
+    toolbarHeight + (bottom?.preferredSize.height ?? 0),
+  );
+}
+
+/// Minimal App Bar (without back button)
+class MinimalAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String title;
+  final List<Widget>? actions;
+  final double elevation;
+
+  const MinimalAppBar({
+    Key? key,
+    required this.title,
+    this.actions,
+    this.elevation = AppSpacing.elevationMd,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: Text(
+        title,
+        style: AppTypography.headlineSmall.copyWith(
+          color: AppColors.white,
+        ),
+      ),
+      backgroundColor: AppColors.primary,
+      elevation: elevation,
+      actions: actions,
+      automaticallyImplyLeading: false,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
+}
+
+/// Transparent App Bar (for hero sections)
+class TransparentAppBar extends StatelessWidget implements PreferredSizeWidget {
+  final String? title;
+  final List<Widget>? actions;
+  final VoidCallback? onBackPressed;
+  final bool showBackButton;
+
+  const TransparentAppBar({
+    Key? key,
+    this.title,
+    this.actions,
+    this.onBackPressed,
+    this.showBackButton = true,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AppBar(
+      title: title != null
+          ? Text(
+              title!,
+              style: AppTypography.headlineSmall.copyWith(
+                color: AppColors.white,
+              ),
+            )
+          : null,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      actions: actions,
+      leading: showBackButton
+          ? IconButton(
+              icon: Container(
+                decoration: BoxDecoration(
+                  color: AppColors.textPrimary.withOpacity(0.3),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                ),
+                child: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: AppColors.white,
+                  size: 18,
+                ),
+              ),
+              onPressed: onBackPressed ?? () => Navigator.of(context).pop(),
+            )
+          : null,
+    );
+  }
+
+  @override
+  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

@@ -3,214 +3,206 @@ import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_typography.dart';
 
-/// Food item card for displaying menu items
-class FoodItemCard extends StatelessWidget {
-  final String itemName;
+/// Food Item Card - Menu items with image, price, rating
+class FoodItemCard extends StatefulWidget {
+  final String name;
+  final String imageUrl;
   final String description;
   final double price;
-  final double rating;
-  final String imageUrl;
-  final int quantity;
-  final VoidCallback onAddTap;
-  final VoidCallback onRemoveTap;
-  final VoidCallback onTap;
+  final double? rating;
+  final int? quantity;
+  final VoidCallback? onAddPressed;
+  final Function(int)? onQuantityChanged;
 
   const FoodItemCard({
     Key? key,
-    required this.itemName,
+    required this.name,
+    required this.imageUrl,
     required this.description,
     required this.price,
-    required this.rating,
-    required this.imageUrl,
-    required this.onAddTap,
-    required this.onRemoveTap,
-    required this.onTap,
-    this.quantity = 0,
+    this.rating,
+    this.quantity,
+    this.onAddPressed,
+    this.onQuantityChanged,
   }) : super(key: key);
 
   @override
+  State<FoodItemCard> createState() => _FoodItemCardState();
+}
+
+class _FoodItemCardState extends State<FoodItemCard> {
+  late int _quantity;
+
+  @override
+  void initState() {
+    super.initState();
+    _quantity = widget.quantity ?? 0;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Image with Rating Badge
-            Stack(
-              children: [
-                // Image
-                Container(
-                  width: double.infinity,
-                  height: 140,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(AppSpacing.cardRadius),
-                      topRight: Radius.circular(AppSpacing.cardRadius),
-                    ),
-                    color: AppColors.gray200,
-                    image: imageUrl.isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage(imageUrl),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                  ),
-                  child: imageUrl.isEmpty
-                      ? Icon(
-                          Icons.fastfood,
-                          size: 50,
-                          color: AppColors.textTertiary,
-                        )
-                      : null,
-                ),
-                // Rating Badge
-                Positioned(
-                  left: AppSpacing.paddingSm,
-                  top: AppSpacing.paddingSm,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.paddingXs,
-                      vertical: 2,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(4),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.black.withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.star,
-                          color: AppColors.rating,
-                          size: 14,
-                        ),
-                        const SizedBox(width: 2),
-                        Text(
-                          rating.toStringAsFixed(1),
-                          style: AppTypography.labelSmall.copyWith(
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+    return Card(
+      elevation: AppSpacing.elevationLow,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Image
+          Container(
+            height: 150,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppSpacing.radiusLg),
+              ),
+              color: AppColors.gray200,
             ),
-            // Content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.paddingMd),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: Image.network(
+              widget.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Center(
+                  child: Icon(
+                    Icons.fastfood,
+                    size: 40,
+                    color: AppColors.gray400,
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // Content
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Name
+                Text(
+                  widget.name,
+                  style: AppTypography.titleMedium,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: AppSpacing.sm),
+
+                // Description
+                Text(
+                  widget.description,
+                  style: AppTypography.bodySmall.copyWith(
+                    color: AppColors.textTertiary,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: AppSpacing.md),
+
+                // Rating and Price row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Item Name
-                    Text(
-                      itemName,
-                      style: AppTypography.headline6,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: AppSpacing.paddingXs),
-                    // Description
-                    Text(
-                      description,
-                      style: AppTypography.bodySmall,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: AppSpacing.paddingMd),
-                    // Price and Quantity Selector
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Price
-                        Text(
-                          '₹${price.toStringAsFixed(0)}',
-                          style: AppTypography.price.copyWith(fontSize: 18),
-                        ),
-                        // Quantity Selector
-                        if (quantity == 0)
-                          GestureDetector(
-                            onTap: onAddTap,
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.paddingMd,
-                                vertical: AppSpacing.paddingXs,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                'Add',
-                                style:
-                                    AppTypography.labelSmall.copyWith(fontSize: 11),
-                              ),
-                            ),
-                          )
-                        else
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: AppColors.border),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Row(
-                              children: [
-                                GestureDetector(
-                                  onTap: onRemoveTap,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    child: const Icon(
-                                      Icons.remove,
-                                      size: 16,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.paddingSm,
-                                  ),
-                                  child: Text(
-                                    quantity.toString(),
-                                    style: AppTypography.labelSmall,
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: onAddTap,
-                                  child: Container(
-                                    padding: const EdgeInsets.all(2),
-                                    child: const Icon(
-                                      Icons.add,
-                                      size: 16,
-                                      color: AppColors.primary,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
+                    // Rating
+                    if (widget.rating != null)
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.star_rounded,
+                            color: AppColors.rating,
+                            size: 16,
                           ),
-                      ],
+                          const SizedBox(width: AppSpacing.xs),
+                          Text(
+                            widget.rating!.toStringAsFixed(1),
+                            style: AppTypography.labelSmall,
+                          ),
+                        ],
+                      )
+                    else
+                      const SizedBox(),
+
+                    // Price
+                    Text(
+                      '\₹${widget.price.toStringAsFixed(2)}',
+                      style: AppTypography.titleMedium.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: AppSpacing.lg),
+
+                // Add button or Quantity selector
+                if (_quantity == 0)
+                  SizedBox(
+                    width: double.infinity,
+                    height: AppSpacing.buttonHeight - 8,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setState(() => _quantity = 1);
+                        widget.onQuantityChanged?.call(1);
+                        widget.onAddPressed?.call();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(AppSpacing.radiusLg),
+                        ),
+                      ),
+                      child: Text(
+                        'Add',
+                        style: AppTypography.labelMedium.copyWith(
+                          color: AppColors.white,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Minus
+                      IconButton(
+                        icon: const Icon(Icons.remove_circle),
+                        color: AppColors.primary,
+                        onPressed: () {
+                          if (_quantity > 1) {
+                            setState(() => _quantity--);
+                            widget.onQuantityChanged?.call(_quantity);
+                          } else {
+                            setState(() => _quantity = 0);
+                            widget.onQuantityChanged?.call(0);
+                          }
+                        },
+                      ),
+
+                      // Quantity
+                      Text(
+                        '$_quantity',
+                        style: AppTypography.headlineSmall.copyWith(
+                          color: AppColors.primary,
+                        ),
+                      ),
+
+                      // Plus
+                      IconButton(
+                        icon: const Icon(Icons.add_circle),
+                        color: AppColors.primary,
+                        onPressed: () {
+                          setState(() => _quantity++);
+                          widget.onQuantityChanged?.call(_quantity);
+                        },
+                      ),
+                    ],
+                  ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
