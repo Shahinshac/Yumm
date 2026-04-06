@@ -30,9 +30,8 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
   Timer? _pollTimer;
 
   static const Color _brand = Color(0xFFff6b35);
-
-  @override
-  void initState() {
+  // Default map center (Malappuram, Kerala) – used when delivery location is unknown
+  static const LatLng _defaultLocation = LatLng(11.0089, 76.0305);
     super.initState();
     _api = context.read<ApiService>();
     _socket = SocketService();
@@ -182,8 +181,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
 
   Widget _buildLiveMap(dynamic order) {
     // Default to restaurant location if delivery location unknown
-    final LatLng initialPosition = _deliveryLocation ??
-        const LatLng(11.0089, 76.0305); // Malappuram, Kerala
+    final LatLng initialPosition = _deliveryLocation ?? _defaultLocation;
 
     return Container(
       height: 250,
@@ -340,7 +338,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
           const Text('Order Details',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const Divider(),
-          _detailRow('Order ID', '#${order.id.substring(0, 12)}...'),
+          _detailRow('Order ID', '#${order.id.padRight(12).substring(0, 12).trimRight()}...'),
           _detailRow('Restaurant', order.restaurantName),
           _detailRow('Items', '${order.items.length} item(s)'),
           _detailRow('Total', '₹${order.totalAmount.toStringAsFixed(2)}'),

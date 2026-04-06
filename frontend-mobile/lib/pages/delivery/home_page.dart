@@ -408,7 +408,7 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Order #${(o['id'] ?? '').toString().substring(0, 8)}',
+                        'Order #${(o['id'] ?? '').toString().padRight(8).substring(0, 8).trimRight()}',
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Container(

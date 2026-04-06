@@ -229,9 +229,14 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                   _showSnack('Name and price are required', error: true);
                   return;
                 }
+                final price = double.tryParse(priceCtrl.text);
+                if (price == null || price <= 0) {
+                  _showSnack('Please enter a valid price greater than 0', error: true);
+                  return;
+                }
                 final data = {
                   'name': nameCtrl.text.trim(),
-                  'price': double.tryParse(priceCtrl.text) ?? 0,
+                  'price': price,
                   'description': descCtrl.text.trim(),
                   'category': catCtrl.text.trim(),
                   'is_veg': isVeg,
@@ -573,7 +578,7 @@ class _OrderCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Order #${(order['id'] ?? '').toString().substring(0, 8)}',
+                    'Order #${(order['id'] ?? '').toString().padRight(8).substring(0, 8).trimRight()}',
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                   ),
                 ),

@@ -104,18 +104,27 @@ def update_delivery_location(order_id):
     if str(order.delivery_partner.id) != current['user_id']:
         return jsonify({'error': 'Forbidden'}), 403
 
+    lat = data.get('lat')
+    lng = data.get('lng')
+
+    if lat is None or lng is None:
+        return jsonify({'error': 'lat and lng coordinates are required'}), 400
+
+    try:
+        lat = float(lat)
+        lng = float(lng)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid coordinates: lat and lng must be numbers'}), 400
+
     # Update location
-    order.current_location = {
-        'lat': float(data.get('lat', 0)),
-        'lng': float(data.get('lng', 0))
-    }
+    order.current_location = {'lat': lat, 'lng': lng}
     order.save()
 
     # Broadcast live location to all order watchers via SocketIO
     emit_delivery_location_update(
         order_id=str(order.id),
-        lat=order.current_location['lat'],
-        lng=order.current_location['lng'],
+        lat=lat,
+        lng=lng,
     )
 
     return jsonify({
@@ -182,8 +191,17 @@ def update_my_location():
     current = get_current_user()
     data = request.get_json()
 
-    lat = float(data.get('lat', data.get('latitude', 0)))
-    lng = float(data.get('lng', data.get('longitude', 0)))
+    raw_lat = data.get('lat', data.get('latitude'))
+    raw_lng = data.get('lng', data.get('longitude'))
+
+    if raw_lat is None or raw_lng is None:
+        return jsonify({'error': 'lat and lng coordinates are required'}), 400
+
+    try:
+        lat = float(raw_lat)
+        lng = float(raw_lng)
+    except (TypeError, ValueError):
+        return jsonify({'error': 'Invalid coordinates: lat and lng must be numbers'}), 400
 
     # Update location on all active orders assigned to this partner
     active_orders = Order.objects(
