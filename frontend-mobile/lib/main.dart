@@ -37,8 +37,7 @@ class FoodHubApp extends StatelessWidget {
         Provider<SocketService>(create: (_) => socketService),
         ChangeNotifierProvider(
             create: (_) => AuthProvider(apiService: apiService)),
-        ChangeNotifierProvider(
-            create: (_) => RestaurantProvider()),
+        ChangeNotifierProvider(create: (_) => RestaurantProvider()),
         ChangeNotifierProvider(
             create: (_) => OrderProvider(apiService: apiService)),
       ],
@@ -87,7 +86,8 @@ class FoodHubApp extends StatelessWidget {
 
         // ── Customer ──────────────────────────────────────────────────────
         GoRoute(
-            path: '/customer-home', builder: (_, __) => const CustomerHomePage()),
+            path: '/customer-home',
+            builder: (_, __) => const CustomerHomePage()),
         GoRoute(
           path: '/restaurant/:id',
           builder: (_, state) =>
@@ -125,10 +125,14 @@ class FoodHubApp extends StatelessWidget {
   /// Return the home route for a given role
   static String _roleHome(String? role) {
     switch (role) {
-      case 'restaurant': return '/restaurant-dashboard';
-      case 'delivery':   return '/delivery-home';
-      case 'admin':      return '/admin-dashboard';
-      default:           return '/customer-home';
+      case 'restaurant':
+        return '/restaurant-dashboard';
+      case 'delivery':
+        return '/delivery-home';
+      case 'admin':
+        return '/admin-dashboard';
+      default:
+        return '/customer-home';
     }
   }
 }
