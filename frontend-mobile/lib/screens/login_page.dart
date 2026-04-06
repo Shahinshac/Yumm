@@ -15,7 +15,8 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMixin {
+class _LoginPageState extends State<LoginPage>
+    with SingleTickerProviderStateMixin {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   late AnimationController _animationController;
@@ -39,8 +40,8 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
     );
 
-    _slideAnimation = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
-        .animate(
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero).animate(
       CurvedAnimation(parent: _animationController, curve: Curves.easeOut),
     );
 
@@ -70,7 +71,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
             ),
           ),
         );
@@ -84,7 +85,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
             ),
           ),
         );
@@ -108,7 +109,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         ),
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.paddingLg),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: FadeTransition(
               opacity: _fadeAnimation,
               child: SlideTransition(
@@ -118,16 +119,16 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                   decoration: BoxDecoration(
                     color: AppColors.white,
                     borderRadius:
-                        BorderRadius.circular(AppSpacing.dialogRadius),
+                        BorderRadius.circular(AppSpacing.radiusXl),
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.black.withOpacity(0.15),
-                        blurRadius: AppSpacing.shadowLg,
+                        blurRadius: AppSpacing.elevationHigh,
                         offset: const Offset(0, 8),
                       ),
                     ],
                   ),
-                  padding: const EdgeInsets.all(AppSpacing.paddingXxl),
+                  padding: const EdgeInsets.all(AppSpacing.xxl),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -139,7 +140,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           style: TextStyle(fontSize: 64),
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.paddingXxl),
+                      const SizedBox(height: AppSpacing.xxl),
 
                       // Title
                       Text(
@@ -148,7 +149,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           color: AppColors.primary,
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.paddingSm),
+                      const SizedBox(height: AppSpacing.sm),
 
                       // Subtitle
                       Text(
@@ -157,7 +158,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           color: AppColors.textSecondary,
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.paddingXxl),
+                      const SizedBox(height: AppSpacing.xxl),
 
                       // Username Field
                       CustomTextField(
@@ -168,7 +169,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.next,
                       ),
-                      const SizedBox(height: AppSpacing.paddingLg),
+                      const SizedBox(height: AppSpacing.lg),
 
                       // Password Field
                       CustomTextField(
@@ -181,7 +182,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                         textInputAction: TextInputAction.done,
                         onSubmitted: (_) => _login(context),
                       ),
-                      const SizedBox(height: AppSpacing.paddingXxl),
+                      const SizedBox(height: AppSpacing.xxl),
 
                       // Login Button
                       Consumer<AuthProvider>(
@@ -191,11 +192,10 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                             onPressed: () => _login(context),
                             isLoading: authProvider.isLoading,
                             isEnabled: !authProvider.isLoading,
-                            size: ButtonSize.large,
                           );
                         },
                       ),
-                      const SizedBox(height: AppSpacing.paddingLg),
+                      const SizedBox(height: AppSpacing.lg),
 
                       // Register Link
                       Row(
@@ -219,14 +219,14 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           ),
                         ],
                       ),
-                      const SizedBox(height: AppSpacing.paddingXxl),
+                      const SizedBox(height: AppSpacing.xxl),
 
                       // Divider
                       const Divider(
                         color: AppColors.border,
                         height: 1,
                       ),
-                      const SizedBox(height: AppSpacing.paddingLg),
+                      const SizedBox(height: AppSpacing.lg),
 
                       // Demo Users Section
                       Text(
@@ -235,15 +235,15 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                           color: AppColors.textSecondary,
                         ),
                       ),
-                      const SizedBox(height: AppSpacing.paddingMd),
+                      const SizedBox(height: AppSpacing.md),
 
                       // Demo Buttons Grid
                       GridView.count(
                         crossAxisCount: 2,
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        crossAxisSpacing: AppSpacing.paddingMd,
-                        mainAxisSpacing: AppSpacing.paddingMd,
+                        crossAxisSpacing: AppSpacing.md,
+                        mainAxisSpacing: AppSpacing.md,
                         childAspectRatio: 1.5,
                         children: [
                           _demoUserButton(
@@ -294,14 +294,15 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       child: InkWell(
         onTap: () {
           _usernameController.text = username;
-          _passwordController.text = username == 'admin' ? 'admin123' : '${username}123';
+          _passwordController.text =
+              username == 'admin' ? 'admin123' : '${username}123';
           _login(context);
         },
-        borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
         child: Container(
           decoration: BoxDecoration(
             border: Border.all(color: AppColors.primary, width: 1.5),
-            borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
             color: AppColors.primaryLight.withOpacity(0.05),
           ),
           child: Column(
@@ -312,7 +313,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                 color: AppColors.primary,
                 size: 28,
               ),
-              const SizedBox(height: AppSpacing.paddingXs),
+              const SizedBox(height: AppSpacing.xs),
               Text(
                 label,
                 style: AppTypography.labelSmall.copyWith(

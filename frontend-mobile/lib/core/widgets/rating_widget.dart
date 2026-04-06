@@ -5,16 +5,16 @@ import '../constants/app_typography.dart';
 
 class RatingWidget extends StatelessWidget {
   final double rating;
-  final int reviewCount;
+  final int? reviewCount;
   final double size;
-  final bool showText;
+  final bool interactive;
 
   const RatingWidget({
     Key? key,
     required this.rating,
-    required this.reviewCount,
-    this.size = 24,
-    this.showText = true,
+    this.reviewCount,
+    this.size = 20,
+    this.interactive = false,
   }) : super(key: key);
 
   @override
@@ -22,28 +22,53 @@ class RatingWidget extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(Icons.star_rounded, color: AppColors.rating, size: size),
-        const SizedBox(width: AppSpacing.xs),
-        if (showText)
+        _buildStars(),
+        if (reviewCount != null) ...[
+          const SizedBox(width: AppSpacing.xs),
           Text(
-            '${rating.toStringAsFixed(1)} ($reviewCount)',
-            style: AppTypography.labelMedium,
+            '($reviewCount)',
+            style: AppTypography.labelSmall.copyWith(
+              color: AppColors.textTertiary,
+            ),
           ),
+        ],
       ],
+    );
+  }
+
+  Widget _buildStars() {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(5, (index) {
+        final starRating = index + 1;
+        final isFilled = starRating <= rating;
+        final isHalf = starRating - 1 < rating && rating < starRating;
+
+        return Padding(
+          padding: EdgeInsets.only(
+            right: index < 4 ? AppSpacing.xs : 0,
+          ),
+          child: Icon(
+            isHalf ? Icons.star_half : Icons.star,
+            color: isFilled || isHalf ? AppColors.rating : AppColors.gray300,
+            size: size,
+          ),
+        );
+      }),
     );
   }
 }
 
 class RatingSelector extends StatefulWidget {
-  final int initialRating;
-  final Function(int) onRatingChanged;
+  final double initialRating;
+  final Function(double) onRatingChanged;
   final double size;
 
   const RatingSelector({
     Key? key,
     this.initialRating = 0,
     required this.onRatingChanged,
-    this.size = 32,
+    this.size = 40,
   }) : super(key: key);
 
   @override
@@ -51,7 +76,7 @@ class RatingSelector extends StatefulWidget {
 }
 
 class _RatingSelectorState extends State<RatingSelector> {
-  late int _rating;
+  late double _rating;
 
   @override
   void initState() {
@@ -61,33 +86,41 @@ class _RatingSelectorState extends State<RatingSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: List.generate(
-        5,
-        (index) => GestureDetector(
-          onTap: () {
-            setState(() => _rating = index + 1);
-            widget.onRatingChanged(index + 1);
-          },
-          child: Icon(
-            Icons.star_rounded,
-            color: index < _rating ? AppColors.rating : AppColors.gray300,
-            size: widget.size,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: List.generate(5, (index) {
+            return GestureDetector(
+              onTap: () {
+                setState(() {
+                  _rating = (index + 1).toDouble();
+                });
+                widget.onRatingChanged(_rating);
+              },
+              child: Padding(
+                padding: EdgeInsets.only(
+                  right: index < 4 ? AppSpacing.md : 0,
+                ),
+                child: Icon(
+                  (index + 1) <= _rating ? Icons.star : Icons.star_border,
+                  color: (index + 1) <= _rating
+                      ? AppColors.rating
+                      : AppColors.gray300,
+                  size: widget.size,
+                ),
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        Text(
+          'Rating: ${_rating.toStringAsFixed(0)}/5',
+          style: AppTypography.bodyMedium.copyWith(
+            color: AppColors.textSecondary,
           ),
         ),
-      ).separated(const SizedBox(width: AppSpacing.sm)),
+      ],
     );
-  }
-}
-
-extension SeparatorExtension<T> on List<T> {
-  List<T> separated(T separator) {
-    final result = <T>[];
-    for (int i = 0; i < length; i++) {
-      result.add(this[i]);
-      if (i < length - 1) result.add(separator);
-    }
-    return result;
   }
 }

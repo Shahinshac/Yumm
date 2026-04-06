@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
-import '../constants/app_typography.dart';
 
 class CustomLoading extends StatelessWidget {
   final String? message;
   final double size;
-  final Color? color;
 
   const CustomLoading({
     Key? key,
     this.message,
-    this.size = 48,
-    this.color,
+    this.size = 50,
   }) : super(key: key);
 
   @override
@@ -25,17 +22,18 @@ class CustomLoading extends StatelessWidget {
             width: size,
             height: size,
             child: CircularProgressIndicator(
+              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
               strokeWidth: 4,
-              valueColor: AlwaysStoppedAnimation<Color>(
-                color ?? AppColors.primary,
-              ),
             ),
           ),
-          if (message != null) ...[
+          if (message != null && message!.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.lg),
             Text(
               message!,
-              style: AppTypography.bodyMedium,
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -46,13 +44,13 @@ class CustomLoading extends StatelessWidget {
 }
 
 class LoadingOverlay extends StatelessWidget {
-  final bool isVisible;
+  final bool isLoading;
   final Widget child;
   final String? message;
 
   const LoadingOverlay({
     Key? key,
-    required this.isVisible,
+    required this.isLoading,
     required this.child,
     this.message,
   }) : super(key: key);
@@ -62,9 +60,9 @@ class LoadingOverlay extends StatelessWidget {
     return Stack(
       children: [
         child,
-        if (isVisible)
+        if (isLoading)
           Container(
-            color: Colors.black.withOpacity(0.3),
+            color: AppColors.black.withOpacity(0.3),
             child: CustomLoading(message: message),
           ),
       ],

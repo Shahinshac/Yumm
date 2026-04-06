@@ -6,60 +6,59 @@ import '../constants/app_typography.dart';
 class CustomEmptyState extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String? subtitle;
-  final String? buttonLabel;
-  final VoidCallback? onButtonPressed;
-  final double iconSize;
+  final String? description;
+  final Widget? actionButton;
 
   const CustomEmptyState({
     Key? key,
     required this.icon,
     required this.title,
-    this.subtitle,
-    this.buttonLabel,
-    this.onButtonPressed,
-    this.iconSize = 64,
+    this.description,
+    this.actionButton,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(AppSpacing.xxl),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: iconSize,
-              color: AppColors.gray300,
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppColors.primaryLight.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+              ),
+              child: Icon(
+                icon,
+                size: 48,
+                color: AppColors.primary,
+              ),
             ),
-            const SizedBox(height: AppSpacing.xl),
+            const SizedBox(height: AppSpacing.xxl),
             Text(
               title,
-              style: AppTypography.headlineSmall,
+              style: AppTypography.headlineSmall.copyWith(
+                color: AppColors.textPrimary,
+              ),
               textAlign: TextAlign.center,
             ),
-            if (subtitle != null) ...[
-              const SizedBox(height: AppSpacing.md),
+            if (description != null && description!.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.lg),
               Text(
-                subtitle!,
+                description!,
                 style: AppTypography.bodyMedium.copyWith(
                   color: AppColors.textSecondary,
                 ),
                 textAlign: TextAlign.center,
               ),
             ],
-            if (buttonLabel != null) ...[
-              const SizedBox(height: AppSpacing.xl),
-              SizedBox(
-                width: double.infinity,
-                height: AppSpacing.buttonHeight,
-                child: ElevatedButton(
-                  onPressed: onButtonPressed,
-                  child: Text(buttonLabel!),
-                ),
-              ),
+            if (actionButton != null) ...[
+              const SizedBox(height: AppSpacing.xxl),
+              actionButton!,
             ],
           ],
         ),
