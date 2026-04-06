@@ -91,7 +91,8 @@ class OrderCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text('$itemCount items', style: AppTypography.bodySmall),
-                  Text('₹${totalAmount.toStringAsFixed(2)}', style: AppTypography.titleMedium),
+                  Text('₹${totalAmount.toStringAsFixed(2)}',
+                      style: AppTypography.titleMedium),
                 ],
               ),
               const SizedBox(height: AppSpacing.md),

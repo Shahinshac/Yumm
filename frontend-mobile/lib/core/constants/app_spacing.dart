@@ -72,7 +72,8 @@ class AppSpacing {
   static const EdgeInsets dialogPadding = EdgeInsets.all(xxl);
 
   /// Bottom sheet padding
-  static const EdgeInsets bottomSheetPadding = EdgeInsets.fromLTRB(lg, lg, lg, lg);
+  static const EdgeInsets bottomSheetPadding =
+      EdgeInsets.fromLTRB(lg, lg, lg, lg);
 
   // ─────────────────────────────────────────────────────────
   // SPACING FOR GAPS

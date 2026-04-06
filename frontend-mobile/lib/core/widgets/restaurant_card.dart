@@ -3,170 +3,184 @@ import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_typography.dart';
 
-/// Restaurant Card - Lists restaurants with images, rating, delivery info
+/// Restaurant Card for home page listings
 class RestaurantCard extends StatelessWidget {
   final String name;
-  final String imageUrl;
+  final String description;
   final double rating;
   final int reviewCount;
+  final String imageUrl;
   final String deliveryTime;
   final String deliveryFee;
-  final String? cuisineType;
-  final bool isOpen;
   final VoidCallback onTap;
-  final double? imageHeight;
 
   const RestaurantCard({
     Key? key,
     required this.name,
-    required this.imageUrl,
+    required this.description,
     required this.rating,
     required this.reviewCount,
+    required this.imageUrl,
     required this.deliveryTime,
     required this.deliveryFee,
-    this.cuisineType,
-    this.isOpen = true,
     required this.onTap,
-    this.imageHeight = 180,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Card(
-        elevation: AppSpacing.elevationLow,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        decoration: BoxDecoration(
+          color: AppColors.white,
           borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.black.withOpacity(0.08),
+              blurRadius: AppSpacing.elevationMd,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
+        overflow: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Image with overlay
+            // Image
             Stack(
               children: [
                 Container(
-                  height: imageHeight,
+                  height: 160,
                   width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(AppSpacing.radiusLg),
-                    ),
-                    color: AppColors.gray200,
-                  ),
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Icon(
-                          Icons.restaurant,
-                          size: 48,
-                          color: AppColors.gray400,
+                  color: AppColors.gray200,
+                  child: imageUrl.isNotEmpty
+                      ? Image.network(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Center(
+                            child: Icon(
+                              Icons.restaurant,
+                              size: 48,
+                              color: AppColors.gray400,
+                            ),
+                          ),
+                        )
+                      : Center(
+                          child: Icon(
+                            Icons.restaurant,
+                            size: 48,
+                            color: AppColors.gray400,
+                          ),
                         ),
-                      );
-                    },
+                ),
+                // Rating Badge
+                Positioned(
+                  top: AppSpacing.md,
+                  right: AppSpacing.md,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.white.withOpacity(0.95),
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(
+                          Icons.star_rounded,
+                          color: AppColors.rating,
+                          size: 16,
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        Text(
+                          rating.toStringAsFixed(1),
+                          style: AppTypography.labelSmall.copyWith(
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                if (!isOpen)
-                  Container(
-                    height: imageHeight,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(AppSpacing.radiusLg),
-                      ),
-                      color: AppColors.textPrimary.withOpacity(0.5),
-                    ),
-                    child: Center(
-                      child: Text(
-                        'CLOSED',
-                        style: AppTypography.headlineSmall.copyWith(
-                          color: AppColors.white,
-                        ),
-                      ),
-                    ),
-                  ),
               ],
             ),
-
             // Content
             Padding(
               padding: const EdgeInsets.all(AppSpacing.lg),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name
+                  // Restaurant Name
                   Text(
                     name,
-                    style: AppTypography.titleMedium,
+                    style: AppTypography.titleMedium.copyWith(
+                      color: AppColors.textPrimary,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+                  const SizedBox(height: AppSpacing.xs),
 
-                  // Cuisine type
-                  if (cuisineType != null)
-                    Text(
-                      cuisineType!,
-                      style: AppTypography.bodySmall.copyWith(
-                        color: AppColors.textTertiary,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                  // Description
+                  Text(
+                    description,
+                    style: AppTypography.bodySmall.copyWith(
+                      color: AppColors.textSecondary,
                     ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Rating row
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Rating
-                      Row(
-                        children: [
-                          const Icon(
-                            Icons.star_rounded,
-                            color: AppColors.rating,
-                            size: 18,
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          Text(
-                            '${rating.toStringAsFixed(1)} ($reviewCount)',
-                            style: AppTypography.labelMedium,
-                          ),
-                        ],
-                      ),
-                    ],
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: AppSpacing.md),
 
-                  // Delivery info
+                  // Review Count and Details Row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      Text(
+                        '($reviewCount reviews)',
+                        style: AppTypography.labelSmall.copyWith(
+                          color: AppColors.textTertiary,
+                        ),
+                      ),
                       Row(
                         children: [
-                          const Icon(
-                            Icons.schedule,
-                            size: 16,
+                          Icon(
+                            Icons.access_time,
+                            size: 14,
                             color: AppColors.textTertiary,
                           ),
-                          const SizedBox(width: AppSpacing.sm),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(
                             deliveryTime,
                             style: AppTypography.labelSmall.copyWith(
-                              color: AppColors.textSecondary,
+                              color: AppColors.textTertiary,
                             ),
                           ),
                         ],
                       ),
-                      Text(
-                        deliveryFee,
-                        style: AppTypography.labelSmall.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
                     ],
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+
+                  // Delivery Fee
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.xs,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.gray100,
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusSm),
+                    ),
+                    child: Text(
+                      'Delivery: ₹$deliveryFee',
+                      style: AppTypography.labelSmall.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
                   ),
                 ],
               ),

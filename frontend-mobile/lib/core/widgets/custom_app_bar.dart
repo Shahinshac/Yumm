@@ -68,8 +68,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(
-    toolbarHeight + (bottom?.preferredSize.height ?? 0),
-  );
+        toolbarHeight + (bottom?.preferredSize.height ?? 0),
+      );
 }
 
 /// Minimal App Bar (without back button)

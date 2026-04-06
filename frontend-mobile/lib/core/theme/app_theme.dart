@@ -33,7 +33,7 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: colorScheme,
       fontFamily: 'Segoe UI',
-      
+
       // Primary Color
       primaryColor: AppColors.primary,
       scaffoldBackgroundColor: AppColors.surface,
