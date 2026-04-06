@@ -79,7 +79,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
       final raw = await _api.getAvailableOrders();
       if (!mounted) return;
       setState(() {
-        _available = raw.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        _available =
+            raw.map((e) => Map<String, dynamic>.from(e as Map)).toList();
         _availableLoading = false;
       });
     } catch (_) {
@@ -92,7 +93,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
       final raw = await _api.getMyDeliveryOrders();
       if (!mounted) return;
       setState(() {
-        _myOrders = raw.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        _myOrders =
+            raw.map((e) => Map<String, dynamic>.from(e as Map)).toList();
         _myLoading = false;
       });
     } catch (_) {
@@ -164,10 +166,14 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
 
   Color _statusColor(String status) {
     switch (status.toLowerCase()) {
-      case 'on_the_way': return Colors.purple;
-      case 'delivered':  return Colors.green;
-      case 'ready':      return Colors.teal;
-      default:           return Colors.orange;
+      case 'on_the_way':
+        return Colors.purple;
+      case 'delivered':
+        return Colors.green;
+      case 'ready':
+        return Colors.teal;
+      default:
+        return Colors.orange;
     }
   }
 
@@ -189,14 +195,16 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                 Icon(
                   _locationTracking ? Icons.location_on : Icons.location_off,
                   size: 18,
-                  color: _locationTracking ? Colors.greenAccent : Colors.white54,
+                  color:
+                      _locationTracking ? Colors.greenAccent : Colors.white54,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   _locationTracking ? 'GPS' : 'No GPS',
                   style: TextStyle(
                     fontSize: 11,
-                    color: _locationTracking ? Colors.greenAccent : Colors.white54,
+                    color:
+                        _locationTracking ? Colors.greenAccent : Colors.white54,
                   ),
                 ),
               ],
@@ -262,9 +270,12 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _statChip(Icons.check_circle, 'Delivered', '${_stats!['delivered_orders'] ?? 0}', Colors.green),
-          _statChip(Icons.pending, 'Active', '${_stats!['active_orders'] ?? 0}', Colors.orange),
-          _statChip(Icons.currency_rupee, 'Earnings', '₹${_stats!['total_earnings'] ?? 0}', AppColors.primary),
+          _statChip(Icons.check_circle, 'Delivered',
+              '${_stats!['delivered_orders'] ?? 0}', Colors.green),
+          _statChip(Icons.pending, 'Active', '${_stats!['active_orders'] ?? 0}',
+              Colors.orange),
+          _statChip(Icons.currency_rupee, 'Earnings',
+              '₹${_stats!['total_earnings'] ?? 0}', AppColors.primary),
         ],
       ),
     );
@@ -275,7 +286,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
       children: [
         Icon(icon, color: color, size: 20),
         const SizedBox(height: 2),
-        Text(value, style: TextStyle(fontWeight: FontWeight.bold, color: color)),
+        Text(value,
+            style: TextStyle(fontWeight: FontWeight.bold, color: color)),
         Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
       ],
     );
@@ -284,7 +296,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
   // ── Available Orders Tab ──────────────────────────────────────────────────
 
   Widget _buildAvailableTab() {
-    if (_availableLoading) return const Center(child: CircularProgressIndicator());
+    if (_availableLoading)
+      return const Center(child: CircularProgressIndicator());
     if (_available.isEmpty) {
       return const Center(
         child: Column(
@@ -295,7 +308,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
             Text('No available orders right now',
                 style: TextStyle(color: Colors.grey)),
             SizedBox(height: 8),
-            Text('Pull to refresh', style: TextStyle(fontSize: 12, color: Colors.grey)),
+            Text('Pull to refresh',
+                style: TextStyle(fontSize: 12, color: Colors.grey)),
           ],
         ),
       );
@@ -311,7 +325,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
             elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: Column(
@@ -322,7 +337,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                     children: [
                       Text(
                         '🏪 ${o['restaurant'] ?? 'Restaurant'}',
-                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 15),
                       ),
                       Text(
                         '₹${o['total_amount'] ?? 0}',
@@ -336,12 +352,14 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      const Icon(Icons.location_pin, size: 14, color: Colors.grey),
+                      const Icon(Icons.location_pin,
+                          size: 14, color: Colors.grey),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           o['delivery_address'] ?? 'Address not provided',
-                          style: const TextStyle(color: Colors.grey, fontSize: 12),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 12),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -398,7 +416,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
           return Card(
             margin: const EdgeInsets.only(bottom: 12),
             elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: Column(
@@ -412,7 +431,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: _statusColor(status).withOpacity(0.15),
                           borderRadius: BorderRadius.circular(20),
@@ -432,12 +452,14 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                   Text('🏪 ${o['restaurant_name'] ?? ''}'),
                   Row(
                     children: [
-                      const Icon(Icons.location_pin, size: 14, color: Colors.grey),
+                      const Icon(Icons.location_pin,
+                          size: 14, color: Colors.grey),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           o['delivery_address'] ?? '',
-                          style: const TextStyle(color: Colors.grey, fontSize: 12),
+                          style:
+                              const TextStyle(color: Colors.grey, fontSize: 12),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -450,7 +472,9 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
                       Text(
                         '₹${o['total_amount'] ?? 0}',
                         style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.primary),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: AppColors.primary),
                       ),
                       if (isActive)
                         ElevatedButton.icon(
