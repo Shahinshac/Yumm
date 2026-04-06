@@ -188,7 +188,8 @@ class ApiService {
   }
 
   /// Get all orders for a restaurant
-  Future<List<dynamic>> getRestaurantOrders(String restaurantId, {String? status}) async {
+  Future<List<dynamic>> getRestaurantOrders(String restaurantId,
+      {String? status}) async {
     var url = '$baseUrl/restaurants/$restaurantId/orders';
     if (status != null) url += '?status=$status';
 
