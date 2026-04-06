@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_spacing.dart';
+import '../../core/constants/app_typography.dart';
 import '../../providers/order_provider.dart';
 import '../../services/api_service.dart';
 import '../../services/socket_service.dart';
@@ -29,7 +32,6 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
 
   Timer? _pollTimer;
 
-  static const Color _brand = Color(0xFFff6b35);
   // Default map center (Malappuram, Kerala) – used when delivery location is unknown
   static const LatLng _defaultLocation = LatLng(11.0089, 76.0305);
 
@@ -124,7 +126,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
     final msg = labels[status.toLowerCase()] ?? 'Status: $status';
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(msg),
-      backgroundColor: status == 'delivered' ? Colors.green : _brand,
+      backgroundColor: status == 'delivered' ? Colors.green : AppColors.primary,
       duration: const Duration(seconds: 3),
     ));
   }
@@ -133,8 +135,8 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: _brand,
-        foregroundColor: Colors.white,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.white,
         title: const Text('📍 Order Tracking'),
       ),
       body: Consumer<OrderProvider>(
@@ -151,7 +153,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
           final status = _currentStatus.isNotEmpty ? _currentStatus : order.status;
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.lg),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -188,13 +190,13 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
 
     return Container(
       height: 250,
-      margin: const EdgeInsets.only(bottom: 24),
+      margin: const EdgeInsets.only(bottom: AppSpacing.xxl),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.12), blurRadius: AppSpacing.elevationMd)],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
         child: GoogleMap(
           initialCameraPosition: CameraPosition(
             target: initialPosition,
@@ -238,20 +240,20 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
     final currentIndex = steps.indexOf(currentStatus.toLowerCase());
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.12), blurRadius: AppSpacing.elevationMd)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Order Status',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           ...List.generate(steps.length, (index) {
             final isActive = index <= currentIndex;
             final isCurrent = index == currentIndex;
@@ -265,15 +267,15 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                       height: 36,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: isActive ? _brand : Colors.grey[200],
+                        color: isActive ? AppColors.primary : AppColors.gray100,
                         boxShadow: isCurrent
-                            ? [BoxShadow(color: _brand.withOpacity(0.4), blurRadius: 8)]
+                            ? [BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: AppSpacing.elevationMd)]
                             : null,
                       ),
                       child: Center(
                         child: Icon(
                           isActive ? icons[steps[index]] : icons[steps[index]],
-                          color: isActive ? Colors.white : Colors.grey,
+                          color: isActive ? AppColors.white : AppColors.gray400,
                           size: 18,
                         ),
                       ),
@@ -285,7 +287,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                         style: TextStyle(
                           fontWeight:
                               isCurrent ? FontWeight.bold : FontWeight.normal,
-                          color: isActive ? Colors.black : Colors.grey,
+                          color: isActive ? AppColors.textPrimary : AppColors.textSecondary,
                           fontSize: isCurrent ? 15 : 13,
                         ),
                       ),
@@ -293,15 +295,15 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                     if (isCurrent)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
+                            horizontal: AppSpacing.sm, vertical: AppSpacing.xs),
                         decoration: BoxDecoration(
-                          color: _brand.withOpacity(0.15),
-                          borderRadius: BorderRadius.circular(10),
+                          color: AppColors.primary.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                         ),
                         child: Text(
                           'Current',
                           style: TextStyle(
-                              color: _brand,
+                              color: AppColors.primary,
                               fontSize: 11,
                               fontWeight: FontWeight.bold),
                         ),
@@ -314,7 +316,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                     child: SizedBox(
                       height: 20,
                       child: VerticalDivider(
-                        color: index < currentIndex ? _brand : Colors.grey[300]!,
+                        color: index < currentIndex ? AppColors.primary : AppColors.gray200,
                         thickness: 2,
                       ),
                     ),
@@ -329,17 +331,17 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
 
   Widget _buildOrderDetails(dynamic order) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.12), blurRadius: AppSpacing.elevationMd)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Order Details',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text('Order Details',
+              style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary)),
           const Divider(),
           _detailRow('Order ID', '#${order.id.padRight(12).substring(0, 12).trimRight()}...'),
           _detailRow('Restaurant', order.restaurantName),
@@ -357,20 +359,20 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
 
   Widget _buildOrderItems(dynamic order) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.12), blurRadius: AppSpacing.elevationMd)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Items Ordered',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          Text('Items Ordered',
+              style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary)),
           const Divider(),
           ...order.items.map<Widget>((item) => Padding(
-            padding: const EdgeInsets.only(bottom: 8),
+            padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -379,16 +381,16 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(item.name,
-                          style: const TextStyle(fontWeight: FontWeight.w500)),
+                          style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600)),
                       Text('${item.quantity} × ₹${item.price}',
-                          style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                          style: AppTypography.bodySmall.copyWith(color: AppColors.textSecondary)),
                     ],
                   ),
                 ),
                 Text(
                   '₹${(item.price * item.quantity).toStringAsFixed(2)}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold, color: _brand),
+                  style: AppTypography.bodyMedium.copyWith(
+                      fontWeight: FontWeight.bold, color: AppColors.primary),
                 ),
               ],
             ),
@@ -400,17 +402,17 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
 
   Widget _detailRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: Colors.grey)),
+          Text(label, style: AppTypography.bodyMedium.copyWith(color: AppColors.textSecondary)),
           Expanded(
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: const TextStyle(fontWeight: FontWeight.w600),
+              style: AppTypography.bodyMedium.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
         ],
@@ -435,8 +437,6 @@ class _ReviewSectionState extends State<_ReviewSection> {
   final _commentController = TextEditingController();
   bool _submitted = false;
 
-  static const Color _brand = Color(0xFFff6b35);
-
   @override
   void dispose() {
     _commentController.dispose();
@@ -447,16 +447,16 @@ class _ReviewSectionState extends State<_ReviewSection> {
   Widget build(BuildContext context) {
     if (_submitted) {
       return Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(AppSpacing.lg),
         decoration: BoxDecoration(
-          color: Colors.green[50],
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.green[200]!),
+          color: AppColors.successLight,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+          border: Border.all(color: AppColors.success),
         ),
         child: const Row(
           children: [
-            Icon(Icons.check_circle, color: Colors.green),
-            SizedBox(width: 8),
+            Icon(Icons.check_circle, color: AppColors.success),
+            SizedBox(width: AppSpacing.md),
             Text('Thank you for your feedback! 🎉'),
           ],
         ),
@@ -464,57 +464,59 @@ class _ReviewSectionState extends State<_ReviewSection> {
     }
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
-        color: Colors.grey[50],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey[200]!),
+        color: AppColors.gray50,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        border: Border.all(color: AppColors.gray200),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Share Your Feedback',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary),
           ),
-          const SizedBox(height: 16),
-          const Text('Rate your experience'),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.lg),
+          Text('Rate your experience', style: AppTypography.bodyMedium),
+          const SizedBox(height: AppSpacing.md),
           Row(
             children: List.generate(
               5,
               (index) => GestureDetector(
                 onTap: () => setState(() => _rating = index + 1),
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                   child: Icon(
                     index < _rating ? Icons.star : Icons.star_border,
                     size: 36,
-                    color: _brand,
+                    color: AppColors.primary,
                   ),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           TextField(
             controller: _commentController,
             minLines: 3,
             maxLines: 5,
             decoration: InputDecoration(
               hintText: 'Share your comments...',
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusMd)),
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
               onPressed: () {
                 if (_rating == 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please rate your experience')),
+                    SnackBar(
+                      content: const Text('Please rate your experience'),
+                      backgroundColor: AppColors.error,
+                    ),
                   );
                   return;
                 }
@@ -527,9 +529,8 @@ class _ReviewSectionState extends State<_ReviewSection> {
                     )
                     .then((_) => setState(() => _submitted = true));
               },
-              style: ElevatedButton.styleFrom(backgroundColor: _brand),
-              child: const Text('Submit Review',
-                  style: TextStyle(color: Colors.white)),
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+              child: const Text('Submit Review', style: TextStyle(color: Colors.white)),
             ),
           ),
         ],
