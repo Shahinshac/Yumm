@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'core/theme/app_theme.dart';
 import 'services/api_service.dart';
 import 'services/socket_service.dart';
 import 'providers/auth_provider.dart';
@@ -44,12 +45,7 @@ class FoodHubApp extends StatelessWidget {
       child: MaterialApp.router(
         title: '🍕 FoodHub',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          primaryColor: const Color(0xFFff6b35),
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFff6b35)),
-          fontFamily: 'Segoe UI',
-        ),
+        theme: AppTheme.lightTheme(),
         routerConfig: _buildRouter(),
       ),
     );
