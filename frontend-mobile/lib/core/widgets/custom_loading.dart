@@ -3,17 +3,16 @@ import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_typography.dart';
 
-/// Custom loading indicator with message
 class CustomLoading extends StatelessWidget {
   final String? message;
-  final Color? color;
   final double size;
+  final Color? color;
 
   const CustomLoading({
     Key? key,
     this.message,
-    this.color,
     this.size = 48,
+    this.color,
   }) : super(key: key);
 
   @override
@@ -23,22 +22,20 @@ class CustomLoading extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SizedBox(
-            height: size,
             width: size,
+            height: size,
             child: CircularProgressIndicator(
+              strokeWidth: 4,
               valueColor: AlwaysStoppedAnimation<Color>(
                 color ?? AppColors.primary,
               ),
-              strokeWidth: 4,
             ),
           ),
           if (message != null) ...[
-            const SizedBox(height: AppSpacing.paddingLg),
+            const SizedBox(height: AppSpacing.lg),
             Text(
               message!,
-              style: AppTypography.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
-              ),
+              style: AppTypography.bodyMedium,
               textAlign: TextAlign.center,
             ),
           ],
@@ -48,15 +45,14 @@ class CustomLoading extends StatelessWidget {
   }
 }
 
-/// Loading overlay for full screen loading
 class LoadingOverlay extends StatelessWidget {
-  final bool isLoading;
+  final bool isVisible;
   final Widget child;
   final String? message;
 
   const LoadingOverlay({
     Key? key,
-    required this.isLoading,
+    required this.isVisible,
     required this.child,
     this.message,
   }) : super(key: key);
@@ -66,9 +62,9 @@ class LoadingOverlay extends StatelessWidget {
     return Stack(
       children: [
         child,
-        if (isLoading)
+        if (isVisible)
           Container(
-            color: AppColors.black.withOpacity(0.3),
+            color: Colors.black.withOpacity(0.3),
             child: CustomLoading(message: message),
           ),
       ],

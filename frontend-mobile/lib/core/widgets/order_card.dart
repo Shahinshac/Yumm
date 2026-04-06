@@ -3,42 +3,41 @@ import '../constants/app_colors.dart';
 import '../constants/app_spacing.dart';
 import '../constants/app_typography.dart';
 
-/// Order card for displaying order history and tracking
 class OrderCard extends StatelessWidget {
   final String orderId;
   final String restaurantName;
-  final String status;
   final double totalAmount;
-  final String orderDate;
+  final String status;
+  final String estimatedTime;
   final int itemCount;
+  final DateTime orderDate;
   final VoidCallback onTap;
-  final VoidCallback? onReorderTap;
-  final Color? statusColor;
+  final VoidCallback? onTrackPressed;
+  final VoidCallback? onReorderPressed;
 
   const OrderCard({
     Key? key,
     required this.orderId,
     required this.restaurantName,
-    required this.status,
     required this.totalAmount,
-    required this.orderDate,
+    required this.status,
+    required this.estimatedTime,
     required this.itemCount,
+    required this.orderDate,
     required this.onTap,
-    this.onReorderTap,
-    this.statusColor,
+    this.onTrackPressed,
+    this.onReorderPressed,
   }) : super(key: key);
 
-  Color _getStatusColor() {
-    return statusColor ??
-        switch (status.toLowerCase()) {
-          'delivered' => AppColors.statusDelivered,
-          'pending' => AppColors.statusPending,
-          'confirmed' => AppColors.statusConfirmed,
-          'preparing' => AppColors.statusPreparing,
-          'on the way' => AppColors.statusOnTheWay,
-          'cancelled' => AppColors.statusCancelled,
-          _ => AppColors.textSecondary,
-        };
+  Color getStatusColor() {
+    switch (status.toLowerCase()) {
+      case 'delivered':
+        return AppColors.statusDelivered;
+      case 'cancelled':
+        return AppColors.statusCancelled;
+      default:
+        return AppColors.primary;
+    }
   }
 
   @override
@@ -46,115 +45,57 @@ class OrderCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.cardRadius),
-        ),
+        elevation: AppSpacing.elevationLow,
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.paddingMd),
+          padding: const EdgeInsets.all(AppSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Top Row: Restaurant and Status Badge
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Restaurant Name
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
+                          'Order #${orderId.substring(0, 8)}',
+                          style: AppTypography.labelMedium,
+                        ),
+                        Text(
                           restaurantName,
-                          style: AppTypography.headline6,
+                          style: AppTypography.titleMedium,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: AppSpacing.paddingXs),
-                        Text(
-                          'Order #$orderId',
-                          style: AppTypography.caption,
                         ),
                       ],
                     ),
                   ),
-                  // Status Badge
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.paddingMd,
-                      vertical: AppSpacing.paddingXs,
-                    ),
+                    padding: const EdgeInsets.all(AppSpacing.md),
                     decoration: BoxDecoration(
-                      color: _getStatusColor().withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(
-                        color: _getStatusColor(),
-                        width: 1,
-                      ),
+                      color: getStatusColor().withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                     ),
                     child: Text(
                       status,
                       style: AppTypography.labelSmall.copyWith(
-                        color: _getStatusColor(),
+                        color: getStatusColor(),
                       ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.paddingMd),
-              // Divider
-              const Divider(
-                height: 1,
-                color: AppColors.border,
-              ),
-              const SizedBox(height: AppSpacing.paddingMd),
-              // Bottom Row: Details
+              const SizedBox(height: AppSpacing.lg),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Items Count and Date
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '$itemCount item${itemCount > 1 ? 's' : ''}',
-                        style: AppTypography.bodySmall,
-                      ),
-                      const SizedBox(height: AppSpacing.paddingXs),
-                      Text(
-                        orderDate,
-                        style: AppTypography.caption,
-                      ),
-                    ],
-                  ),
-                  // Price and Reorder Button
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        '₹${totalAmount.toStringAsFixed(0)}',
-                        style: AppTypography.headline6.copyWith(
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      if (onReorderTap != null &&
-                          status.toLowerCase() == 'delivered') ...[
-                        const SizedBox(height: AppSpacing.paddingXs),
-                        GestureDetector(
-                          onTap: onReorderTap,
-                          child: Text(
-                            'Reorder',
-                            style: AppTypography.labelSmall.copyWith(
-                              color: AppColors.primary,
-                              fontSize: 11,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
-                  ),
+                  Text('$itemCount items', style: AppTypography.bodySmall),
+                  Text('₹${totalAmount.toStringAsFixed(2)}', style: AppTypography.titleMedium),
                 ],
               ),
+              const SizedBox(height: AppSpacing.md),
+              Text(estimatedTime, style: AppTypography.bodySmall),
             ],
           ),
         ),
