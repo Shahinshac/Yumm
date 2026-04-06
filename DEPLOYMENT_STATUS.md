@@ -11,7 +11,7 @@ All deployments are **READY** for production! Here's what's complete:
 | Component | Status | Location | Action Needed |
 |-----------|--------|----------|----------------|
 | **Backend API** | ✅ Live | https://yumm-ym2m.onrender.com | None - Already deployed |
-| **Flutter Web** | ✅ Building | Vercel | Check Vercel dashboard |
+| **Flutter Web** | ✅ LIVE | https://frontend-mobile-hymti8ny3-shahinshacs-projects.vercel.app | ✅ Deployed |
 | **Android APK** | ✅ Built | `build/app/outputs/flutter-apk/app-release.apk` | Upload to Play Store |
 | **Database** | ✅ Connected | MongoDB Atlas | Configured in backend |
 
