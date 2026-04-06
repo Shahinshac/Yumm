@@ -15,7 +15,7 @@ def role_required(*roles):
             user_id = get_jwt_identity()
             try:
                 user = User.objects(id=user_id).first()
-            except:
+            except Exception:
                 user = None
 
             if not user:
@@ -50,5 +50,5 @@ def get_current_user():
             'role': user.role,
             'phone': user.phone,
         }
-    except:
+    except Exception:
         return None

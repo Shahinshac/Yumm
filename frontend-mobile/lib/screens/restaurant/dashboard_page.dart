@@ -28,7 +28,6 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
   List<Map<String, dynamic>> _menuItems = [];
   bool _ordersLoading = true;
   bool _menuLoading = true;
-  String? _error;
 
   // The restaurant whose data this panel manages.
   // In a real app the user's profile would reference their restaurant id.
@@ -95,11 +94,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
           }
         });
       } catch (e) {
-        if (mounted)
-          setState(() {
-            _ordersLoading = false;
-            _error = e.toString();
-          });
+        if (mounted) setState(() => _ordersLoading = false);
       }
       return;
     }
@@ -117,11 +112,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
         _ordersLoading = false;
       });
     } catch (e) {
-      if (mounted)
-        setState(() {
-          _ordersLoading = false;
-          _error = e.toString();
-        });
+      if (mounted) setState(() => _ordersLoading = false);
     }
   }
 
@@ -143,11 +134,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
         _menuLoading = false;
       });
     } catch (e) {
-      if (mounted)
-        setState(() {
-          _menuLoading = false;
-          _error = e.toString();
-        });
+      if (mounted) setState(() => _menuLoading = false);
     }
   }
 

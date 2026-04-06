@@ -6,16 +6,16 @@ import 'services/socket_service.dart';
 import 'providers/auth_provider.dart';
 import 'providers/restaurant_provider.dart';
 import 'providers/order_provider.dart';
-import 'pages/login_page.dart';
-import 'pages/register_page.dart';
-import 'pages/customer/home_page.dart';
-import 'pages/customer/restaurant_menu_page.dart';
-import 'pages/customer/checkout_page.dart';
-import 'pages/customer/my_orders_page.dart';
-import 'pages/customer/order_tracking_page.dart';
-import 'pages/restaurant/dashboard_page.dart';
-import 'pages/delivery/home_page.dart' as delivery;
-import 'pages/admin/dashboard_page.dart' as admin;
+import 'screens/login_page.dart';
+import 'screens/register_page.dart';
+import 'screens/customer/home_page.dart';
+import 'screens/customer/restaurant_menu_page.dart';
+import 'screens/customer/checkout_page.dart';
+import 'screens/customer/my_orders_page.dart';
+import 'screens/customer/order_tracking_page.dart';
+import 'screens/restaurant/dashboard_page.dart';
+import 'screens/delivery/home_page.dart' as delivery;
+import 'screens/admin/dashboard_page.dart' as admin;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

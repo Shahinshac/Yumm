@@ -1,61 +1,171 @@
 """
 Flask Application Factory
-Food Delivery App - Complete System
+Food Delivery App - Complete System with Professional Setup
 """
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO
-from mongoengine import connect
+from mongoengine import connect, ConnectionFailure
 import os
+import logging
 from datetime import timedelta
 
 jwt = JWTManager()
 # socketio instance shared across the app
 socketio = SocketIO(cors_allowed_origins="*", async_mode='eventlet')
 
+
+def setup_logging(app):
+    """Configure logging for the application"""
+    log_dir = app.config.get('LOG_DIR', 'logs')
+    log_level = getattr(logging, app.config.get('LOG_LEVEL', 'INFO'))
+
+    # Create logs directory if it doesn't exist
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
+
+    # Configure root logger
+    logger = logging.getLogger()
+    logger.setLevel(log_level)
+
+    # File handler
+    fh = logging.FileHandler(os.path.join(log_dir, 'app.log'))
+    fh.setLevel(log_level)
+
+    # Console handler
+    ch = logging.StreamHandler()
+    ch.setLevel(log_level)
+
+    # Formatter
+    formatter = logging.Formatter(app.config.get('LOG_FORMAT'))
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+
+    logger.addHandler(fh)
+    logger.addHandler(ch)
+
+    return logger
+
+
 def create_app():
     """Application factory"""
     app = Flask(__name__)
 
-    # Configuration
-    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'food-delivery-secret-key')
-    app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)
+    # Load configuration based on environment
+    env = os.getenv('FLASK_ENV', 'development')
+    from backend.config import config
+    app.config.from_object(config.get(env, config['default']))
 
-    # MongoDB
-    db_uri = os.getenv('MONGODB_URI', 'mongodb://localhost:27017/fooddelivery')
-    connect(host=db_uri, serverSelectionTimeoutMS=5000)
-    print(f"✅ MongoDB connected")
+    # Setup logging
+    logger = setup_logging(app)
+    logger.info(f"Starting FoodHub App in {env} mode")
+
+    # Configuration
+    app.config['JSON_SORT_KEYS'] = False
+    app.config['PROPAGATE_EXCEPTIONS'] = app.config.get('PROPAGATE_EXCEPTIONS', True)
+
+    # MongoDB Connection with error handling
+    try:
+        db_uri = app.config['MONGODB_SETTINGS'].get('host', 'mongodb://localhost:27017/fooddelivery')
+        logger.info(f"Connecting to MongoDB: {db_uri}")
+
+        connect(
+            host=db_uri,
+            serverSelectionTimeoutMS=app.config['MONGODB_SETTINGS'].get('serverSelectionTimeoutMS', 5000),
+            connectTimeoutMS=app.config['MONGODB_SETTINGS'].get('connectTimeoutMS', 10000),
+            retryWrites=app.config['MONGODB_SETTINGS'].get('retryWrites', False)
+        )
+        logger.info("✅ MongoDB connected successfully")
+    except ConnectionFailure as e:
+        logger.error(f"❌ MongoDB connection failed: {str(e)}")
+        raise RuntimeError(f"Could not connect to MongoDB: {str(e)}")
+    except Exception as e:
+        logger.error(f"❌ Unexpected error during MongoDB connection: {str(e)}")
+        raise
+
+    # JWT Configuration
+    app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', app.config['JWT_SECRET_KEY'])
 
     # CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    CORS(app, resources={r"/api/*": {"origins": app.config.get('CORS_ORIGINS', '*').split(',')}})
+    logger.info("✅ CORS configured")
 
-    # JWT
+    # JWT Initialization
     jwt.init_app(app)
 
+    # JWT Error Handlers
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_data):
+        return jsonify({'error': 'Token has expired'}), 401
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(error):
+        return jsonify({'error': 'Invalid token'}), 401
+
+    @jwt.unauthorized_loader
+    def missing_token_callback(error):
+        return jsonify({'error': 'Authorization token is missing'}), 401
+
     # Initialize SocketIO with the app
-    socketio.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
+    logger.info("✅ SocketIO configured")
 
     # Register blueprints
-    from backend.app.routes import auth, restaurants, orders, delivery, admin, reviews, promo
+    logger.info("Registering API blueprints...")
+    try:
+        from backend.app.routes import auth, restaurants, orders, delivery, admin, reviews, promo
 
-    app.register_blueprint(auth.bp)
-    app.register_blueprint(restaurants.bp)
-    app.register_blueprint(orders.bp)
-    app.register_blueprint(delivery.bp)
-    app.register_blueprint(admin.bp)
-    app.register_blueprint(reviews.bp)
-    app.register_blueprint(promo.bp)
+        app.register_blueprint(auth.bp)
+        app.register_blueprint(restaurants.bp)
+        app.register_blueprint(orders.bp)
+        app.register_blueprint(delivery.bp)
+        app.register_blueprint(admin.bp)
+        app.register_blueprint(reviews.bp)
+        app.register_blueprint(promo.bp)
+
+        logger.info("✅ All blueprints registered successfully")
+    except Exception as e:
+        logger.error(f"Failed to register blueprints: {str(e)}")
+        raise
 
     # Register SocketIO event handlers
-    from backend.app.routes import socket_events  # noqa: F401
+    try:
+        from backend.app.routes import socket_events  # noqa: F401
+        logger.info("✅ SocketIO events registered")
+    except Exception as e:
+        logger.error(f"Failed to register socket events: {str(e)}")
+        raise
 
-    # Create default admin & demo data
-    create_demo_data()
+    # Global error handlers
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({'error': 'Resource not found', 'status': 404}), 404
+
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        return jsonify({'error': 'Method not allowed', 'status': 405}), 405
+
+    @app.errorhandler(500)
+    def internal_error(error):
+        logger.error(f"Internal server error: {str(error)}")
+        return jsonify({'error': 'Internal server error', 'status': 500}), 500
+
+    # Create demo data if in development
+    if env in ['development', 'testing']:
+        try:
+            logger.info("Creating demo data...")
+            create_demo_data(app, logger)
+        except Exception as e:
+            logger.error(f"Failed to create demo data: {str(e)}")
+            # Don't fail startup if demo data creation fails
+
+    logger.info("✅ FoodHub App initialized successfully!")
 
     return app
 
-def create_demo_data():
+
+def create_demo_data(app, logger):
     """Create demo restaurants and items"""
     from backend.app.models.restaurant import Restaurant, MenuItem
     from backend.app.models.user import User
@@ -154,7 +264,7 @@ def create_demo_data():
                 )
                 menu_item.save()
 
-        print("✅ Demo data created")
+        logger.info("✅ Demo restaurants created")
 
     # Create demo admin if not exist
     if User.objects(role='admin').count() == 0:
@@ -167,7 +277,7 @@ def create_demo_data():
             is_verified=True
         )
         admin.save()
-        print("✅ Admin created: admin/admin123")
+        logger.info("✅ Admin created: admin/admin123")
 
     # Create demo customer
     if User.objects(role='customer', username='customer').count() == 0:
@@ -180,7 +290,7 @@ def create_demo_data():
             is_verified=True
         )
         customer.save()
-        print("✅ Demo customer created: customer/customer123")
+        logger.info("✅ Demo customer created: customer/customer123")
 
     # Create demo restaurant user
     if User.objects(role='restaurant', username='restaurant').count() == 0:
@@ -193,7 +303,7 @@ def create_demo_data():
             is_verified=True
         )
         rest_user.save()
-        print("✅ Demo restaurant user created: restaurant/rest123")
+        logger.info("✅ Demo restaurant user created: restaurant/rest123")
 
     # Create demo delivery partner
     if User.objects(role='delivery', username='delivery').count() == 0:
@@ -206,4 +316,4 @@ def create_demo_data():
             is_verified=True
         )
         delivery.save()
-        print("✅ Demo delivery partner created: delivery/delivery123")
+        logger.info("✅ Demo delivery partner created: delivery/delivery123")

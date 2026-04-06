@@ -16,5 +16,5 @@ class PasswordSecurity:
         """Verify password against hash"""
         try:
             return checkpw(password.encode(), hash_str.encode())
-        except:
+        except Exception:
             return False

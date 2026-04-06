@@ -148,8 +148,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
             return const Center(child: Text('Order not found'));
           }
 
-          final status =
-              _currentStatus.isNotEmpty ? _currentStatus : order.status;
+          final status = _currentStatus.isNotEmpty ? _currentStatus : order.status;
 
           return SingleChildScrollView(
             padding: const EdgeInsets.all(16),
@@ -218,14 +217,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
   }
 
   Widget _buildStatusTimeline(String currentStatus) {
-    const steps = [
-      'pending',
-      'confirmed',
-      'preparing',
-      'ready',
-      'on_the_way',
-      'delivered'
-    ];
+    const steps = ['pending', 'confirmed', 'preparing', 'ready', 'on_the_way', 'delivered'];
     final labels = {
       'pending': 'Order Placed',
       'confirmed': 'Confirmed',
@@ -275,11 +267,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                         shape: BoxShape.circle,
                         color: isActive ? _brand : Colors.grey[200],
                         boxShadow: isCurrent
-                            ? [
-                                BoxShadow(
-                                    color: _brand.withOpacity(0.4),
-                                    blurRadius: 8)
-                              ]
+                            ? [BoxShadow(color: _brand.withOpacity(0.4), blurRadius: 8)]
                             : null,
                       ),
                       child: Center(
@@ -326,8 +314,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                     child: SizedBox(
                       height: 20,
                       child: VerticalDivider(
-                        color:
-                            index < currentIndex ? _brand : Colors.grey[300]!,
+                        color: index < currentIndex ? _brand : Colors.grey[300]!,
                         thickness: 2,
                       ),
                     ),
@@ -354,8 +341,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
           const Text('Order Details',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const Divider(),
-          _detailRow('Order ID',
-              '#${order.id.padRight(12).substring(0, 12).trimRight()}...'),
+          _detailRow('Order ID', '#${order.id.padRight(12).substring(0, 12).trimRight()}...'),
           _detailRow('Restaurant', order.restaurantName),
           _detailRow('Items', '${order.items.length} item(s)'),
           _detailRow('Total', '₹${order.totalAmount.toStringAsFixed(2)}'),
@@ -384,31 +370,29 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           const Divider(),
           ...order.items.map<Widget>((item) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(item.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w500)),
-                          Text('${item.quantity} × ₹${item.price}',
-                              style: const TextStyle(
-                                  fontSize: 12, color: Colors.grey)),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      '₹${(item.price * item.quantity).toStringAsFixed(2)}',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: _brand),
-                    ),
-                  ],
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.name,
+                          style: const TextStyle(fontWeight: FontWeight.w500)),
+                      Text('${item.quantity} × ₹${item.price}',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                    ],
+                  ),
                 ),
-              )),
+                Text(
+                  '₹${(item.price * item.quantity).toStringAsFixed(2)}',
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, color: _brand),
+                ),
+              ],
+            ),
+          )),
         ],
       ),
     );
@@ -530,8 +514,7 @@ class _ReviewSectionState extends State<_ReviewSection> {
               onPressed: () {
                 if (_rating == 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text('Please rate your experience')),
+                    const SnackBar(content: Text('Please rate your experience')),
                   );
                   return;
                 }

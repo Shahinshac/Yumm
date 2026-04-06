@@ -1,5 +1,4 @@
-import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:socket_io_client/socket_io_client.dart' as io;
 
 /// Service for real-time communication with the Flask-SocketIO backend.
 /// Supports live order status updates and delivery location tracking.
@@ -7,7 +6,7 @@ class SocketService {
   static const String _baseUrl = 'http://localhost:5000';
   // For production: use the Render backend URL
 
-  IO.Socket? _socket;
+  io.Socket? _socket;
   bool _isConnected = false;
 
   bool get isConnected => _isConnected;
@@ -16,9 +15,9 @@ class SocketService {
   void connect() {
     if (_isConnected) return;
 
-    _socket = IO.io(
+    _socket = io.io(
       _baseUrl,
-      IO.OptionBuilder()
+      io.OptionBuilder()
           .setTransports(['websocket', 'polling'])
           .disableAutoConnect()
           .build(),
@@ -68,7 +67,8 @@ class SocketService {
   /// Join the delivery partner room for new assignment notifications
   void joinDeliveryRoom(String deliveryPartnerId) {
     if (!_isConnected) connect();
-    _socket?.emit('join_delivery_room', {'delivery_partner_id': deliveryPartnerId});
+    _socket?.emit(
+        'join_delivery_room', {'delivery_partner_id': deliveryPartnerId});
   }
 
   /// Listen for real-time order status updates
