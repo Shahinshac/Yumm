@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://localhost:5000/api';
-  // For production: 'https://your-render-app.onrender.com/api'
+  static const String baseUrl = 'https://yumm-ym2m.onrender.com/api';
 
   String? _token;
 

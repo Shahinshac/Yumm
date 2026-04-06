@@ -1,6 +1,5 @@
 {
-  "buildCommand": "echo 'Build already done'",
-  "outputDirectory": "build/web"
+  "buildCommand": "exit 0",
+  "outputDirectory": "build/web",
+  "framework": "vite"
 }
-
-
