@@ -121,11 +121,11 @@ class _RegisterPageState extends State<RegisterPage>
                 constraints: const BoxConstraints(maxWidth: 400),
                 decoration: BoxDecoration(
                   color: AppColors.white,
-                  borderRadius: BorderRadius.circular(AppSpacing.dialogRadius),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.black.withOpacity(0.15),
-                      blurRadius: AppSpacing.shadowLg,
+                      blurRadius: AppSpacing.elevationHigh,
                       offset: const Offset(0, 8),
                     ),
                   ],
@@ -139,16 +139,16 @@ class _RegisterPageState extends State<RegisterPage>
                       '🍕',
                       style: AppTypography.displayLarge.copyWith(fontSize: 56),
                     ),
-                    const SizedBox(height: AppSpacing.paddingMd),
+                    const SizedBox(height: AppSpacing.md),
 
                     // Title
                     Text(
                       'Create Account',
-                      style: AppTypography.headline2.copyWith(
+                      style: AppTypography.headlineLarge.copyWith(
                         color: AppColors.primary,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.paddingXs),
+                    const SizedBox(height: AppSpacing.xs),
 
                     // Subtitle
                     Text(
@@ -225,16 +225,16 @@ class _RegisterPageState extends State<RegisterPage>
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.paddingSm),
+                        const SizedBox(height: AppSpacing.sm),
                         Container(
                           decoration: BoxDecoration(
+                            color: AppColors.gray100,
                             border: Border.all(color: AppColors.border),
                             borderRadius:
-                                BorderRadius.circular(AppSpacing.inputRadius),
-                            fillColor: AppColors.gray100,
+                                BorderRadius.circular(AppSpacing.radiusMd),
                           ),
                           padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.paddingMd,
+                            horizontal: AppSpacing.md,
                           ),
                           child: DropdownButton<String>(
                             isExpanded: true,
@@ -276,7 +276,6 @@ class _RegisterPageState extends State<RegisterPage>
                           onPressed: () => _register(context),
                           isLoading: authProvider.isLoading,
                           isEnabled: !authProvider.isLoading,
-                          size: ButtonSize.large,
                         );
                       },
                     ),
