@@ -60,10 +60,23 @@ class AuthProvider extends ChangeNotifier {
         fullName,
         role,
       );
-      _token = response['access_token'];
-      // Persist token so future requests are authenticated
-      if (_token != null) await apiService.setToken(_token!);
-      _user = User.fromJson(response['user']);
+
+      // Only set token if returned (customer auto-approved)
+      if (response.containsKey('access_token')) {
+        _token = response['access_token'];
+        if (_token != null) await apiService.setToken(_token!);
+      }
+
+      // Only set user if returned (customer auto-approved)
+      if (response.containsKey('user')) {
+        _user = User.fromJson(response['user']);
+      }
+
+      // For restaurant/delivery, show different message in error field as feedback
+      if (!response.containsKey('access_token')) {
+        _error = response['message'] ?? 'Registration submitted for approval';
+      }
+
       _isLoading = false;
       notifyListeners();
       return true;

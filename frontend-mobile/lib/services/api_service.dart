@@ -49,24 +49,72 @@ class ApiService {
     String fullName,
     String role,
   ) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl/auth/register'),
-      headers: _getHeaders(includeAuth: false),
-      body: jsonEncode({
-        'username': username,
-        'email': email,
-        'password': password,
-        'phone': phone,
-        'full_name': fullName,
-        'role': role,
-      }),
-    );
+    // Use role-specific endpoints for restaurant/delivery
+    // Customer/other roles use the legacy endpoint
+    String endpoint = '$baseUrl/auth/register';
 
-    if (response.statusCode == 201 || response.statusCode == 200) {
-      return jsonDecode(response.body);
+    if (role == 'restaurant') {
+      // Restaurant registration - requires approval
+      endpoint = '$baseUrl/auth/register/restaurant';
+      final response = await http.post(
+        Uri.parse(endpoint),
+        headers: _getHeaders(includeAuth: false),
+        body: jsonEncode({
+          'name': fullName,
+          'email': email,
+          'phone': phone,
+          'shop_name': username,  // Use username as shop name
+          'address': 'To be updated after approval',
+        }),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final err = jsonDecode(response.body);
+        throw Exception(err['error'] ?? 'Registration failed');
+      }
+    } else if (role == 'delivery') {
+      // Delivery registration - requires approval
+      endpoint = '$baseUrl/auth/register/delivery';
+      final response = await http.post(
+        Uri.parse(endpoint),
+        headers: _getHeaders(includeAuth: false),
+        body: jsonEncode({
+          'name': fullName,
+          'email': email,
+          'phone': phone,
+          'vehicle_type': 'bike',  // Default vehicle
+        }),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final err = jsonDecode(response.body);
+        throw Exception(err['error'] ?? 'Registration failed');
+      }
     } else {
-      final err = jsonDecode(response.body);
-      throw Exception(err['error'] ?? 'Registration failed');
+      // Customer registration - legacy endpoint (auto-approved for demo)
+      final response = await http.post(
+        Uri.parse(endpoint),
+        headers: _getHeaders(includeAuth: false),
+        body: jsonEncode({
+          'username': username,
+          'email': email,
+          'password': password,
+          'phone': phone,
+          'full_name': fullName,
+          'role': role,
+        }),
+      );
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return jsonDecode(response.body);
+      } else {
+        final err = jsonDecode(response.body);
+        throw Exception(err['error'] ?? 'Registration failed');
+      }
     }
   }
 

@@ -60,28 +60,52 @@ class _RegisterPageState extends State<RegisterPage>
 
   void _register(BuildContext context) async {
     final authProvider = context.read<AuthProvider>();
+    final role = _selectedRole;
     final success = await authProvider.register(
       _usernameController.text,
       _emailController.text,
       _passwordController.text,
       _phoneController.text,
       _fullNameController.text,
-      _selectedRole,
+      role,
     );
 
     if (success) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Registration successful!'),
-            backgroundColor: AppColors.success,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+        if (role == 'customer' && authProvider.isAuthenticated) {
+          // Customer: Auto-approved, go to home
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Registration successful! Welcome to FoodHub 🎉'),
+              backgroundColor: AppColors.success,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+              ),
             ),
-          ),
-        );
-        context.go('/home');
+          );
+          context.go('/home');
+        } else {
+          // Restaurant/Delivery: Pending approval
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                role == 'restaurant'
+                    ? 'Registration submitted! Admin will review your shop.'
+                    : 'Registration submitted! Admin will verify your details.',
+              ),
+              backgroundColor: AppColors.warning,
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 4),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+              ),
+            ),
+          );
+          // Go back to login after 2 seconds
+          await Future.delayed(const Duration(seconds: 2));
+          if (mounted) context.go('/login');
+        }
       }
     } else {
       if (mounted) {
