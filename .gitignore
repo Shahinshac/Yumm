@@ -5,6 +5,7 @@
 *.swo
 *~
 .DS_Store
+devtools_options.yaml
 
 # Flutter
 .dart_tool/
