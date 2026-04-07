@@ -13,7 +13,7 @@ from datetime import timedelta
 
 jwt = JWTManager()
 # socketio instance shared across the app
-socketio = SocketIO(cors_allowed_origins="*", async_mode='eventlet')
+socketio = SocketIO(cors_allowed_origins="*", async_mode='threading')
 
 
 def setup_logging(app):
