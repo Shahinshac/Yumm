@@ -6,6 +6,9 @@ from flask_jwt_extended import create_access_token, jwt_required, get_jwt_identi
 from datetime import datetime
 from backend.app.models.user import User
 from backend.app.utils.security import PasswordSecurity
+import logging
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 
@@ -53,31 +56,35 @@ def register():
 @bp.route('/login', methods=['POST'])
 def login():
     """Login user"""
-    data = request.get_json()
+    try:
+        data = request.get_json()
 
-    if not data.get('username') or not data.get('password'):
-        return jsonify({'error': 'Username and password required'}), 400
+        if not data.get('username') or not data.get('password'):
+            return jsonify({'error': 'Username and password required'}), 400
 
-    user = User.objects(username=data['username']).first()
+        user = User.objects(username=data['username']).first()
 
-    if not user or not PasswordSecurity.verify_password(data['password'], user.password_hash):
-        return jsonify({'error': 'Invalid credentials'}), 401
+        if not user or not PasswordSecurity.verify_password(data['password'], user.password_hash):
+            return jsonify({'error': 'Invalid credentials'}), 401
 
-    if not user.is_active:
-        return jsonify({'error': 'Account is disabled'}), 403
+        if not user.is_active:
+            return jsonify({'error': 'Account is disabled'}), 403
 
-    # Update last login
-    user.last_login = datetime.utcnow()
-    user.save()
+        # Update last login
+        user.last_login = datetime.utcnow()
+        user.save()
 
-    # Create JWT token
-    access_token = create_access_token(identity=str(user.id))
+        # Create JWT token
+        access_token = create_access_token(identity=str(user.id))
 
-    return jsonify({
-        'message': 'Login successful',
-        'access_token': access_token,
-        'user': user.to_dict()
-    }), 200
+        return jsonify({
+            'message': 'Login successful',
+            'access_token': access_token,
+            'user': user.to_dict()
+        }), 200
+    except Exception as e:
+        logger.error(f"Login error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 @bp.route('/me', methods=['GET'])
 @jwt_required()
