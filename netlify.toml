@@ -1,6 +1,6 @@
 [build]
-  command = "cd frontend-mobile && flutter pub get && flutter build web --release"
   publish = "frontend-mobile/build/web"
+  command = "echo 'Serving pre-built Flutter web application'"
 
 [[redirects]]
   from = "/*"
