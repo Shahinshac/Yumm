@@ -140,6 +140,7 @@ class AppSpacing {
 
   /// Divider height
   static const double dividerHeight = 1.0;
+
   /// Standard duration (300ms) - normal interactions
   static const Duration durationMd = Duration(milliseconds: 300);
 

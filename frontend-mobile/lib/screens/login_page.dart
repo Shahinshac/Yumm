@@ -118,8 +118,7 @@ class _LoginPageState extends State<LoginPage>
                   constraints: const BoxConstraints(maxWidth: 400),
                   decoration: BoxDecoration(
                     color: AppColors.white,
-                    borderRadius:
-                        BorderRadius.circular(AppSpacing.radiusXl),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.black.withOpacity(0.15),

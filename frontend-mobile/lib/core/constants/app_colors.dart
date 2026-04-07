@@ -123,7 +123,8 @@ class AppColors {
   static const Color border = gray300;
 
   /// Overlay/scrim color
-  static const Color scrim = Color.fromARGB(82, 0, 0, 0); // black with 0.32 opacity
+  static const Color scrim =
+      Color.fromARGB(82, 0, 0, 0); // black with 0.32 opacity
 
   // ─────────────────────────────────────────────────────────
   // TEXT COLORS

@@ -45,7 +45,7 @@ class Restaurant {
   final String name;
   final String category;
   final double rating;
-  final int reviewCount;  // Add reviewCount
+  final int reviewCount; // Add reviewCount
   final int deliveryTime;
   final double minOrder;
   final double deliveryCharge;
@@ -97,8 +97,8 @@ class MenuItem {
   final String description;
   final double price;
   final bool available;
-  final double rating;  // Add rating
-  final String imageUrl;  // Add imageUrl
+  final double rating; // Add rating
+  final String imageUrl; // Add imageUrl
 
   MenuItem({
     required this.id,
@@ -166,8 +166,7 @@ class Order {
   });
 
   factory Order.fromJson(Map<String, dynamic> json) {
-    final itemsList =
-        (json['items'] as List?)
+    final itemsList = (json['items'] as List?)
             ?.map((item) => OrderItem.fromJson(item))
             .toList() ??
         [];

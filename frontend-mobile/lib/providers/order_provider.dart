@@ -14,7 +14,7 @@ class OrderProvider extends ChangeNotifier {
   String? _appliedPromoCode;
 
   OrderProvider({ApiService? apiService})
-    : apiService = apiService ?? ApiService();
+      : apiService = apiService ?? ApiService();
 
   List<CartItem> get cart => _cart;
   List<Order> get orders => _orders;

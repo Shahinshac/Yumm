@@ -42,7 +42,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
     // For now, use a default or get from navigation args
     // In a real app, restaurantId would be passed through navigation or stored elsewhere
-    orderProvider.placeOrder('default_restaurant', _addressController.text).then((success) {
+    orderProvider
+        .placeOrder('default_restaurant', _addressController.text)
+        .then((success) {
       if (success) context.go('/home');
     });
   }
@@ -51,7 +53,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surface,
-      appBar: AppBar(title: const Text('Checkout'), elevation: AppSpacing.elevationMd),
+      appBar: AppBar(
+          title: const Text('Checkout'), elevation: AppSpacing.elevationMd),
       body: Consumer<OrderProvider>(
         builder: (context, orderProvider, _) {
           if (orderProvider.cart.isEmpty) {
@@ -71,7 +74,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Delivery Address', style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary)),
+                Text('Delivery Address',
+                    style: AppTypography.titleMedium
+                        .copyWith(color: AppColors.textPrimary)),
                 const SizedBox(height: AppSpacing.md),
                 CustomTextField(
                   label: 'Address',
@@ -81,16 +86,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   prefixIcon: Icons.location_on,
                 ),
                 const SizedBox(height: AppSpacing.xxl),
-
-                Text('Order Summary', style: AppTypography.titleMedium.copyWith(color: AppColors.textPrimary)),
+                Text('Order Summary',
+                    style: AppTypography.titleMedium
+                        .copyWith(color: AppColors.textPrimary)),
                 const SizedBox(height: AppSpacing.lg),
-                
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.lg),
                   decoration: BoxDecoration(
                     color: AppColors.white,
                     borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                    boxShadow: [BoxShadow(color: AppColors.black.withOpacity(0.08), blurRadius: AppSpacing.elevationMd)],
+                    boxShadow: [
+                      BoxShadow(
+                          color: AppColors.black.withOpacity(0.08),
+                          blurRadius: AppSpacing.elevationMd)
+                    ],
                   ),
                   child: Column(
                     children: [
@@ -101,21 +110,32 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(child: Text(item.item.name, style: AppTypography.bodyMedium)),
-                              Text('x${item.quantity}', style: AppTypography.labelSmall.copyWith(color: AppColors.textSecondary)),
-                              Text('Rs.${(item.item.price * item.quantity).toStringAsFixed(0)}', style: AppTypography.labelMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                              Expanded(
+                                  child: Text(item.item.name,
+                                      style: AppTypography.bodyMedium)),
+                              Text('x${item.quantity}',
+                                  style: AppTypography.labelSmall.copyWith(
+                                      color: AppColors.textSecondary)),
+                              Text(
+                                  'Rs.${(item.item.price * item.quantity).toStringAsFixed(0)}',
+                                  style: AppTypography.labelMedium.copyWith(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.bold)),
                             ],
                           ),
                         );
                       }).toList(),
                       const Divider(color: AppColors.border),
                       Padding(
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: AppSpacing.md),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Subtotal', style: AppTypography.bodyMedium),
-                            Text('Rs.${orderProvider.subtotal.toStringAsFixed(0)}', style: AppTypography.labelMedium),
+                            Text(
+                                'Rs.${orderProvider.subtotal.toStringAsFixed(0)}',
+                                style: AppTypography.labelMedium),
                           ],
                         ),
                       ),
@@ -124,27 +144,41 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Delivery Fee', style: AppTypography.bodyMedium),
-                            Text('Rs.${orderProvider.deliveryFee.toStringAsFixed(0)}', style: AppTypography.labelMedium),
+                            Text('Delivery Fee',
+                                style: AppTypography.bodyMedium),
+                            Text(
+                                'Rs.${orderProvider.deliveryFee.toStringAsFixed(0)}',
+                                style: AppTypography.labelMedium),
                           ],
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        padding:
+                            const EdgeInsets.symmetric(vertical: AppSpacing.md),
                         decoration: BoxDecoration(
                           color: AppColors.primaryLight.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                          borderRadius:
+                              BorderRadius.circular(AppSpacing.radiusMd),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                              child: Text('Total', style: AppTypography.titleSmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md),
+                              child: Text('Total',
+                                  style: AppTypography.titleSmall.copyWith(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.bold)),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-                              child: Text('Rs.${orderProvider.total.toStringAsFixed(0)}', style: AppTypography.titleSmall.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md),
+                              child: Text(
+                                  'Rs.${orderProvider.total.toStringAsFixed(0)}',
+                                  style: AppTypography.titleSmall.copyWith(
+                                      color: AppColors.primary,
+                                      fontWeight: FontWeight.bold)),
                             ),
                           ],
                         ),
@@ -153,7 +187,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.xxl),
-
                 CustomButton(
                   label: 'Place Order',
                   onPressed: () => _placeOrder(context),
