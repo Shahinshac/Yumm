@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd frontend-mobile && flutter build web --release",
+  "buildCommand": "echo 'Web build already complete'",
   "outputDirectory": "frontend-mobile/build/web",
   "rewrites": [
     {
