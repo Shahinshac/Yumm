@@ -211,7 +211,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                     const Text('Available'),
                     Switch(
                       value: isAvailable,
-                      activeColor: _brand,
+                      activeColor: AppColors.primary,
                       onChanged: (v) => setDialogState(() => isAvailable = v),
                     ),
                   ],
@@ -225,7 +225,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
               child: const Text('Cancel'),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: _brand),
+              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
               onPressed: () async {
                 if (nameCtrl.text.isEmpty || priceCtrl.text.isEmpty) {
                   _showSnack('Name and price are required', error: true);
@@ -467,7 +467,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
               ),
               ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(backgroundColor: _brand),
+                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
                 icon: const Icon(Icons.add, color: Colors.white),
                 label: const Text('Add Item',
                     style: TextStyle(color: Colors.white)),
@@ -541,7 +541,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                               style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 15,
-                                  color: _brand),
+                                  color: AppColors.primary),
                             ),
                             PopupMenuButton<String>(
                               onSelected: (action) {

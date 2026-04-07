@@ -250,7 +250,7 @@ class _LoginPageState extends State<LoginPage>
                             context,
                             'customer',
                             'Customer',
-                            Icons.shopping_bag_outline,
+                            Icons.shopping_basket_outlined,
                           ),
                           _demoUserButton(
                             context,

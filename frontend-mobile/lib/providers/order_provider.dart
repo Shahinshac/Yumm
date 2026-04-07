@@ -26,7 +26,9 @@ class OrderProvider extends ChangeNotifier {
 
   double get cartSubtotal => _cart.fold(0, (sum, item) => sum + item.subtotal);
   double get subtotal => cartSubtotal; // Alias for checkout page
+  double get deliveryFee => 50.0; // Default delivery fee
   double get cartTotal => cartSubtotal - _promoDiscount;
+  double get total => cartTotal + deliveryFee;
   int get cartItemCount => _cart.fold(0, (sum, item) => sum + item.quantity);
 
   void addToCart(MenuItem item) {

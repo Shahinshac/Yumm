@@ -45,6 +45,7 @@ class Restaurant {
   final String name;
   final String category;
   final double rating;
+  final int reviewCount;  // Add reviewCount
   final int deliveryTime;
   final double minOrder;
   final double deliveryCharge;
@@ -58,6 +59,7 @@ class Restaurant {
     required this.name,
     required this.category,
     required this.rating,
+    required this.reviewCount,
     required this.deliveryTime,
     required this.minOrder,
     required this.deliveryCharge,
@@ -73,6 +75,7 @@ class Restaurant {
       name: json['name'] ?? '',
       category: json['category'] ?? '',
       rating: (json['rating'] ?? 0).toDouble(),
+      reviewCount: json['review_count'] ?? 0,
       deliveryTime: json['delivery_time'] ?? 30,
       minOrder: (json['min_order'] ?? 0).toDouble(),
       deliveryCharge: (json['delivery_charge'] ?? 0).toDouble(),
@@ -94,6 +97,8 @@ class MenuItem {
   final String description;
   final double price;
   final bool available;
+  final double rating;  // Add rating
+  final String imageUrl;  // Add imageUrl
 
   MenuItem({
     required this.id,
@@ -102,6 +107,8 @@ class MenuItem {
     required this.description,
     required this.price,
     required this.available,
+    this.rating = 0.0,
+    this.imageUrl = '',
   });
 
   factory MenuItem.fromJson(Map<String, dynamic> json) {
@@ -112,6 +119,8 @@ class MenuItem {
       description: json['description'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
       available: json['available'] ?? true,
+      rating: (json['rating'] ?? 0).toDouble(),
+      imageUrl: json['image_url'] ?? json['imageUrl'] ?? '',
     );
   }
 }
