@@ -9,7 +9,7 @@ class User(Document):
 
     username = StringField(required=True, unique=True, max_length=80)
     email = StringField(required=True, unique=True, max_length=120)
-    password_hash = StringField(required=True)
+    password_hash = StringField(required=False)  # Can be None for Google auth users
     phone = StringField(required=True, max_length=20)
 
     # User type
@@ -23,6 +23,13 @@ class User(Document):
     # Status
     is_verified = BooleanField(default=False)
     is_active = BooleanField(default=True)
+    is_approved = BooleanField(default=False)  # Admin approval for restaurant/delivery
+
+    # Google OAuth
+    google_id = StringField(unique=True, sparse=True)  # For Google Sign-In users
+
+    # Admin-generated password tracking
+    password_generated_at = DateTimeField()
 
     # Preferences
     favorite_restaurants = ListField()
@@ -49,8 +56,11 @@ class User(Document):
             'profile_image': self.profile_image,
             'is_verified': self.is_verified,
             'is_active': self.is_active,
+            'is_approved': self.is_approved,
+            'google_id': self.google_id,
             'address': self.address,
             'created_at': self.created_at.isoformat() if self.created_at else None,
+            'password_generated_at': self.password_generated_at.isoformat() if self.password_generated_at else None,
         }
 
     def __repr__(self):

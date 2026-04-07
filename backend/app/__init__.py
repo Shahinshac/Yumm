@@ -174,9 +174,25 @@ def create_app():
             }), 503
 
     try:
-        from backend.app.routes import auth, restaurants, orders, delivery, admin, reviews, promo
+        from backend.app.routes import (
+            auth, 
+            restaurants, 
+            orders, 
+            delivery, 
+            admin, 
+            reviews, 
+            promo,
+            customer,
+            restaurant_dashboard,
+            delivery_dashboard,
+            admin_dashboard
+        )
 
         app.register_blueprint(auth.bp)
+        app.register_blueprint(customer.bp)
+        app.register_blueprint(restaurant_dashboard.bp)
+        app.register_blueprint(delivery_dashboard.bp)
+        app.register_blueprint(admin_dashboard.bp)
         app.register_blueprint(restaurants.bp)
         app.register_blueprint(orders.bp)
         app.register_blueprint(delivery.bp)
@@ -339,10 +355,11 @@ def create_demo_data(app, logger):
             password_hash=PasswordSecurity.hash_password('admin123'),
             phone='9999999999',
             role='admin',
-            is_verified=True
+            is_verified=True,
+            is_approved=True
         )
         admin.save()
-        logger.info("✅ Admin created: admin/admin123")
+        logger.info("✅ Admin created: admin@fooddelivery.com / admin123")
 
     # Create demo customer
     if User.objects(role='customer', username='customer').count() == 0:
@@ -352,10 +369,12 @@ def create_demo_data(app, logger):
             password_hash=PasswordSecurity.hash_password('customer123'),
             phone='8888888888',
             role='customer',
-            is_verified=True
+            is_verified=True,
+            is_approved=True,
+            password_hash=None  # Customers don't need password for Google login
         )
         customer.save()
-        logger.info("✅ Demo customer created: customer/customer123")
+        logger.info("✅ Demo customer created: customer@fooddelivery.com")
 
     # Create demo restaurant user
     if User.objects(role='restaurant', username='restaurant').count() == 0:
@@ -365,10 +384,11 @@ def create_demo_data(app, logger):
             password_hash=PasswordSecurity.hash_password('rest123'),
             phone='7777777777',
             role='restaurant',
-            is_verified=True
+            is_verified=True,
+            is_approved=True
         )
         rest_user.save()
-        logger.info("✅ Demo restaurant user created: restaurant/rest123")
+        logger.info("✅ Demo restaurant user created: rest@fooddelivery.com / rest123")
 
     # Create demo delivery partner
     if User.objects(role='delivery', username='delivery').count() == 0:
@@ -378,7 +398,8 @@ def create_demo_data(app, logger):
             password_hash=PasswordSecurity.hash_password('delivery123'),
             phone='6666666666',
             role='delivery',
-            is_verified=True
+            is_verified=True,
+            is_approved=True
         )
         delivery.save()
-        logger.info("✅ Demo delivery partner created: delivery/delivery123")
+        logger.info("✅ Demo delivery partner created: delivery@fooddelivery.com / delivery123")

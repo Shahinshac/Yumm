@@ -5,8 +5,13 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime, timedelta
 from backend.app.models.user import User
 from backend.app.models.restaurant import Restaurant
+from backend.app.models.delivery_partner import DeliveryPartner
 from backend.app.models.models import Order, Payment
 from backend.app.middleware.auth import role_required, get_current_user
+from backend.app.utils.security import PasswordSecurity
+import logging
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint('admin', __name__, url_prefix='/api/admin')
 
@@ -166,3 +171,143 @@ def restaurant_analytics():
         'total_restaurants': len(restaurants),
         'top_restaurants': top_restaurants
     }), 200
+
+
+# ============ ADMIN APPROVAL WORKFLOWS ============
+
+@bp.route('/pending-users', methods=['GET'])
+@role_required('admin')
+def get_pending_users():
+    """Get list of pending users (restaurants & delivery) waiting for approval"""
+    try:
+        pending_users = User.objects(
+            is_approved=False,
+            role__in=['restaurant', 'delivery']
+        ).order_by('-created_at')
+
+        result = []
+        for user in pending_users:
+            user_dict = user.to_dict()
+
+            # Add role-specific data
+            if user.role == 'restaurant':
+                restaurant = Restaurant.objects(user=user).first()
+                if restaurant:
+                    user_dict['shop_name'] = restaurant.name
+                    user_dict['address'] = restaurant.address
+
+            elif user.role == 'delivery':
+                delivery = DeliveryPartner.objects(user=user).first()
+                if delivery:
+                    user_dict['vehicle_type'] = delivery.vehicle_type
+
+            result.append(user_dict)
+
+        return jsonify({
+            'count': len(result),
+            'pending_users': result
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error fetching pending users: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to fetch pending users', 'details': str(e)}), 500
+
+
+@bp.route('/approve/<user_id>', methods=['POST'])
+@role_required('admin')
+def approve_user(user_id):
+    """Approve a pending user and generate password
+
+    Response includes the generated password (communicate via email/SMS)
+    """
+    try:
+        user = User.objects(id=user_id).first()
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        # Only restaurant/delivery users can be approved via this endpoint
+        if user.role not in ['restaurant', 'delivery']:
+            return jsonify({'error': 'Only restaurants and delivery partners can be approved'}), 403
+
+        # Check if already approved
+        if user.is_approved:
+            return jsonify({'error': 'User is already approved'}), 400
+
+        # Generate secure password
+        generated_password = PasswordSecurity.generate_secure_password()
+
+        # Hash and save password
+        user.password_hash = PasswordSecurity.hash_password(generated_password)
+        user.is_approved = True
+        user.password_generated_at = datetime.utcnow()
+        user.save()
+
+        # Update restaurant/delivery record if exists
+        if user.role == 'restaurant':
+            restaurant = Restaurant.objects(user=user).first()
+            if restaurant:
+                restaurant.is_approved = True
+                restaurant.save()
+                logger.info(f"Restaurant approved and password generated: {user.email}")
+
+        elif user.role == 'delivery':
+            delivery = DeliveryPartner.objects(user=user).first()
+            if delivery:
+                # Note: DeliveryPartner doesn't have is_approved field, but we still update
+                logger.info(f"Delivery partner approved and password generated: {user.email}")
+
+        logger.info(f"User {user.email} approved by admin, password generated")
+
+        return jsonify({
+            'success': True,
+            'message': f'User approved successfully',
+            'user': user.to_dict(),
+            'password': generated_password,
+            'note': 'Share this password with the user via email or phone. This is shown only once.'
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error approving user: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to approve user', 'details': str(e)}), 500
+
+
+@bp.route('/reject/<user_id>', methods=['POST'])
+@role_required('admin')
+def reject_user(user_id):
+    """Reject a pending registration (optional - delete user)"""
+    try:
+        data = request.get_json() or {}
+        reason = data.get('reason', 'No reason provided')
+
+        user = User.objects(id=user_id).first()
+
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        if user.role not in ['restaurant', 'delivery']:
+            return jsonify({'error': 'Only pending restaurants and delivery partners can be rejected'}), 403
+
+        if user.is_approved:
+            return jsonify({'error': 'Cannot reject an already-approved user'}), 400
+
+        # Delete user and associated data
+        if user.role == 'restaurant':
+            Restaurant.objects(user=user).delete()
+        elif user.role == 'delivery':
+            DeliveryPartner.objects(user=user).delete()
+
+        user.delete()
+
+        logger.info(f"User {user.email} rejected by admin. Reason: {reason}")
+
+        return jsonify({
+            'success': True,
+            'message': f'User registration rejected',
+            'email': user.email
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error rejecting user: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Failed to reject user', 'details': str(e)}), 500
+
