@@ -366,12 +366,12 @@ def create_demo_data(app, logger):
         customer = User(
             username='customer',
             email='customer@fooddelivery.com',
-            password_hash=PasswordSecurity.hash_password('customer123'),
+            password_hash=None,  # Customers use Google login
             phone='8888888888',
             role='customer',
             is_verified=True,
             is_approved=True,
-            password_hash=None  # Customers don't need password for Google login
+            google_id='mock_customer_demo'
         )
         customer.save()
         logger.info("✅ Demo customer created: customer@fooddelivery.com")

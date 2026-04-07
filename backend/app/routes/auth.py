@@ -85,6 +85,7 @@ def register_restaurant():
     from backend.app.models.restaurant import Restaurant
 
     data = request.get_json()
+    logger.info(f"Restaurant registration attempt: {data.get('email', 'unknown')}")
 
     # Validate required fields
     required_fields = ['name', 'email', 'phone', 'shop_name', 'address']
