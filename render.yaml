@@ -11,13 +11,13 @@ services:
       - key: FLASK_APP
         value: run.py
       - key: MONGODB_URI
-        sync: false
+        value: mongodb+srv://foodhub_user:fooddbadmin@foodhub.yqgznxh.mongodb.net/fooddelivery?retryWrites=true&w=majority
       - key: CORS_ORIGINS
         value: https://yummfoodhub.vercel.app,http://localhost:3000,http://127.0.0.1:3000
       - key: SECRET_KEY
-        sync: false
+        value: u8u7f5jGwAr4qwmRx_bbVkF-hwji6hl9A2kcHxZG9Ng
       - key: JWT_SECRET_KEY
-        sync: false
+        value: _DfBiu07DONzbbN_dHh7iEeczozTn33tGsnLMGdNRNs
       - key: DEBUG
         value: "False"
       - key: PYTHON_VERSION
