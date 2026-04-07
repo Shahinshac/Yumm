@@ -12,7 +12,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-bp = Blueprint('delivery', __name__, url_prefix='/api/delivery')
+bp = Blueprint('delivery_dashboard', __name__, url_prefix='/api/delivery-dashboard')
 
 
 @bp.route('/register', methods=['POST'])

@@ -12,13 +12,15 @@ class AuthService {
   final GoogleSignInService googleSignIn;
 
   AuthService()
-      : googleSignIn = GoogleSignInService(),
-        _dio = Dio(BaseOptions(
+    : googleSignIn = GoogleSignInService(),
+      _dio = Dio(
+        BaseOptions(
           baseUrl: BASE_URL,
           connectTimeout: Duration(seconds: 15),
           receiveTimeout: Duration(seconds: 15),
           contentType: 'application/json',
-        )) {
+        ),
+      ) {
     _setupInterceptors();
   }
 
@@ -27,7 +29,9 @@ class AuthService {
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
-          debugPrint('$TAG: 📤 ${options.method.toUpperCase()} ${options.path}');
+          debugPrint(
+            '$TAG: 📤 ${options.method.toUpperCase()} ${options.path}',
+          );
           if (options.data != null) {
             debugPrint('$TAG: Data: ${options.data}');
           }
@@ -105,10 +109,13 @@ class AuthService {
           'role': user['role'] ?? 'customer',
         };
       } else {
-        throw Exception('Backend authentication failed: ${response.statusCode}');
+        throw Exception(
+          'Backend authentication failed: ${response.statusCode}',
+        );
       }
     } on DioException catch (e) {
-      final errorMessage = e.response?.data?['error'] ?? 'Login failed: ${e.message}';
+      final errorMessage =
+          e.response?.data?['error'] ?? 'Login failed: ${e.message}';
       debugPrint('$TAG: ❌ DioException: $errorMessage');
 
       // Try to sign out if backend auth failed
@@ -116,10 +123,7 @@ class AuthService {
         await googleSignIn.signOut();
       } catch (_) {}
 
-      return {
-        'success': false,
-        'error': errorMessage,
-      };
+      return {'success': false, 'error': errorMessage};
     } catch (e) {
       debugPrint('$TAG: ❌ Unexpected error: $e');
 
@@ -127,10 +131,7 @@ class AuthService {
         await googleSignIn.signOut();
       } catch (_) {}
 
-      return {
-        'success': false,
-        'error': e.toString(),
-      };
+      return {'success': false, 'error': e.toString()};
     }
   }
 
@@ -138,19 +139,13 @@ class AuthService {
 
   /// Email/Password Login (for Restaurant & Delivery after approval)
   /// Only works if user is approved by admin
-  Future<Map<String, dynamic>> emailLogin(
-    String email,
-    String password,
-  ) async {
+  Future<Map<String, dynamic>> emailLogin(String email, String password) async {
     try {
       debugPrint('$TAG: Email login attempt for: $email');
 
       final response = await _dio.post(
         '/api/auth/login',
-        data: {
-          'email': email,
-          'password': password,
-        },
+        data: {'email': email, 'password': password},
       );
 
       if (response.statusCode == 200) {
@@ -171,20 +166,15 @@ class AuthService {
         throw Exception('Login failed: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      final errorMessage = e.response?.data?['error'] ?? 'Login failed: ${e.message}';
+      final errorMessage =
+          e.response?.data?['error'] ?? 'Login failed: ${e.message}';
       debugPrint('$TAG: ❌ Login error: $errorMessage');
 
-      return {
-        'success': false,
-        'error': errorMessage,
-      };
+      return {'success': false, 'error': errorMessage};
     } catch (e) {
       debugPrint('$TAG: ❌ Unexpected error: $e');
 
-      return {
-        'success': false,
-        'error': e.toString(),
-      };
+      return {'success': false, 'error': e.toString()};
     }
   }
 
@@ -202,10 +192,7 @@ class AuthService {
         final user = response.data as Map<String, dynamic>;
         debugPrint('$TAG: ✅ Current user: ${user['email']}');
 
-        return {
-          'success': true,
-          'user': user,
-        };
+        return {'success': true, 'user': user};
       } else {
         throw Exception('Failed to fetch user: ${response.statusCode}');
       }
@@ -218,15 +205,13 @@ class AuthService {
 
       return {
         'success': false,
-        'error': e.response?.data?['error'] ?? e.message ?? 'Failed to fetch user',
+        'error':
+            e.response?.data?['error'] ?? e.message ?? 'Failed to fetch user',
       };
     } catch (e) {
       debugPrint('$TAG: ❌ Unexpected error: $e');
 
-      return {
-        'success': false,
-        'error': e.toString(),
-      };
+      return {'success': false, 'error': e.toString()};
     }
   }
 
@@ -270,20 +255,15 @@ class AuthService {
         throw Exception('Registration failed: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      final errorMessage = e.response?.data?['error'] ?? 'Registration failed: ${e.message}';
+      final errorMessage =
+          e.response?.data?['error'] ?? 'Registration failed: ${e.message}';
       debugPrint('$TAG: ❌ Registration error: $errorMessage');
 
-      return {
-        'success': false,
-        'error': errorMessage,
-      };
+      return {'success': false, 'error': errorMessage};
     } catch (e) {
       debugPrint('$TAG: ❌ Unexpected error: $e');
 
-      return {
-        'success': false,
-        'error': e.toString(),
-      };
+      return {'success': false, 'error': e.toString()};
     }
   }
 
@@ -319,7 +299,9 @@ class AuthService {
       if (response.statusCode == 201) {
         final userId = response.data['user_id'] as String;
 
-        debugPrint('$TAG: ✅ Delivery partner registered (pending approval): $userId');
+        debugPrint(
+          '$TAG: ✅ Delivery partner registered (pending approval): $userId',
+        );
 
         return {
           'success': true,
@@ -331,20 +313,15 @@ class AuthService {
         throw Exception('Registration failed: ${response.statusCode}');
       }
     } on DioException catch (e) {
-      final errorMessage = e.response?.data?['error'] ?? 'Registration failed: ${e.message}';
+      final errorMessage =
+          e.response?.data?['error'] ?? 'Registration failed: ${e.message}';
       debugPrint('$TAG: ❌ Registration error: $errorMessage');
 
-      return {
-        'success': false,
-        'error': errorMessage,
-      };
+      return {'success': false, 'error': errorMessage};
     } catch (e) {
       debugPrint('$TAG: ❌ Unexpected error: $e');
 
-      return {
-        'success': false,
-        'error': e.toString(),
-      };
+      return {'success': false, 'error': e.toString()};
     }
   }
 
@@ -375,7 +352,9 @@ class AuthService {
   /// Check if backend is online
   Future<bool> isBackendOnline() async {
     try {
-      final response = await _dio.get('/api/health').timeout(Duration(seconds: 5));
+      final response = await _dio
+          .get('/api/health')
+          .timeout(Duration(seconds: 5));
       return response.statusCode == 200;
     } catch (e) {
       debugPrint('$TAG: Backend offline: $e');

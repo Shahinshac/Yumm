@@ -10,7 +10,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-bp = Blueprint('admin', __name__, url_prefix='/api/admin')
+bp = Blueprint('admin_dashboard', __name__, url_prefix='/api/admin-dashboard')
 
 
 @bp.route('/restaurants/pending', methods=['GET'])

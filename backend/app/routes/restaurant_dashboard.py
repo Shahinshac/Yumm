@@ -14,7 +14,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-bp = Blueprint('restaurant', __name__, url_prefix='/api/restaurant')
+bp = Blueprint('restaurant_dashboard', __name__, url_prefix='/api/restaurant-dashboard')
 
 
 @bp.route('/register', methods=['POST'])
