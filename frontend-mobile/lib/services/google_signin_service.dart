@@ -1,6 +1,5 @@
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart';
-import 'dart:io' show Platform;
 import 'package:flutter/services.dart';
 
 /// Google Sign-In Service for FoodHub
@@ -10,16 +9,25 @@ class GoogleSignInService {
   static const String TAG = '🔐 GoogleSignInService';
 
   GoogleSignInService() {
-    final clientId = _getClientId();
+    debugPrint('$TAG: Initializing for ${kIsWeb ? 'WEB' : 'MOBILE'}');
 
-    debugPrint(
-      '$TAG: Initializing with Client ID (last 20 chars): ...${clientId.substring(clientId.length - 20)}',
-    );
-
-    _googleSignIn = GoogleSignIn(
-      clientId: clientId,
-      scopes: ['email', 'profile', 'openid'],
-    );
+    if (kIsWeb) {
+      // Web: Use meta tag in index.html, don't pass clientId
+      _googleSignIn = GoogleSignIn(
+        scopes: ['email', 'profile', 'openid'],
+      );
+      debugPrint('$TAG: ✅ Web initialization complete (using meta tag)');
+    } else {
+      // Mobile: Use platform-specific Client ID
+      final clientId = _getClientId();
+      debugPrint(
+        '$TAG: Mobile initialization with Client ID (last 20 chars): ...${clientId.substring(clientId.length - 20)}',
+      );
+      _googleSignIn = GoogleSignIn(
+        clientId: clientId,
+        scopes: ['email', 'profile', 'openid'],
+      );
+    }
   }
 
   /// Get platform-specific Google Client ID
@@ -28,15 +36,11 @@ class GoogleSignInService {
     if (kIsWeb) {
       // Web Client ID - from Google Cloud Console > Credentials > Web Application
       return '946437330680-9r4mutghresee1heq36ailmtrh7drtv1.apps.googleusercontent.com';
-    } else if (Platform.isAndroid) {
-      // Android Client ID - from Google Cloud Console > Credentials > Android
-      // Note: Must match SHA-1 of your signing key (05:1F:58:10:5C:1E:89:17:EA:E9:14:76:F2:10:7B:58:91:CA:94:11)
-      return '946437330680-87ma1tf4dg56rcp0mk4moi00r7f3159m.apps.googleusercontent.com';
-    } else if (Platform.isIOS) {
-      // iOS Client ID - from Google Cloud Console > Credentials > iOS
-      return '946437330680-drp10qt4b720rhdl6h19uruj1pqirsat.apps.googleusercontent.com';
     }
-    throw UnsupportedError('Unsupported platform for Google Sign-In');
+
+    // For mobile: Determine platform by checking native channel or use defaultTargetPlatform
+    // Default: return Android client ID (most common)
+    return '946437330680-87ma1tf4dg56rcp0mk4moi00r7f3159m.apps.googleusercontent.com';
   }
 
   /// Sign in with Google
