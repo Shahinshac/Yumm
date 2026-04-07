@@ -126,8 +126,9 @@ def create_app():
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', app.config['JWT_SECRET_KEY'])
 
     # CORS
-    CORS(app, resources={r"/api/*": {"origins": app.config.get('CORS_ORIGINS', '*').split(',')}})
-    logger.info("✅ CORS configured")
+    cors_origins = [origin.strip() for origin in app.config.get('CORS_ORIGINS', '*').split(',')]
+    CORS(app, resources={r"/api/*": {"origins": cors_origins, "supports_credentials": True}})
+    logger.info(f"✅ CORS configured for origins: {cors_origins}")
 
     # JWT Initialization
     jwt.init_app(app)
