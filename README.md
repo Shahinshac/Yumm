@@ -45,11 +45,11 @@ A full-stack food delivery application built with **Flutter** (mobile & web), **
 
 ### **Option 1: Access Web App (Share with Friends!)**
 ```
-1. Wait for Netlify deployment to complete
-2. Visit the live URL (will be posted here)
-3. Demo credentials:
-   - Username: customer
-   - Password: customer123
+1. Visit: https://yummfoodhub.netlify.app
+2. Admin login:
+   - Username: shahinsha
+   - Password: 262007food
+3. Customers can sign up with Google Sign-In
 ```
 
 ### **Option 2: Run Mobile App Locally**
@@ -71,23 +71,19 @@ flutter run -d chrome    # Run on web
 # Health check
 curl https://yumm-ym2m.onrender.com/api/health
 
-# Login
+# Admin login
 curl -X POST https://yumm-ym2m.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username":"customer","password":"customer123"}'
+  -d '{"username":"shahinsha","password":"262007food"}'
 ```
 
 ---
 
-## 👤 Demo Credentials
+## 👤 Admin Credentials
 
-| Role | Username | Password | Notes |
-|------|----------|----------|-------|
-| Customer | customer | customer123 | Auto-approved, instant access |
-| Restaurant | restaurant | rest123 | Requires admin approval |
-| Delivery Partner | delivery | delivery123 | Requires admin approval |
-| Admin | admin | admin123 | Full system access |
-| Admin | shahinsha | 262007food | Full system access |
+| Role | Username | Password |
+|------|----------|----------|
+| Admin | shahinsha | 262007food |
 
 ---
 

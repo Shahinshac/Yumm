@@ -358,20 +358,6 @@ def create_demo_data(app, logger):
 
         logger.info("✅ Demo restaurants created")
 
-    # Create demo admin if not exist
-    if User.objects(role='admin').count() == 0:
-        admin = User(
-            username='admin',
-            email='admin@fooddelivery.com',
-            password_hash=PasswordSecurity.hash_password('admin123'),
-            phone='9999999999',
-            role='admin',
-            is_verified=True,
-            is_approved=True
-        )
-        admin.save()
-        logger.info("✅ Admin created: admin@fooddelivery.com / admin123")
-
     # Create shahinsha admin if not exist
     if User.objects(username='shahinsha').count() == 0:
         shahinsha_admin = User(
@@ -385,46 +371,3 @@ def create_demo_data(app, logger):
         )
         shahinsha_admin.save()
         logger.info("✅ Admin created: shahinsha / 262007food")
-
-    # Create demo customer
-    if User.objects(role='customer', username='customer').count() == 0:
-        customer = User(
-            username='customer',
-            email='customer@fooddelivery.com',
-            password_hash=None,  # Customers use Google login
-            phone='8888888888',
-            role='customer',
-            is_verified=True,
-            is_approved=True,
-            google_id='mock_customer_demo'
-        )
-        customer.save()
-        logger.info("✅ Demo customer created: customer@fooddelivery.com")
-
-    # Create demo restaurant user
-    if User.objects(role='restaurant', username='restaurant').count() == 0:
-        rest_user = User(
-            username='restaurant',
-            email='rest@fooddelivery.com',
-            password_hash=PasswordSecurity.hash_password('rest123'),
-            phone='7777777777',
-            role='restaurant',
-            is_verified=True,
-            is_approved=True
-        )
-        rest_user.save()
-        logger.info("✅ Demo restaurant user created: rest@fooddelivery.com / rest123")
-
-    # Create demo delivery partner
-    if User.objects(role='delivery', username='delivery').count() == 0:
-        delivery = User(
-            username='delivery',
-            email='delivery@fooddelivery.com',
-            password_hash=PasswordSecurity.hash_password('delivery123'),
-            phone='6666666666',
-            role='delivery',
-            is_verified=True,
-            is_approved=True
-        )
-        delivery.save()
-        logger.info("✅ Demo delivery partner created: delivery@fooddelivery.com / delivery123")
