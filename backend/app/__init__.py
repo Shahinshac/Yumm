@@ -53,7 +53,7 @@ def create_app():
     app = Flask(__name__)
 
     # Load configuration based on environment
-    env = os.getenv('FLASK_ENV', 'development')
+    env = os.getenv('FLASK_ENV', 'production')
     from backend.config import config
     app.config.from_object(config.get(env, config['default']))
 
@@ -151,8 +151,9 @@ def create_app():
         logger.error(f"Internal server error: {str(error)}")
         return jsonify({'error': 'Internal server error', 'status': 500}), 500
 
-    # Create demo data if in development
-    if env in ['development', 'testing']:
+    # Seed demo data only when explicitly enabled in non-production environments.
+    enable_demo_data = os.getenv('ENABLE_DEMO_DATA', 'false').lower() == 'true'
+    if env in ['development', 'testing'] and enable_demo_data:
         try:
             logger.info("Creating demo data...")
             create_demo_data(app, logger)
