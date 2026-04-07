@@ -9,7 +9,7 @@ import '../core/widgets/custom_text_field.dart';
 import '../providers/auth_provider.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -22,7 +22,7 @@ class _LoginPageState extends State<LoginPage>
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  bool _obscurePassword = true;
+  final bool _obscurePassword = true;
 
   @override
   void initState() {
@@ -97,7 +97,7 @@ class _LoginPageState extends State<LoginPage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -119,20 +119,20 @@ class _LoginPageState extends State<LoginPage>
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 500),
                     margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withOpacity(0.15),
-                        blurRadius: AppSpacing.elevationHigh,
-                        offset: const Offset(0, 8),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.all(AppSpacing.xxl),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusXl),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.black.withOpacity(0.15),
+                          blurRadius: AppSpacing.elevationHigh,
+                          offset: const Offset(0, 8),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(AppSpacing.xxl),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                     children: [
                       // Logo with Animation
                       ScaleTransition(
