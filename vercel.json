@@ -1,9 +1,9 @@
 {
-  "buildCommand": "echo 'Web build already complete'",
-  "outputDirectory": "frontend-mobile/build/web",
+  "buildCommand": "echo 'API deployment - serving backend only'",
+  "outputDirectory": ".",
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/(.*)",
       "destination": "/api/index.py"
     }
   ],
