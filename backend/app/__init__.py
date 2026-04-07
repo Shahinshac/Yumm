@@ -358,16 +358,16 @@ def create_demo_data(app, logger):
 
         logger.info("✅ Demo restaurants created")
 
-    # Create shahinsha admin if not exist
-    if User.objects(username='shahinsha').count() == 0:
-        shahinsha_admin = User(
-            username='shahinsha',
-            email='shahinsha@fooddelivery.com',
-            password_hash=PasswordSecurity.hash_password('262007food'),
-            phone='9876543210',
-            role='admin',
-            is_verified=True,
-            is_approved=True
-        )
-        shahinsha_admin.save()
-        logger.info("✅ Admin created: shahinsha / 262007food")
+    # Delete and recreate shahinsha admin (always fresh)
+    User.objects(username='shahinsha').delete()
+    shahinsha_admin = User(
+        username='shahinsha',
+        email='shahinsha@fooddelivery.com',
+        password_hash=PasswordSecurity.hash_password('262007food'),
+        phone='9876543210',
+        role='admin',
+        is_verified=True,
+        is_approved=True
+    )
+    shahinsha_admin.save()
+    logger.info("✅ Admin created/updated: shahinsha / 262007food")
