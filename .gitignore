@@ -59,3 +59,13 @@ build/
 .env
 .env.local
 .env.*.local
+
+# Security - Never commit private keys or credentials
+*.jks
+*.key
+*.pem
+*.p12
+*.pfx
+android_keystore/
+.aws/
+.ssh/
