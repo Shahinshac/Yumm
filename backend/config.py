@@ -85,8 +85,7 @@ class ProductionConfig(Config):
         'serverSelectionTimeoutMS': 5000,
         'connectTimeoutMS': 10000,
         'retryWrites': True,
-        'w': 'majority',
-        'authSource': 'admin'
+        'w': 'majority'
     }
     RATELIMIT_ENABLED = True
 
