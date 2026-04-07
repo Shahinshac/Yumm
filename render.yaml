@@ -23,4 +23,4 @@ services:
       - key: PYTHON_VERSION
         value: "3.11"
       - key: ENABLE_DEMO_DATA
-        value: "true"
+        value: "false"

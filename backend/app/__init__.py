@@ -113,6 +113,12 @@ def create_app():
 
     # Register blueprints
     logger.info("Registering API blueprints...")
+
+    # Health check endpoint
+    @app.route('/api/health', methods=['GET'])
+    def health_check():
+        return jsonify({'status': 'healthy', 'message': 'FoodHub Backend is running'}), 200
+
     try:
         from backend.app.routes import auth, restaurants, orders, delivery, admin, reviews, promo
 
