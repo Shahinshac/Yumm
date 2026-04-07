@@ -68,20 +68,58 @@ def create_app():
     # MongoDB Connection with error handling
     try:
         db_uri = app.config['MONGODB_SETTINGS'].get('host', 'mongodb://localhost:27017/fooddelivery')
-        logger.info(f"Connecting to MongoDB: {db_uri}")
+        logger.info(f"Connecting to MongoDB: {db_uri[:50]}..." if len(db_uri) > 50 else f"Connecting to MongoDB: {db_uri}")
 
-        connect(
-            host=db_uri,
-            serverSelectionTimeoutMS=app.config['MONGODB_SETTINGS'].get('serverSelectionTimeoutMS', 5000),
-            connectTimeoutMS=app.config['MONGODB_SETTINGS'].get('connectTimeoutMS', 10000),
-            retryWrites=app.config['MONGODB_SETTINGS'].get('retryWrites', False)
-        )
+        # SSL/TLS Configuration for mongodb+srv:// connections
+        conn_kwargs = {
+            'serverSelectionTimeoutMS': app.config['MONGODB_SETTINGS'].get('serverSelectionTimeoutMS', 5000),
+            'connectTimeoutMS': app.config['MONGODB_SETTINGS'].get('connectTimeoutMS', 10000),
+            'retryWrites': app.config['MONGODB_SETTINGS'].get('retryWrites', False)
+        }
+
+        # For mongodb+srv:// connections (MongoDB Atlas), explicitly enable SSL
+        if 'mongodb+srv://' in db_uri:
+            logger.info("Detected mongodb+srv:// connection - SSL/TLS enabled")
+            conn_kwargs['ssl'] = True
+            conn_kwargs['ssl_cert_reqs'] = 'CERT_REQUIRED'
+            # Use default system CA certificates (available on all systems)
+            conn_kwargs['ssl_ca_certs'] = None  # Use system's default CA bundle
+            conn_kwargs['ssl_match_hostname'] = True
+            logger.info("SSL/TLS parameters configured: cert_reqs=REQUIRED, hostname_matching=ENABLED")
+
+        connect(host=db_uri, **conn_kwargs)
         logger.info("✅ MongoDB connected successfully")
+
     except ConnectionFailure as e:
-        logger.error(f"❌ MongoDB connection failed: {str(e)}")
-        raise RuntimeError(f"Could not connect to MongoDB: {str(e)}")
+        error_str = str(e)
+        logger.error(f"❌ MongoDB connection failed: {error_str}")
+
+        # Provide specific diagnostics for common SSL errors
+        if 'SSL' in error_str or 'TLS' in error_str or 'CERTIFICATE' in error_str:
+            logger.error("⚠️  SSL/TLS Connection Error Detected:")
+            logger.error("   1. Check MongoDB Atlas IP Whitelist: https://cloud.mongodb.com/v2/...")
+            logger.error("      - Render IPs may change; recommend adding 0.0.0.0/0 for testing (not recommended for production)")
+            logger.error("   2. Verify connection string format and credentials in Render environment variables")
+            logger.error("   3. Ensure Render backend is deployed in same region as MongoDB Atlas cluster")
+            logger.error("   4. Check MongoDB Atlas firewall rules and network access settings")
+        elif 'Timeout' in error_str or 'timeout' in error_str:
+            logger.error("⚠️  Connection Timeout - MongoDB Atlas may be unreachable from Render")
+            logger.error("   Check: IP whitelist, firewall rules, cluster status")
+
+        raise RuntimeError(f"Could not connect to MongoDB: {error_str}")
+
     except Exception as e:
-        logger.error(f"❌ Unexpected error during MongoDB connection: {str(e)}")
+        error_str = str(e)
+        logger.error(f"❌ Unexpected error during MongoDB connection: {error_str}")
+        logger.error(f"Error type: {type(e).__name__}")
+
+        # Additional SSL diagnostic info
+        if 'ssl' in error_str.lower() or 'certificate' in error_str.lower():
+            logger.error("💡 This appears to be an SSL/TLS issue. Verify:")
+            logger.error("   - MongoDB Atlas IP whitelist includes Render's IP or 0.0.0.0/0")
+            logger.error("   - Connection string has correct credentials")
+            logger.error("   - MONGODB_URI environment variable is set correctly in Render")
+
         raise
 
     # JWT Configuration
