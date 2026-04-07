@@ -1,5 +1,15 @@
 {
   "buildCommand": "exit 0",
   "outputDirectory": "build/web",
-  "framework": "vite"
+  "framework": "flutter",
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }

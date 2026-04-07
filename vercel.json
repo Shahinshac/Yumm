@@ -1,4 +1,33 @@
 {
-  "buildCommand": "echo 'Build already done'",
-  "outputDirectory": "frontend-mobile/build/web"
+  "buildCommand": "cd frontend-mobile && flutter build web --release",
+  "outputDirectory": "frontend-mobile/build/web",
+  "regions": ["sfo1"],
+  "functions": {
+    "api/index.py": {
+      "runtime": "python3.9",
+      "maxDuration": 30,
+      "memory": 1024
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.py"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    }
+  ],
+  "env": {
+    "FLASK_ENV": "production",
+    "PYTHONUNBUFFERED": "1"
+  }
 }
