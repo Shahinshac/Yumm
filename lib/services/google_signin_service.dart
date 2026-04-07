@@ -12,15 +12,13 @@ class GoogleSignInService {
   GoogleSignInService() {
     final clientId = _getClientId();
 
-    debugPrint('$TAG: Initializing with Client ID (last 20 chars): ...${clientId.substring(clientId.length - 20)}');
+    debugPrint(
+      '$TAG: Initializing with Client ID (last 20 chars): ...${clientId.substring(clientId.length - 20)}',
+    );
 
     _googleSignIn = GoogleSignIn(
       clientId: clientId,
-      scopes: [
-        'email',
-        'profile',
-        'openid',
-      ],
+      scopes: ['email', 'profile', 'openid'],
     );
   }
 
@@ -29,14 +27,14 @@ class GoogleSignInService {
   String _getClientId() {
     if (kIsWeb) {
       // Web Client ID - from Google Cloud Console > Credentials > Web Application
-      return 'YOUR_WEB_CLIENT_ID.apps.googleusercontent.com';
+      return '946437330680-9r4mutghresee1heq36ailmtrh7drtv1.apps.googleusercontent.com';
     } else if (Platform.isAndroid) {
       // Android Client ID - from Google Cloud Console > Credentials > Android
       // Note: Must match SHA-1 of your signing key
       return 'YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com';
     } else if (Platform.isIOS) {
       // iOS Client ID - from Google Cloud Console > Credentials > iOS
-      return 'YOUR_IOS_CLIENT_ID.apps.googleusercontent.com';
+      return '946437330680-drp10qt4b720rhdl6h19uruj1pqirsat.apps.googleusercontent.com';
     }
     throw UnsupportedError('Unsupported platform for Google Sign-In');
   }
