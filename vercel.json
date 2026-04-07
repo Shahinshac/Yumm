@@ -1,5 +1,5 @@
 {
-  "buildCommand": "mkdir -p public && echo '<h1>FoodHub API</h1><p>Backend: https://yumm-ym2m.onrender.com</p>' > public/index.html",
+  "buildCommand": "mkdir -p public && echo '<h1>FoodHub Backend API</h1><p>Frontend deployed on Netlify. Visit: https://foodhub.netlify.app</p>' > public/index.html",
   "outputDirectory": "public",
   "rewrites": [
     {
