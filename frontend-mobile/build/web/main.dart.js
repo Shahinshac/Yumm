@@ -99776,7 +99776,7 @@ var $async$wv=A.y(function(b,c){if(b===1){p.push(c)
 s=q}for(;;)switch(s){case 0:q=3
 j=new A.ahh()
 A.iJ().$1("\ud83d\udd10 GoogleSignInService: Initializing for WEB")
-i=new A.RH(A.c(["email","profile","openid"],t.s),A.k1(!1,t.z1))
+i=new A.RH(A.c(["email","profile"],t.s),A.k1(!1,t.z1))
 i.Bl()
 j.a=i
 A.iJ().$1("\ud83d\udd10 GoogleSignInService: \u2705 Web initialization complete (using meta tag)")

@@ -13,8 +13,9 @@ class GoogleSignInService {
 
     if (kIsWeb) {
       // Web: Use meta tag in index.html, don't pass clientId
+      // Use minimal scopes for web
       _googleSignIn = GoogleSignIn(
-        scopes: ['email', 'profile', 'openid'],
+        scopes: ['email', 'profile'],
       );
       debugPrint('$TAG: ✅ Web initialization complete (using meta tag)');
     } else {
@@ -25,7 +26,7 @@ class GoogleSignInService {
       );
       _googleSignIn = GoogleSignIn(
         clientId: clientId,
-        scopes: ['email', 'profile', 'openid'],
+        scopes: ['email', 'profile'],
       );
     }
   }
