@@ -133,198 +133,94 @@ class _LoginPageState extends State<LoginPage>
                     padding: const EdgeInsets.all(AppSpacing.xxl),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Logo with Animation
-                      ScaleTransition(
-                        scale: _fadeAnimation,
-                        child: const Text(
-                          '🍕',
-                          style: TextStyle(fontSize: 64),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xxl),
-
-                      // Title
-                      Text(
-                        'FoodHub',
-                        style: AppTypography.displaySmall.copyWith(
-                          color: AppColors.primary,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-
-                      // Subtitle
-                      Text(
-                        'Fast Food Delivery',
-                        style: AppTypography.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xxl),
-
-                      // Username Field
-                      CustomTextField(
-                        label: 'Username',
-                        hint: 'Enter your username',
-                        controller: _usernameController,
-                        prefixIcon: Icons.person_outline,
-                        keyboardType: TextInputType.text,
-                        textInputAction: TextInputAction.next,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-
-                      // Password Field
-                      CustomTextField(
-                        label: 'Password',
-                        hint: 'Enter your password',
-                        controller: _passwordController,
-                        prefixIcon: Icons.lock_outline,
-                        obscureText: true,
-                        keyboardType: TextInputType.visiblePassword,
-                        textInputAction: TextInputAction.done,
-                        onSubmitted: (_) => _login(context),
-                      ),
-                      const SizedBox(height: AppSpacing.xxl),
-
-                      // Login Button
-                      Consumer<AuthProvider>(
-                        builder: (context, authProvider, _) {
-                          return CustomButton(
-                            label: 'Login',
-                            onPressed: () => _login(context),
-                            isLoading: authProvider.isLoading,
-                            isEnabled: !authProvider.isLoading,
-                          );
-                        },
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-
-                      // Register Link
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'New to FoodHub? ',
-                            style: AppTypography.bodyMedium.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
+                      children: [
+                        // Logo with Animation
+                        ScaleTransition(
+                          scale: _fadeAnimation,
+                          child: const Text(
+                            '🍕',
+                            style: TextStyle(fontSize: 64),
                           ),
-                          GestureDetector(
-                            onTap: () => context.go('/register'),
-                            child: Text(
-                              'Register here',
-                              style: AppTypography.labelMedium.copyWith(
-                                color: AppColors.primary,
-                                decoration: TextDecoration.underline,
+                        ),
+                        const SizedBox(height: AppSpacing.xxl),
+                        // Title
+                        Text(
+                          'FoodHub',
+                          style: AppTypography.displaySmall.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        // Subtitle
+                        Text(
+                          'Fast Food Delivery',
+                          style: AppTypography.bodyMedium.copyWith(
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.xxl),
+                        // Username Field
+                        CustomTextField(
+                          label: 'Username',
+                          hint: 'Enter your username',
+                          controller: _usernameController,
+                          prefixIcon: Icons.person_outline,
+                          keyboardType: TextInputType.text,
+                          textInputAction: TextInputAction.next,
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        // Password Field
+                        CustomTextField(
+                          label: 'Password',
+                          hint: 'Enter your password',
+                          controller: _passwordController,
+                          prefixIcon: Icons.lock_outline,
+                          obscureText: true,
+                          keyboardType: TextInputType.visiblePassword,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _login(context),
+                        ),
+                        const SizedBox(height: AppSpacing.xxl),
+                        // Login Button
+                        Consumer<AuthProvider>(
+                          builder: (context, authProvider, _) {
+                            return CustomButton(
+                              label: 'Login',
+                              onPressed: () => _login(context),
+                              isLoading: authProvider.isLoading,
+                              isEnabled: !authProvider.isLoading,
+                            );
+                          },
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        // Register Link
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'New to FoodHub? ',
+                              style: AppTypography.bodyMedium.copyWith(
+                                color: AppColors.textSecondary,
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.xxl),
-
-                      // Divider
-                      const Divider(
-                        color: AppColors.border,
-                        height: 1,
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-
-                      // Demo Users Section
-                      Text(
-                        'Quick Login',
-                        style: AppTypography.labelMedium.copyWith(
-                          color: AppColors.textSecondary,
+                            GestureDetector(
+                              onTap: () => context.go('/register'),
+                              child: Text(
+                                'Register here',
+                                style: AppTypography.labelMedium.copyWith(
+                                  color: AppColors.primary,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-
-                      // Demo Buttons Grid
-                      GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        crossAxisSpacing: AppSpacing.md,
-                        mainAxisSpacing: AppSpacing.md,
-                        childAspectRatio: 1.5,
-                        children: [
-                          _demoUserButton(
-                            context,
-                            'customer',
-                            'Customer',
-                            Icons.shopping_basket_outlined,
-                          ),
-                          _demoUserButton(
-                            context,
-                            'restaurant',
-                            'Restaurant',
-                            Icons.store_outlined,
-                          ),
-                          _demoUserButton(
-                            context,
-                            'delivery',
-                            'Delivery',
-                            Icons.two_wheeler_outlined,
-                          ),
-                          _demoUserButton(
-                            context,
-                            'admin',
-                            'Admin',
-                            Icons.admin_panel_settings_outlined,
-                          ),
-                        ],
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _demoUserButton(
-    BuildContext context,
-    String username,
-    String label,
-    IconData icon,
-  ) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: () {
-          _usernameController.text = username;
-          _passwordController.text =
-              username == 'admin' ? 'admin123' : '${username}123';
-          _login(context);
-        },
-        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: AppColors.primary, width: 1.5),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-            color: AppColors.primaryLight.withOpacity(0.05),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                color: AppColors.primary,
-                size: 28,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                label,
-                style: AppTypography.labelSmall.copyWith(
-                  color: AppColors.primary,
-                  fontSize: 11,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
           ),
         ),
       ),
