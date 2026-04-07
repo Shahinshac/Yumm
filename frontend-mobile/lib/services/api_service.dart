@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
-  // Use relative URL for Vercel deployment - works on same domain
-  static const String baseUrl = '/api';
+  // Use Render backend for production
+  static const String baseUrl = 'https://yumm-ym2m.onrender.com/api';
 
-  // For development/testing with external backend, override with:
-  // static const String baseUrl = 'https://yumm-ym2m.onrender.com/api';
+  // Alternative: For Vercel serverless (requires different setup)
+  // static const String baseUrl = '/api';
 
   String? _token;
 
