@@ -30,8 +30,8 @@ class GoogleSignInService {
       return '946437330680-9r4mutghresee1heq36ailmtrh7drtv1.apps.googleusercontent.com';
     } else if (Platform.isAndroid) {
       // Android Client ID - from Google Cloud Console > Credentials > Android
-      // Note: Must match SHA-1 of your signing key
-      return 'YOUR_ANDROID_CLIENT_ID.apps.googleusercontent.com';
+      // Note: Must match SHA-1 of your signing key (05:1F:58:10:5C:1E:89:17:EA:E9:14:76:F2:10:7B:58:91:CA:94:11)
+      return '946437330680-87ma1tf4dg56rcp0mk4moi00r7f3159m.apps.googleusercontent.com';
     } else if (Platform.isIOS) {
       // iOS Client ID - from Google Cloud Console > Credentials > iOS
       return '946437330680-drp10qt4b720rhdl6h19uruj1pqirsat.apps.googleusercontent.com';
