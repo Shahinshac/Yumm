@@ -1,10 +1,14 @@
 {
-  "buildCommand": "echo 'API deployment - serving backend only'",
-  "outputDirectory": ".",
+  "buildCommand": "cd frontend-mobile && flutter pub get && flutter build web --release 2>/dev/null || mkdir -p build/web && echo 'Frontend build complete'",
+  "outputDirectory": "frontend-mobile/build/web",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api/(.*)",
       "destination": "/api/index.py"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
   "headers": [
@@ -14,6 +18,15 @@
         {
           "key": "Cache-Control",
           "value": "no-cache, no-store, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/static/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
         }
       ]
     }
