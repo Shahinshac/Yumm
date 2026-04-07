@@ -154,8 +154,12 @@ def create_app():
 
     @app.errorhandler(500)
     def internal_error(error):
-        logger.error(f"Internal server error: {str(error)}")
-        return jsonify({'error': 'Internal server error', 'status': 500}), 500
+        logger.error(f"Internal server error: {str(error)}", exc_info=True)
+        return jsonify({
+            'error': 'Internal server error',
+            'status': 500,
+            'details': str(error)
+        }), 500
 
     # Seed demo data only when explicitly enabled in non-production environments.
     enable_demo_data = os.getenv('ENABLE_DEMO_DATA', 'false').lower() == 'true'
