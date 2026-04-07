@@ -153,6 +153,16 @@ def create_app():
     # Register blueprints
     logger.info("Registering API blueprints...")
 
+    # Version endpoint
+    @app.route('/api/version', methods=['GET'])
+    def version_check():
+        return jsonify({
+            'version': '2.0.0',
+            'build': 'auth-approval-system-v2',
+            'features': ['google-signin', 'restaurant-registration', 'admin-approval', 'role-based-access'],
+            'status': 'production'
+        }), 200
+
     # Health check endpoint
     @app.route('/api/health', methods=['GET'])
     def health_check():
