@@ -115,201 +115,202 @@ class _RegisterPageState extends State<RegisterPage>
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
-            child: SizedBox(
-              width: double.infinity,
-              child: FadeTransition(
-                opacity: _fadeAnimation,
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: Align(
+                alignment: Alignment.center,
                 child: Container(
                   constraints: const BoxConstraints(maxWidth: 500),
-                  margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.black.withOpacity(0.15),
-                      blurRadius: AppSpacing.elevationHigh,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(AppSpacing.xxl),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // Logo
-                    Text(
-                      '🍕',
-                      style: AppTypography.displayLarge.copyWith(fontSize: 56),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-
-                    // Title
-                    Text(
-                      'Create Account',
-                      style: AppTypography.headlineLarge.copyWith(
-                        color: AppColors.primary,
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.black.withOpacity(0.15),
+                        blurRadius: AppSpacing.elevationHigh,
+                        offset: const Offset(0, 8),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-
-                    // Subtitle
-                    Text(
-                      'Join FoodHub today',
-                      style: AppTypography.bodyMedium.copyWith(
-                        color: AppColors.textSecondary,
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(AppSpacing.xxl),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Logo
+                      Text(
+                        '🍕',
+                        style:
+                            AppTypography.displayLarge.copyWith(fontSize: 56),
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.xxl),
+                      const SizedBox(height: AppSpacing.md),
 
-                    // Full Name Field
-                    CustomTextField(
-                      label: 'Full Name',
-                      hint: 'Enter your full name',
-                      controller: _fullNameController,
-                      prefixIcon: Icons.person_outline,
-                      keyboardType: TextInputType.name,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-
-                    // Username Field
-                    CustomTextField(
-                      label: 'Username',
-                      hint: 'Choose a username',
-                      controller: _usernameController,
-                      prefixIcon: Icons.account_circle_outlined,
-                      keyboardType: TextInputType.text,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-
-                    // Email Field
-                    CustomTextField(
-                      label: 'Email',
-                      hint: 'Enter your email',
-                      controller: _emailController,
-                      prefixIcon: Icons.email_outlined,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-
-                    // Phone Field
-                    CustomTextField(
-                      label: 'Phone Number',
-                      hint: 'Enter your phone number',
-                      controller: _phoneController,
-                      prefixIcon: Icons.phone_outlined,
-                      keyboardType: TextInputType.phone,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-
-                    // Password Field
-                    CustomTextField(
-                      label: 'Password',
-                      hint: 'Create a strong password',
-                      controller: _passwordController,
-                      prefixIcon: Icons.lock_outline,
-                      obscureText: true,
-                      keyboardType: TextInputType.visiblePassword,
-                      textInputAction: TextInputAction.next,
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-
-                    // Role Selector
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Account Type',
-                          style: AppTypography.labelMedium.copyWith(
-                            color: AppColors.textPrimary,
-                          ),
+                      // Title
+                      Text(
+                        'Create Account',
+                        style: AppTypography.headlineLarge.copyWith(
+                          color: AppColors.primary,
                         ),
-                        const SizedBox(height: AppSpacing.sm),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.gray100,
-                            border: Border.all(color: AppColors.border),
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusMd),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: AppSpacing.md,
-                          ),
-                          child: DropdownButton<String>(
-                            isExpanded: true,
-                            underline: const SizedBox(),
-                            value: _selectedRole,
-                            items: [
-                              'customer',
-                              'restaurant',
-                              'delivery',
-                              'admin'
-                            ]
-                                .map(
-                                  (role) => DropdownMenuItem(
-                                    value: role,
-                                    child: Text(
-                                      role.capitalize(),
-                                      style: AppTypography.bodyMedium.copyWith(
-                                        color: AppColors.textPrimary,
-                                      ),
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              setState(
-                                  () => _selectedRole = value ?? 'customer');
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.xxl),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
 
-                    // Register Button
-                    Consumer<AuthProvider>(
-                      builder: (context, authProvider, _) {
-                        return CustomButton(
-                          label: 'Create Account',
-                          onPressed: () => _register(context),
-                          isLoading: authProvider.isLoading,
-                          isEnabled: !authProvider.isLoading,
-                        );
-                      },
-                    ),
-                    const SizedBox(height: AppSpacing.lg),
-
-                    // Login Link
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Already have an account? ',
-                          style: AppTypography.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
+                      // Subtitle
+                      Text(
+                        'Join FoodHub today',
+                        style: AppTypography.bodyMedium.copyWith(
+                          color: AppColors.textSecondary,
                         ),
-                        GestureDetector(
-                          onTap: () => context.go('/login'),
-                          child: Text(
-                            'Login here',
+                      ),
+                      const SizedBox(height: AppSpacing.xxl),
+
+                      // Full Name Field
+                      CustomTextField(
+                        label: 'Full Name',
+                        hint: 'Enter your full name',
+                        controller: _fullNameController,
+                        prefixIcon: Icons.person_outline,
+                        keyboardType: TextInputType.name,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Username Field
+                      CustomTextField(
+                        label: 'Username',
+                        hint: 'Choose a username',
+                        controller: _usernameController,
+                        prefixIcon: Icons.account_circle_outlined,
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Email Field
+                      CustomTextField(
+                        label: 'Email',
+                        hint: 'Enter your email',
+                        controller: _emailController,
+                        prefixIcon: Icons.email_outlined,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Phone Field
+                      CustomTextField(
+                        label: 'Phone Number',
+                        hint: 'Enter your phone number',
+                        controller: _phoneController,
+                        prefixIcon: Icons.phone_outlined,
+                        keyboardType: TextInputType.phone,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Password Field
+                      CustomTextField(
+                        label: 'Password',
+                        hint: 'Create a strong password',
+                        controller: _passwordController,
+                        prefixIcon: Icons.lock_outline,
+                        obscureText: true,
+                        keyboardType: TextInputType.visiblePassword,
+                        textInputAction: TextInputAction.next,
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Role Selector
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Account Type',
                             style: AppTypography.labelMedium.copyWith(
-                              color: AppColors.primary,
-                              decoration: TextDecoration.underline,
+                              color: AppColors.textPrimary,
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(height: AppSpacing.sm),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.gray100,
+                              border: Border.all(color: AppColors.border),
+                              borderRadius:
+                                  BorderRadius.circular(AppSpacing.radiusMd),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: AppSpacing.md,
+                            ),
+                            child: DropdownButton<String>(
+                              isExpanded: true,
+                              underline: const SizedBox(),
+                              value: _selectedRole,
+                              items: [
+                                'customer',
+                                'restaurant',
+                                'delivery',
+                                'admin'
+                              ]
+                                  .map(
+                                    (role) => DropdownMenuItem(
+                                      value: role,
+                                      child: Text(
+                                        role.capitalize(),
+                                        style:
+                                            AppTypography.bodyMedium.copyWith(
+                                          color: AppColors.textPrimary,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                              onChanged: (value) {
+                                setState(
+                                    () => _selectedRole = value ?? 'customer');
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.xxl),
+
+                      // Register Button
+                      Consumer<AuthProvider>(
+                        builder: (context, authProvider, _) {
+                          return CustomButton(
+                            label: 'Create Account',
+                            onPressed: () => _register(context),
+                            isLoading: authProvider.isLoading,
+                            isEnabled: !authProvider.isLoading,
+                          );
+                        },
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+
+                      // Login Link
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Already have an account? ',
+                            style: AppTypography.bodyMedium.copyWith(
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () => context.go('/login'),
+                            child: Text(
+                              'Login here',
+                              style: AppTypography.labelMedium.copyWith(
+                                color: AppColors.primary,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
             ),
           ),
         ),

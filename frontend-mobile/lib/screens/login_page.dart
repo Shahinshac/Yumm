@@ -110,12 +110,12 @@ class _LoginPageState extends State<LoginPage>
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
-            child: SizedBox(
-              width: double.infinity,
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
+            child: FadeTransition(
+              opacity: _fadeAnimation,
+              child: SlideTransition(
+                position: _slideAnimation,
+                child: Align(
+                  alignment: Alignment.center,
                   child: Container(
                     constraints: const BoxConstraints(maxWidth: 500),
                     margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
@@ -278,7 +278,6 @@ class _LoginPageState extends State<LoginPage>
                   ),
                 ),
               ),
-            ),
             ),
           ),
         ),
