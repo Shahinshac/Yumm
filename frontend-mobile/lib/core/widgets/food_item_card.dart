@@ -44,7 +44,7 @@ class _FoodItemCardState extends State<FoodItemCard> {
           ),
         ],
       ),
-      overflow: Clip.antiAlias,
+      clipBehavior: Clip.antiAlias,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

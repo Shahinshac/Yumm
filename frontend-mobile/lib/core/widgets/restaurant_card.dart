@@ -42,7 +42,7 @@ class RestaurantCard extends StatelessWidget {
             ),
           ],
         ),
-        overflow: Clip.antiAlias,
+        clipBehavior: Clip.antiAlias,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

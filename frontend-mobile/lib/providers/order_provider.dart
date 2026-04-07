@@ -25,6 +25,7 @@ class OrderProvider extends ChangeNotifier {
   String? get appliedPromoCode => _appliedPromoCode;
 
   double get cartSubtotal => _cart.fold(0, (sum, item) => sum + item.subtotal);
+  double get subtotal => cartSubtotal; // Alias for checkout page
   double get cartTotal => cartSubtotal - _promoDiscount;
   int get cartItemCount => _cart.fold(0, (sum, item) => sum + item.quantity);
 

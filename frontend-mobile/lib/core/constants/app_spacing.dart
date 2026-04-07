@@ -105,6 +105,9 @@ class AppSpacing {
   // ─────────────────────────────────────────────────────────
   // BORDER RADIUS
   // ─────────────────────────────────────────────────────────
+  /// Small border radius (4px)
+  static const double radiusSm = 4.0;
+
   /// Small border radius (8px)
   static const double radiusMd = 8.0;
 
@@ -126,9 +129,17 @@ class AppSpacing {
   /// High elevation (prominent shadow)
   static const double elevationHigh = 8.0;
 
+  /// Maximum elevation
+  static const double elevationMax = 12.0;
+
   // ─────────────────────────────────────────────────────────
-  // ANIMATION DURATIONS
+  // COMPONENT DIMENSIONS
   // ─────────────────────────────────────────────────────────
+  /// Standard button height
+  static const double buttonHeight = 48.0;
+
+  /// Divider height
+  static const double dividerHeight = 1.0;
   /// Standard duration (300ms) - normal interactions
   static const Duration durationMd = Duration(milliseconds: 300);
 

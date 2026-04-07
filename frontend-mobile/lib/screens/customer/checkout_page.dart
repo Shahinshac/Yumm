@@ -40,8 +40,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
       );
       return;
     }
-    orderProvider.placeOrder(_addressController.text);
-    context.go('/home');
+    // For now, use a default or get from navigation args
+    // In a real app, restaurantId would be passed through navigation or stored elsewhere
+    orderProvider.placeOrder('default_restaurant', _addressController.text).then((success) {
+      if (success) context.go('/home');
+    });
   }
 
   @override
@@ -98,9 +101,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(child: Text(item.name, style: AppTypography.bodyMedium)),
+                              Expanded(child: Text(item.item.name, style: AppTypography.bodyMedium)),
                               Text('x${item.quantity}', style: AppTypography.labelSmall.copyWith(color: AppColors.textSecondary)),
-                              Text('Rs.${(item.price * item.quantity).toStringAsFixed(0)}', style: AppTypography.labelMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
+                              Text('Rs.${(item.item.price * item.quantity).toStringAsFixed(0)}', style: AppTypography.labelMedium.copyWith(color: AppColors.primary, fontWeight: FontWeight.bold)),
                             ],
                           ),
                         );
