@@ -117,7 +117,22 @@ def create_app():
     # Health check endpoint
     @app.route('/api/health', methods=['GET'])
     def health_check():
-        return jsonify({'status': 'healthy', 'message': 'FoodHub Backend is running'}), 200
+        try:
+            # Try a simple database access to check connection
+            from backend.app.models.user import User
+            user_count = User.objects.count()
+            return jsonify({
+                'status': 'healthy',
+                'message': 'FoodHub Backend is running',
+                'database': 'connected',
+                'users': user_count
+            }), 200
+        except Exception as e:
+            return jsonify({
+                'status': 'unhealthy',
+                'message': 'FoodHub Backend is running but database is not accessible',
+                'error': str(e)
+            }), 503
 
     try:
         from backend.app.routes import auth, restaurants, orders, delivery, admin, reviews, promo
