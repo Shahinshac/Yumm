@@ -1,14 +1,10 @@
 {
-  "buildCommand": "cd frontend-mobile && flutter pub get && flutter build web --release 2>/dev/null || mkdir -p build/web && echo 'Frontend build complete'",
-  "outputDirectory": "frontend-mobile/build/web",
+  "buildCommand": "mkdir -p public && echo '<h1>FoodHub API</h1><p>Backend: https://yumm-ym2m.onrender.com</p>' > public/index.html",
+  "outputDirectory": "public",
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api/index.py"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
     }
   ],
   "headers": [
