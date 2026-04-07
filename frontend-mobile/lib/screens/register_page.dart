@@ -202,30 +202,36 @@ class _RegisterPageState extends State<RegisterPage>
                       ),
                       const SizedBox(height: AppSpacing.xxl),
 
-                      // Google Sign-In Button (for customers)
-                      ElevatedButton.icon(
-                        onPressed: () => _handleGoogleSignIn(context),
-                        icon: const Icon(Icons.login),
-                        label: const Text('Sign up with Google'),
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 48),
-                          backgroundColor: AppColors.white,
-                          foregroundColor: AppColors.textPrimary,
-                          side: BorderSide(color: AppColors.border),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                      // Google Sign-In Button (for customers only)
+                      if (_selectedRole == 'customer')
+                        ElevatedButton.icon(
+                          onPressed: () => _handleGoogleSignIn(context),
+                          icon: const Icon(Icons.login),
+                          label: const Text('Sign up with Google'),
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: const Size(double.infinity, 48),
+                            backgroundColor: AppColors.white,
+                            foregroundColor: AppColors.textPrimary,
+                            side: BorderSide(color: AppColors.border),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
+                      if (_selectedRole == 'customer')
+                        const SizedBox(height: AppSpacing.lg),
 
-                      // Divider
-                      const Divider(color: AppColors.border, height: 1),
-                      const SizedBox(height: AppSpacing.lg),
+                      // Divider (only show if customer)
+                      if (_selectedRole == 'customer')
+                        const Divider(color: AppColors.border, height: 1),
+                      if (_selectedRole == 'customer')
+                        const SizedBox(height: AppSpacing.lg),
 
                       // Form Title
                       Text(
-                        'Or create account manually',
+                        _selectedRole == 'customer'
+                            ? 'Or create account manually'
+                            : 'Create your account',
                         style: AppTypography.labelMedium.copyWith(
                           color: AppColors.textSecondary,
                         ),
@@ -317,7 +323,6 @@ class _RegisterPageState extends State<RegisterPage>
                                 'customer',
                                 'restaurant',
                                 'delivery',
-                                'admin'
                               ]
                                   .map(
                                     (role) => DropdownMenuItem(
