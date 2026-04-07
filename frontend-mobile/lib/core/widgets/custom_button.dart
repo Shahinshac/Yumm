@@ -18,7 +18,7 @@ class CustomButton extends StatefulWidget {
   final Widget? suffixIcon;
 
   const CustomButton({
-    Key? key,
+    super.key,
     required this.label,
     this.onPressed,
     this.variant = ButtonVariant.primary,
@@ -28,7 +28,7 @@ class CustomButton extends StatefulWidget {
     this.height,
     this.prefixIcon,
     this.suffixIcon,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomButton> createState() => _CustomButtonState();

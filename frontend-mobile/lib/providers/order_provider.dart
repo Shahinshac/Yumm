@@ -5,7 +5,7 @@ import '../services/api_service.dart';
 class OrderProvider extends ChangeNotifier {
   final ApiService apiService;
 
-  List<CartItem> _cart = [];
+  final List<CartItem> _cart = [];
   List<Order> _orders = [];
   Order? _currentOrder;
   bool _isLoading = false;
@@ -125,7 +125,7 @@ class OrderProvider extends ChangeNotifier {
 
     try {
       final response = await apiService.getUserOrders();
-      _orders = (response as List).map((o) => Order.fromJson(o)).toList();
+      _orders = (response).map((o) => Order.fromJson(o)).toList();
       _isLoading = false;
       notifyListeners();
     } catch (e) {

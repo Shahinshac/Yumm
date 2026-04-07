@@ -10,12 +10,12 @@ class RatingWidget extends StatelessWidget {
   final bool interactive;
 
   const RatingWidget({
-    Key? key,
+    super.key,
     required this.rating,
     this.reviewCount,
     this.size = 20,
     this.interactive = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -65,11 +65,11 @@ class RatingSelector extends StatefulWidget {
   final double size;
 
   const RatingSelector({
-    Key? key,
+    super.key,
     this.initialRating = 0,
     required this.onRatingChanged,
     this.size = 40,
-  }) : super(key: key);
+  });
 
   @override
   State<RatingSelector> createState() => _RatingSelectorState();

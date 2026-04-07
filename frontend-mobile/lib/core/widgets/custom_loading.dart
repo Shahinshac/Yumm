@@ -7,10 +7,10 @@ class CustomLoading extends StatelessWidget {
   final double size;
 
   const CustomLoading({
-    Key? key,
+    super.key,
     this.message,
     this.size = 50,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,8 +21,8 @@ class CustomLoading extends StatelessWidget {
           SizedBox(
             width: size,
             height: size,
-            child: CircularProgressIndicator(
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.primary),
+            child: const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.primary),
               strokeWidth: 4,
             ),
           ),
@@ -49,11 +49,11 @@ class LoadingOverlay extends StatelessWidget {
   final String? message;
 
   const LoadingOverlay({
-    Key? key,
+    super.key,
     required this.isLoading,
     required this.child,
     this.message,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

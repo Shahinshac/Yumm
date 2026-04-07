@@ -12,7 +12,7 @@ import '../../services/socket_service.dart';
 ///  1. Orders – incoming orders with accept/reject and status updates
 ///  2. Menu   – add, edit, and delete menu items
 class RestaurantDashboardPage extends StatefulWidget {
-  const RestaurantDashboardPage({Key? key}) : super(key: key);
+  const RestaurantDashboardPage({super.key});
 
   @override
   State<RestaurantDashboardPage> createState() =>
@@ -204,14 +204,14 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                     const Text('Vegetarian'),
                     Switch(
                       value: isVeg,
-                      activeColor: Colors.green,
+                      activeThumbColor: Colors.green,
                       onChanged: (v) => setDialogState(() => isVeg = v),
                     ),
                     const Spacer(),
                     const Text('Available'),
                     Switch(
                       value: isAvailable,
-                      activeColor: AppColors.primary,
+                      activeThumbColor: AppColors.primary,
                       onChanged: (v) => setDialogState(() => isAvailable = v),
                     ),
                   ],

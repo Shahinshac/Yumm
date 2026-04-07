@@ -19,7 +19,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double toolbarHeight;
 
   const CustomAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.actions,
     this.centerTitle = false,
@@ -32,7 +32,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     this.showShadow = true,
     this.bottom,
     this.toolbarHeight = kToolbarHeight,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -79,11 +79,11 @@ class MinimalAppBar extends StatelessWidget implements PreferredSizeWidget {
   final double elevation;
 
   const MinimalAppBar({
-    Key? key,
+    super.key,
     required this.title,
     this.actions,
     this.elevation = AppSpacing.elevationMd,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -113,12 +113,12 @@ class TransparentAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool showBackButton;
 
   const TransparentAppBar({
-    Key? key,
+    super.key,
     this.title,
     this.actions,
     this.onBackPressed,
     this.showBackButton = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

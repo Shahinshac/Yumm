@@ -15,7 +15,7 @@ class RestaurantCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const RestaurantCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.description,
     required this.rating,
@@ -24,7 +24,7 @@ class RestaurantCard extends StatelessWidget {
     required this.deliveryTime,
     required this.deliveryFee,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,7 @@ class RestaurantCard extends StatelessWidget {
                       ? Image.network(
                           imageUrl,
                           fit: BoxFit.cover,
-                          errorBuilder: (_, __, ___) => Center(
+                          errorBuilder: (_, __, ___) => const Center(
                             child: Icon(
                               Icons.restaurant,
                               size: 48,
@@ -65,7 +65,7 @@ class RestaurantCard extends StatelessWidget {
                             ),
                           ),
                         )
-                      : Center(
+                      : const Center(
                           child: Icon(
                             Icons.restaurant,
                             size: 48,
@@ -147,7 +147,7 @@ class RestaurantCard extends StatelessWidget {
                       ),
                       Row(
                         children: [
-                          Icon(
+                          const Icon(
                             Icons.access_time,
                             size: 14,
                             color: AppColors.textTertiary,

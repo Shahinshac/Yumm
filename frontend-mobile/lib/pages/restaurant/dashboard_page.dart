@@ -10,7 +10,7 @@ import '../../services/socket_service.dart';
 ///  1. Orders – incoming orders with accept/reject and status updates
 ///  2. Menu   – add, edit, and delete menu items
 class RestaurantDashboardPage extends StatefulWidget {
-  const RestaurantDashboardPage({Key? key}) : super(key: key);
+  const RestaurantDashboardPage({super.key});
 
   @override
   State<RestaurantDashboardPage> createState() =>
@@ -95,11 +95,12 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
           }
         });
       } catch (e) {
-        if (mounted)
+        if (mounted) {
           setState(() {
             _ordersLoading = false;
             _error = e.toString();
           });
+        }
       }
       return;
     }
@@ -117,11 +118,12 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
         _ordersLoading = false;
       });
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _ordersLoading = false;
           _error = e.toString();
         });
+      }
     }
   }
 
@@ -143,11 +145,12 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
         _menuLoading = false;
       });
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _menuLoading = false;
           _error = e.toString();
         });
+      }
     }
   }
 
@@ -217,14 +220,14 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                     const Text('Vegetarian'),
                     Switch(
                       value: isVeg,
-                      activeColor: Colors.green,
+                      activeThumbColor: Colors.green,
                       onChanged: (v) => setDialogState(() => isVeg = v),
                     ),
                     const Spacer(),
                     const Text('Available'),
                     Switch(
                       value: isAvailable,
-                      activeColor: _brand,
+                      activeThumbColor: _brand,
                       onChanged: (v) => setDialogState(() => isAvailable = v),
                     ),
                   ],

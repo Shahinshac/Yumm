@@ -9,7 +9,7 @@ import '../../services/socket_service.dart';
 class OrderTrackingPage extends StatefulWidget {
   final String orderId;
 
-  const OrderTrackingPage({Key? key, required this.orderId}) : super(key: key);
+  const OrderTrackingPage({super.key, required this.orderId});
 
   @override
   State<OrderTrackingPage> createState() => _OrderTrackingPageState();
@@ -192,7 +192,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       margin: const EdgeInsets.only(bottom: 24),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 8)],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8)],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -250,7 +250,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,7 +310,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                           color: _brand.withOpacity(0.15),
                           borderRadius: BorderRadius.circular(10),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Current',
                           style: TextStyle(
                               color: _brand,
@@ -346,7 +346,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -375,7 +375,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 6)],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

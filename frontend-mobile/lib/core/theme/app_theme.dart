@@ -12,7 +12,7 @@ class AppTheme {
   // LIGHT THEME
   // ─────────────────────────────────────────────────────────
   static ThemeData get lightTheme {
-    final colorScheme = ColorScheme.light(
+    const colorScheme = ColorScheme.light(
       primary: AppColors.primary,
       primaryContainer: AppColors.primaryLight,
       secondary: AppColors.secondary,
@@ -55,7 +55,7 @@ class AppTheme {
       ),
 
       // APP BAR
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         elevation: AppSpacing.elevationMd,
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.white,

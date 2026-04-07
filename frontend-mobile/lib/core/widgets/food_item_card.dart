@@ -14,7 +14,7 @@ class FoodItemCard extends StatefulWidget {
   final Function(int) onQuantityChanged;
 
   const FoodItemCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.description,
     required this.price,
@@ -23,7 +23,7 @@ class FoodItemCard extends StatefulWidget {
     this.quantity = 0,
     required this.onAddToCart,
     required this.onQuantityChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<FoodItemCard> createState() => _FoodItemCardState();
@@ -55,7 +55,7 @@ class _FoodItemCardState extends State<FoodItemCard> {
                 width: double.infinity,
                 color: AppColors.gray200,
                 child:
-                    Icon(Icons.restaurant, size: 40, color: AppColors.gray400),
+                    const Icon(Icons.restaurant, size: 40, color: AppColors.gray400),
               ),
               Positioned(
                 top: AppSpacing.md,
@@ -144,9 +144,9 @@ class _FoodItemCardState extends State<FoodItemCard> {
           GestureDetector(
               onTap: () => widget.onQuantityChanged(
                   widget.quantity > 1 ? widget.quantity - 1 : 0),
-              child: Padding(
+              child: const Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                      EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                   child:
                       Icon(Icons.remove, size: 16, color: AppColors.primary))),
           Padding(
@@ -155,10 +155,10 @@ class _FoodItemCardState extends State<FoodItemCard> {
                   Text('${widget.quantity}', style: AppTypography.labelSmall)),
           GestureDetector(
               onTap: () => widget.onQuantityChanged(widget.quantity + 1),
-              child: Padding(
+              child: const Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
-                  child: const Icon(Icons.add,
+                      EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                  child: Icon(Icons.add,
                       size: 16, color: AppColors.primary))),
         ],
       ),

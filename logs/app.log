@@ -1,0 +1,5 @@
+2026-04-07 21:51:03,926 - root - INFO - Starting FoodHub App in development mode
+2026-04-07 21:51:03,926 - root - INFO - Connecting to MongoDB: mongodb+srv://fooduser:Fv7%40FoodApp123@cluster0.q...
+2026-04-07 21:51:03,926 - root - INFO - Detected mongodb+srv:// connection - SSL/TLS automatically enabled by MongoDB Atlas
+2026-04-07 21:51:05,981 - root - ERROR - ❌ Unexpected error during MongoDB connection: The DNS query name does not exist: _mongodb._tcp.cluster0.qugxr.mongodb.net.
+2026-04-07 21:51:05,981 - root - ERROR - Error type: ConfigurationError

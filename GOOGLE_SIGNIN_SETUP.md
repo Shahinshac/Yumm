@@ -1,4 +1,6 @@
-# 🚀 Complete Google Sign-In Setup Guide for FoodHub Flutter + Web
+google_sign_in: ^6.1.6
+dio: ^5.3.1
+provider: ^6.0.0# 🚀 Complete Google Sign-In Setup Guide for FoodHub Flutter + Web
 
 This guide covers Google Sign-In integration for both **Flutter Mobile** and **Flutter Web** applications with backend support.
 

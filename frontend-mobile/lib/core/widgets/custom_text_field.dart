@@ -22,7 +22,7 @@ class CustomTextField extends StatefulWidget {
   final int? maxLength;
 
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.label,
     this.hint,
     this.controller,
@@ -38,7 +38,7 @@ class CustomTextField extends StatefulWidget {
     this.onSubmitted,
     this.readOnly = false,
     this.maxLength,
-  }) : super(key: key);
+  });
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();

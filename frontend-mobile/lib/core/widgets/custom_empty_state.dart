@@ -10,12 +10,12 @@ class CustomEmptyState extends StatelessWidget {
   final Widget? actionButton;
 
   const CustomEmptyState({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     this.description,
     this.actionButton,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

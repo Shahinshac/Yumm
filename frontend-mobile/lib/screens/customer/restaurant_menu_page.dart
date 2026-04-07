@@ -13,8 +13,7 @@ import '../../providers/order_provider.dart';
 class RestaurantMenuPage extends StatefulWidget {
   final String restaurantId;
 
-  const RestaurantMenuPage({Key? key, required this.restaurantId})
-    : super(key: key);
+  const RestaurantMenuPage({super.key, required this.restaurantId});
 
   @override
   State<RestaurantMenuPage> createState() => _RestaurantMenuPageState();
@@ -110,7 +109,7 @@ class _RestaurantMenuPageState extends State<RestaurantMenuPage> {
                         children: [
                           RatingWidget(rating: (restaurant.rating ?? 4.5).toDouble(), reviewCount: restaurant.reviewCount ?? 0),
                           const SizedBox(width: AppSpacing.lg),
-                          Icon(Icons.access_time, color: AppColors.textTertiary, size: 18),
+                          const Icon(Icons.access_time, color: AppColors.textTertiary, size: 18),
                           const SizedBox(width: AppSpacing.xs),
                           Text('${restaurant.deliveryTime ?? 30} min', style: AppTypography.bodySmall.copyWith(color: AppColors.textTertiary)),
                         ],

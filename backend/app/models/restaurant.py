@@ -6,13 +6,16 @@ from datetime import datetime
 
 class Restaurant(Document):
     """Restaurant model"""
-
+    
+    user = ReferenceField('User')  # Link to user account
+    
     name = StringField(required=True, max_length=100)
     category = StringField(required=True)  # Pizza, Burger, Indian, etc
     location = DictField()  # {'lat': 28.6139, 'lng': 77.2090}
     address = StringField()
     phone = StringField()
     image = StringField()  # Emoji or image URL
+    license_number = StringField(max_length=50)
 
     # Stats
     rating = FloatField(default=0.0)
@@ -24,20 +27,24 @@ class Restaurant(Document):
     # Status
     is_open = BooleanField(default=True)
     is_verified = BooleanField(default=False)
+    is_approved = BooleanField(default=False)  # Admin approval
+    is_active = BooleanField(default=True)
 
     # Metadata
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
+    approved_at = DateTimeField()
 
     meta = {
         'collection': 'restaurants',
-        'indexes': ['name', 'category'],
+        'indexes': ['name', 'category', 'user', 'is_approved'],
         'strict': False
     }
 
     def to_dict(self):
         return {
             'id': str(self.id),
+            'user_id': str(self.user.id) if self.user else None,
             'name': self.name,
             'category': self.category,
             'address': self.address,
@@ -48,7 +55,11 @@ class Restaurant(Document):
             'min_order': self.min_order,
             'delivery_charge': self.delivery_charge,
             'image': self.image,
+            'license_number': self.license_number,
             'is_open': self.is_open,
+            'is_verified': self.is_verified,
+            'is_approved': self.is_approved,
+            'is_active': self.is_active,
             'created_at': self.created_at.isoformat() if self.created_at else None,
         }
 

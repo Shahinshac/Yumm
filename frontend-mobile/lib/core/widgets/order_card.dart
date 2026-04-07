@@ -13,7 +13,7 @@ class OrderCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const OrderCard({
-    Key? key,
+    super.key,
     required this.orderId,
     required this.restaurantName,
     required this.totalPrice,
@@ -21,7 +21,7 @@ class OrderCard extends StatelessWidget {
     required this.orderDate,
     required this.itemCount,
     required this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

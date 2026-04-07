@@ -27,7 +27,7 @@ class RestaurantProvider extends ChangeNotifier {
 
     try {
       final response = await apiService.getRestaurants();
-      _restaurants = (response as List)
+      _restaurants = (response)
           .map((r) => Restaurant.fromJson(r))
           .toList();
       _isLoading = false;
@@ -69,7 +69,7 @@ class RestaurantProvider extends ChangeNotifier {
 
     try {
       final response = await apiService.getRestaurantMenu(restaurantId);
-      _menuItems = (response as List)
+      _menuItems = (response)
           .map((item) => MenuItem.fromJson(item))
           .toList();
       _isLoading = false;

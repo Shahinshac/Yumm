@@ -11,7 +11,7 @@ import '../../providers/order_provider.dart';
 import '../../providers/restaurant_provider.dart';
 
 class CheckoutPage extends StatefulWidget {
-  const CheckoutPage({Key? key}) : super(key: key);
+  const CheckoutPage({super.key});
 
   @override
   State<CheckoutPage> createState() => _CheckoutPageState();
@@ -32,8 +32,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
     final orderProvider = context.read<OrderProvider>();
     if (_addressController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Text('Please enter delivery address'),
+        const SnackBar(
+          content: Text('Please enter delivery address'),
           backgroundColor: AppColors.error,
           behavior: SnackBarBehavior.floating,
         ),
@@ -124,7 +124,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                             ],
                           ),
                         );
-                      }).toList(),
+                      }),
                       const Divider(color: AppColors.border),
                       Padding(
                         padding:
@@ -132,7 +132,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Subtotal', style: AppTypography.bodyMedium),
+                            const Text('Subtotal', style: AppTypography.bodyMedium),
                             Text(
                                 'Rs.${orderProvider.subtotal.toStringAsFixed(0)}',
                                 style: AppTypography.labelMedium),
@@ -144,7 +144,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Delivery Fee',
+                            const Text('Delivery Fee',
                                 style: AppTypography.bodyMedium),
                             Text(
                                 'Rs.${orderProvider.deliveryFee.toStringAsFixed(0)}',

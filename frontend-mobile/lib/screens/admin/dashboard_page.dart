@@ -5,7 +5,7 @@ import '../../core/constants/app_typography.dart';
 import '../../core/widgets/custom_empty_state.dart';
 
 class AdminDashboardPage extends StatelessWidget {
-  const AdminDashboardPage({Key? key}) : super(key: key);
+  const AdminDashboardPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class AdminDashboardPage extends StatelessWidget {
         title: const Text('Admin Dashboard'),
         elevation: AppSpacing.elevationMd,
       ),
-      body: CustomEmptyState(
+      body: const CustomEmptyState(
         icon: Icons.admin_panel_settings,
         title: 'Admin Dashboard',
         description: 'System administration and analytics features coming soon',

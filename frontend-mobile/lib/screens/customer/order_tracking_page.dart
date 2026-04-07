@@ -12,7 +12,7 @@ import '../../services/socket_service.dart';
 class OrderTrackingPage extends StatefulWidget {
   final String orderId;
 
-  const OrderTrackingPage({Key? key, required this.orderId}) : super(key: key);
+  const OrderTrackingPage({super.key, required this.orderId});
 
   @override
   State<OrderTrackingPage> createState() => _OrderTrackingPageState();
@@ -324,7 +324,7 @@ class _OrderTrackingPageState extends State<OrderTrackingPage> {
                           borderRadius:
                               BorderRadius.circular(AppSpacing.radiusMd),
                         ),
-                        child: Text(
+                        child: const Text(
                           'Current',
                           style: TextStyle(
                               color: AppColors.primary,
@@ -522,7 +522,7 @@ class _ReviewSectionState extends State<_ReviewSection> {
                 .copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: AppSpacing.lg),
-          Text('Rate your experience', style: AppTypography.bodyMedium),
+          const Text('Rate your experience', style: AppTypography.bodyMedium),
           const SizedBox(height: AppSpacing.md),
           Row(
             children: List.generate(
@@ -559,8 +559,8 @@ class _ReviewSectionState extends State<_ReviewSection> {
               onPressed: () {
                 if (_rating == 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: const Text('Please rate your experience'),
+                    const SnackBar(
+                      content: Text('Please rate your experience'),
                       backgroundColor: AppColors.error,
                     ),
                   );

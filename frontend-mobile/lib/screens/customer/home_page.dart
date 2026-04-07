@@ -13,7 +13,7 @@ import '../../providers/restaurant_provider.dart';
 import '../../providers/order_provider.dart';
 
 class CustomerHomePage extends StatefulWidget {
-  const CustomerHomePage({Key? key}) : super(key: key);
+  const CustomerHomePage({super.key});
 
   @override
   State<CustomerHomePage> createState() => _CustomerHomePageState();
@@ -95,7 +95,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             builder: (context, authProvider, _) {
               return PopupMenuButton(
                 itemBuilder: (context) => [
-                  const PopupMenuItem(child: Text('Logout'), value: 'logout'),
+                  const PopupMenuItem(value: 'logout', child: Text('Logout')),
                 ],
                 onSelected: (value) {
                   if (value == 'logout') {
@@ -145,7 +145,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
                 const SizedBox(height: AppSpacing.lg),
 
                 if (_filteredRestaurants.isEmpty)
-                  CustomEmptyState(
+                  const CustomEmptyState(
                     icon: Icons.restaurant,
                     title: 'No Restaurants Found',
                     description: 'Try adjusting your search criteria',

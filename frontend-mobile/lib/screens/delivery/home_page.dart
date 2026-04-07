@@ -14,7 +14,7 @@ import '../../services/socket_service.dart';
 ///  - Tab 2: My active / completed deliveries
 ///  - Live GPS location broadcasting
 class DeliveryHomePage extends StatefulWidget {
-  const DeliveryHomePage({Key? key}) : super(key: key);
+  const DeliveryHomePage({super.key});
 
   @override
   State<DeliveryHomePage> createState() => _DeliveryHomePageState();
@@ -238,8 +238,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
               icon: const Icon(Icons.local_shipping_outlined),
               text: 'Available (${_available.length})',
             ),
-            Tab(
-              icon: const Icon(Icons.delivery_dining),
+            const Tab(
+              icon: Icon(Icons.delivery_dining),
               text: 'My Deliveries',
             ),
           ],
@@ -296,8 +296,9 @@ class _DeliveryHomePageState extends State<DeliveryHomePage>
   // ── Available Orders Tab ──────────────────────────────────────────────────
 
   Widget _buildAvailableTab() {
-    if (_availableLoading)
+    if (_availableLoading) {
       return const Center(child: CircularProgressIndicator());
+    }
     if (_available.isEmpty) {
       return const Center(
         child: Column(

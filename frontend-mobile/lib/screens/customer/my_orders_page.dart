@@ -10,7 +10,7 @@ import '../../core/widgets/custom_loading.dart';
 import '../../providers/order_provider.dart';
 
 class MyOrdersPage extends StatefulWidget {
-  const MyOrdersPage({Key? key}) : super(key: key);
+  const MyOrdersPage({super.key});
 
   @override
   State<MyOrdersPage> createState() => _MyOrdersPageState();
