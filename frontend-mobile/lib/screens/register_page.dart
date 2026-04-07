@@ -112,13 +112,16 @@ class _RegisterPageState extends State<RegisterPage>
             ],
           ),
         ),
-        child: SafeArea(
+        child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(AppSpacing.lg),
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 400),
+            child: SizedBox(
+              width: double.infinity,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 500),
+                  margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
@@ -306,6 +309,7 @@ class _RegisterPageState extends State<RegisterPage>
                   ],
                 ),
               ),
+            ),
             ),
           ),
         ),
