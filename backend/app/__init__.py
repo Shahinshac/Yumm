@@ -157,10 +157,11 @@ def create_app():
     @app.route('/api/version', methods=['GET'])
     def version_check():
         return jsonify({
-            'version': '2.0.0',
-            'build': 'auth-approval-system-v2',
+            'version': '2.0.1',
+            'build': 'auth-approval-system-v2-fixed',
             'features': ['google-signin', 'restaurant-registration', 'admin-approval', 'role-based-access'],
-            'status': 'production'
+            'status': 'production',
+            'timestamp': '2026-04-07T22:50:00Z'
         }), 200
 
     # Health check endpoint
