@@ -9,11 +9,9 @@ import CustomerHome from './pages/customer/CustomerHome';
 import RestaurantDashboard from './pages/restaurant/RestaurantDashboard';
 import DeliveryDashboard from './pages/delivery/DeliveryDashboard';
 import AdminApprovals from './pages/admin/AdminApprovals';
+import AdminDashboard from './pages/admin/AdminDashboard';
 import RestaurantRegister from './pages/RestaurantRegister';
 import DeliveryRegister from './pages/DeliveryRegister';
-
-// Temporary dummy components for untracked sections
-const AdminDashboard = () => <div className="bg-white p-6 rounded-xl shadow-sm"><h1 className="text-xl font-bold">Admin Hub</h1></div>;
 
 // Role-based protection wrapper
 const ProtectedRoute = ({ children, allowedRoles }) => {
