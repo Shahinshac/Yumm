@@ -131,10 +131,10 @@ def get_order(order_id):
 
     return jsonify(order.to_dict()), 200
 
-@bp.route('/<order_id>/status', methods=['PUT'])
+@bp.route('/<order_id>/status/legacy', methods=['PUT'])
 @role_required('restaurant', 'delivery', 'admin')
-def update_order_status(order_id):
-    """Update order status"""
+def update_order_status_legacy(order_id):
+    """Update order status (legacy endpoint - use /<order_id>/status PUT instead)"""
     try:
         order = Order.objects(id=order_id).first()
     except Exception:
