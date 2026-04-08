@@ -13,7 +13,7 @@ const AdminApprovals = () => {
   const loadPendingUsers = async () => {
     try {
       const data = await adminService.getPendingUsers();
-      setUsers(data.users || []);
+      setUsers(data.pending_users || []);
     } catch (err) {
       console.error(err);
     } finally {
@@ -24,8 +24,8 @@ const AdminApprovals = () => {
   const handleApprove = async (id) => {
     try {
       const resp = await adminService.approveUser(id);
-      alert(`User approved! Their generated password is: ${resp.generated_password}`);
-      setUsers(users.filter(u => u._id !== id));
+      alert(`User approved! Their generated password is: ${resp.password}\n\nNote: ${resp.note || 'Share this via email/phone.'}`);
+      setUsers(users.filter(u => u.id !== id));
     } catch (err) {
       alert('Error approving user');
     }
@@ -34,7 +34,7 @@ const AdminApprovals = () => {
   const handleReject = async (id) => {
     try {
       await adminService.rejectUser(id);
-      setUsers(users.filter(u => u._id !== id));
+      setUsers(users.filter(u => u.id !== id));
     } catch (err) {
       alert('Error rejecting user');
     }
@@ -64,8 +64,8 @@ const AdminApprovals = () => {
             </thead>
             <tbody>
               {users.map(u => (
-                <tr key={u._id} className="border-b hover:bg-gray-50/50">
-                  <td className="p-3 font-medium">{u.name}</td>
+                <tr key={u.id} className="border-b hover:bg-gray-50/50">
+                  <td className="p-3 font-medium">{u.full_name || u.name}</td>
                   <td className="p-3 text-gray-600">{u.email}</td>
                   <td className="p-3">
                     <span className={`px-2 py-1 rounded-full text-xs font-bold uppercase ${u.role === 'restaurant' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'}`}>
@@ -75,14 +75,14 @@ const AdminApprovals = () => {
                   <td className="p-3 text-gray-600">{u.phone}</td>
                   <td className="p-3 text-right flex justify-end gap-2">
                     <button 
-                      onClick={() => handleApprove(u._id)}
+                      onClick={() => handleApprove(u.id)}
                       className="p-2 bg-green-100 text-green-600 rounded hover:bg-green-200 transition"
                       title="Approve"
                     >
                       <Check size={18} />
                     </button>
                     <button 
-                      onClick={() => handleReject(u._id)}
+                      onClick={() => handleReject(u.id)}
                       className="p-2 bg-red-100 text-red-600 rounded hover:bg-red-200 transition"
                       title="Reject"
                     >

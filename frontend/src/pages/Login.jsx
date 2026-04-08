@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/authService';
 
@@ -75,34 +75,48 @@ const Login = () => {
             </p>
           </div>
         ) : (
-          <form onSubmit={handlePartnerLogin} className="flex flex-col gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input 
-                type="email" 
-                className="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-[#ff4b3a]"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+          <div className="flex flex-col gap-6">
+            <form onSubmit={handlePartnerLogin} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input 
+                  type="email" 
+                  className="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-[#ff4b3a]"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                <input 
+                  type="password" 
+                  className="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-[#ff4b3a]"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <button 
+                type="submit" 
+                className="w-full bg-[#ff4b3a] text-white py-3 rounded-lg font-medium hover:bg-[#e03d2e] transition mt-2"
+              >
+                Partner Login
+              </button>
+            </form>
+
+            <div className="border-t border-gray-100 pt-5">
+              <p className="text-sm text-center text-gray-500 mb-3">Want to join us as a partner?</p>
+              <div className="grid grid-cols-2 gap-3">
+                <Link to="/register/restaurant" className="text-center py-2.5 px-3 border border-[#ff4b3a] text-[#ff4b3a] rounded-lg text-sm font-medium hover:bg-red-50 transition">
+                  Register Restaurant
+                </Link>
+                <Link to="/register/delivery" className="text-center py-2.5 px-3 border border-[#ff4b3a] text-[#ff4b3a] rounded-lg text-sm font-medium hover:bg-red-50 transition">
+                  Register Delivery
+                </Link>
+              </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-              <input 
-                type="password" 
-                className="w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-[#ff4b3a]"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <button 
-              type="submit" 
-              className="w-full bg-[#ff4b3a] text-white py-3 rounded-lg font-medium hover:bg-[#e03d2e] transition mt-2"
-            >
-              Partner Login
-            </button>
-          </form>
+          </div>
         )}
       </div>
     </div>

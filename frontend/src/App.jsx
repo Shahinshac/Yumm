@@ -9,6 +9,8 @@ import CustomerHome from './pages/customer/CustomerHome';
 import RestaurantDashboard from './pages/restaurant/RestaurantDashboard';
 import DeliveryDashboard from './pages/delivery/DeliveryDashboard';
 import AdminApprovals from './pages/admin/AdminApprovals';
+import RestaurantRegister from './pages/RestaurantRegister';
+import DeliveryRegister from './pages/DeliveryRegister';
 
 // Temporary dummy components for untracked sections
 const AdminDashboard = () => <div className="bg-white p-6 rounded-xl shadow-sm"><h1 className="text-xl font-bold">Admin Hub</h1></div>;
@@ -31,6 +33,8 @@ function AppRoutes() {
     <Routes>
       {/* Public Routes */}
       <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+      <Route path="/register/restaurant" element={!user ? <RestaurantRegister /> : <Navigate to="/" />} />
+      <Route path="/register/delivery" element={!user ? <DeliveryRegister /> : <Navigate to="/" />} />
       <Route path="/unauthorized" element={<div className="p-10 text-red-500 font-bold text-center">Unauthorized Access</div>} />
       
       {/* Root Redirect based on Role */}
