@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'https://yumm-ym2m.onrender.com/api', // Render backend handles all environments
+  baseURL: '/api',  // Vite proxy → local Flask in dev | Render in production
   headers: {
     'Content-Type': 'application/json',
   },

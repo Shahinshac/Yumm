@@ -10,7 +10,8 @@ const RestaurantRegister = () => {
     email: '',
     phone: '',
     shop_name: '',
-    address: ''
+    address: '',
+    category: 'Multi-cuisine'
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -168,6 +169,20 @@ const RestaurantRegister = () => {
                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none"
               />
             </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-medium text-gray-700 ml-1">Cuisine / Category</label>
+            <select
+              name="category"
+              value={formData.category}
+              onChange={handleChange}
+              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none"
+            >
+              {['Multi-cuisine','Biryani & Kerala','Seafood','Pizza','Burgers','Chinese','Tandoori','Desserts','Healthy','South Indian','North Indian'].map(c => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
           </div>
 
           <div className="space-y-1">

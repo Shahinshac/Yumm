@@ -99,6 +99,7 @@ def register_restaurant():
     phone = data.get('phone', '').strip()
     shop_name = data.get('shop_name', '').strip()
     address = data.get('address', '').strip()
+    category = data.get('category', 'Multi-cuisine').strip() or 'Multi-cuisine'
 
     if not Validators.validate_name(name):
         return jsonify({'error': 'Invalid name. Must be 2-100 characters'}), 400
@@ -139,6 +140,7 @@ def register_restaurant():
             user=user,
             name=shop_name,
             address=address,
+            category=category,
             is_approved=False,
             is_verified=False
         )
@@ -242,26 +244,33 @@ def google_login():
         return jsonify({'error': 'Missing access_token'}), 400
 
     try:
-        # Verify token and get user profile from Google
-        google_response = req_lib.get(
-            'https://www.googleapis.com/oauth2/v3/userinfo',
-            headers={'Authorization': f'Bearer {access_token}'},
-            timeout=10
-        )
+        # Mock logic for local testing without actual Google Auth flow
+        if access_token == 'mock_test_user':
+            logger.info("Using mock google verification for local testing")
+            google_id = "mock_google_12345"
+            email = "testcustomer@example.com"
+            name = "Test Customer"
+        else:
+            # Verify token and get user profile from Google
+            google_response = req_lib.get(
+                'https://www.googleapis.com/oauth2/v3/userinfo',
+                headers={'Authorization': f'Bearer {access_token}'},
+                timeout=10
+            )
 
-        if google_response.status_code != 200:
-            logger.warning(f"Google userinfo rejected access_token: {google_response.status_code}")
-            return jsonify({'error': 'Invalid or expired Google token'}), 401
+            if google_response.status_code != 200:
+                logger.warning(f"Google userinfo rejected access_token: {google_response.status_code}")
+                return jsonify({'error': 'Invalid or expired Google token'}), 401
 
-        google_data = google_response.json()
-        google_id = google_data.get('sub')  # Google's unique user ID
-        email = google_data.get('email')
-        name = google_data.get('name', email)
+            google_data = google_response.json()
+            google_id = google_data.get('sub')  # Google's unique user ID
+            email = google_data.get('email')
+            name = google_data.get('name', email)
 
-        if not email or not google_id:
-            return jsonify({'error': 'Could not retrieve user info from Google'}), 400
+            if not email or not google_id:
+                return jsonify({'error': 'Could not retrieve user info from Google'}), 400
 
-        logger.info(f"Google userinfo verified for: {email}")
+            logger.info(f"Google userinfo verified for: {email}")
 
         # Check if user exists by google_id or email
         existing_user = User.objects(google_id=google_id).first()
