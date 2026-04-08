@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/widgets/custom_empty_state.dart';
+import '../../providers/auth_provider.dart';
 
 class AdminDashboardPage extends StatefulWidget {
   const AdminDashboardPage({super.key});
@@ -35,6 +37,21 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
         elevation: AppSpacing.elevationMd,
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.white,
+        actions: [
+          Consumer<AuthProvider>(
+            builder: (_, auth, __) => PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'logout') {
+                  auth.logout();
+                  Navigator.of(context).pushReplacementNamed('/login');
+                }
+              },
+              itemBuilder: (_) => [
+                const PopupMenuItem(value: 'logout', child: Text('Logout')),
+              ],
+            ),
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
@@ -69,6 +86,18 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              _buildNavChip('Dashboard', 0),
+              _buildNavChip('Approvals', 1),
+              _buildNavChip('Users', 2),
+              _buildNavChip('Orders', 3),
+              _buildNavChip('Reports', 4),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
           _buildStatCard('Active Users', '1,264', Icons.people_outline),
           _buildStatCard('Pending Approvals', '8', Icons.check_circle_outline),
           _buildStatCard('Open Orders', '42', Icons.receipt_long_outlined),
@@ -80,6 +109,15 @@ class _AdminDashboardPageState extends State<AdminDashboardPage>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildNavChip(String label, int index) {
+    return ActionChip(
+      label: Text(label),
+      labelStyle: const TextStyle(color: Colors.white),
+      backgroundColor: AppColors.primary,
+      onPressed: () => _tabController.animateTo(index),
     );
   }
 

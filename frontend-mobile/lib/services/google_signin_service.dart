@@ -12,12 +12,16 @@ class GoogleSignInService {
     debugPrint('$TAG: Initializing for ${kIsWeb ? 'WEB' : 'MOBILE'}');
 
     if (kIsWeb) {
-      // Web: Use meta tag in index.html, don't pass clientId
-      // Important: Include 'openid' scope for ID token retrieval
+      // Web: Provide the explicit web client ID so the plugin can retrieve ID tokens reliably.
+      final clientId = _getClientId();
       _googleSignIn = GoogleSignIn(
+        clientId: clientId,
         scopes: ['openid', 'email', 'profile'],
+        signInOption: SignInOption.standard,
       );
-      debugPrint('$TAG: ✅ Web initialization complete (using meta tag)');
+      debugPrint(
+        '$TAG: ✅ Web initialization complete with client ID (last 20 chars): ...${clientId.substring(clientId.length - 20)}',
+      );
     } else {
       // Mobile: Use platform-specific Client ID
       final clientId = _getClientId();
@@ -94,11 +98,17 @@ class GoogleSignInService {
 
       if (idToken == null) {
         debugPrint('$TAG: ⚠️  ID token is null - possible causes:');
-        debugPrint('   1. People API not enabled in Google Cloud Console');
-        debugPrint('   2. OAuth scopes missing (need: openid, email, profile)');
-        debugPrint('   3. Browser privacy settings blocking token');
-        debugPrint('   4. User not fully authenticated');
-        throw Exception('Failed to retrieve ID token - check scopes and People API in Google Cloud');
+        debugPrint(
+            '   1. OAuth Web client ID is incorrect or not authorized for this origin');
+        debugPrint(
+            '   2. People API / OpenID Connect scope is not enabled in Google Cloud');
+        debugPrint(
+            '   3. OAuth client does not include the current web origin under JavaScript origins');
+        debugPrint(
+            '   4. Browser privacy settings or third-party cookies are blocking the auth flow');
+        throw Exception(
+          'Failed to retrieve ID token. Check your Google OAuth Web client ID, authorized JavaScript origins, and OpenID scope configuration.',
+        );
       }
 
       debugPrint('$TAG: ✅ ID token obtained (length: ${idToken.length})');

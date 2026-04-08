@@ -65,6 +65,19 @@ class _CustomerHomePageState extends State<CustomerHomePage>
         elevation: AppSpacing.elevationMd,
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.white,
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'logout') {
+                context.read<AuthProvider>().logout();
+                context.go('/login');
+              }
+            },
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 'logout', child: Text('Logout')),
+            ],
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           indicatorColor: AppColors.white,
