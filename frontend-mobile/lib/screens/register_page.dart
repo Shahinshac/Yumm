@@ -236,7 +236,7 @@ class _RegisterPageState extends State<RegisterPage>
                             minimumSize: const Size(double.infinity, 48),
                             backgroundColor: AppColors.white,
                             foregroundColor: AppColors.textPrimary,
-                            side: BorderSide(color: AppColors.border),
+                            side: const BorderSide(color: AppColors.border),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(AppSpacing.radiusMd),
                             ),

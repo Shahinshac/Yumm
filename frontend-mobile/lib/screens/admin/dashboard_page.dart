@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_spacing.dart';
-import '../../core/constants/app_typography.dart';
 import '../../core/widgets/custom_empty_state.dart';
 
 class AdminDashboardPage extends StatelessWidget {

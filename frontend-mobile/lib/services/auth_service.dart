@@ -8,7 +8,7 @@ class AuthService {
   static const String TAG = '🔐 AuthService';
   static const String BASE_URL = 'https://yumm-ym2m.onrender.com';
 
-  late Dio _dio;
+  late final Dio _dio;
   final GoogleSignInService googleSignIn;
 
   AuthService()
@@ -16,8 +16,8 @@ class AuthService {
       _dio = Dio(
         BaseOptions(
           baseUrl: BASE_URL,
-          connectTimeout: Duration(seconds: 15),
-          receiveTimeout: Duration(seconds: 15),
+          connectTimeout: const Duration(seconds: 15),
+          receiveTimeout: const Duration(seconds: 15),
           contentType: 'application/json',
         ),
       ) {
@@ -354,7 +354,7 @@ class AuthService {
     try {
       final response = await _dio
           .get('/api/health')
-          .timeout(Duration(seconds: 5));
+          .timeout(const Duration(seconds: 5));
       return response.statusCode == 200;
     } catch (e) {
       debugPrint('$TAG: Backend offline: $e');

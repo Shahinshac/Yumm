@@ -8,7 +8,6 @@ import '../../core/widgets/custom_button.dart';
 import '../../core/widgets/custom_text_field.dart';
 import '../../core/widgets/custom_empty_state.dart';
 import '../../providers/order_provider.dart';
-import '../../providers/restaurant_provider.dart';
 
 class CheckoutPage extends StatefulWidget {
   const CheckoutPage({super.key});
