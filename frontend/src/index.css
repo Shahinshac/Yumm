@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+:root {
+  --primary: #ff4b3a; /* App theme orange/red */
+  --background: #ffffff;
+  --text-main: #1e1e1e;
+  --text-muted: #6b7280;
+}
+
+body {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--text-main);
+  margin: 0;
+  padding: 0;
+}

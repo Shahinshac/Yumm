@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "echo 'Deploying prebuilt Flutter web output'",
-  "outputDirectory": "frontend-mobile/build/web",
+  "buildCommand": "npm run build",
+  "outputDirectory": "frontend/dist",
   "rewrites": [
     {
       "source": "^/(.*)$",
