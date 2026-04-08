@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import 'core/theme/app_theme.dart';
+import 'core/theme.dart';
 import 'services/api_service.dart';
 import 'services/socket_service.dart';
 import 'providers/auth_provider.dart';
@@ -44,7 +44,7 @@ class FoodHubApp extends StatelessWidget {
       child: MaterialApp.router(
         title: '🍕 FoodHub',
         debugShowCheckedModeBanner: false,
-        theme: AppTheme.lightTheme,
+        theme: AppTheme.darkTheme,
         routerConfig: _buildRouter(),
       ),
     );

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_spacing.dart';
-import '../../core/constants/app_typography.dart';
-import '../../core/widgets/custom_button.dart';
-import '../../core/widgets/custom_text_field.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../core/theme.dart';
+import '../../core/components/custom_button.dart';
+import '../../core/components/custom_text_field.dart';
 import '../../core/widgets/restaurant_card.dart';
 import '../../core/widgets/custom_loading.dart';
 import '../../core/widgets/custom_empty_state.dart';
@@ -21,16 +20,14 @@ class CustomerHomePage extends StatefulWidget {
   State<CustomerHomePage> createState() => _CustomerHomePageState();
 }
 
-class _CustomerHomePageState extends State<CustomerHomePage>
-    with SingleTickerProviderStateMixin {
+class _CustomerHomePageState extends State<CustomerHomePage> {
   final _searchController = TextEditingController();
   List<dynamic> _filteredRestaurants = [];
-  late TabController _tabController;
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 4, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<RestaurantProvider>().fetchRestaurants();
       context.read<OrderProvider>().fetchOrders();
@@ -40,7 +37,6 @@ class _CustomerHomePageState extends State<CustomerHomePage>
   @override
   void dispose() {
     _searchController.dispose();
-    _tabController.dispose();
     super.dispose();
   }
 
@@ -50,7 +46,7 @@ class _CustomerHomePageState extends State<CustomerHomePage>
         _filteredRestaurants = restaurants;
       } else {
         _filteredRestaurants = restaurants
-            .where((r) => r.name.toLowerCase().contains(query.toLowerCase()))
+            .where((r) => (r.name??'').toLowerCase().contains(query.toLowerCase()))
             .toList();
       }
     });
@@ -58,47 +54,51 @@ class _CustomerHomePageState extends State<CustomerHomePage>
 
   @override
   Widget build(BuildContext context) {
+    final pages = [
+      _buildExploreTab(),
+      _buildOrdersTab(),
+      _buildCartTab(),
+      _buildAccountTab(),
+    ];
+
     return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
-        title: const Text('🍕 FoodHub'),
-        elevation: AppSpacing.elevationMd,
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'logout') {
-                context.read<AuthProvider>().logout();
-                context.go('/login');
-              }
-            },
-            itemBuilder: (_) => [
-              const PopupMenuItem(value: 'logout', child: Text('Logout')),
-            ],
+      backgroundColor: AppTheme.backgroundDark,
+      body: SafeArea(
+        child: AnimatedSwitcher(
+          duration: 300.ms,
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: child,
           ),
-        ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: AppColors.white,
-          labelColor: AppColors.white,
-          unselectedLabelColor: AppColors.white70,
-          isScrollable: true,
-          tabs: const [
-            Tab(icon: Icon(Icons.explore_outlined), text: 'Explore'),
-            Tab(icon: Icon(Icons.receipt_long_outlined), text: 'Orders'),
-            Tab(icon: Icon(Icons.shopping_cart_outlined), text: 'Cart'),
-            Tab(icon: Icon(Icons.person_outline), text: 'Account'),
-          ],
+          child: pages[_selectedIndex],
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildExploreTab(),
-          _buildOrdersTab(),
-          _buildCartTab(),
-          _buildAccountTab(),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (index) => setState(() => _selectedIndex = index),
+        backgroundColor: AppTheme.surfaceDark,
+        indicatorColor: AppTheme.primary.withValues(alpha: 0.2),
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.explore_outlined),
+            selectedIcon: Icon(Icons.explore, color: AppTheme.primary),
+            label: 'Explore',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.receipt_long_outlined),
+            selectedIcon: Icon(Icons.receipt_long, color: AppTheme.primary),
+            label: 'Orders',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.shopping_cart_outlined),
+            selectedIcon: Icon(Icons.shopping_cart, color: AppTheme.primary),
+            label: 'Cart',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.person_outline),
+            selectedIcon: Icon(Icons.person, color: AppTheme.primary),
+            label: 'Account',
+          ),
         ],
       ),
     );
@@ -107,8 +107,7 @@ class _CustomerHomePageState extends State<CustomerHomePage>
   Widget _buildExploreTab() {
     return Consumer<RestaurantProvider>(
       builder: (context, restaurantProvider, _) {
-        if (restaurantProvider.isLoading &&
-            restaurantProvider.restaurants.isEmpty) {
+        if (restaurantProvider.isLoading && restaurantProvider.restaurants.isEmpty) {
           return const CustomLoading(message: 'Loading restaurants...');
         }
 
@@ -118,67 +117,62 @@ class _CustomerHomePageState extends State<CustomerHomePage>
         }
 
         return RefreshIndicator(
-          onRefresh: () async {
-            await restaurantProvider.fetchRestaurants();
-          },
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            physics: const AlwaysScrollableScrollPhysics(),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomTextField(
-                  label: 'Search Restaurants',
-                  hint: 'Find your favorite restaurant...',
-                  controller: _searchController,
-                  prefixIcon: Icons.search,
-                  keyboardType: TextInputType.text,
-                  onChanged: (value) =>
-                      _filterRestaurants(value, restaurantProvider.restaurants),
-                ),
-                const SizedBox(height: AppSpacing.xl),
-                Text(
-                  'Popular Restaurants',
-                  style: AppTypography.headlineSmall.copyWith(
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                if (_filteredRestaurants.isEmpty)
-                  const CustomEmptyState(
-                    icon: Icons.restaurant,
-                    title: 'No Restaurants Found',
-                    description: 'Try adjusting your search criteria',
-                  )
-                else
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
-                      childAspectRatio: 1.2,
-                      mainAxisSpacing: AppSpacing.lg,
-                    ),
-                    itemCount: _filteredRestaurants.length,
-                    itemBuilder: (context, index) {
-                      final restaurant = _filteredRestaurants[index];
-                      return RestaurantCard(
-                        name: restaurant.name ?? 'Unknown',
-                        description: restaurant.cuisine ?? 'Restaurant',
-                        rating: (restaurant.rating ?? 4.5).toDouble(),
-                        reviewCount: restaurant.reviewCount ?? 0,
-                        imageUrl: restaurant.imageUrl ?? '',
-                        deliveryTime: '${restaurant.deliveryTime ?? 30} min',
-                        deliveryFee: '${restaurant.deliveryCharge ?? 0}',
-                        onTap: () {
-                          context.go('/restaurant/${restaurant.id}');
+          onRefresh: () async => await restaurantProvider.fetchRestaurants(),
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                floating: true,
+                backgroundColor: AppTheme.primary,
+                title: const Text('🍕 FoodHub', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.notifications_outlined, color: Colors.white),
+                    onPressed: () {},
+                  ).animate().shake(delay: 2.seconds),
+                ],
+              ),
+              SliverPadding(
+                padding: const EdgeInsets.all(16),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    Text('What are you craving?', style: Theme.of(context).textTheme.displayLarge).animate().fadeIn().moveY(),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      hintText: 'Search Restaurants',
+                      controller: _searchController,
+                      prefixIcon: Icons.search,
+                    ).animate().fadeIn(delay: 100.ms),
+                    const SizedBox(height: 24),
+                    Text('Popular Near You', style: Theme.of(context).textTheme.titleLarge).animate().fadeIn(delay: 200.ms),
+                    const SizedBox(height: 16),
+                    if (_filteredRestaurants.isEmpty)
+                      const Center(child: Text('No Restaurants Found', style: TextStyle(color: AppTheme.textSecondary)))
+                    else
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: _filteredRestaurants.length,
+                        itemBuilder: (context, index) {
+                          final restaurant = _filteredRestaurants[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: RestaurantCard(
+                              name: restaurant.name ?? 'Unknown',
+                              description: restaurant.cuisine ?? 'Restaurant',
+                              rating: (restaurant.rating ?? 4.5).toDouble(),
+                              reviewCount: restaurant.reviewCount ?? 0,
+                              imageUrl: restaurant.imageUrl ?? '',
+                              deliveryTime: '${restaurant.deliveryTime ?? 30} min',
+                              deliveryFee: '${restaurant.deliveryCharge ?? 0}',
+                              onTap: () => context.go('/restaurant/${restaurant.id}'),
+                            ),
+                          ).animate().fadeIn(delay: Duration(milliseconds: 300 + (index * 100))).moveY(begin: 20);
                         },
-                      );
-                    },
-                  ),
-              ],
-            ),
+                      ),
+                  ]),
+                ),
+              ),
+            ],
           ),
         );
       },
@@ -188,42 +182,46 @@ class _CustomerHomePageState extends State<CustomerHomePage>
   Widget _buildOrdersTab() {
     return Consumer<OrderProvider>(
       builder: (context, orderProvider, _) {
-        if (orderProvider.isLoading) {
-          return const CustomLoading(message: 'Loading orders...');
+        if (orderProvider.isLoading && orderProvider.orders.isEmpty) {
+            return const CustomLoading(message: 'Loading orders...');
         }
 
         if (orderProvider.orders.isEmpty) {
-          return CustomEmptyState(
-            icon: Icons.receipt_long_outlined,
-            title: 'No Orders Yet',
-            description: 'Your recent orders will appear here.',
-            actionButton: CustomButton(
-              label: 'Browse Restaurants',
-              onPressed: () => _tabController.animateTo(0),
-            ),
-          );
+          return const Center(child: Text('No Orders Found', style: TextStyle(color: AppTheme.textSecondary))); 
         }
 
         return RefreshIndicator(
           onRefresh: orderProvider.fetchOrders,
-          child: ListView.builder(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            itemCount: orderProvider.orders.length,
-            itemBuilder: (context, index) {
-              final order = orderProvider.orders[index];
-              return Padding(
-                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                child: OrderCard(
-                  orderId: order.id,
-                  restaurantName: order.restaurantName,
-                  totalPrice: order.totalAmount.toDouble(),
-                  status: order.status,
-                  orderDate: order.createdAt ?? DateTime.now(),
-                  itemCount: order.items.length,
-                  onTap: () => context.go('/order-tracking/${order.id}'),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(16).copyWith(top: 48),
+                color: AppTheme.primary,
+                child: const Text('My Orders', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+              ),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: orderProvider.orders.length,
+                  itemBuilder: (context, index) {
+                    final order = orderProvider.orders[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: OrderCard(
+                        orderId: order.id,
+                        restaurantName: order.restaurantName,
+                        totalPrice: order.totalAmount.toDouble(),
+                        status: order.status,
+                        orderDate: order.createdAt ?? DateTime.now(),
+                        itemCount: order.items.length,
+                        onTap: () => context.go('/order-tracking/${order.id}'),
+                      ),
+                    ).animate().fadeIn(delay: Duration(milliseconds: 100 * index));
+                  },
                 ),
-              );
-            },
+              ),
+            ],
           ),
         );
       },
@@ -234,104 +232,75 @@ class _CustomerHomePageState extends State<CustomerHomePage>
     return Consumer<OrderProvider>(
       builder: (context, orderProvider, _) {
         if (orderProvider.cart.isEmpty) {
-          return CustomEmptyState(
-            icon: Icons.shopping_cart_outlined,
-            title: 'Your Cart is Empty',
-            description: 'Add items from restaurants to start your order.',
-            actionButton: CustomButton(
-              label: 'Start Shopping',
-              onPressed: () => _tabController.animateTo(0),
-            ),
-          );
+           return const Center(child: Text('Cart is Empty', style: TextStyle(color: AppTheme.textSecondary)));
         }
 
-        return Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Cart Summary',
-                style: AppTypography.headlineSmall.copyWith(
-                  color: AppColors.textPrimary,
-                ),
+        return Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16).copyWith(top: 48),
+              color: AppTheme.primary,
+              width: double.infinity,
+              child: const Text('Your Cart', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+            ),
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.all(16),
+                itemCount: orderProvider.cart.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 12),
+                itemBuilder: (context, index) {
+                  final cartItem = orderProvider.cart[index];
+                  return ListTile(
+                    tileColor: AppTheme.surfaceDark,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    title: Text(cartItem.item.name, style: Theme.of(context).textTheme.bodyLarge),
+                    subtitle: Text('Qty: ${cartItem.quantity} • ₹${cartItem.item.price.toStringAsFixed(0)} each', style: Theme.of(context).textTheme.bodySmall),
+                    trailing: Text(
+                      '₹${(cartItem.item.price * cartItem.quantity).toStringAsFixed(0)}',
+                      style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold),
+                    ),
+                  ).animate().slideX();
+                },
               ),
-              const SizedBox(height: AppSpacing.lg),
-              Expanded(
-                child: ListView.separated(
-                  itemCount: orderProvider.cart.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: AppSpacing.md),
-                  itemBuilder: (context, index) {
-                    final cartItem = orderProvider.cart[index];
-                    return ListTile(
-                      tileColor: AppColors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                      ),
-                      title: Text(cartItem.item.name,
-                          style: AppTypography.bodyLarge),
-                      subtitle: Text(
-                        'Qty: ${cartItem.quantity} • ₹${cartItem.item.price.toStringAsFixed(0)} each',
-                        style: AppTypography.bodySmall,
-                      ),
-                      trailing: Text(
-                        '₹${(cartItem.item.price * cartItem.quantity).toStringAsFixed(0)}',
-                        style: AppTypography.titleSmall.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    );
-                  },
-                ),
+            ),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: const BoxDecoration(
+                color: AppTheme.surfaceDark,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
               ),
-              const SizedBox(height: AppSpacing.lg),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                ),
-                elevation: 2,
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: Column(
-                    children: [
-                      _buildSummaryRow('Subtotal',
-                          '₹${orderProvider.subtotal.toStringAsFixed(0)}'),
-                      const SizedBox(height: AppSpacing.sm),
-                      _buildSummaryRow('Delivery Fee',
-                          '₹${orderProvider.deliveryFee.toStringAsFixed(0)}'),
-                      const Divider(height: AppSpacing.xl),
-                      _buildSummaryRow(
-                        'Total',
-                        '₹${orderProvider.total.toStringAsFixed(0)}',
-                        valueStyle: AppTypography.titleMedium.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.lg),
-                      CustomButton(
-                        label: 'Checkout',
-                        onPressed: () => context.go('/checkout'),
-                      ),
-                    ],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildSummaryRow('Subtotal', '₹${orderProvider.subtotal.toStringAsFixed(0)}'),
+                  const SizedBox(height: 8),
+                  _buildSummaryRow('Delivery Fee', '₹${orderProvider.deliveryFee.toStringAsFixed(0)}'),
+                  const Divider(color: AppTheme.borderDark, height: 24),
+                  _buildSummaryRow(
+                    'Total',
+                    '₹${orderProvider.total.toStringAsFixed(0)}',
+                    valueStyle: const TextStyle(color: AppTheme.primary, fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  CustomButton(
+                    text: 'Checkout',
+                    onPressed: () => context.go('/checkout'),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         );
       },
     );
   }
 
-  Widget _buildSummaryRow(String label, String value,
-      {TextStyle? valueStyle}) {
+  Widget _buildSummaryRow(String label, String value, {TextStyle? valueStyle}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: AppTypography.bodyMedium),
-        Text(value, style: valueStyle ?? AppTypography.bodyMedium),
+        Text(label, style: const TextStyle(color: AppTheme.textSecondary)),
+        Text(value, style: valueStyle ?? const TextStyle(color: AppTheme.textPrimary)),
       ],
     );
   }
@@ -341,64 +310,39 @@ class _CustomerHomePageState extends State<CustomerHomePage>
       builder: (context, authProvider, _) {
         final user = authProvider.user;
         return Padding(
-          padding: const EdgeInsets.all(AppSpacing.lg),
+          padding: const EdgeInsets.all(16.0).copyWith(top: 48),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'My Account',
-                style: AppTypography.headlineSmall.copyWith(
-                  color: AppColors.textPrimary,
+              Text('My Account', style: Theme.of(context).textTheme.displayLarge),
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceDark,
+                  borderRadius: BorderRadius.circular(24),
+                  border: Border.all(color: AppTheme.borderDark),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
+                child: Column(
+                  children: [
+                    const CircleAvatar(radius: 40, backgroundColor: AppTheme.primary, child: Icon(Icons.person, size: 40, color: Colors.white)),
+                    const SizedBox(height: 16),
+                    Text(user?.fullName ?? 'Customer', style: Theme.of(context).textTheme.titleLarge),
+                    const SizedBox(height: 4),
+                    Text(user?.email ?? 'No email available', style: const TextStyle(color: AppTheme.textSecondary)),
+                  ],
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(user?.fullName ?? 'Customer',
-                          style: AppTypography.titleMedium),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(user?.email ?? 'No email available',
-                          style: AppTypography.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          )),
-                      const SizedBox(height: AppSpacing.md),
-                      Text('Role: ${user?.role ?? 'customer'}',
-                          style: AppTypography.bodyMedium),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text('Stay logged in for faster checkout and order tracking.',
-                          style: AppTypography.bodySmall.copyWith(
-                            color: AppColors.textTertiary,
-                          )),
-                    ],
-                  ),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
+              ).animate().scale(),
+              const Spacer(),
               CustomButton(
-                label: 'View Order History',
-                onPressed: () => _tabController.animateTo(1),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              CustomButton(
-                label: 'View Cart',
-                onPressed: () => _tabController.animateTo(2),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              CustomButton(
-                label: 'Logout',
-                variant: ButtonVariant.danger,
+                text: 'Logout',
                 onPressed: () {
                   authProvider.logout();
                   context.go('/login');
                 },
+                isSecondary: true,
               ),
+              const SizedBox(height: 24),
             ],
           ),
         );
