@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: import.meta.env.DEV ? 'http://127.0.0.1:5000/api' : '/api', // Local Flask for Dev, Relative for Vercel
+  baseURL: 'https://yumm-ym2m.onrender.com/api', // Render backend handles all environments
   headers: {
     'Content-Type': 'application/json',
   },
