@@ -215,11 +215,38 @@ def auto_assign_delivery(order_id):
     try:
         from backend.app.models.delivery_partner import DeliveryPartner
 
-        # Find an available delivery partner
-        delivery_partner = DeliveryPartner.objects(
+        # Calculate nearest delivery partner using Haversine algorithm
+        import math
+        def get_dist(lat1, lon1, lat2, lon2):
+            if lat1 is None or lon1 is None or lat2 is None or lon2 is None: return 999999.0
+            r = 6371 # Earth radius km
+            dlat, dlon = math.radians(lat2 - lat1), math.radians(lon2 - lon1)
+            a = math.sin(dlat/2)**2 + math.cos(math.radians(lat1)) * math.cos(math.radians(lat2)) * math.sin(dlon/2)**2
+            return r * 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+
+        restaurant_loc = order.restaurant.location if hasattr(order.restaurant, 'location') and order.restaurant.location else {}
+        r_lat = restaurant_loc.get('lat')
+        r_lng = restaurant_loc.get('lng')
+
+        # Find available delivery partners
+        available_partners = DeliveryPartner.objects(
             is_available=True,
             is_active=True
-        ).first()
+        )
+
+        delivery_partner = None
+        min_dist = float('inf')
+
+        for dp in available_partners:
+            dp_loc = dp.current_location or {}
+            dp_lat = dp_loc.get('lat')
+            dp_lng = dp_loc.get('lng')
+            
+            # If coordinates are missing, penalize heavily but still allow assignment
+            dist = get_dist(r_lat, r_lng, dp_lat, dp_lng)
+            if dist < min_dist:
+                min_dist = dist
+                delivery_partner = dp
 
         if not delivery_partner:
             # No delivery partner available, mark as waiting

@@ -490,6 +490,45 @@ class ApiService {
     }
   }
 
+  Future<List<dynamic>> getPendingUsers() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/admin/pending-users'),
+      headers: _getHeaders(),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body)['pending_users'] ?? [];
+    } else {
+      throw Exception('Failed to fetch pending users');
+    }
+  }
+
+  Future<Map<String, dynamic>> approveUser(String userId) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/admin/approve/$userId'),
+      headers: _getHeaders(),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Approval failed');
+    }
+  }
+
+  Future<Map<String, dynamic>> rejectUser(String userId) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/admin/reject/$userId'),
+      headers: _getHeaders(),
+      body: jsonEncode({'reason': 'Rejected by admin'}),
+    );
+    if (response.statusCode == 200) {
+      return jsonDecode(response.body);
+    } else {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Rejection failed');
+    }
+  }
+
   // ===== GENERIC HTTP METHODS =====
   Future<Map<String, dynamic>> put(String endpoint, Map<String, dynamic> body) async {
     final response = await http.put(

@@ -48,11 +48,12 @@ def get_dashboard():
     today = now.replace(hour=0, minute=0, second=0, microsecond=0)
     today_orders = Order.objects(created_at__gte=today).count()
 
-    return jsonify({
+    response = jsonify({
         'users': {
             'total': total_users,
             'customers': total_customers,
-            'restaurants': total_restaurants
+            'restaurants': total_restaurants,
+            'pending': User.objects(is_approved=False, role__in=['restaurant', 'delivery']).count()
         },
         'orders': {
             'total': total_orders,
@@ -62,7 +63,35 @@ def get_dashboard():
             'week': week_revenue,
             'month': month_revenue
         }
-    }), 200
+    })
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response, 200
+
+@bp.route('/reset-database', methods=['POST'])
+@role_required('admin')
+def reset_database():
+    """CRITICAL: Wipe entire database except admin. Used for reset between environments."""
+    try:
+        current_admin = get_current_user()
+        
+        # Delete all non-admin users
+        User.objects(role__ne='admin').delete()
+        
+        # Delete all operational data
+        Restaurant.objects().delete()
+        DeliveryPartner.objects().delete()
+        Order.objects().delete()
+        Payment.objects().delete()
+        
+        logger.warning(f"Database reset executed by admin: {current_admin.email if current_admin else 'Unknown'}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Database successfully wiped of all production records. Admins remain.'
+        }), 200
+    except Exception as e:
+        logger.error(f"Error resetting database: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
 
 @bp.route('/users', methods=['GET'])
 @role_required('admin')
@@ -203,10 +232,12 @@ def get_pending_users():
 
             result.append(user_dict)
 
-        return jsonify({
+        response = jsonify({
             'count': len(result),
             'pending_users': result
-        }), 200
+        })
+        response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        return response, 200
 
     except Exception as e:
         logger.error(f"Error fetching pending users: {str(e)}", exc_info=True)
