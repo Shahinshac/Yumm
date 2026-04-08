@@ -194,3 +194,166 @@ def track_order(order_id):
         },
         'delivery_address': order.delivery_address
     }), 200
+
+
+@bp.route('/auto-assign/<order_id>', methods=['POST'])
+@role_required('restaurant')
+def auto_assign_delivery(order_id):
+    """Auto-assign available delivery partner when restaurant accepts order"""
+    try:
+        order = Order.objects(id=order_id).first()
+    except Exception:
+        order = None
+
+    if not order:
+        return jsonify({'error': 'Order not found'}), 404
+
+    # Check order status is "accepted"
+    if order.status != 'accepted':
+        return jsonify({'error': 'Order must be accepted before assignment'}), 400
+
+    try:
+        from backend.app.models.delivery_partner import DeliveryPartner
+
+        # Find an available delivery partner
+        delivery_partner = DeliveryPartner.objects(
+            is_available=True,
+            is_active=True
+        ).first()
+
+        if not delivery_partner:
+            # No delivery partner available, mark as waiting
+            order.status = 'waiting_for_delivery'
+            order.updated_at = datetime.utcnow()
+            order.save()
+            return jsonify({
+                'message': 'No delivery partner available. Order marked as waiting',
+                'status': 'waiting_for_delivery',
+                'order_id': str(order.id)
+            }), 202
+
+        # Assign delivery partner
+        order.delivery_partner = delivery_partner.user
+        order.status = 'assigned'
+        order.updated_at = datetime.utcnow()
+        order.save()
+
+        # Mark delivery partner as unavailable
+        delivery_partner.is_available = False
+        delivery_partner.save()
+
+        return jsonify({
+            'message': 'Delivery partner assigned successfully',
+            'order': order.to_dict(),
+            'delivery_partner': {
+                'id': str(delivery_partner.user.id),
+                'username': delivery_partner.user.username,
+                'phone': delivery_partner.phone,
+                'vehicle_type': delivery_partner.vehicle_type
+            }
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': f'Assignment failed: {str(e)}'}), 500
+
+
+@bp.route('/<order_id>/status', methods=['PUT'])
+@required_auth
+def update_order_status(order_id):
+    """Update order status (placed → accepted → assigned → picked → delivered)"""
+    current = get_current_user()
+    data = request.get_json()
+
+    if not data.get('new_status'):
+        return jsonify({'error': 'new_status required'}), 400
+
+    try:
+        order = Order.objects(id=order_id).first()
+    except Exception:
+        order = None
+
+    if not order:
+        return jsonify({'error': 'Order not found'}), 404
+
+    new_status = data['new_status']
+    allowed_statuses = ['placed', 'accepted', 'assigned', 'picked', 'delivered', 'cancelled']
+
+    if new_status not in allowed_statuses:
+        return jsonify({'error': f'Invalid status. Must be one of: {", ".join(allowed_statuses)}'}), 400
+
+    # Validate status transitions
+    current_status = order.status
+    status_flow = {
+        'placed': ['accepted', 'cancelled'],
+        'accepted': ['assigned', 'cancelled'],
+        'assigned': ['picked', 'cancelled'],
+        'picked': ['delivered'],
+        'delivered': [],
+        'waiting_for_delivery': ['assigned', 'cancelled']
+    }
+
+    if new_status not in status_flow.get(current_status, []):
+        return jsonify({
+            'error': f'Invalid transition from {current_status} to {new_status}',
+            'allowed': status_flow.get(current_status, [])
+        }), 400
+
+    # Role-based permission checks
+    if current.role == 'restaurant' and new_status not in ['accepted', 'cancelled']:
+        return jsonify({'error': 'Restaurants can only accept or cancel orders'}), 403
+
+    if current.role == 'delivery' and new_status not in ['picked', 'delivered']:
+        return jsonify({'error': 'Delivery partners can only update to picked or delivered'}), 403
+
+    # Update order
+    order.status = new_status
+    order.updated_at = datetime.utcnow()
+
+    # Update delivery partner availability when order is delivered
+    if new_status == 'delivered' and order.delivery_partner:
+        try:
+            from backend.app.models.delivery_partner import DeliveryPartner
+            delivery_partner = DeliveryPartner.objects(user=order.delivery_partner).first()
+            if delivery_partner:
+                delivery_partner.is_available = True
+                delivery_partner.total_deliveries += 1
+                delivery_partner.save()
+        except Exception as e:
+            pass  # Log but don't fail
+
+    order.save()
+
+    from backend.app.routes.socket_events import emit_order_status_update
+    emit_order_status_update(
+        order_id=str(order.id),
+        status=new_status,
+        order_data=order.to_dict(),
+        restaurant_id=str(order.restaurant.id),
+        customer_id=str(order.customer.id),
+    )
+
+    return jsonify({
+        'message': f'Order status updated to {new_status}',
+        'order': order.to_dict()
+    }), 200
+
+
+@bp.route('/available-delivery', methods=['GET'])
+@role_required('admin')
+def get_available_delivery():
+    """Get list of available delivery partners"""
+    try:
+        from backend.app.models.delivery_partner import DeliveryPartner
+
+        delivery_partners = DeliveryPartner.objects(
+            is_available=True,
+            is_active=True
+        )
+
+        return jsonify({
+            'total': len(delivery_partners),
+            'delivery_partners': [dp.to_dict() for dp in delivery_partners]
+        }), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

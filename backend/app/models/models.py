@@ -27,8 +27,8 @@ class Order(Document):
     # Order status
     status = StringField(
         required=True,
-        choices=['pending', 'confirmed', 'preparing', 'ready', 'on_the_way', 'delivered', 'cancelled'],
-        default='pending'
+        choices=['placed', 'accepted', 'assigned', 'picked', 'delivered', 'cancelled'],
+        default='placed'
     )
 
     # Tracking
