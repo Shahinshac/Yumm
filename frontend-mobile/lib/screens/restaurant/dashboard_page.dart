@@ -2,57 +2,45 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/constants/app_colors.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../core/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/api_service.dart';
 import '../../services/socket_service.dart';
 
-/// Full-featured Restaurant Dashboard with two tabs:
-///  1. Orders – incoming orders with accept/reject and status updates
-///  2. Menu   – add, edit, and delete menu items
 class RestaurantDashboardPage extends StatefulWidget {
   const RestaurantDashboardPage({super.key});
 
   @override
-  State<RestaurantDashboardPage> createState() =>
-      _RestaurantDashboardPageState();
+  State<RestaurantDashboardPage> createState() => _RestaurantDashboardPageState();
 }
 
-class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _RestaurantDashboardPageState extends State<RestaurantDashboardPage> {
   late ApiService _api;
   late SocketService _socket;
 
-  // ---- state ----
   List<Map<String, dynamic>> _orders = [];
   List<Map<String, dynamic>> _menuItems = [];
   bool _ordersLoading = true;
   bool _menuLoading = true;
 
-  // The restaurant whose data this panel manages.
-  // In a real app the user's profile would reference their restaurant id.
-  // For demo we derive it from the first order or first menu item.
   String? _restaurantId;
-
   Timer? _pollTimer;
+
+  int _selectedIndex = 0;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
     _api = context.read<ApiService>();
     _socket = SocketService();
     _socket.connect();
 
-    // Load data immediately then poll every 15 s for new orders
     _loadOrders();
     _loadMenu();
 
-    _pollTimer =
-        Timer.periodic(const Duration(seconds: 15), (_) => _loadOrders());
+    _pollTimer = Timer.periodic(const Duration(seconds: 15), (_) => _loadOrders());
 
-    // Listen for real-time new-order events
     _socket.onNewOrder((data) {
       if (mounted) {
         setState(() => _orders.insert(0, data));
@@ -60,7 +48,6 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
       }
     });
 
-    // Live order status updates pushed from server
     _socket.onOrderStatusUpdate((data) {
       if (mounted) _refreshOrderById(data['order_id'], data['status']);
     });
@@ -68,22 +55,17 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
 
   @override
   void dispose() {
-    _tabController.dispose();
     _pollTimer?.cancel();
     _socket.dispose();
     super.dispose();
   }
 
-  // ── Data loaders ──────────────────────────────────────────────────────────
-
   Future<void> _loadOrders() async {
     if (_restaurantId == null && _orders.isEmpty) {
-      // Try to derive restaurant id from API (demo: load all orders for the logged-in restaurant role)
       try {
         final raw = await _api.getUserOrders();
         if (!mounted) return;
-        final list =
-            raw.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        final list = raw.map((e) => Map<String, dynamic>.from(e as Map)).toList();
         setState(() {
           _orders = list;
           _ordersLoading = false;
@@ -117,7 +99,6 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
 
   Future<void> _loadMenu() async {
     if (_restaurantId == null) {
-      // Wait until restaurant id is known; retry after a short delay
       await Future.delayed(const Duration(seconds: 2));
       if (_restaurantId == null) {
         setState(() => _menuLoading = false);
@@ -128,8 +109,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
       final raw = await _api.getRestaurantMenu(_restaurantId!);
       if (!mounted) return;
       setState(() {
-        _menuItems =
-            raw.map((e) => Map<String, dynamic>.from(e as Map)).toList();
+        _menuItems = raw.map((e) => Map<String, dynamic>.from(e as Map)).toList();
         _menuLoading = false;
       });
     } catch (e) {
@@ -144,8 +124,6 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
     }
   }
 
-  // ── Order actions ─────────────────────────────────────────────────────────
-
   Future<void> _updateStatus(String orderId, String status) async {
     try {
       await _api.updateOrderStatus(orderId, status);
@@ -156,14 +134,10 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
     }
   }
 
-  // ── Menu actions ──────────────────────────────────────────────────────────
-
   Future<void> _showMenuItemDialog({Map<String, dynamic>? existing}) async {
     final nameCtrl = TextEditingController(text: existing?['name'] ?? '');
-    final priceCtrl = TextEditingController(
-        text: existing != null ? existing['price'].toString() : '');
-    final descCtrl =
-        TextEditingController(text: existing?['description'] ?? '');
+    final priceCtrl = TextEditingController(text: existing != null ? existing['price'].toString() : '');
+    final descCtrl = TextEditingController(text: existing?['description'] ?? '');
     final catCtrl = TextEditingController(text: existing?['category'] ?? '');
     bool isVeg = existing?['is_veg'] ?? true;
     bool isAvailable = existing?['is_available'] ?? true;
@@ -172,45 +146,34 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
-          title: Text(existing == null ? 'Add Menu Item' : 'Edit Menu Item'),
+          backgroundColor: AppTheme.surfaceDark,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          title: Text(existing == null ? 'Add Menu Item' : 'Edit Menu Item', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           content: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                TextField(
-                  controller: nameCtrl,
-                  decoration: const InputDecoration(labelText: 'Name *'),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: priceCtrl,
-                  decoration: const InputDecoration(labelText: 'Price (₹) *'),
-                  keyboardType: TextInputType.number,
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: descCtrl,
-                  decoration: const InputDecoration(labelText: 'Description'),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: catCtrl,
-                  decoration: const InputDecoration(labelText: 'Category'),
-                ),
-                const SizedBox(height: 8),
+                _buildDialogField('Name *', nameCtrl),
+                const SizedBox(height: 16),
+                _buildDialogField('Price (₹) *', priceCtrl, keyboardType: TextInputType.number),
+                const SizedBox(height: 16),
+                _buildDialogField('Description', descCtrl),
+                const SizedBox(height: 16),
+                _buildDialogField('Category', catCtrl),
+                const SizedBox(height: 24),
                 Row(
                   children: [
-                    const Text('Vegetarian'),
+                    const Text('Vegetarian', style: TextStyle(color: Colors.white)),
                     Switch(
                       value: isVeg,
-                      activeThumbColor: Colors.green,
+                      activeColor: Colors.greenAccent,
                       onChanged: (v) => setDialogState(() => isVeg = v),
                     ),
                     const Spacer(),
-                    const Text('Available'),
+                    const Text('Available', style: TextStyle(color: Colors.white)),
                     Switch(
                       value: isAvailable,
-                      activeThumbColor: AppColors.primary,
+                      activeColor: AppTheme.primary,
                       onChanged: (v) => setDialogState(() => isAvailable = v),
                     ),
                   ],
@@ -221,10 +184,10 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel'),
+              child: const Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primary, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
               onPressed: () async {
                 if (nameCtrl.text.isEmpty || priceCtrl.text.isEmpty) {
                   _showSnack('Name and price are required', error: true);
@@ -232,8 +195,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                 }
                 final price = double.tryParse(priceCtrl.text);
                 if (price == null || price <= 0) {
-                  _showSnack('Please enter a valid price greater than 0',
-                      error: true);
+                  _showSnack('Please enter a valid price greater than 0', error: true);
                   return;
                 }
                 final data = {
@@ -251,13 +213,26 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                   await _editMenuItem(existing['id'], data);
                 }
               },
-              child: Text(
-                existing == null ? 'Add' : 'Save',
-                style: const TextStyle(color: Colors.white),
-              ),
+              child: Text(existing == null ? 'Add' : 'Save', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDialogField(String label, TextEditingController controller, {TextInputType? keyboardType}) {
+    return TextField(
+      controller: controller,
+      keyboardType: keyboardType,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: AppTheme.textSecondary),
+        enabledBorder: OutlineInputBorder(borderSide: const BorderSide(color: AppTheme.borderDark), borderRadius: BorderRadius.circular(12)),
+        focusedBorder: OutlineInputBorder(borderSide: const BorderSide(color: AppTheme.primary), borderRadius: BorderRadius.circular(12)),
+        filled: true,
+        fillColor: AppTheme.backgroundDark,
       ),
     );
   }
@@ -266,8 +241,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
     if (_restaurantId == null) return;
     try {
       final res = await _api.addMenuItem(_restaurantId!, data);
-      setState(() =>
-          _menuItems.insert(0, Map<String, dynamic>.from(res['menu_item'])));
+      setState(() => _menuItems.insert(0, Map<String, dynamic>.from(res['menu_item'])));
       _showSnack('Menu item added ✅');
     } catch (e) {
       _showSnack('Error: ${e.toString()}', error: true);
@@ -294,15 +268,14 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
     final confirm = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('Delete Item'),
-        content: Text('Remove "$name" from the menu?'),
+        backgroundColor: AppTheme.surfaceDark,
+        title: const Text('Delete Item', style: TextStyle(color: Colors.white)),
+        content: Text('Remove "$name" from the menu?', style: const TextStyle(color: AppTheme.textSecondary)),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: const Text('Delete', style: TextStyle(color: Colors.redAccent)),
           ),
         ],
       ),
@@ -317,34 +290,24 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
     }
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
-
   void _showSnack(String msg, {bool error = false}) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text(msg),
-      backgroundColor: error ? Colors.red : Colors.green,
+      content: Text(msg, style: const TextStyle(color: Colors.white)),
+      backgroundColor: error ? Colors.redAccent : Colors.greenAccent.withValues(alpha: 0.8),
     ));
   }
 
   Color _statusColor(String status) {
     switch (status.toLowerCase()) {
-      case 'pending':
-        return Colors.orange;
-      case 'confirmed':
-        return Colors.blue;
-      case 'preparing':
-        return Colors.indigo;
-      case 'ready':
-        return Colors.teal;
-      case 'on_the_way':
-        return Colors.purple;
-      case 'delivered':
-        return Colors.green;
-      case 'cancelled':
-        return Colors.red;
-      default:
-        return Colors.grey;
+      case 'pending': return Colors.orangeAccent;
+      case 'confirmed': return Colors.blueAccent;
+      case 'preparing': return Colors.indigoAccent;
+      case 'ready': return Colors.tealAccent;
+      case 'on_the_way': return Colors.purpleAccent;
+      case 'delivered': return Colors.greenAccent;
+      case 'cancelled': return Colors.redAccent;
+      default: return Colors.grey;
     }
   }
 
@@ -361,15 +324,22 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
     return flow[current.toLowerCase()] ?? [];
   }
 
-  // ── Build ─────────────────────────────────────────────────────────────────
-
   @override
   Widget build(BuildContext context) {
+    final pendingCount = _orders.where((o) => o['status'] == 'pending').length;
+    
+    final pages = [
+      _buildOrdersTab(),
+      _buildMenuTab(),
+    ];
+
     return Scaffold(
+      backgroundColor: AppTheme.backgroundDark,
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        foregroundColor: AppColors.white,
-        title: const Text('🍽️  Restaurant Panel'),
+        backgroundColor: AppTheme.surfaceDark,
+        foregroundColor: Colors.white,
+        title: const Text('🍽️ Restaurant Hub', style: TextStyle(fontWeight: FontWeight.bold)),
+        elevation: 0,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -380,6 +350,7 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
           ),
           Consumer<AuthProvider>(
             builder: (_, auth, __) => PopupMenuButton<String>(
+              color: AppTheme.surfaceDark,
               onSelected: (v) {
                 if (v == 'logout') {
                   auth.logout();
@@ -387,162 +358,155 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                 }
               },
               itemBuilder: (_) => [
-                const PopupMenuItem(value: 'logout', child: Text('Logout')),
+                const PopupMenuItem(value: 'logout', child: Text('Logout', style: TextStyle(color: Colors.white))),
               ],
             ),
           ),
         ],
-        bottom: TabBar(
-          controller: _tabController,
-          indicatorColor: AppColors.white,
-          labelColor: AppColors.white,
-          unselectedLabelColor: AppColors.white.withOpacity(0.7),
-          tabs: [
-            Tab(
-              icon: const Icon(Icons.receipt_long),
-              text:
-                  'Orders (${_orders.where((o) => o['status'] == 'pending').length})',
-            ),
-            const Tab(icon: Icon(Icons.restaurant_menu), text: 'Menu'),
-          ],
-        ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          _buildOrdersTab(),
-          _buildMenuTab(),
+      body: AnimatedSwitcher(duration: 300.ms, child: pages[_selectedIndex]),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: (index) => setState(() => _selectedIndex = index),
+        backgroundColor: AppTheme.surfaceDark,
+        indicatorColor: AppTheme.primary.withValues(alpha: 0.2),
+        destinations: [
+          NavigationDestination(
+            icon: Badge(isLabelVisible: pendingCount > 0, label: Text('$pendingCount'), child: const Icon(Icons.receipt_long_outlined)),
+            selectedIcon: Badge(isLabelVisible: pendingCount > 0, label: Text('$pendingCount'), child: const Icon(Icons.receipt_long, color: AppTheme.primary)),
+            label: 'Orders',
+          ),
+          const NavigationDestination(
+            icon: Icon(Icons.restaurant_menu_outlined),
+            selectedIcon: Icon(Icons.restaurant_menu, color: AppTheme.primary),
+            label: 'Menu',
+          ),
         ],
       ),
     );
   }
 
-  // ── Orders Tab ────────────────────────────────────────────────────────────
-
   Widget _buildOrdersTab() {
-    if (_ordersLoading) return const Center(child: CircularProgressIndicator());
+    if (_ordersLoading) return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
     if (_orders.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inbox, size: 64, color: Colors.grey),
-            SizedBox(height: 12),
-            Text('No orders yet', style: TextStyle(color: Colors.grey)),
+            const Icon(Icons.inbox_outlined, size: 64, color: AppTheme.textSecondary),
+            const SizedBox(height: 16),
+            const Text('No orders yet', style: TextStyle(color: AppTheme.textSecondary, fontSize: 16)),
           ],
         ),
-      );
+      ).animate().fadeIn();
     }
 
     return RefreshIndicator(
       onRefresh: _loadOrders,
       child: ListView.builder(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         itemCount: _orders.length,
         itemBuilder: (_, i) => _OrderCard(
           order: _orders[i],
           statusColor: _statusColor(_orders[i]['status'] ?? ''),
           nextStatuses: _nextStatuses(_orders[i]['status'] ?? ''),
           onUpdateStatus: (s) => _updateStatus(_orders[i]['id'], s),
-        ),
+        ).animate().fadeIn(delay: Duration(milliseconds: 100 * i)),
       ),
     );
   }
 
-  // ── Menu Tab ──────────────────────────────────────────────────────────────
-
   Widget _buildMenuTab() {
-    if (_menuLoading) return const Center(child: CircularProgressIndicator());
+    if (_menuLoading) return const Center(child: CircularProgressIndicator(color: AppTheme.primary));
 
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(24),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
                 '${_menuItems.length} item${_menuItems.length == 1 ? '' : 's'}',
-                style: const TextStyle(fontSize: 14, color: Colors.grey),
+                style: const TextStyle(fontSize: 16, color: AppTheme.textSecondary),
               ),
               ElevatedButton.icon(
-                style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-                icon: const Icon(Icons.add, color: Colors.white),
-                label: const Text('Add Item',
-                    style: TextStyle(color: Colors.white)),
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primary,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12)),
+                icon: const Icon(Icons.add),
+                label: const Text('Add Item', style: TextStyle(fontWeight: FontWeight.bold)),
                 onPressed: () => _showMenuItemDialog(),
-              ),
+              ).animate().scale(),
             ],
           ),
         ),
         Expanded(
           child: _menuItems.isEmpty
-              ? const Center(child: Text('No menu items yet. Add one!'))
+              ? const Center(child: Text('No menu items yet. Add one!', style: TextStyle(color: AppTheme.textSecondary)))
               : ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: _menuItems.length,
                   itemBuilder: (_, i) {
                     final item = _menuItems[i];
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 10),
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(
+                        color: AppTheme.surfaceDark,
+                        border: Border.all(color: AppTheme.borderDark),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
                       child: ListTile(
+                        contentPadding: const EdgeInsets.all(16),
                         leading: CircleAvatar(
-                          backgroundColor: item['is_veg'] == true
-                              ? Colors.green[100]
-                              : Colors.red[100],
+                          backgroundColor: item['is_veg'] == true ? Colors.greenAccent.withValues(alpha: 0.2) : Colors.redAccent.withValues(alpha: 0.2),
+                          radius: 24,
                           child: Icon(
-                            item['is_veg'] == true
-                                ? Icons.eco
-                                : Icons.lunch_dining,
-                            color: item['is_veg'] == true
-                                ? Colors.green
-                                : Colors.red,
+                            item['is_veg'] == true ? Icons.eco : Icons.lunch_dining,
+                            color: item['is_veg'] == true ? Colors.greenAccent : Colors.redAccent,
                           ),
                         ),
-                        title: Text(
-                          item['name'] ?? '',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
+                        title: Text(item['name'] ?? '', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18)),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(item['description'] ?? ''),
-                            Row(children: [
-                              Chip(
-                                label: Text(item['category'] ?? 'Other'),
-                                materialTapTargetSize:
-                                    MaterialTapTargetSize.shrinkWrap,
-                                padding: EdgeInsets.zero,
-                                labelPadding:
-                                    const EdgeInsets.symmetric(horizontal: 4),
-                              ),
-                              const SizedBox(width: 6),
-                              if (item['is_available'] != true)
-                                const Chip(
-                                  label: Text('Unavailable',
-                                      style: TextStyle(
-                                          color: Colors.white, fontSize: 11)),
-                                  backgroundColor: Colors.red,
-                                  materialTapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                  padding: EdgeInsets.zero,
-                                  labelPadding:
-                                      EdgeInsets.symmetric(horizontal: 4),
+                            const SizedBox(height: 8),
+                            Text(item['description'] ?? '', style: const TextStyle(color: AppTheme.textSecondary)),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.backgroundDark,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(item['category'] ?? 'Other', style: const TextStyle(color: Colors.white, fontSize: 12)),
                                 ),
-                            ]),
+                                const SizedBox(width: 8),
+                                if (item['is_available'] != true)
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: Colors.redAccent.withValues(alpha: 0.2),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: Colors.redAccent),
+                                    ),
+                                    child: const Text('Unavailable', style: TextStyle(color: Colors.redAccent, fontSize: 10, fontWeight: FontWeight.bold)),
+                                  ),
+                              ],
+                            ),
                           ],
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              '₹${item['price']}',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 15,
-                                  color: AppColors.primary),
-                            ),
+                            Text('₹${item['price']}', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: AppTheme.primary)),
                             PopupMenuButton<String>(
+                              icon: const Icon(Icons.more_vert, color: Colors.white),
+                              color: AppTheme.surfaceDark,
                               onSelected: (action) {
                                 if (action == 'edit') {
                                   _showMenuItemDialog(existing: item);
@@ -551,19 +515,14 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
                                 }
                               },
                               itemBuilder: (_) => [
-                                const PopupMenuItem(
-                                    value: 'edit', child: Text('Edit')),
-                                const PopupMenuItem(
-                                  value: 'delete',
-                                  child: Text('Delete',
-                                      style: TextStyle(color: Colors.red)),
-                                ),
+                                const PopupMenuItem(value: 'edit', child: Text('Edit', style: TextStyle(color: Colors.white))),
+                                const PopupMenuItem(value: 'delete', child: Text('Delete', style: TextStyle(color: Colors.redAccent))),
                               ],
                             ),
                           ],
                         ),
                       ),
-                    );
+                    ).animate().fadeIn(delay: Duration(milliseconds: 100 * i));
                   },
                 ),
         ),
@@ -571,8 +530,6 @@ class _RestaurantDashboardPageState extends State<RestaurantDashboardPage>
     );
   }
 }
-
-// ── Order Card Widget ─────────────────────────────────────────────────────────
 
 class _OrderCard extends StatelessWidget {
   final Map<String, dynamic> order;
@@ -592,101 +549,99 @@ class _OrderCard extends StatelessWidget {
     final items = order['items'] as List? ?? [];
     final status = order['status'] ?? 'unknown';
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 12),
-      elevation: 2,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header row
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceDark,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+      ),
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Order #${(order['id'] ?? '').toString().padRight(8).substring(0, 8).trimRight()}',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: statusColor.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: statusColor.withValues(alpha: 0.5)),
+                ),
+                child: Text(
+                  status.replaceAll('_', ' ').toUpperCase(),
+                  style: TextStyle(color: statusColor, fontSize: 10, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ],
+          ),
+          const Divider(color: AppTheme.borderDark, height: 32),
+          Row(
+            children: [
+              const Icon(Icons.person, color: AppTheme.textSecondary, size: 16),
+              const SizedBox(width: 8),
+              Text('👤 ${order['customer_username'] ?? 'Customer'}', style: const TextStyle(color: Colors.white, fontSize: 16)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          if (order['delivery_address'] != null)
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                const Icon(Icons.location_on, color: AppTheme.textSecondary, size: 16),
+                const SizedBox(width: 8),
                 Expanded(
-                  child: Text(
-                    'Order #${(order['id'] ?? '').toString().padRight(8).substring(0, 8).trimRight()}',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15),
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: statusColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: statusColor),
-                  ),
-                  child: Text(
-                    status.replaceAll('_', ' ').toUpperCase(),
-                    style: TextStyle(
-                        color: statusColor,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold),
-                  ),
+                  child: Text('📍 ${order['delivery_address']}', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
                 ),
               ],
             ),
-            const Divider(),
-            // Customer & address
-            Text('👤 ${order['customer_username'] ?? 'Customer'}'),
-            if (order['delivery_address'] != null)
-              Text('📍 ${order['delivery_address']}',
-                  style: const TextStyle(color: Colors.grey, fontSize: 12)),
-            const SizedBox(height: 8),
-            // Items
-            ...items.map((item) => Padding(
-                  padding: const EdgeInsets.only(bottom: 2),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('• ${item['name'] ?? ''} × ${item['qty'] ?? 1}'),
-                      Text('₹${item['price'] ?? 0}'),
-                    ],
-                  ),
-                )),
-            const Divider(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '₹${order['total_amount'] ?? 0}',
-                  style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: Color(0xFFff6b35)),
+          const SizedBox(height: 16),
+          ...items.map((item) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('• ${item['name'] ?? ''} × ${item['qty'] ?? 1}', style: const TextStyle(color: Colors.white)),
+                    Text('₹${item['price'] ?? 0}', style: const TextStyle(color: AppTheme.textSecondary)),
+                  ],
                 ),
-                // Action buttons for status transitions
-                if (nextStatuses.isNotEmpty)
-                  Row(
-                    children: nextStatuses.map((s) {
-                      final isCancel = s == 'cancelled';
-                      return Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                isCancel ? Colors.red : const Color(0xFFff6b35),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                          ),
-                          onPressed: () => onUpdateStatus(s),
-                          child: Text(
-                            s.replaceAll('_', ' ').toUpperCase(),
-                            style: const TextStyle(
-                                color: Colors.white, fontSize: 11),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  ),
-              ],
-            ),
-          ],
-        ),
+              )),
+          const Divider(color: AppTheme.borderDark, height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                '₹${order['total_amount'] ?? 0}',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: AppTheme.primary),
+              ),
+              if (nextStatuses.isNotEmpty)
+                Wrap(
+                  spacing: 8,
+                  children: nextStatuses.map((s) {
+                    final isCancel = s == 'cancelled';
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: isCancel ? Colors.redAccent.withValues(alpha: 0.2) : AppTheme.primary.withValues(alpha: 0.2),
+                        foregroundColor: isCancel ? Colors.redAccent : AppTheme.primary,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      ),
+                      onPressed: () => onUpdateStatus(s),
+                      child: Text(s.replaceAll('_', ' ').toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                    );
+                  }).toList(),
+                ),
+            ],
+          ),
+        ],
       ),
     );
   }

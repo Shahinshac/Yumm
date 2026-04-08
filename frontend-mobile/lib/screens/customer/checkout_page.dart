@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_spacing.dart';
-import '../../core/constants/app_typography.dart';
-import '../../core/widgets/custom_button.dart';
-import '../../core/widgets/custom_text_field.dart';
+import 'package:flutter_animate/flutter_animate.dart';
+import '../../core/theme.dart';
+import '../../core/components/custom_button.dart';
+import '../../core/components/custom_text_field.dart';
 import '../../core/widgets/custom_empty_state.dart';
 import '../../providers/order_provider.dart';
 
@@ -33,14 +32,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please enter delivery address'),
-          backgroundColor: AppColors.error,
+          backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
         ),
       );
       return;
     }
-    // For now, use a default or get from navigation args
-    // In a real app, restaurantId would be passed through navigation or stored elsewhere
+    
     orderProvider
         .placeOrder('default_restaurant', _addressController.text)
         .then((success) {
@@ -51,9 +49,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppTheme.backgroundDark,
       appBar: AppBar(
-          title: const Text('Checkout'), elevation: AppSpacing.elevationMd),
+        title: const Text('Checkout', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+        backgroundColor: AppTheme.surfaceDark,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
       body: Consumer<OrderProvider>(
         builder: (context, orderProvider, _) {
           if (orderProvider.cart.isEmpty) {
@@ -62,134 +64,117 @@ class _CheckoutPageState extends State<CheckoutPage> {
               title: 'Your Cart is Empty',
               description: 'Add items from restaurants to get started',
               actionButton: CustomButton(
-                label: 'Continue Shopping',
+                text: 'Continue Shopping',
                 onPressed: () => context.go('/home'),
               ),
-            );
+            ).animate().fadeIn().moveY(begin: 20);
           }
 
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            padding: const EdgeInsets.all(24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Delivery Address',
-                    style: AppTypography.titleMedium
-                        .copyWith(color: AppColors.textPrimary)),
-                const SizedBox(height: AppSpacing.md),
+                Text('Delivery Details', style: Theme.of(context).textTheme.titleLarge).animate().fadeIn(),
+                const SizedBox(height: 16),
                 CustomTextField(
-                  label: 'Address',
-                  hint: 'Enter your delivery address',
+                  hintText: 'Enter your delivery address',
                   controller: _addressController,
-                  maxLines: 3,
                   prefixIcon: Icons.location_on,
-                ),
-                const SizedBox(height: AppSpacing.xxl),
-                Text('Order Summary',
-                    style: AppTypography.titleMedium
-                        .copyWith(color: AppColors.textPrimary)),
-                const SizedBox(height: AppSpacing.lg),
+                ).animate().fadeIn(delay: 50.ms).slideX(begin: 0.1),
+                
+                const SizedBox(height: 32),
+                
+                Text('Order Summary', style: Theme.of(context).textTheme.titleLarge).animate().fadeIn(delay: 100.ms),
+                const SizedBox(height: 16),
                 Container(
-                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(AppSpacing.radiusLg),
-                    boxShadow: [
-                      BoxShadow(
-                          color: AppColors.black.withOpacity(0.08),
-                          blurRadius: AppSpacing.elevationMd)
-                    ],
+                    color: AppTheme.surfaceDark,
+                    border: Border.all(color: AppTheme.borderDark),
+                    borderRadius: BorderRadius.circular(24),
                   ),
                   child: Column(
                     children: [
                       ...orderProvider.cart.asMap().entries.map((entry) {
+                        final index = entry.key;
                         final item = entry.value;
                         return Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                          padding: const EdgeInsets.only(bottom: 16),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
-                                  child: Text(item.item.name,
-                                      style: AppTypography.bodyMedium)),
-                              Text('x${item.quantity}',
-                                  style: AppTypography.labelSmall.copyWith(
-                                      color: AppColors.textSecondary)),
+                                child: Text(item.item.name, style: const TextStyle(color: Colors.white, fontSize: 16)),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.backgroundDark,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Text('x${item.quantity}', style: const TextStyle(color: AppTheme.textSecondary, fontSize: 14)),
+                              ),
+                              const SizedBox(width: 16),
                               Text(
-                                  'Rs.${(item.item.price * item.quantity).toStringAsFixed(0)}',
-                                  style: AppTypography.labelMedium.copyWith(
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.bold)),
+                                '₹${(item.item.price * item.quantity).toStringAsFixed(0)}',
+                                style: const TextStyle(color: AppTheme.primary, fontWeight: FontWeight.bold, fontSize: 16),
+                              ),
                             ],
                           ),
-                        );
+                        ).animate().fadeIn(delay: Duration(milliseconds: 150 + (index * 50)));
                       }),
-                      const Divider(color: AppColors.border),
+                      const Divider(color: AppTheme.borderDark, height: 32),
+                      
                       Padding(
-                        padding:
-                            const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        padding: const EdgeInsets.symmetric(vertical: 8),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Subtotal', style: AppTypography.bodyMedium),
-                            Text(
-                                'Rs.${orderProvider.subtotal.toStringAsFixed(0)}',
-                                style: AppTypography.labelMedium),
+                            const Text('Subtotal', style: TextStyle(color: AppTheme.textSecondary, fontSize: 16)),
+                            Text('₹${orderProvider.subtotal.toStringAsFixed(0)}', style: const TextStyle(color: Colors.white, fontSize: 16)),
                           ],
                         ),
-                      ),
+                      ).animate().fadeIn(delay: 300.ms),
+                      
                       Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.md),
+                        padding: const EdgeInsets.only(bottom: 16),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text('Delivery Fee',
-                                style: AppTypography.bodyMedium),
-                            Text(
-                                'Rs.${orderProvider.deliveryFee.toStringAsFixed(0)}',
-                                style: AppTypography.labelMedium),
+                            const Text('Delivery Fee', style: TextStyle(color: AppTheme.textSecondary, fontSize: 16)),
+                            Text('₹${orderProvider.deliveryFee.toStringAsFixed(0)}', style: const TextStyle(color: Colors.white, fontSize: 16)),
                           ],
                         ),
-                      ),
+                      ).animate().fadeIn(delay: 350.ms),
+                      
                       Container(
-                        padding:
-                            const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                        padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryLight.withOpacity(0.1),
-                          borderRadius:
-                              BorderRadius.circular(AppSpacing.radiusMd),
+                          color: AppTheme.primary.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: AppTheme.primary.withValues(alpha: 0.3)),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.md),
-                              child: Text('Total',
-                                  style: AppTypography.titleSmall.copyWith(
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.bold)),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.md),
-                              child: Text(
-                                  'Rs.${orderProvider.total.toStringAsFixed(0)}',
-                                  style: AppTypography.titleSmall.copyWith(
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.bold)),
+                            const Text('Total', style: TextStyle(color: AppTheme.primary, fontSize: 20, fontWeight: FontWeight.bold)),
+                            Text(
+                              '₹${orderProvider.total.toStringAsFixed(0)}',
+                              style: const TextStyle(color: AppTheme.primary, fontSize: 24, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
-                      ),
+                      ).animate().fadeIn(delay: 400.ms).scale(begin: const Offset(0.95, 0.95)),
                     ],
                   ),
                 ),
-                const SizedBox(height: AppSpacing.xxl),
+                
+                const SizedBox(height: 48),
                 CustomButton(
-                  label: 'Place Order',
+                  text: 'Place Order',
                   onPressed: () => _placeOrder(context),
-                ),
+                ).animate().fadeIn(delay: 500.ms).moveY(begin: 20),
               ],
             ),
           );
