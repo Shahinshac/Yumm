@@ -74,6 +74,9 @@ class AppColors {
   /// Pure white
   static const Color white = Color(0xFFFFFFFF);
 
+  /// 70% opaque white, for subtle tab text on dark app bars
+  static const Color white70 = Color.fromRGBO(255, 255, 255, 0.70);
+
   /// Light gray background
   static const Color gray50 = Color(0xFFFAFAFA);
 
