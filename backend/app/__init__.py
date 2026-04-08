@@ -125,9 +125,26 @@ def create_app():
     # JWT Configuration
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', app.config['JWT_SECRET_KEY'])
 
-    # CORS
-    cors_origins = [origin.strip() for origin in app.config.get('CORS_ORIGINS', '*').split(',')]
-    CORS(app, resources={r"/api/*": {"origins": cors_origins, "supports_credentials": True}})
+    # CORS - Handle both the correct name and common typos from the environment
+    origins_str = os.getenv('CORS_ORIGINS') or os.getenv('CORS_ORGINS')
+    
+    if origins_str:
+        cors_origins = [origin.strip() for origin in origins_str.split(',') if origin.strip()]
+    else:
+        # Robust defaults for development and the specific production Vercel domain
+        cors_origins = [
+            "http://localhost:5173", 
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+            "https://yummfoodhub.vercel.app"
+        ]
+        
+    CORS(app, resources={r"/api/*": {
+        "origins": cors_origins, 
+        "supports_credentials": True,
+        "allow_headers": ["Content-Type", "Authorization"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    }})
     logger.info(f"✅ CORS configured for origins: {cors_origins}")
 
     # JWT Initialization
