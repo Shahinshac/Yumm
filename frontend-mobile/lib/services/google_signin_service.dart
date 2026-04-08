@@ -13,9 +13,9 @@ class GoogleSignInService {
 
     if (kIsWeb) {
       // Web: Use meta tag in index.html, don't pass clientId
-      // Use minimal scopes for web
+      // Important: Include 'openid' scope for ID token retrieval
       _googleSignIn = GoogleSignIn(
-        scopes: ['email', 'profile'],
+        scopes: ['openid', 'email', 'profile'],
       );
       debugPrint('$TAG: ✅ Web initialization complete (using meta tag)');
     } else {
@@ -26,7 +26,7 @@ class GoogleSignInService {
       );
       _googleSignIn = GoogleSignIn(
         clientId: clientId,
-        scopes: ['email', 'profile'],
+        scopes: ['openid', 'email', 'profile'],
       );
     }
   }
@@ -93,7 +93,12 @@ class GoogleSignInService {
       final idToken = authentication.idToken;
 
       if (idToken == null) {
-        throw Exception('Failed to retrieve ID token');
+        debugPrint('$TAG: ⚠️  ID token is null - possible causes:');
+        debugPrint('   1. People API not enabled in Google Cloud Console');
+        debugPrint('   2. OAuth scopes missing (need: openid, email, profile)');
+        debugPrint('   3. Browser privacy settings blocking token');
+        debugPrint('   4. User not fully authenticated');
+        throw Exception('Failed to retrieve ID token - check scopes and People API in Google Cloud');
       }
 
       debugPrint('$TAG: ✅ ID token obtained (length: ${idToken.length})');
