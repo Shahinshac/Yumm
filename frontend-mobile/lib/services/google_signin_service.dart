@@ -44,6 +44,9 @@ class GoogleSignInService {
     }
 
     // For mobile: Determine platform by checking native channel or use defaultTargetPlatform
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      return '946437330680-drp10qt4b720rhdl6h19uruj1pqirsat.apps.googleusercontent.com';
+    }
     // Default: return Android client ID (most common)
     return '946437330680-87ma1tf4dg56rcp0mk4moi00r7f3159m.apps.googleusercontent.com';
   }
