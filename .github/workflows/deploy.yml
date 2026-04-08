@@ -43,8 +43,8 @@ jobs:
 
       - name: Install frontend dependencies
         run: |
-          cd frontend-mobile
-          npm install || true
+          cd frontend
+          npm install
 
   deploy:
     needs: test
