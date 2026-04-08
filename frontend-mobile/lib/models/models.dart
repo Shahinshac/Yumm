@@ -220,6 +220,7 @@ class Order {
       createdAt: createdAt ?? this.createdAt,
     );
   }
+}
 
 // Order Item Model
 class OrderItem {
