@@ -4,7 +4,11 @@
   "outputDirectory": "frontend/dist",
   "rewrites": [
     {
-      "source": "/(.*)",
+      "source": "/api/(.*)",
+      "destination": "https://yumm-ym2m.onrender.com/api/$1"
+    },
+    {
+      "source": "/((?!api/).*)",
       "destination": "/index.html"
     }
   ]
