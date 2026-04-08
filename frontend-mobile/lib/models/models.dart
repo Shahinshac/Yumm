@@ -189,7 +189,37 @@ class Order {
           : DateTime.now(),
     );
   }
-}
+
+  /// Create a copy of this Order with some fields updated
+  Order copyWith({
+    String? id,
+    String? restaurantId,
+    String? restaurantName,
+    List<OrderItem>? items,
+    double? subtotal,
+    double? deliveryCharge,
+    double? promoDiscount,
+    double? totalAmount,
+    String? deliveryAddress,
+    String? status,
+    DateTime? estimatedDelivery,
+    DateTime? createdAt,
+  }) {
+    return Order(
+      id: id ?? this.id,
+      restaurantId: restaurantId ?? this.restaurantId,
+      restaurantName: restaurantName ?? this.restaurantName,
+      items: items ?? this.items,
+      subtotal: subtotal ?? this.subtotal,
+      deliveryCharge: deliveryCharge ?? this.deliveryCharge,
+      promoDiscount: promoDiscount ?? this.promoDiscount,
+      totalAmount: totalAmount ?? this.totalAmount,
+      deliveryAddress: deliveryAddress ?? this.deliveryAddress,
+      status: status ?? this.status,
+      estimatedDelivery: estimatedDelivery ?? this.estimatedDelivery,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 
 // Order Item Model
 class OrderItem {

@@ -185,10 +185,10 @@ class OrderProvider extends ChangeNotifier {
       // Update local order
       final index = _orders.indexWhere((o) => o.id == orderId);
       if (index >= 0) {
-        _orders[index].status = newStatus;
+        _orders[index] = _orders[index].copyWith(status: newStatus);
       }
       if (_currentOrder?.id == orderId) {
-        _currentOrder?.status = newStatus;
+        _currentOrder = _currentOrder!.copyWith(status: newStatus);
       }
 
       _isLoading = false;
@@ -217,7 +217,9 @@ class OrderProvider extends ChangeNotifier {
       // Update local order
       final index = _orders.indexWhere((o) => o.id == orderId);
       if (index >= 0) {
-        _orders[index].status = response['status'] ?? 'assigned';
+        _orders[index] = _orders[index].copyWith(
+          status: response['status'] ?? 'assigned',
+        );
       }
 
       _isLoading = false;
