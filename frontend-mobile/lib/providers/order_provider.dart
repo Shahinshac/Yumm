@@ -170,6 +170,67 @@ class OrderProvider extends ChangeNotifier {
     }
   }
 
+  /// Update order status (for restaurant/delivery/admin)
+  Future<bool> updateOrderStatus(String orderId, String newStatus) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await apiService.put(
+        '/orders/$orderId/status',
+        {'new_status': newStatus},
+      );
+
+      // Update local order
+      final index = _orders.indexWhere((o) => o.id == orderId);
+      if (index >= 0) {
+        _orders[index].status = newStatus;
+      }
+      if (_currentOrder?.id == orderId) {
+        _currentOrder?.status = newStatus;
+      }
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Auto-assign delivery partner (for restaurant)
+  Future<bool> autoAssignDelivery(String orderId) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final response = await apiService.post(
+        '/orders/auto-assign/$orderId',
+        {},
+      );
+
+      // Update local order
+      final index = _orders.indexWhere((o) => o.id == orderId);
+      if (index >= 0) {
+        _orders[index].status = response['status'] ?? 'assigned';
+      }
+
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
   void clearError() {
     _error = null;
     notifyListeners();

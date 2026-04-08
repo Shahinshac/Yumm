@@ -489,4 +489,65 @@ class ApiService {
       throw Exception('Failed to fetch admin dashboard');
     }
   }
+
+  // ===== GENERIC HTTP METHODS =====
+  Future<Map<String, dynamic>> put(String endpoint, Map<String, dynamic> body) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: _getHeaders(),
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return jsonDecode(response.body);
+    } else {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Request failed');
+    }
+  }
+
+  Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> body) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl$endpoint'),
+      headers: _getHeaders(),
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 202) {
+      return jsonDecode(response.body);
+    } else {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Request failed');
+    }
+  }
+
+  // ===== ORDER ASSIGNMENT ENDPOINTS =====
+  Future<Map<String, dynamic>> autoAssignDelivery(String orderId) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/orders/auto-assign/$orderId'),
+      headers: _getHeaders(),
+      body: jsonEncode({}),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 202) {
+      return jsonDecode(response.body);
+    } else {
+      final err = jsonDecode(response.body);
+      throw Exception(err['error'] ?? 'Auto-assignment failed');
+    }
+  }
+
+  Future<List<dynamic>> getAvailableDeliveryPartners() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/orders/available-delivery'),
+      headers: _getHeaders(),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['delivery_partners'] ?? [];
+    } else {
+      throw Exception('Failed to fetch available delivery partners');
+    }
+  }
 }
