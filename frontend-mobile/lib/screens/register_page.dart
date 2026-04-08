@@ -6,7 +6,7 @@ import '../core/components/custom_button.dart';
 import '../core/components/custom_text_field.dart';
 import '../core/theme.dart';
 import '../providers/auth_provider.dart';
-import '../services/google_signin_service.dart';
+import '../services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -81,14 +81,20 @@ class _RegisterPageState extends State<RegisterPage> {
 
   void _handleGoogleSignIn(BuildContext context) async {
     try {
-      final googleSignIn = GoogleSignInService();
-      final account = await googleSignIn.signIn();
-      if (account == null) throw Exception('Google Sign-In cancelled');
-      final idToken = await googleSignIn.getIdToken();
-      if (idToken == null) throw Exception('Failed to get ID token');
+      final authService = AuthService();
+      final result = await authService.googleLogin();
 
-      if (mounted) {
-        context.go('/home');
+      if (result['success'] == true) {
+        final token = result['access_token'] as String;
+        final user = result['user'] as Map<String, dynamic>;
+
+        // Persist token via AuthProvider
+        if (mounted) {
+          await context.read<AuthProvider>().loginWithToken(token, user);
+          context.go('/home');
+        }
+      } else {
+        throw Exception(result['error'] ?? 'Google Sign-In failed');
       }
     } catch (e) {
       if (mounted) {

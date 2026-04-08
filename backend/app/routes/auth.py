@@ -228,26 +228,40 @@ def register_delivery():
 
 @bp.route('/google-login', methods=['POST'])
 def google_login():
-    """Mock Google Sign-In for customers
+    """Google Sign-In for customers using Access Token
 
-    For testing: send {"id_token": "mock_user123"}
+    Accepts the access_token from Google OAuth2 (via google_sign_in Flutter plugin),
+    verifies it directly against Google's userinfo endpoint, then logs the user in.
     """
+    import requests as req_lib
+
     data = request.get_json()
 
-    if not data.get('id_token'):
-        return jsonify({'error': 'Missing id_token'}), 400
-
-    id_token = data.get('id_token', '').strip()
-
-    # Validate mock token format
-    if not Validators.validate_google_mock_token(id_token):
-        return jsonify({'error': 'Invalid token format. Mock tokens must start with "mock_"'}), 400
+    access_token = data.get('access_token', '').strip()
+    if not access_token:
+        return jsonify({'error': 'Missing access_token'}), 400
 
     try:
-        # Extract user data from mock token
-        google_id = id_token
-        email = f"{id_token}@gmail.com"
-        name = "Mock User"
+        # Verify token and get user profile from Google
+        google_response = req_lib.get(
+            'https://www.googleapis.com/oauth2/v3/userinfo',
+            headers={'Authorization': f'Bearer {access_token}'},
+            timeout=10
+        )
+
+        if google_response.status_code != 200:
+            logger.warning(f"Google userinfo rejected access_token: {google_response.status_code}")
+            return jsonify({'error': 'Invalid or expired Google token'}), 401
+
+        google_data = google_response.json()
+        google_id = google_data.get('sub')  # Google's unique user ID
+        email = google_data.get('email')
+        name = google_data.get('name', email)
+
+        if not email or not google_id:
+            return jsonify({'error': 'Could not retrieve user info from Google'}), 400
+
+        logger.info(f"Google userinfo verified for: {email}")
 
         # Check if user exists by google_id or email
         existing_user = User.objects(google_id=google_id).first()
@@ -255,24 +269,29 @@ def google_login():
             existing_user = User.objects(email=email).first()
 
         if existing_user:
-            # User exists
             if existing_user.role != 'customer':
                 return jsonify({'error': 'Email already registered as a different role'}), 403
-            # Login existing customer
             user = existing_user
         else:
             # Create new customer user
+            base_username = email.split('@')[0]
+            username = base_username
+            counter = 1
+            while User.objects(username=username).first():
+                username = f"{base_username}{counter}"
+                counter += 1
+
             user = User(
-                username=f"cust_{id_token}",
+                username=username,
                 email=email,
-                phone="0000000000",  # Placeholder
+                phone='0000000000',
                 full_name=name,
                 role='customer',
-                is_approved=True,  # Auto-approve customers
+                is_approved=True,
                 is_verified=True,
                 is_active=True,
                 google_id=google_id,
-                password_hash=None  # No password for Google users
+                password_hash=None
             )
             user.save()
             logger.info(f"New customer created via Google: {email}")
@@ -281,12 +300,11 @@ def google_login():
         user.last_login = datetime.utcnow()
         user.save()
 
-        # Create JWT token
-        access_token = create_access_token(identity=str(user.id))
+        access_token_jwt = create_access_token(identity=str(user.id))
 
         return jsonify({
             'message': 'Google login successful',
-            'access_token': access_token,
+            'access_token': access_token_jwt,
             'user': user.to_dict()
         }), 200
 

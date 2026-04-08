@@ -78,20 +78,20 @@ class AuthService {
 
       debugPrint('$TAG: ✅ Google Sign-In successful: ${account.email}');
 
-      // Step 2: Get ID token
-      final idToken = await googleSignIn.getIdToken();
-      if (idToken == null) {
-        throw Exception('Failed to get ID token from Google');
+      // Step 2: Get token (access_token on web via GIS, idToken on mobile)
+      final token = await googleSignIn.getIdToken();
+      if (token == null) {
+        throw Exception('Failed to get token from Google');
       }
 
-      debugPrint('$TAG: ID token obtained (length: ${idToken.length})');
+      debugPrint('$TAG: Token obtained (length: ${token.length})');
 
-      // Step 3: Send to backend
-      debugPrint('$TAG: Sending ID token to backend...');
+      // Step 3: Send to backend as access_token
+      debugPrint('$TAG: Sending token to backend...');
 
       final response = await _dio.post(
         '/api/auth/google-login',
-        data: {'id_token': idToken},
+        data: {'access_token': token},
       );
 
       if (response.statusCode == 200) {

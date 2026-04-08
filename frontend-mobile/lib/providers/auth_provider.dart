@@ -28,6 +28,7 @@ class AuthProvider extends ChangeNotifier {
       final response = await apiService.login(username, password);
       _token = response['access_token'];
       _user = User.fromJson(response['user']);
+      await apiService.setToken(_token!);
       _isLoading = false;
       notifyListeners();
       return true;
@@ -37,6 +38,14 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  /// Login using an already-retrieved token and user map (e.g., from Google Sign-In)
+  Future<void> loginWithToken(String token, Map<String, dynamic> userMap) async {
+    _token = token;
+    _user = User.fromJson(userMap);
+    await apiService.setToken(token);
+    notifyListeners();
   }
 
   Future<bool> register(

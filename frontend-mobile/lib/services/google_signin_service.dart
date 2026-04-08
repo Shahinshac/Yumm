@@ -73,11 +73,11 @@ class GoogleSignInService {
     }
   }
 
-  /// Get ID token for backend communication
-  /// This token is sent to the backend for authentication
+  /// Get Google token for backend communication.
+  /// On web (GIS), only accessToken is available via custom buttons.
+  /// Falls back to accessToken automatically if idToken is null.
   Future<String?> getIdToken() async {
     try {
-      // Get current user or prompt to sign in
       var user = _googleSignIn.currentUser;
 
       if (user == null) {
@@ -90,44 +90,33 @@ class GoogleSignInService {
         }
       }
 
-      debugPrint('$TAG: Getting ID token for ${user.email}...');
+      debugPrint('$TAG: Getting authentication details for ${user.email}...');
 
-      // Get authentication details
       final authentication = await user.authentication;
-      final idToken = authentication.idToken;
 
-      if (idToken == null) {
-        debugPrint('$TAG: ⚠️  ID token is null - possible causes:');
-        debugPrint(
-            '   1. OAuth Web client ID is incorrect or not authorized for this origin');
-        debugPrint(
-            '   2. People API / OpenID Connect scope is not enabled in Google Cloud');
-        debugPrint(
-            '   3. OAuth client does not include the current web origin under JavaScript origins');
-        debugPrint(
-            '   4. Browser privacy settings or third-party cookies are blocking the auth flow');
-        throw Exception(
-          'Failed to retrieve ID token. Check your Google OAuth Web client ID, authorized JavaScript origins, and OpenID scope configuration.',
-        );
+      // On Web with the new GIS library, idToken is null for custom buttons.
+      // We fall back to accessToken which works equally well with our backend.
+      final token = authentication.idToken ?? authentication.accessToken;
+
+      if (token == null) {
+        debugPrint('$TAG: ⚠️  Both idToken and accessToken are null.');
+        throw Exception('Failed to retrieve any token from Google. Please try again.');
       }
 
-      debugPrint('$TAG: ✅ ID token obtained (length: ${idToken.length})');
-      return idToken;
+      final tokenType = authentication.idToken != null ? 'ID Token' : 'Access Token (GIS fallback)';
+      debugPrint('$TAG: ✅ Token obtained via $tokenType (length: ${token.length})');
+      return token;
     } catch (e) {
-      debugPrint('$TAG: ❌ Error getting ID token: $e');
+      debugPrint('$TAG: ❌ Error getting token: $e');
       rethrow;
     }
   }
 
-  /// Get access token (optional, for other APIs)
+  /// Get access token directly (for explicit use)
   Future<String?> getAccessToken() async {
     try {
       var user = _googleSignIn.currentUser;
-
-      if (user == null) {
-        return null;
-      }
-
+      if (user == null) return null;
       final authentication = await user.authentication;
       return authentication.accessToken;
     } catch (e) {
