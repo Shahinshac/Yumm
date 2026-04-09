@@ -434,10 +434,7 @@ def reject_user(user_id):
             return jsonify({'error': 'User not found'}), 404
 
         if user.role not in ['restaurant', 'delivery']:
-            return jsonify({'error': 'Only pending restaurants and delivery partners can be rejected'}), 403
-
-        if user.is_approved:
-            return jsonify({'error': 'Cannot reject an already-approved user'}), 400
+            return jsonify({'error': 'Only restaurants and delivery partners can be deleted'}), 403
 
         # Capture email for logging and response BEFORE deletion
         email = user.email

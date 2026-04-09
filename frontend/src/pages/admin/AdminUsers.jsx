@@ -44,6 +44,24 @@ const AdminUsers = () => {
     }
   };
 
+  const handleDeleteUser = async (user) => {
+    if (!window.confirm(`Are you sure you want to PERMANENTLY delete account "${user.full_name || user.username}"? This will also remove their business profile and history.`)) {
+        return;
+    }
+
+    try {
+        const res = await adminService.rejectUser(user.id);
+        if (res.success) {
+            setUsers(prev => prev.filter(u => u.id !== user.id));
+        } else {
+            alert(res.error || 'Failed to delete user');
+        }
+    } catch (err) {
+        console.error("Delete error:", err);
+        alert(err.response?.data?.error || 'Failed to delete user. Please try again.');
+    }
+  };
+
   const checkIsOnline = (lastActivityDate) => {
     if (!lastActivityDate) return false;
     const lastActivity = new Date(lastActivityDate);
@@ -156,7 +174,11 @@ const AdminUsers = () => {
                        <button className="p-2 hover:bg-white rounded-lg transition text-gray-400 hover:text-blue-500">
                         <Edit2 size={16} />
                       </button>
-                      <button className="p-2 hover:bg-white rounded-lg transition text-gray-400 hover:text-red-500">
+                      <button 
+                        onClick={() => handleDeleteUser(user)}
+                        className="p-2 hover:bg-white rounded-lg transition text-gray-400 hover:text-red-500"
+                        title="Delete User"
+                      >
                         <Trash2 size={16} />
                       </button>
                     </div>
