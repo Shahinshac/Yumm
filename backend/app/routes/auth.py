@@ -210,6 +210,7 @@ def register_delivery():
         # Create delivery partner record
         delivery_partner = DeliveryPartner(
             user=user,
+            phone=phone,
             vehicle_type=vehicle_type,
             is_verified=False,
             is_active=True
@@ -235,7 +236,9 @@ def google_login():
     Accepts the access_token from Google OAuth2 (via google_sign_in Flutter plugin),
     verifies it directly against Google's userinfo endpoint, then logs the user in.
     """
-    import requests as req_lib
+    from google.oauth2 import id_token
+    from google.auth.transport import requests as google_auth_req
+    import os
 
     data = request.get_json()
 
@@ -251,26 +254,34 @@ def google_login():
             email = "testcustomer@example.com"
             name = "Test Customer"
         else:
-            # Verify token and get user profile from Google
-            google_response = req_lib.get(
-                'https://www.googleapis.com/oauth2/v3/userinfo',
-                headers={'Authorization': f'Bearer {access_token}'},
-                timeout=10
-            )
+            # For web, Google Identity Services (GIS) provides an ID Token (JWT)
+            # which must be verified against the GOOGLE_CLIENT_ID
+            client_id = os.getenv('GOOGLE_CLIENT_ID')
+            if not client_id:
+                logger.error("GOOGLE_CLIENT_ID not found in environment")
+                return jsonify({'error': 'Server configuration error: missing client ID'}), 500
 
-            if google_response.status_code != 200:
-                logger.warning(f"Google userinfo rejected access_token: {google_response.status_code}")
-                return jsonify({'error': 'Invalid or expired Google token'}), 401
+            try:
+                # Verify the ID Token
+                # 'access_token' variable in this context contains the ID Token string
+                id_info = id_token.verify_oauth2_token(
+                    access_token,
+                    google_auth_req.Request(),
+                    client_id
+                )
 
-            google_data = google_response.json()
-            google_id = google_data.get('sub')  # Google's unique user ID
-            email = google_data.get('email')
-            name = google_data.get('name', email)
+                google_id = id_info.get('sub')
+                email = id_info.get('email')
+                name = id_info.get('name', email)
 
-            if not email or not google_id:
-                return jsonify({'error': 'Could not retrieve user info from Google'}), 400
+                if not email or not google_id:
+                    return jsonify({'error': 'Unable to retrieve required user info from Google'}), 400
 
-            logger.info(f"Google userinfo verified for: {email}")
+                logger.info(f"Google ID token verified for: {email}")
+
+            except ValueError as ve:
+                logger.warning(f"Google ID token verification failed: {str(ve)}")
+                return jsonify({'error': 'Invalid or expired Google token', 'details': str(ve)}), 401
 
         # Check if user exists by google_id or email
         existing_user = User.objects(google_id=google_id).first()

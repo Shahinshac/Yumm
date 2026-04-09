@@ -37,7 +37,8 @@ const Login = () => {
       login(data.user, data.access_token);
       navigate('/');
     } catch (err) {
-      setError('Google login failed. Please try again.');
+      console.error('Google Login Error:', err.response?.data || err.message);
+      setError(err.response?.data?.error || 'Google login failed. Please try again.');
     } finally {
       setLoading(false);
     }
