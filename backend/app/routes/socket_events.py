@@ -165,3 +165,42 @@ def handle_join_fleet(data):
     """Admin joins fleet room for global tracking"""
     join_room('admin_fleet')
     emit('joined', {'room': 'admin_fleet'})
+
+
+@socketio.on('chat_message')
+def handle_chat_message(data):
+    """Handle incoming chat message in an order room.
+    Payload: { order_id: str, message: str, token: str }
+    """
+    from backend.app.models.models import Order, ChatMessage
+    from backend.app.models.user import User
+    
+    token = data.get('token')
+    order_id = data.get('order_id')
+    msg_text = data.get('message')
+    
+    if not token or not order_id or not msg_text:
+        return
+        
+    try:
+        identity = decode_token(token)['sub']
+        user = User.objects(id=identity).first()
+        order = Order.objects(id=order_id).first()
+        
+        if user and order:
+            # Save message
+            chat_msg = ChatMessage(
+                order=order,
+                sender=user,
+                message=msg_text
+            )
+            chat_msg.save()
+            
+            # Broadcast to order room
+            payload = chat_msg.to_dict()
+            room = f'order_{order_id}'
+            socketio.emit('new_chat_message', payload, room=room)
+            print(f'💬 Chat: {user.username} says "{msg_text[:20]}..." in {room}')
+
+    except Exception as e:
+        print(f"❌ Chat routing error: {str(e)}")

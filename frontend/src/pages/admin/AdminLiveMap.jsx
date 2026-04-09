@@ -108,6 +108,16 @@ const AdminLiveMap = () => {
                         <div className="w-2 h-2 bg-orange-500 rounded-full" />
                         <span className="text-xs font-black text-gray-900 uppercase tracking-widest">{stats.busy} On Trip</span>
                     </div>
+                    <button 
+                        onClick={() => setHeatmapVisible(!heatmapVisible)}
+                        className={`px-6 py-3 rounded-2xl border font-black text-xs uppercase tracking-widest transition-all ${
+                            heatmapVisible 
+                            ? 'bg-red-500 text-white border-red-400 shadow-lg shadow-red-200' 
+                            : 'bg-white text-gray-900 border-gray-100 shadow-sm hover:bg-gray-50'
+                        }`}
+                    >
+                        {heatmapVisible ? '🔥 Heatmap Active' : '📊 Analysis Off'}
+                    </button>
                 </div>
             </div>
 
@@ -172,22 +182,35 @@ const AdminLiveMap = () => {
                     style={{ minHeight: '500px' }}
                 >
                     <TileLayer
-                        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                        attribution='&copy; <a href="https://www.basemaps.cartocdn.com/copyright">CartoDB</a>'
+                        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                     />
                     {Object.values(drivers).map(driver => (
-                        <Marker 
-                            key={driver.user_id} 
-                            position={[driver.lat, driver.lng]} 
-                            icon={DeliveryIcon}
-                        >
-                            <Popup className="custom-popup">
-                                <div className="p-2">
-                                    <p className="font-black text-gray-900 text-sm">Partner: {driver.username}</p>
-                                    <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Status: {driver.status}</p>
-                                </div>
-                            </Popup>
-                        </Marker>
+                        <React.Fragment key={driver.user_id}>
+                            <Marker 
+                                position={[driver.lat, driver.lng]} 
+                                icon={DeliveryIcon}
+                            >
+                                <Popup className="custom-popup">
+                                    <div className="p-2">
+                                        <p className="font-black text-gray-900 text-sm">Partner: {driver.username}</p>
+                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Status: {driver.status}</p>
+                                    </div>
+                                </Popup>
+                            </Marker>
+                            {heatmapVisible && (
+                                <Circle 
+                                    center={[driver.lat, driver.lng]}
+                                    radius={2000} // 2km hotspot
+                                    pathOptions={{ 
+                                        fillColor: '#ff4b3a', 
+                                        color: '#ff4b3a', 
+                                        weight: 0,
+                                        fillOpacity: 0.15 
+                                    }}
+                                />
+                            )}
+                        </React.Fragment>
                     ))}
                 </MapContainer>
             </div>

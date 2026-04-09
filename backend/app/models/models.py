@@ -251,3 +251,27 @@ class Notification(Document):
             'is_read': self.is_read,
             'created_at': self.created_at.isoformat() if self.created_at else None,
         }
+
+class ChatMessage(Document):
+    """Real-time chat message between customer and delivery partner"""
+    order = ReferenceField('Order', required=True)
+    sender = ReferenceField('User', required=True)
+    message = StringField(required=True)
+    created_at = DateTimeField(default=datetime.utcnow)
+
+    meta = {
+        'collection': 'chat_messages',
+        'indexes': ['order'],
+        'ordering': ['created_at'],
+        'strict': False
+    }
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'order_id': str(self.order.id),
+            'sender_id': str(self.sender.id),
+            'sender_name': self.sender.username,
+            'message': self.message,
+            'created_at': self.created_at.isoformat(),
+        }

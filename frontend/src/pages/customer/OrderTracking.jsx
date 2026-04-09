@@ -6,6 +6,7 @@ import { io } from 'socket.io-client';
 import L from 'leaflet';
 import { Navigation, Package, MapPin, Phone, MessageSquare, ChevronLeft, Loader2, Clock, ShieldCheck } from 'lucide-react';
 import { customerService } from '../../services/customerService';
+import ChatModule from '../../components/ChatModule';
 
 const DriverIcon = L.divIcon({
     html: `<div class="w-10 h-10 bg-[#ff4b3a] rounded-full border-4 border-white shadow-lg flex items-center justify-center text-white">
@@ -43,6 +44,7 @@ const OrderTracking = () => {
     const [driverLocation, setDriverLocation] = useState(null);
     const [loading, setLoading] = useState(true);
     const [socket, setSocket] = useState(null);
+    const [showChat, setShowChat] = useState(false);
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -127,7 +129,8 @@ const OrderTracking = () => {
                         zoomControl={false}
                     >
                         <TileLayer
-                            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                            attribution='&copy; <a href="https://www.basemaps.cartocdn.com/copyright">CartoDB</a>'
+                            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
                         />
                         <Marker position={destLocation} icon={DestinationIcon}>
                             <Popup>Your Delivery Location</Popup>
@@ -159,7 +162,7 @@ const OrderTracking = () => {
                                     <Navigation size={32} />
                                 </div>
                                 <div>
-                                    <p className="font-black text-gray-900 text-lg">{order.delivery_partner_name || 'Assigning Partner...'}</p>
+                                    <p className="font-black text-gray-900 text-lg">{order?.delivery_partner_name || 'Assigning Partner...'}</p>
                                     <p className="text-xs font-bold text-gray-400 flex items-center gap-1 mt-0.5">
                                         <ShieldCheck size={14} className="text-green-500" /> Verified Delivery Hero
                                     </p>
@@ -170,12 +173,23 @@ const OrderTracking = () => {
                                 <button className="flex-1 py-4 bg-gray-900 text-white rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all">
                                     <Phone size={18} /> <span className="text-[10px] font-black uppercase tracking-widest">Call</span>
                                 </button>
-                                <button className="flex-1 py-4 bg-gray-50 text-gray-900 rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all">
+                                <button 
+                                    onClick={() => setShowChat(true)}
+                                    className="flex-1 py-4 bg-gray-50 text-gray-900 rounded-2xl flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-95 transition-all"
+                                >
                                     <MessageSquare size={18} /> <span className="text-[10px] font-black uppercase tracking-widest">Chat</span>
                                 </button>
                             </div>
                         </div>
                     </div>
+
+                    {showChat && (
+                        <ChatModule 
+                            orderId={orderId} 
+                            socket={socket} 
+                            onClose={() => setShowChat(false)} 
+                        />
+                    )}
 
                     <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm">
                         <h3 className="text-[10px] font-black uppercase tracking-widest text-[#ff4b3a] mb-8">Order Status</h3>

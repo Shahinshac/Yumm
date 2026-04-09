@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, TrendingUp, Bike } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, TrendingUp, Bike, MessageSquare } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import useLocationTracking from '../../hooks/useLocationTracking';
+import ChatModule from '../../components/ChatModule';
+import { io } from 'socket.io-client';
 
 const DELIVERIES = [];
 
@@ -22,6 +24,20 @@ const DeliveryDashboard = () => {
     const [online, setOnline] = useState(true);
     const [deliveries, setDeliveries] = useState(DELIVERIES);
     const [activeDelivery, setActiveDelivery] = useState(null);
+    const [showChat, setShowChat] = useState(false);
+    const [socket, setSocket] = useState(null);
+
+    // Initialize socket for chat
+    useEffect(() => {
+        const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
+        setSocket(newSocket);
+        
+        if (activeDelivery) {
+            newSocket.emit('join_order_room', { order_id: activeDelivery.id });
+        }
+        
+        return () => newSocket.disconnect();
+    }, [activeDelivery?.id]);
 
     // Initialize real-time location tracking
     useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
