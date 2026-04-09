@@ -99,5 +99,69 @@ def emit_delivery_location_update(order_id, lat, lng, delivery_partner_id=None):
         'order_id': order_id,
         'lat': lat,
         'lng': lng,
+        'timestamp': datetime.utcnow().isoformat() if 'datetime' in globals() else None
     }
     socketio.emit('delivery_location_update', payload, room=f'order_{order_id}')
+    # Also broadcast for Admin global map
+    socketio.emit('fleet_location_update', {
+        'user_id': delivery_partner_id,
+        'lat': lat,
+        'lng': lng
+    }, room='admin_fleet')
+
+
+@socketio.on('update_location')
+def handle_location_update(data):
+    """Update delivery partner location in DB and broadcast to rooms.
+    Payload: { lat: float, lng: float, order_id: str (optional) }
+    """
+    from flask_jwt_extended import decode_token
+    from backend.app.models.delivery_partner import DeliveryPartner
+    from backend.app.models.order import Order
+    from datetime import datetime
+
+    token = data.get('token')
+    lat = data.get('lat')
+    lng = data.get('lng')
+    order_id = data.get('order_id')
+
+    if not token or lat is None or lng is None:
+        return
+
+    try:
+        identity = decode_token(token)['sub']
+        partner = DeliveryPartner.objects(user=identity).first()
+        
+        if partner:
+            # Update DB (throttled logic can be here, but usually coordinates are fine)
+            partner.current_location = {'lat': lat, 'lng': lng}
+            partner.last_online_at = datetime.utcnow()
+            partner.save()
+
+            # 1. Broadcast to specific order room if they are on a trip
+            if order_id:
+                emit_delivery_location_update(order_id, lat, lng, str(identity))
+                # Update order object location too
+                order = Order.objects(id=order_id).first()
+                if order:
+                    order.current_location = {'lat': lat, 'lng': lng}
+                    order.save()
+            
+            # 2. Broadcast to Admin Fleet room
+            socketio.emit('fleet_location_update', {
+                'user_id': str(identity),
+                'username': partner.user.username,
+                'lat': lat,
+                'lng': lng,
+                'status': 'online' if partner.is_available else 'busy'
+            }, room='admin_fleet')
+
+    except Exception as e:
+        print(f"❌ Location update error: {str(e)}")
+
+
+@socketio.on('join_fleet_room')
+def handle_join_fleet(data):
+    """Admin joins fleet room for global tracking"""
+    join_room('admin_fleet')
+    emit('joined', {'room': 'admin_fleet'})

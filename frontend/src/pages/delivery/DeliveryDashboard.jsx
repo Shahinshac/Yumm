@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, TrendingUp, Bike } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import useLocationTracking from '../../hooks/useLocationTracking';
 
 const DELIVERIES = [
   {
@@ -27,9 +29,13 @@ const StatCard = ({ icon: Icon, label, value, iconColor, iconBg }) => (
 );
 
 const DeliveryDashboard = () => {
-  const [online, setOnline] = useState(true);
-  const [deliveries, setDeliveries] = useState(DELIVERIES);
-  const [activeDelivery, setActiveDelivery] = useState(null);
+    const { user } = useAuth();
+    const [online, setOnline] = useState(true);
+    const [deliveries, setDeliveries] = useState(DELIVERIES);
+    const [activeDelivery, setActiveDelivery] = useState(null);
+
+    // Initialize real-time location tracking
+    useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
 
   const acceptDelivery = (id) => {
     const d = deliveries.find(x => x.id === id);

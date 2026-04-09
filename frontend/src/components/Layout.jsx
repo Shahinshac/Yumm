@@ -38,6 +38,7 @@ const ROLE_LINKS = {
     { name: 'Platform Orders', path: '/admin/orders', icon: Package },
     { name: 'Users', path: '/admin/users', icon: User },
     { name: 'Analytics', path: '/admin/analytics', icon: TrendingUp },
+    { name: 'Fleet Map', path: '/admin/fleet-map', icon: MapIcon },
     { name: 'Settings', path: '/admin/settings', icon: Settings },
   ],
 };

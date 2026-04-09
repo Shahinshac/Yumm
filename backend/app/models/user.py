@@ -38,10 +38,11 @@ class User(Document):
     # Metadata
     created_at = DateTimeField(default=datetime.utcnow)
     last_login = DateTimeField()
+    last_activity = DateTimeField(default=datetime.utcnow)
 
     meta = {
         'collection': 'users',
-        'indexes': ['username', 'email', 'role'],
+        'indexes': ['username', 'email', 'role', 'last_activity'],
         'strict': False
     }
 
@@ -60,6 +61,8 @@ class User(Document):
             'google_id': self.google_id,
             'address': self.address,
             'created_at': self.created_at.isoformat() if self.created_at else None,
+            'last_login': self.last_login.isoformat() if self.last_login else None,
+            'last_activity': self.last_activity.isoformat() if self.last_activity else None,
             'password_generated_at': self.password_generated_at.isoformat() if self.password_generated_at else None,
         }
 

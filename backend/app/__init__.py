@@ -255,6 +255,34 @@ def create_app():
         logger.error(f"Failed to register socket events: {str(e)}")
         raise
 
+    # Activity Tracking Hook
+    @app.before_request
+    def track_user_activity():
+        """Update last_activity for authenticated users, throttled to 1 min"""
+        try:
+            from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
+            from backend.app.models.user import User
+            from datetime import datetime, timedelta
+
+            # Check if request has JWT without failing
+            try:
+                verify_jwt_in_request(optional=True)
+                user_id = get_jwt_identity()
+            except:
+                user_id = None
+
+            if user_id:
+                user = User.objects(id=user_id).first()
+                if user:
+                    # Throttle: Only update if last_activity is older than 60 seconds
+                    now = datetime.utcnow()
+                    if not user.last_activity or (now - user.last_activity) > timedelta(seconds=60):
+                        user.last_activity = now
+                        user.save()
+        except Exception as e:
+            # Don't block requests if tracking fails
+            pass
+
     # Global error handlers
     @app.errorhandler(404)
     def not_found(error):

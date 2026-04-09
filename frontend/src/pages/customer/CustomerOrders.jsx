@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Clock, ChevronRight, CheckCircle2, XCircle, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Package, Clock, ChevronRight, CheckCircle2, XCircle, Loader2, Navigation } from 'lucide-react';
 import { customerService } from '../../services/customerService';
 
 const CustomerOrders = () => {
@@ -81,6 +82,14 @@ const CustomerOrders = () => {
                   <span className="flex items-center gap-1 text-[10px] font-bold text-green-600">
                     <CheckCircle2 size={12} /> Rate Food
                   </span>
+                )}
+                {['accepted', 'assigned', 'picked'].includes(order.status) && (
+                  <Link 
+                    to={`/orders/${order.id}/track`}
+                    className="flex items-center gap-1 text-[10px] font-black text-[#ff4b3a] bg-red-50 px-3 py-1 rounded-full uppercase tracking-widest hover:bg-[#ff4b3a] hover:text-white transition-all shadow-sm"
+                  >
+                    <Navigation size={12} fill="currentColor" /> Track Live
+                  </Link>
                 )}
               </div>
             </div>

@@ -11,6 +11,7 @@ import CustomerOrders from './pages/customer/CustomerOrders';
 import CustomerProfile from './pages/customer/CustomerProfile';
 import CustomerAddresses from './pages/customer/CustomerAddresses';
 import CustomerReviews from './pages/customer/CustomerReviews';
+import OrderTracking from './pages/customer/OrderTracking';
 
 import RestaurantDashboard from './pages/restaurant/RestaurantDashboard';
 import RestaurantMenu from './pages/restaurant/RestaurantMenu';
@@ -31,6 +32,7 @@ import AdminRestaurants from './pages/admin/AdminRestaurants';
 import AdminOrders from './pages/admin/AdminOrders';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
 import AdminSettings from './pages/admin/AdminSettings';
+import AdminLiveMap from './pages/admin/AdminLiveMap';
 
 import RestaurantRegister from './pages/RestaurantRegister';
 import DeliveryRegister from './pages/DeliveryRegister';
@@ -76,6 +78,7 @@ function AppRoutes() {
         <Route path="/profile" element={<ProtectedRoute allowedRoles={['customer']}><CustomerProfile /></ProtectedRoute>} />
         <Route path="/profile/addresses" element={<ProtectedRoute allowedRoles={['customer']}><CustomerAddresses /></ProtectedRoute>} />
         <Route path="/customer/reviews" element={<ProtectedRoute allowedRoles={['customer']}><CustomerReviews /></ProtectedRoute>} />
+        <Route path="/orders/:orderId/track" element={<ProtectedRoute allowedRoles={['customer']}><OrderTracking /></ProtectedRoute>} />
         
         {/* Restaurant Routes */}
         <Route path="/restaurant/dashboard" element={<ProtectedRoute allowedRoles={['restaurant']}><RestaurantDashboard /></ProtectedRoute>} />
@@ -99,6 +102,7 @@ function AppRoutes() {
         <Route path="/admin/orders" element={<ProtectedRoute allowedRoles={['admin']}><AdminOrders /></ProtectedRoute>} />
         <Route path="/admin/analytics" element={<ProtectedRoute allowedRoles={['admin']}><AdminAnalytics /></ProtectedRoute>} />
         <Route path="/admin/settings" element={<ProtectedRoute allowedRoles={['admin']}><AdminSettings /></ProtectedRoute>} />
+        <Route path="/admin/fleet-map" element={<ProtectedRoute allowedRoles={['admin']}><AdminLiveMap /></ProtectedRoute>} />
       </Route>
     </Routes>
   );
