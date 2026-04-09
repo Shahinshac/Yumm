@@ -9,6 +9,9 @@ const CustomerCart = () => {
   const { cart, addToCart, removeFromCart, clearCart, getCartTotal } = useCart();
   const [loading, setLoading] = useState(false);
   const [placedOrder, setPlacedOrder] = useState(null);
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [showAddressModal, setShowAddressModal] = useState(false);
+  const [addressInput, setAddressInput] = useState('');
 
   const subtotal = getCartTotal();
   const deliveryFee = subtotal > 0 ? 40 : 0;
@@ -17,7 +20,10 @@ const CustomerCart = () => {
 
   const handlePlaceOrder = async () => {
     if (cart.items.length === 0) return;
-    
+    if (!deliveryAddress.trim()) {
+      setShowAddressModal(true);
+      return;
+    }
     setLoading(true);
     try {
         const orderData = {
@@ -26,10 +32,11 @@ const CustomerCart = () => {
                 id: i.id,
                 name: i.name,
                 price: i.price,
-                quantity: i.quantity
+                quantity: i.quantity,
+                qty: i.quantity  // send both for backend compatibility
             })),
             total_amount: total,
-            delivery_address: "My Default Address", // In a real app, this would come from profile
+            delivery_address: deliveryAddress,
             payment_method: "COD"
         };
         
@@ -37,7 +44,6 @@ const CustomerCart = () => {
         setPlacedOrder(res.order);
         clearCart();
         
-        // Redirect after a short delay to show success
         setTimeout(() => {
             navigate(`/orders/${res.order.id}/track`);
         }, 2000);
@@ -123,7 +129,7 @@ const CustomerCart = () => {
                   </button>
                   <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
                   <button 
-                    onClick={() => addToCart(item)}
+                    onClick={() => addToCart(item, { id: cart.restaurantId, name: cart.restaurantName })}
                     className="p-1 hover:bg-white hover:shadow-sm rounded-md transition text-gray-600 active:scale-90"
                   >
                         <Plus size={14} />
@@ -178,14 +184,54 @@ const CustomerCart = () => {
               <div className="p-3 bg-orange-50 rounded-xl shrink-0">
                 <MapPin size={20} className="text-orange-600" />
               </div>
-              <div>
+              <div className="flex-1">
                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Delivery Address</p>
                 <p className="text-sm font-bold text-gray-900 mt-1">
-                   Current Location / Selected Address
+                  {deliveryAddress || <span className="text-gray-400 italic font-normal">No address selected</span>}
                 </p>
-                <button className="text-[10px] font-black text-orange-600 uppercase mt-2 hover:underline">Change Address</button>
+                <button 
+                  onClick={() => { setAddressInput(deliveryAddress); setShowAddressModal(true); }}
+                  className="text-[10px] font-black text-orange-600 uppercase mt-2 hover:underline"
+                >
+                  {deliveryAddress ? 'Change Address' : '+ Add Address'}
+                </button>
               </div>
             </div>
+
+            {/* Address Modal */}
+            {showAddressModal && (
+              <div className="fixed inset-0 z-[200] flex items-end justify-center bg-black/40 backdrop-blur-sm p-4">
+                <div className="bg-white w-full max-w-lg rounded-3xl p-6 shadow-2xl space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-black text-gray-900">Delivery Address</h3>
+                    <button onClick={() => setShowAddressModal(false)} className="text-gray-400 hover:text-gray-600">✕</button>
+                  </div>
+                  <textarea
+                    value={addressInput}
+                    onChange={e => setAddressInput(e.target.value)}
+                    placeholder="Enter your full delivery address (house no, street, landmark, city)..."
+                    className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm font-medium focus:border-[#ff4b3a] focus:bg-white outline-none transition-all resize-none"
+                    rows={4}
+                    autoFocus
+                  />
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => setShowAddressModal(false)}
+                      className="flex-1 py-3 bg-gray-100 text-gray-600 font-bold rounded-xl hover:bg-gray-200 transition"
+                    >Cancel</button>
+                    <button
+                      onClick={() => { 
+                        if (addressInput.trim()) {
+                          setDeliveryAddress(addressInput.trim());
+                          setShowAddressModal(false);
+                        }
+                      }}
+                      className="flex-1 py-3 bg-[#ff4b3a] text-white font-bold rounded-xl hover:bg-red-600 transition"
+                    >Save Address</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

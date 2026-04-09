@@ -8,6 +8,9 @@ from backend.app.models.restaurant import Restaurant
 from backend.app.models.models import Order, Payment
 from backend.app.middleware.auth import required_auth, get_current_user, role_required
 from backend.app.routes.socket_events import emit_order_status_update, emit_new_order
+import logging
+
+logger = logging.getLogger(__name__)
 
 bp = Blueprint('orders', __name__, url_prefix='/api/orders')
 
@@ -30,9 +33,18 @@ def create_order():
     if not restaurant:
         return jsonify({'error': 'Restaurant not found'}), 404
 
-    # Calculate total
+    # Calculate total — normalize items to use 'qty' key (handle both 'qty' and 'quantity' from frontend)
     items = data.get('items', [])
-    subtotal = sum(float(item.get('price', 0)) * int(item.get('qty', 0)) for item in items)
+    normalized_items = []
+    for item in items:
+        qty = int(item.get('qty', item.get('quantity', 0)))
+        normalized_items.append({
+            **item,
+            'qty': qty,
+            'quantity': qty  # keep both for compatibility
+        })
+    items = normalized_items
+    subtotal = sum(float(item.get('price', 0)) * item['qty'] for item in items)
 
     if subtotal < restaurant.min_order:
         return jsonify({'error': f'Minimum order is ₹{restaurant.min_order}'}), 400
