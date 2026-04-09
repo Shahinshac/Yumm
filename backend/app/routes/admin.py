@@ -67,6 +67,56 @@ def get_dashboard():
     response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
     return response, 200
 
+@bp.route('/global-map-data', methods=['GET'])
+@role_required('admin')
+def get_global_map_data():
+    """Get spatial data for drivers, hotels, and active customers for the fleet monitor"""
+    try:
+        # 1. Fetch all approved Restaurants (Hotels)
+        restaurants = Restaurant.objects(is_approved=True)
+        hotel_data = [
+            {
+                'id': str(r.id),
+                'name': r.name,
+                'location': r.location,
+                'address': r.address,
+                'type': 'hotel'
+            }
+            for r in restaurants if r.location
+        ]
+
+        # 2. Fetch Active Customers (only those with orders currently in progress)
+        # We define "active" as placed, accepted, assigned, or picked.
+        active_statuses = ['placed', 'accepted', 'assigned', 'picked']
+        active_orders = Order.objects(status__in=active_statuses)
+        
+        customer_data = []
+        # Use a set to avoid showing the same customer multiple times if they have multi orders
+        seen_customers = set()
+        
+        for order in active_orders:
+            cust_id = str(order.customer.id)
+            if cust_id not in seen_customers and order.current_location:
+                customer_data.append({
+                    'id': cust_id,
+                    'username': order.customer.username,
+                    'location': order.current_location,
+                    'order_id': str(order.id),
+                    'status': order.status,
+                    'type': 'customer'
+                })
+                seen_customers.add(cust_id)
+
+        return jsonify({
+            'success': True,
+            'hotels': hotel_data,
+            'customers': customer_data
+        }), 200
+
+    except Exception as e:
+        logger.error(f"Error fetching global map data: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
 @bp.route('/reset-database', methods=['POST'])
 @role_required('admin')
 def reset_database():

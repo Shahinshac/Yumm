@@ -39,5 +39,10 @@ export const adminService = {
   getDetailedAnalytics: async (period = 'week') => {
     const response = await api.get(`/admin/analytics/orders?period=${period}`);
     return response.data;
+  },
+
+  getGlobalMapData: async () => {
+    const response = await api.get('/admin/global-map-data');
+    return response.data;
   }
 };
