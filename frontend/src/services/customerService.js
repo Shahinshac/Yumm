@@ -35,5 +35,25 @@ export const customerService = {
   cancelOrder: async (id) => {
     const resp = await api.post(`/customer/orders/${id}/cancel`);
     return resp.data;
+  },
+
+  getAddresses: async () => {
+    const resp = await api.get('/customer/profile/addresses');
+    return resp.data;
+  },
+
+  saveAddress: async (addressData) => {
+    const resp = await api.post('/customer/profile/addresses', addressData);
+    return resp.data;
+  },
+
+  deleteAddress: async (id) => {
+    const resp = await api.delete(`/customer/profile/addresses/${id}`);
+    return resp.data;
+  },
+
+  getMyReviews: async () => {
+    const resp = await api.get('/customer/profile/reviews');
+    return resp.data;
   }
 };

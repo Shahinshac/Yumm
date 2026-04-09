@@ -220,3 +220,34 @@ class DeliveryAssignment(Document):
             'current_location': self.current_location,
             'assigned_at': self.assigned_at.isoformat() if self.assigned_at else None,
         }
+
+class Notification(Document):
+    """Notification model for system alerts"""
+
+    recipient = ReferenceField('User', required=True)
+    title = StringField(required=True)
+    message = StringField(required=True)
+    
+    # type: info, success, warning, error, order, delivery
+    type = StringField(default='info')
+    
+    is_read = BooleanField(default=False)
+    created_at = DateTimeField(default=datetime.utcnow)
+
+    meta = {
+        'collection': 'notifications',
+        'indexes': ['recipient', 'is_read', '-created_at'],
+        'ordering': ['-created_at'],
+        'strict': False
+    }
+
+    def to_dict(self):
+        return {
+            'id': str(self.id),
+            'recipient_id': str(self.recipient.id),
+            'title': self.title,
+            'message': self.message,
+            'type': self.type,
+            'is_read': self.is_read,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }

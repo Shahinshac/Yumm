@@ -48,5 +48,20 @@ export const restaurantService = {
   updateOrderStatus: async (id, status) => {
     const resp = await api.put(`/restaurant-dashboard/orders/${id}/status`, { status });
     return resp.data;
+  },
+
+  getAnalytics: async (period = 'month') => {
+    const resp = await api.get(`/restaurant-dashboard/analytics?period=${period}`);
+    return resp.data;
+  },
+
+  getReviews: async () => {
+    const resp = await api.get('/restaurant-dashboard/reviews');
+    return resp.data;
+  },
+
+  updateProfile: async (profileData) => {
+    const resp = await api.put('/restaurant-dashboard/profile/update', profileData);
+    return resp.data;
   }
 };

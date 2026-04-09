@@ -24,5 +24,20 @@ export const adminService = {
   getStats: async () => {
     const response = await api.get('/admin-dashboard/stats');
     return response.data;
+  },
+
+  getRestaurants: async () => {
+    const response = await api.get('/admin/restaurants');
+    return response.data;
+  },
+
+  getAllOrders: async () => {
+    const response = await api.get('/admin/orders');
+    return response.data;
+  },
+
+  getDetailedAnalytics: async (period = 'week') => {
+    const response = await api.get(`/admin/analytics/orders?period=${period}`);
+    return response.data;
   }
 };

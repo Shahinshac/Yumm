@@ -223,7 +223,10 @@ def create_app():
             customer,
             restaurant_dashboard,
             delivery_dashboard,
-            admin_dashboard
+            restaurant_dashboard,
+            delivery_dashboard,
+            admin_dashboard,
+            notifications
         )
 
         app.register_blueprint(auth.bp)
@@ -231,6 +234,7 @@ def create_app():
         app.register_blueprint(restaurant_dashboard.bp)
         app.register_blueprint(delivery_dashboard.bp)
         app.register_blueprint(admin_dashboard.bp)
+        app.register_blueprint(notifications.bp)
         app.register_blueprint(restaurants.bp)
         app.register_blueprint(orders.bp)
         app.register_blueprint(delivery.bp)
