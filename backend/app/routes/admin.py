@@ -170,10 +170,12 @@ def list_users():
 
     users = list(query)
 
-    return jsonify({
+    response = jsonify({
         'count': len(users),
         'users': [u.to_dict() for u in users]
-    }), 200
+    })
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response, 200
 
 @bp.route('/users/create', methods=['POST'])
 @role_required('admin')
@@ -234,10 +236,12 @@ def list_restaurants():
     """List all restaurants"""
     restaurants = Restaurant.objects()
 
-    return jsonify({
+    response = jsonify({
         'count': len(restaurants),
         'restaurants': [r.to_dict() for r in restaurants]
-    }), 200
+    })
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+    return response, 200
 
 @bp.route('/orders', methods=['GET'])
 @role_required('admin')

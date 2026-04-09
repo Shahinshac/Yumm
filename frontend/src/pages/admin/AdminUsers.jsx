@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Search, Shield, Trash2, Edit2, Loader2, Filter, Plus, X, CheckSquare } from 'lucide-react';
+import { Users, Search, Shield, Trash2, Edit2, Loader2, Filter, Plus, X, CheckSquare, RefreshCw } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 
 const AdminUsers = () => {
@@ -93,8 +93,18 @@ const AdminUsers = () => {
         </div>
         <div className="flex gap-3 items-center">
             <div className="bg-white px-4 py-2 rounded-xl border border-gray-100 flex items-center gap-2 text-sm font-bold text-gray-400">
-              <Users size={16} /> {users.length} Total Users
+              <Users size={16} /> {filteredUsers.length} of {users.length} Users
             </div>
+            <button 
+                onClick={() => {
+                  setLoading(true);
+                  fetchUsers();
+                }}
+                className="p-2 bg-white hover:bg-gray-50 text-gray-400 hover:text-[#ff4b3a] rounded-xl border border-gray-100 transition-all active:rotate-180"
+                title="Refresh Directory"
+            >
+                <RefreshCw size={18} />
+            </button>
             <button 
                 onClick={() => setShowModal(true)}
                 className="bg-[#ff4b3a] hover:bg-red-600 text-white px-4 py-2 rounded-xl font-bold text-sm shadow-md shadow-red-100 transition-all flex items-center gap-2"
