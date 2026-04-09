@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/authService';
@@ -29,11 +29,50 @@ const Login = () => {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  useEffect(() => {
+    // Initialize Google Sign-In
+    const initializeGoogle = () => {
+      if (window.google && tab === 'customer') {
+        window.google.accounts.id.initialize({
+          client_id: "your_google_client_id_here.apps.googleusercontent.com",
+          callback: handleCallbackResponse,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+
+        const googleBtn = document.getElementById("googleSignInDiv");
+        if (googleBtn) {
+          window.google.accounts.id.renderButton(googleBtn, {
+            theme: "outline",
+            size: "large",
+            text: "continue_with",
+            shape: "rectangular",
+            logo_alignment: "left",
+            width: googleBtn.offsetWidth || 400
+          });
+        }
+      }
+    };
+
+    // Load or wait for script
+    if (window.google) {
+      initializeGoogle();
+    } else {
+      const interval = setInterval(() => {
+        if (window.google) {
+          initializeGoogle();
+          clearInterval(interval);
+        }
+      }, 100);
+      return () => clearInterval(interval);
+    }
+  }, [tab]);
+
+  const handleCallbackResponse = async (response) => {
     setError('');
     setLoading(true);
     try {
-      const data = await authService.googleLogin('mock_test_user');
+      const data = await authService.googleLogin(response.credential);
       login(data.user, data.access_token);
       navigate('/');
     } catch (err) {
@@ -41,6 +80,14 @@ const Login = () => {
       setError(err.response?.data?.error || 'Google login failed. Please try again.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = () => {
+    // This is now handled by the Google rendered button, 
+    // but kept as a fallback or for custom trigger if needed
+    if (window.google) {
+      window.google.accounts.id.prompt();
     }
   };
 
@@ -142,17 +189,12 @@ const Login = () => {
           {/* CUSTOMER TAB */}
           {tab === 'customer' && (
             <div className="space-y-4">
-              <button
-                onClick={handleGoogleLogin}
-                disabled={loading}
-                className="w-full flex items-center justify-between gap-3 bg-white border-2 border-gray-200 text-gray-800 px-5 py-4 rounded-xl hover:border-gray-400 hover:shadow-sm transition-all duration-200 font-semibold group"
+              <div 
+                id="googleSignInDiv" 
+                className="w-full flex justify-center py-1 transition-all duration-200"
               >
-                <div className="flex items-center gap-3">
-                  <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
-                  {loading ? 'Signing in...' : 'Continue with Google'}
-                </div>
-                <ChevronRight size={18} className="text-gray-400 group-hover:text-gray-600 transition" />
-              </button>
+                {/* Google Button renders here */}
+              </div>
 
               <div className="relative flex items-center gap-4 py-2">
                 <div className="flex-1 h-px bg-gray-200" />
