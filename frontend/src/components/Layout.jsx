@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 import {
   LayoutDashboard, ShoppingCart, ListOrdered, User, LogOut,
   CheckSquare, Menu, X, Bell, ChevronDown, Store, Package, 
