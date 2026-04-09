@@ -32,15 +32,7 @@ const AdminDashboard = () => {
     api.get('/admin-dashboard/stats').then(res => {
       setStats(res.data);
     }).catch(() => {
-      // Fallback mock stats
-      setStats({
-        total_users: 24,
-        total_restaurants: 8,
-        total_deliveries: 12,
-        pending_approvals: 3,
-        total_orders: 156,
-        revenue: 48200,
-      });
+      setStats(null);
     }).finally(() => setLoadingStats(false));
 
     // Load pending approvals preview
@@ -86,13 +78,7 @@ const AdminDashboard = () => {
     },
   ];
 
-  const recentActivity = [
-    { icon: CheckCircle, text: 'Approved Pizza Palace restaurant', time: '2 min ago', color: 'text-green-500' },
-    { icon: Users, text: 'New delivery partner registered', time: '14 min ago', color: 'text-blue-500' },
-    { icon: ShoppingBag, text: 'Order #1042 completed', time: '30 min ago', color: 'text-orange-500' },
-    { icon: XCircle, text: 'Rejected partner application', time: '1 hr ago', color: 'text-red-500' },
-    { icon: Store, text: 'New restaurant onboarded', time: '3 hrs ago', color: 'text-purple-500' },
-  ];
+  const recentActivity = [];
 
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
@@ -175,15 +161,22 @@ const AdminDashboard = () => {
             <h2 className="font-bold text-gray-800">Recent Activity</h2>
           </div>
           <div className="divide-y divide-gray-50">
-            {recentActivity.map((item, i) => (
-              <div key={i} className="flex items-start gap-3 px-6 py-4">
-                <item.icon size={16} className={`${item.color} mt-0.5 shrink-0`} />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-700 leading-snug">{item.text}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">{item.time}</p>
-                </div>
+            {recentActivity.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-gray-400 px-6">
+                <Clock size={32} className="mb-2 opacity-20" />
+                <p className="text-xs font-medium text-center">No recent activity detected on the platform yet.</p>
               </div>
-            ))}
+            ) : (
+              recentActivity.map((item, i) => (
+                <div key={i} className="flex items-start gap-3 px-6 py-4">
+                  <item.icon size={16} className={`${item.color} mt-0.5 shrink-0`} />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-700 leading-snug">{item.text}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">{item.time}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

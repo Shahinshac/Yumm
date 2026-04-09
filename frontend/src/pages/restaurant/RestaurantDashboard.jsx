@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { ShoppingBag, TrendingUp, IndianRupee, Star, Clock, CheckCircle, XCircle, ChevronRight, Package, Users } from 'lucide-react';
 
-const ORDERS = [
-  { id: '#1042', customer: 'Arjun M.', items: 'Chicken Biryani × 2, Raita × 1', total: 610, status: 'pending', time: '2 min ago' },
-  { id: '#1041', customer: 'Priya R.', items: 'Mutton Biryani × 1, Naan × 2', total: 460, status: 'preparing', time: '8 min ago' },
-  { id: '#1040', customer: 'Rahul K.', items: 'Fish Curry × 1, Rice × 1', total: 320, status: 'completed', time: '22 min ago' },
-  { id: '#1039', customer: 'Fathima N.', items: 'Paragon Combo × 1', total: 550, status: 'completed', time: '45 min ago' },
-];
+const ORDERS = [];
 
 const STATUS_STYLES = {
   pending: { label: 'Pending', cls: 'bg-yellow-100 text-yellow-700' },

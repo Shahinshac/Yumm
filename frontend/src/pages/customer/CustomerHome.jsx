@@ -96,16 +96,8 @@ const CustomerHome = () => {
       setRestaurants(list);
       setFiltered(list);
     }).catch(() => {
-      const mock = [
-        { _id: '1', name: 'Paragon', rating: 4.7, category: 'Biryani & Kerala', delivery_time: 30, address: 'Malappuram', min_order: 200, offer: '20% OFF' },
-        { _id: '2', name: 'Devi Prasad', rating: 4.5, category: 'Traditional Kerala', delivery_time: 35, address: 'Malappuram', min_order: 150 },
-        { _id: '3', name: 'Hot Spot', rating: 4.4, category: 'Multi-cuisine', delivery_time: 25, address: 'Malappuram', min_order: 250, promoted: true },
-        { _id: '4', name: 'Sree Bhagavathy Palace', rating: 4.6, category: 'Seafood & Kerala', delivery_time: 40, address: 'Malappuram', min_order: 300, offer: '10% OFF' },
-        { _id: '5', name: 'Pizza Paradise', rating: 4.8, category: 'Pizza', delivery_time: 22, address: 'Nearby', min_order: 199 },
-        { _id: '6', name: 'Burger Hub', rating: 4.3, category: 'Burgers', delivery_time: 18, address: 'Nearby', min_order: 149, offer: 'FREE DRINK' },
-      ];
-      setRestaurants(mock);
-      setFiltered(mock);
+      setRestaurants([]);
+      setFiltered([]);
     }).finally(() => setLoading(false));
   }, []);
 

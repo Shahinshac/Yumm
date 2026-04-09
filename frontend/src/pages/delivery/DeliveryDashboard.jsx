@@ -3,18 +3,7 @@ import { Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, TrendingU
 import { useAuth } from '../../context/AuthContext';
 import useLocationTracking from '../../hooks/useLocationTracking';
 
-const DELIVERIES = [
-  {
-    id: '#D-201', restaurant: 'Paragon', restaurantAddr: 'MG Road, Malappuram',
-    customer: 'Arjun M.', customerAddr: 'Valanchery, Malappuram',
-    items: 'Chicken Biryani × 2', earnings: 55, distance: '3.2 km', eta: '12 min', status: 'available'
-  },
-  {
-    id: '#D-200', restaurant: 'Hot Spot', restaurantAddr: 'Kottakkal, Malappuram',
-    customer: 'Priya R.', customerAddr: 'Tirur, Malappuram',
-    items: 'Mutton Biryani × 1, Naan × 2', earnings: 70, distance: '5.1 km', eta: '20 min', status: 'available'
-  },
-];
+const DELIVERIES = [];
 
 const StatCard = ({ icon: Icon, label, value, iconColor, iconBg }) => (
   <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
