@@ -170,6 +170,16 @@ def create_app():
     # Register blueprints
     logger.info("Registering API blueprints...")
 
+    # Root endpoint
+    @app.route('/', methods=['GET'])
+    def root():
+        return jsonify({
+            'message': 'Welcome to Yumm FoodHub API',
+            'status': 'online',
+            'health_check': '/api/health',
+            'version': '2.0.1'
+        }), 200
+
     # Version endpoint
     @app.route('/api/version', methods=['GET'])
     def version_check():
