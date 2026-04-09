@@ -10,24 +10,14 @@ const AdminAnalytics = () => {
   useEffect(() => {
     setLoading(true);
     adminService.getDetailedAnalytics(period).then(res => {
-      if (!res.total_orders || res.total_orders === 0) {
-        setData({
-          total_orders: 1250,
-          total_revenue: 450000,
-          avg_order_value: 360,
-          status_breakdown: { 'delivered': 1100, 'processing': 100, 'cancelled': 50 },
-          growth: 12.5
-        });
-      } else {
-        setData(res);
-      }
+      setData(res);
     }).catch(() => {
       setData({
-        total_orders: 1250,
-        total_revenue: 450000,
-        avg_order_value: 360,
-        status_breakdown: { 'delivered': 1100, 'processing': 100, 'cancelled': 50 },
-        growth: 12.5
+        total_orders: 0,
+        total_revenue: 0,
+        avg_order_value: 0,
+        status_breakdown: {},
+        growth: 0
       });
     }).finally(() => setLoading(false));
   }, [period]);

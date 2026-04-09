@@ -60,19 +60,13 @@ const AdminLiveMap = () => {
             try {
                 const data = await adminService.getGlobalMapData();
                 if (data.success) {
-                    setHotels(data.hotels?.length > 0 ? data.hotels : [
-                        { id: 'h1', name: 'Premium Cloud Kitchen (Mock)', location: { lat: 21.1458, lng: 79.0882 } },
-                        { id: 'h2', name: 'Downtown Eats (Mock)', location: { lat: 28.6139, lng: 77.2090 } }
-                    ]);
-                    setCustomers(data.customers?.length > 0 ? data.customers : [
-                        { id: 'c1', username: 'Rajesh K. (Mock)', location: { lat: 19.0760, lng: 72.8777 }, status: 'cooking' },
-                        { id: 'c2', username: 'Priya M. (Mock)', location: { lat: 12.9716, lng: 77.5946 }, status: 'delivering' }
-                    ]);
+                    setHotels(data.hotels || []);
+                    setCustomers(data.customers || []);
                 }
             } catch (err) {
                 console.error('❌ Failed to fetch global map data:', err);
-                setHotels([ { id: 'h1', name: 'Premium Cloud Kitchen (Mock)', location: { lat: 21.1458, lng: 79.0882 } } ]);
-                setCustomers([ { id: 'c1', username: 'Rajesh K. (Mock)', location: { lat: 19.0760, lng: 72.8777 }, status: 'cooking' } ]);
+                setHotels([]);
+                setCustomers([]);
             }
         };
 

@@ -12,10 +12,7 @@ const CustomerAddresses = () => {
         customerService.getAddresses().then(res => {
             setAddresses(res.addresses || []);
         }).catch(() => {
-            setAddresses([
-                { id: 1, type: 'home', address: 'Apartment 4B, Hill Street, Malappuram', landmark: 'Near Central Park' },
-                { id: 2, type: 'office', address: 'Tech Hub Floor 2, Sector 4', landmark: 'Next to Metro Station' }
-            ]);
+            setAddresses([]);
         }).finally(() => setLoading(false));
     }, []);
 
