@@ -425,7 +425,8 @@ def approve_user(user_id):
 def reject_user(user_id):
     """Reject a pending registration (optional - delete user)"""
     try:
-        data = request.get_json() or {}
+        # Use silent=True to handle empty/non-JSON bodies gracefully
+        data = request.get_json(silent=True) or {}
         reason = data.get('reason', 'No reason provided')
 
         user = User.objects(id=user_id).first()
@@ -441,11 +442,18 @@ def reject_user(user_id):
 
         # Delete user and associated data
         if user.role == 'restaurant':
-            from backend.app.models.restaurant import MenuItem
-            MenuItem.objects(restaurant=user.id).delete()
-            Restaurant.objects(user=user).delete()
+            restaurant = Restaurant.objects(user=user).first()
+            if restaurant:
+                # Import here to avoid circular imports if any
+                from backend.app.models.restaurant import MenuItem
+                # Delete related menu items first
+                MenuItem.objects(restaurant=restaurant).delete()
+                # Delete restaurant profile
+                restaurant.delete()
         elif user.role == 'delivery':
-            DeliveryPartner.objects(user=user).delete()
+            delivery = DeliveryPartner.objects(user=user).first()
+            if delivery:
+                delivery.delete()
 
         user.delete()
 
