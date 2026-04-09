@@ -29,7 +29,7 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     // Load stats
-    api.get('/admin/stats').then(res => {
+    api.get('/admin-dashboard/stats').then(res => {
       setStats(res.data);
     }).catch(() => {
       // Fallback mock stats

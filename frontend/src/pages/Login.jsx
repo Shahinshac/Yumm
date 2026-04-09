@@ -32,9 +32,16 @@ const Login = () => {
   useEffect(() => {
     // Initialize Google Sign-In
     const initializeGoogle = () => {
+      const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+      
+      if (!clientId) {
+        console.error("❌ Google Client ID is missing! Please set VITE_GOOGLE_CLIENT_ID in your .env or hosting dashboard.");
+        return;
+      }
+
       if (window.google && tab === 'customer') {
         window.google.accounts.id.initialize({
-          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "your_google_client_id_here.apps.googleusercontent.com",
+          client_id: clientId,
           callback: handleCallbackResponse,
           auto_select: false,
           cancel_on_tap_outside: true,
@@ -248,14 +255,6 @@ const Login = () => {
                     {showPw ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
-              </div>
-
-              {/* Admin hint */}
-              <div className="flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-xl p-3 text-xs text-blue-700">
-                <ShieldCheck size={15} className="mt-0.5 shrink-0 text-blue-500" />
-                <span>
-                  <strong>Admin access:</strong> Use <code className="bg-blue-100 px-1 rounded">shahinsha@fooddelivery.com</code> and password <code className="bg-blue-100 px-1 rounded">262007food</code>
-                </span>
               </div>
 
               <button

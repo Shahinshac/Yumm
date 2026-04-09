@@ -399,6 +399,41 @@ def login():
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 
+@bp.route('/profile', methods=['PUT'])
+@jwt_required()
+def update_profile():
+    """Update current user profile"""
+    try:
+        user_id = get_jwt_identity()
+        user = User.objects(id=user_id).first()
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        data = request.get_json()
+        
+        # Update fields if provided
+        if 'full_name' in data:
+            user.full_name = Validators.sanitize_string(data['full_name'])
+        if 'phone' in data:
+            if not Validators.validate_phone(data['phone']):
+                return jsonify({'error': 'Invalid phone number format'}), 400
+            user.phone = data['phone']
+        if 'address' in data:
+            user.address = Validators.sanitize_string(data['address'])
+            
+        user.save()
+        
+        return jsonify({
+            'message': 'Profile updated successfully',
+            'user': user.to_dict()
+        }), 200
+        
+    except Exception as e:
+        logger.error(f"Error updating profile: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+
 @bp.route('/me', methods=['GET'])
 @jwt_required()
 def get_me():

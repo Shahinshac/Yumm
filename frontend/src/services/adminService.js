@@ -14,5 +14,15 @@ export const adminService = {
   rejectUser: async (userId) => {
     const response = await api.post(`/admin/reject/${userId}`);
     return response.data;
+  },
+
+  getAllUsers: async () => {
+    const response = await api.get('/admin/users');
+    return response.data;
+  },
+
+  getStats: async () => {
+    const response = await api.get('/admin-dashboard/stats');
+    return response.data;
   }
 };

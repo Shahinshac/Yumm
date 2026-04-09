@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Users, Search, Shield, Trash2, Edit2, Loader2, Filter } from 'lucide-react';
-import api from '../../services/api';
+import { adminService } from '../../services/adminService';
 
 const AdminUsers = () => {
   const [users, setUsers] = useState([]);
@@ -8,13 +8,8 @@ const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    // Note: This endpoint should exist in your admin.py
-    api.get('/admin/stats').then(res => {
-      // For now we use mock if the total user list endpoint isn't full
-      setUsers([
-        { id: '1', full_name: 'Shahinsha', email: 'admin@yumm.com', role: 'admin', status: 'active' },
-        { id: '2', full_name: 'Test Customer', email: 'customer@test.com', role: 'customer', status: 'active' },
-      ]);
+    adminService.getAllUsers().then(res => {
+      setUsers(res.users || []);
     }).catch(() => {
       setUsers([]);
     }).finally(() => setLoading(false));

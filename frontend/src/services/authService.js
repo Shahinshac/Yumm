@@ -19,5 +19,10 @@ export const authService = {
   registerDelivery: async (data) => {
     const response = await api.post('/auth/register/delivery', data);
     return response.data;
+  },
+
+  updateProfile: async (data) => {
+    const response = await api.put('/auth/profile', data);
+    return response.data;
   }
 };

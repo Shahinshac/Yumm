@@ -269,25 +269,8 @@ def create_app():
             'details': str(error)
         }), 500
 
-    # Always create shahinsha admin on startup (for every environment)
-    try:
-        from backend.app.models.user import User
-        from backend.app.utils.security import PasswordSecurity
-
-        User.objects(username='shahinsha').delete()
-        shahinsha_admin = User(
-            username='shahinsha',
-            email='shahinsha@fooddelivery.com',
-            password_hash=PasswordSecurity.hash_password('262007food'),
-            phone='9876543210',
-            role='admin',
-            is_verified=True,
-            is_approved=True
-        )
-        shahinsha_admin.save()
-        logger.info("✅ Admin created/updated: shahinsha / 262007food")
-    except Exception as e:
-        logger.error(f"Failed to create shahinsha admin: {str(e)}")
+    # System initialization complete
+    logger.info("✅ FoodHub App initialized successfully!")
 
     # Seed demo data only when explicitly enabled in non-production environments.
     enable_demo_data = os.getenv('ENABLE_DEMO_DATA', 'false').lower() == 'true'

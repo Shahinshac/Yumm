@@ -46,10 +46,8 @@ A full-stack food delivery application built with **Flutter** (mobile & web), **
 ### **Option 1: Access Web App (Share with Friends!)**
 ```
 1. Visit: https://yummfoodhub.netlify.app
-2. Admin login:
-   - Username: shahinsha
-   - Password: 262007food
-3. Customers can sign up with Google Sign-In
+2. Partners can register and wait for admin approval.
+3. Customers can sign in with Google Sign-In.
 ```
 
 ### **Option 2: Run Mobile App Locally**
@@ -74,18 +72,12 @@ curl https://yumm-ym2m.onrender.com/api/health
 # Admin login
 curl -X POST https://yumm-ym2m.onrender.com/api/auth/login \
   -H "Content-Type: application/json" \
-  -d '{"username":"shahinsha","password":"262007food"}'
+  -d '{"username":"ADMIN_USERNAME","password":"ADMIN_PASSWORD"}'
 ```
 
 ---
 
-## 👤 Admin Credentials
-
-| Role | Username | Password |
-|------|----------|----------|
-| Admin | shahinsha | 262007food |
-
----
+## 🏗️ Architecture
 
 ## 🏗️ Architecture
 
@@ -198,7 +190,7 @@ Areas to contribute:
 - Create a GitHub issue: https://github.com/Shahinshac/Yumm/issues
 
 **Questions about setup?**
-- Email: shahinsha@fooddelivery.com
+- Email: admin@yumm.com
 - GitHub: [@Shahinshac](https://github.com/Shahinshac)
 
 ---
