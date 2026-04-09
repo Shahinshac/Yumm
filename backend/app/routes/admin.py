@@ -439,20 +439,25 @@ def reject_user(user_id):
         if user.is_approved:
             return jsonify({'error': 'Cannot reject an already-approved user'}), 400
 
+        # Capture email for logging and response BEFORE deletion
+        email = user.email
+
         # Delete user and associated data
         if user.role == 'restaurant':
+            from backend.app.models.restaurant import MenuItem
+            MenuItem.objects(restaurant=user.id).delete()
             Restaurant.objects(user=user).delete()
         elif user.role == 'delivery':
             DeliveryPartner.objects(user=user).delete()
 
         user.delete()
 
-        logger.info(f"User {user.email} rejected by admin. Reason: {reason}")
+        logger.info(f"User {email} rejected by admin. Reason: {reason}")
 
         return jsonify({
             'success': True,
             'message': f'User registration rejected',
-            'email': user.email
+            'email': email
         }), 200
 
     except Exception as e:
