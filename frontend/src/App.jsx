@@ -11,6 +11,7 @@ import CustomerOrders from './pages/customer/CustomerOrders';
 import CustomerProfile from './pages/customer/CustomerProfile';
 import CustomerAddresses from './pages/customer/CustomerAddresses';
 import CustomerReviews from './pages/customer/CustomerReviews';
+import CustomerPreferences from './pages/customer/CustomerPreferences';
 import OrderTracking from './pages/customer/OrderTracking';
 
 import RestaurantDashboard from './pages/restaurant/RestaurantDashboard';
@@ -77,6 +78,7 @@ function AppRoutes() {
         <Route path="/orders" element={<ProtectedRoute allowedRoles={['customer']}><CustomerOrders /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute allowedRoles={['customer']}><CustomerProfile /></ProtectedRoute>} />
         <Route path="/profile/addresses" element={<ProtectedRoute allowedRoles={['customer']}><CustomerAddresses /></ProtectedRoute>} />
+        <Route path="/profile/preferences" element={<ProtectedRoute allowedRoles={['customer']}><CustomerPreferences /></ProtectedRoute>} />
         <Route path="/customer/reviews" element={<ProtectedRoute allowedRoles={['customer']}><CustomerReviews /></ProtectedRoute>} />
         <Route path="/orders/:orderId/track" element={<ProtectedRoute allowedRoles={['customer']}><OrderTracking /></ProtectedRoute>} />
         

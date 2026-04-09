@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { User, Mail, Phone, MapPin, Shield, LogOut, ChevronRight, Settings, Edit3, X, Loader2, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { authService } from '../../services/authService';
+import { useNavigate } from 'react-router-dom';
 
 const CustomerProfile = () => {
   const { user, logout, login } = useAuth();
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     full_name: user?.full_name || '',
@@ -117,8 +119,8 @@ const CustomerProfile = () => {
         {/* Action Menu */}
         <div className="bg-white rounded-3xl border border-gray-100 shadow-sm">
           <MenuItem icon={User} label="Edit Profile" sub="Update your name and phone number" onClick={() => setIsEditing(true)} />
-          <MenuItem icon={MapPin} label="Manage Addresses" sub="Home, Office, others" />
-          <MenuItem icon={Settings} label="Preferences" sub="App settings & notifications" />
+          <MenuItem icon={MapPin} label="Manage Addresses" sub="Home, Office, others" onClick={() => navigate('/profile/addresses')} />
+          <MenuItem icon={Settings} label="Preferences" sub="App settings & notifications" onClick={() => navigate('/profile/preferences')} />
           <MenuItem icon={LogOut} label="Log Out" sub="Sign out of your account" onClick={logout} danger />
         </div>
       </div>
