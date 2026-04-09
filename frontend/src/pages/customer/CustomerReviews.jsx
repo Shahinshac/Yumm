@@ -11,10 +11,7 @@ const CustomerReviews = () => {
         customerService.getMyReviews().then(res => {
             setReviews(res.reviews || []);
         }).catch(() => {
-            setReviews([
-                { id: 1, restaurant_name: 'Paragon', rating: 5, comment: 'Best biryani in town! Highly recommended.', date: '2026-04-05', reply: 'Thank you for your kind words!' },
-                { id: 2, restaurant_name: 'Hot Spot', rating: 3, comment: 'Food was okay, but wait time was long.', date: '2026-03-29', reply: '' }
-            ]);
+            setReviews([]);
         }).finally(() => setLoading(false));
     }, []);
 

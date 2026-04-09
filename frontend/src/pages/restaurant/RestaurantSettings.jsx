@@ -10,22 +10,22 @@ const RestaurantSettings = () => {
     useEffect(() => {
         restaurantService.getProfile().then(res => {
             setProfile(res.profile || {
-                name: 'Paragon Restaurant',
-                category: 'Biryani & Kerala',
-                address: '123 Food Street, Malappuram',
-                min_order: 200,
-                delivery_time: 30,
-                phone: '+91 9876543210',
+                name: '',
+                category: '',
+                address: '',
+                min_order: 0,
+                delivery_time: 0,
+                phone: '',
                 is_open: true
             });
         }).catch(() => {
             setProfile({
-                name: 'Paragon Restaurant',
-                category: 'Biryani & Kerala',
-                address: '123 Food Street, Malappuram',
-                min_order: 200,
-                delivery_time: 30,
-                phone: '+91 9876543210',
+                name: '',
+                category: '',
+                address: '',
+                min_order: 0,
+                delivery_time: 0,
+                phone: '',
                 is_open: true
             });
         }).finally(() => setLoading(false));

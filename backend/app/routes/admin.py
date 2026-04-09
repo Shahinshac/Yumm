@@ -383,22 +383,22 @@ def approve_user(user_id):
             if restaurant:
                 restaurant.is_approved = True
                 restaurant.save()
-                logger.info(f"Restaurant approved and password generated: {user.email}")
-
-        elif user.role == 'delivery':
-            delivery = DeliveryPartner.objects(user=user).first()
-            if delivery:
-                # Note: DeliveryPartner doesn't have is_approved field, but we still update
-                logger.info(f"Delivery partner approved and password generated: {user.email}")
-
-        logger.info(f"User {user.email} approved by admin, password generated")
+        
+        # Automatically send credentials over email
+        from backend.app.services.email_service import EmailService
+        email_sent = EmailService.send_credentials_email(
+            user_email=user.email,
+            user_name=user.full_name or user.username,
+            password=generated_password
+        )
 
         return jsonify({
             'success': True,
             'message': f'User approved successfully',
             'user': user.to_dict(),
             'password': generated_password,
-            'note': 'Share this password with the user via email or phone. This is shown only once.'
+            'email_sent': email_sent,
+            'note': 'Generated password is shown here once if email fails.'
         }), 200
 
     except Exception as e:

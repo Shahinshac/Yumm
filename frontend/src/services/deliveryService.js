@@ -22,7 +22,17 @@ export const deliveryService = {
   },
 
   updateStatus: async (orderId, status, location = null) => {
-    const resp = await api.post(`/delivery/orders/${orderId}/status`, { status, location });
+    const resp = await api.put(`/delivery-dashboard/orders/${orderId}/status`, { status, location });
+    return resp.data;
+  },
+
+  getAvailableOrders: async () => {
+    const resp = await api.get('/delivery-dashboard/available');
+    return resp.data;
+  },
+
+  claimOrder: async (orderId) => {
+    const resp = await api.post(`/delivery-dashboard/orders/${orderId}/claim`);
     return resp.data;
   }
 };

@@ -163,6 +163,35 @@ def get_order(order_id):
         return jsonify({'error': str(e)}), 500
 
 
+@bp.route('/available', methods=['GET'])
+@delivery_required
+def get_available_orders():
+    """Get orders available for pickup"""
+    try:
+        orders, error = DeliveryService.get_available_orders()
+        if error:
+            return jsonify({'error': error}), 400
+        return jsonify(orders or []), 200
+    except Exception as e:
+        logger.error(f"Error fetching available orders: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+@bp.route('/orders/<order_id>/claim', methods=['POST'])
+@delivery_required
+def claim_order(order_id):
+    """Claim an order for delivery"""
+    try:
+        user_id = get_jwt_identity()
+        order, error = DeliveryService.claim_order(order_id, user_id)
+        if error:
+            return jsonify({'error': error}), 400
+        return jsonify({'message': 'Order claimed successfully', 'order': order}), 200
+    except Exception as e:
+        logger.error(f"Error claiming order: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
 @bp.route('/orders/<order_id>/status', methods=['PUT'])
 @delivery_required
 def update_delivery_status(order_id):
@@ -171,16 +200,21 @@ def update_delivery_status(order_id):
         user_id = get_jwt_identity()
         data = request.get_json()
         
-        if not data.get('status'):
-            return jsonify({'error': 'status required'}), 400
+        status_map = {
+            'pickup': 'picked',
+            'delivering': 'on_the_way',
+            'done': 'delivered'
+        }
         
-        order, error = DeliveryService.update_delivery_status(order_id, data['status'])
+        target_status = status_map.get(data.get('status'), data.get('status'))
+        
+        order, error = DeliveryService.update_delivery_status(order_id, target_status)
         
         if error:
             return jsonify({'error': error}), 400
         
         return jsonify({
-            'message': f'Delivery status updated to {data["status"]}',
+            'message': f'Delivery status updated to {target_status}',
             'order': order
         }), 200
     except Exception as e:

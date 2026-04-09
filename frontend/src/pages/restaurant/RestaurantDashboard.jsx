@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { ShoppingBag, TrendingUp, IndianRupee, Star, Clock, CheckCircle, XCircle, ChevronRight, Package, Users } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingBag, TrendingUp, IndianRupee, Star, Clock, CheckCircle, XCircle, ChevronRight, Package, Users, Loader2 } from 'lucide-react';
+import { restaurantService } from '../../services/restaurantService';
 
 const ORDERS = [];
 
@@ -25,14 +26,49 @@ const StatCard = ({ icon: Icon, label, value, sub, iconColor, iconBg }) => (
 );
 
 const RestaurantDashboard = () => {
-  const [orders, setOrders] = useState(ORDERS);
+  const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('all');
 
-  const updateStatus = (id, newStatus) => {
-    setOrders(prev => prev.map(o => o.id === id ? { ...o, status: newStatus } : o));
+  const fetchOrders = async () => {
+    setLoading(true);
+    try {
+      const res = await restaurantService.getOrders(activeFilter === 'all' ? '' : activeFilter);
+      setOrders(res.orders || []);
+    } catch {
+      setOrders([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const filtered = activeFilter === 'all' ? orders : orders.filter(o => o.status === activeFilter);
+  useEffect(() => {
+    fetchOrders();
+  }, [activeFilter]);
+
+  const updateStatus = async (id, newStatus) => {
+    try {
+      if (newStatus === 'preparing') {
+        await restaurantService.acceptOrder(id);
+      } else if (newStatus === 'rejected') {
+        await restaurantService.rejectOrder(id);
+      } else {
+        await restaurantService.updateOrderStatus(id, newStatus);
+      }
+      fetchOrders();
+    } catch {
+      alert('Failed to update order status');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20">
+        <Loader2 className="w-10 h-10 animate-spin text-[#ff4b3a] mb-4" />
+        <p className="text-gray-500 font-bold text-sm uppercase tracking-widest">Synchronizing kitchen queue...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 max-w-6xl mx-auto">
@@ -51,10 +87,10 @@ const RestaurantDashboard = () => {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard icon={ShoppingBag} label="Pending Orders" value="4" sub="Needs attention" iconColor="text-orange-600" iconBg="bg-orange-50" />
-        <StatCard icon={CheckCircle} label="Completed Today" value="28" sub="+12% vs yesterday" iconColor="text-green-600" iconBg="bg-green-50" />
-        <StatCard icon={IndianRupee} label="Today's Revenue" value="₹4,320" sub="Gross earnings" iconColor="text-blue-600" iconBg="bg-blue-50" />
-        <StatCard icon={Star} label="Avg Rating" value="4.7" sub="Based on 142 reviews" iconColor="text-yellow-500" iconBg="bg-yellow-50" />
+        <StatCard icon={ShoppingBag} label="Pending Orders" value="0" sub="" iconColor="text-orange-600" iconBg="bg-orange-50" />
+        <StatCard icon={CheckCircle} label="Completed Today" value="0" sub="" iconColor="text-green-600" iconBg="bg-green-50" />
+        <StatCard icon={IndianRupee} label="Today's Revenue" value="₹0" sub="" iconColor="text-blue-600" iconBg="bg-blue-50" />
+        <StatCard icon={Star} label="Avg Rating" value="0.0" sub="" iconColor="text-yellow-500" iconBg="bg-yellow-50" />
       </div>
 
       {/* Orders Table */}
@@ -78,14 +114,14 @@ const RestaurantDashboard = () => {
           </div>
         </div>
 
-        {filtered.length === 0 ? (
+        {orders.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-gray-400">
             <CheckCircle size={40} className="mb-3 text-green-300" />
             <p className="font-medium">No orders in this category</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
-            {filtered.map(order => {
+            {orders.map(order => {
               const s = STATUS_STYLES[order.status];
               return (
                 <div key={order.id} className="flex flex-col sm:flex-row sm:items-center gap-4 px-6 py-5 hover:bg-gray-50 transition">

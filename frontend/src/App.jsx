@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 
 import Login from './pages/Login';
 import Layout from './components/Layout';
@@ -13,6 +14,7 @@ import CustomerAddresses from './pages/customer/CustomerAddresses';
 import CustomerReviews from './pages/customer/CustomerReviews';
 import CustomerPreferences from './pages/customer/CustomerPreferences';
 import OrderTracking from './pages/customer/OrderTracking';
+import RestaurantDetails from './pages/customer/RestaurantDetails';
 
 import RestaurantDashboard from './pages/restaurant/RestaurantDashboard';
 import RestaurantMenu from './pages/restaurant/RestaurantMenu';
@@ -74,6 +76,7 @@ function AppRoutes() {
       <Route element={<Layout />}>
         {/* Customer Routes */}
         <Route path="/home" element={<ProtectedRoute allowedRoles={['customer']}><CustomerHome /></ProtectedRoute>} />
+        <Route path="/restaurant/:id" element={<ProtectedRoute allowedRoles={['customer']}><RestaurantDetails /></ProtectedRoute>} />
         <Route path="/cart" element={<ProtectedRoute allowedRoles={['customer']}><CustomerCart /></ProtectedRoute>} />
         <Route path="/orders" element={<ProtectedRoute allowedRoles={['customer']}><CustomerOrders /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute allowedRoles={['customer']}><CustomerProfile /></ProtectedRoute>} />
@@ -114,7 +117,9 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <AppRoutes />
+        <CartProvider>
+          <AppRoutes />
+        </CartProvider>
       </AuthProvider>
     </BrowserRouter>
   );

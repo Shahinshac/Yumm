@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Star, Clock, ChevronRight, Zap, Tag, TrendingUp } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 
@@ -20,18 +21,19 @@ const BANNERS = [
   { title: 'New Arrivals', sub: 'Fresh restaurants near you', bg: 'from-purple-500 to-indigo-500', emoji: '✨' },
 ];
 
-const RestaurantCard = ({ rest }) => (
-  <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+const RestaurantCard = ({ rest, onClick }) => (
+  <div 
+    onClick={onClick}
+    className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+  >
     <div className="relative h-44 overflow-hidden">
       <img
         src={`https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80&sig=${rest.id}`}
         alt={rest.name}
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
       />
-      {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
 
-      {/* Badges */}
       <div className="absolute top-3 left-3 flex gap-2">
         {rest.promoted && (
           <span className="bg-[#ff4b3a] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
@@ -89,6 +91,7 @@ const SkeletonCard = () => (
 );
 
 const CustomerHome = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [restaurants, setRestaurants] = useState([]);
   const [filtered, setFiltered] = useState([]);
@@ -98,7 +101,6 @@ const CustomerHome = () => {
   const [activeBanner, setActiveBanner] = useState(0);
   const [coords, setCoords] = useState(null);
 
-  // Geolocation watch
   useEffect(() => {
     if (!navigator.geolocation) return;
     
@@ -124,7 +126,7 @@ const CustomerHome = () => {
         setRestaurants(list);
         setFiltered(list);
       } catch (error) {
-        console.error("Fetch restaurants error:", error);
+        console.error("Fetch error:", error);
         setRestaurants([]);
         setFiltered([]);
       } finally {
@@ -135,13 +137,11 @@ const CustomerHome = () => {
     fetchRestaurants();
   }, [coords]);
 
-  // Banner auto-rotate
   useEffect(() => {
     const t = setInterval(() => setActiveBanner(b => (b + 1) % BANNERS.length), 4000);
     return () => clearInterval(t);
   }, []);
 
-  // Filter logic
   useEffect(() => {
     let list = [...restaurants];
     if (search) list = list.filter(r => r.name.toLowerCase().includes(search.toLowerCase()) || (r.category || '').toLowerCase().includes(search.toLowerCase()));
@@ -153,13 +153,9 @@ const CustomerHome = () => {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 pb-12">
-
-      {/* Welcome */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-black text-gray-900">
-            Hey {firstName}! 👋
-          </h1>
+          <h1 className="text-2xl font-black text-gray-900">Hey {firstName}! 👋</h1>
           <p className="text-gray-500 text-sm mt-1">What are you craving today?</p>
         </div>
         {coords && (
@@ -170,7 +166,6 @@ const CustomerHome = () => {
         )}
       </div>
 
-      {/* Search Bar */}
       <div className="flex bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden focus-within:border-[#ff4b3a] focus-within:shadow-md transition-all duration-200">
         <div className="flex-1 flex items-center px-5 gap-3">
           <Search className="text-gray-400 shrink-0" size={20} />
@@ -182,13 +177,8 @@ const CustomerHome = () => {
             className="w-full py-4 outline-none text-gray-800 placeholder-gray-400 bg-transparent text-sm"
           />
         </div>
-        <div className="flex items-center gap-2 px-5 border-l border-gray-200 text-gray-500 text-sm shrink-0">
-          <MapPin size={16} className="text-[#ff4b3a]" />
-          <span className="font-medium hidden sm:inline">{coords ? 'Current Location' : 'Malappuram'}</span>
-        </div>
       </div>
 
-      {/* Promo Banners */}
       <div className="relative overflow-hidden rounded-2xl shadow-xl shadow-red-50">
         {BANNERS.map((b, i) => (
           <div
@@ -197,8 +187,7 @@ const CustomerHome = () => {
           >
             <div>
               <div className="inline-flex items-center gap-1.5 bg-white/20 rounded-full px-3 py-1 text-xs font-semibold mb-3">
-                <Zap size={12} />
-                Limited Time
+                <Zap size={12} /> Limited Time
               </div>
               <h2 className="text-3xl font-black">{b.title}</h2>
               <p className="text-white/80 mt-1">{b.sub}</p>
@@ -209,22 +198,11 @@ const CustomerHome = () => {
             <div className="text-7xl hidden sm:block">{b.emoji}</div>
           </div>
         ))}
-        {/* Dots */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {BANNERS.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveBanner(i)}
-              className={`w-2 h-2 rounded-full transition-all ${i === activeBanner ? 'bg-white w-5' : 'bg-white/50'}`}
-            />
-          ))}
-        </div>
       </div>
 
-      {/* Categories */}
       <div>
         <h2 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
-          <Tag size={18} className="text-[#ff4b3a]" /> Order by category
+          <Tag size={18} className="text-[#ff4b3a] rotate-90" /> Order by category
         </h2>
         <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
           <button
@@ -233,8 +211,7 @@ const CustomerHome = () => {
               activeCategory === '' ? 'border-[#ff4b3a] bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
             }`}
           >
-            <span className="text-2xl">🍽️</span>
-            <span className="text-xs font-semibold text-gray-700">All</span>
+            <span className="text-2xl">🍽️</span><span className="text-xs font-semibold text-gray-700">All</span>
           </button>
           {CATEGORIES.map(cat => (
             <button
@@ -244,14 +221,12 @@ const CustomerHome = () => {
                 activeCategory === cat.label ? 'border-[#ff4b3a] bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
               }`}
             >
-              <span className="text-2xl">{cat.emoji}</span>
-              <span className="text-xs font-semibold text-gray-700">{cat.label}</span>
+              <span className="text-2xl">{cat.emoji}</span><span className="text-xs font-semibold text-gray-700">{cat.label}</span>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Restaurants Grid */}
       <div>
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
@@ -269,15 +244,19 @@ const CustomerHome = () => {
           <div className="flex flex-col items-center justify-center py-20 text-gray-400">
             <span className="text-6xl mb-4">🔍</span>
             <p className="font-semibold text-lg text-gray-900 text-center">No restaurants found nearby</p>
-            <p className="text-sm text-center">Be the first to onboard a restaurant in this area!</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filtered.map(rest => <RestaurantCard key={rest.id} rest={rest} />)}
+            {filtered.map(rest => (
+              <RestaurantCard 
+                key={rest.id} 
+                rest={rest} 
+                onClick={() => navigate(`/restaurant/${rest.id}`)} 
+              />
+            ))}
           </div>
         )}
       </div>
-
     </div>
   );
 };

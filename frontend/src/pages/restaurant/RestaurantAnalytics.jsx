@@ -13,15 +13,11 @@ const RestaurantAnalytics = () => {
             setData(res);
         }).catch(() => {
             setData({
-                total_orders: 450,
-                total_revenue: 125000,
-                avg_rating: 4.8,
-                top_items: [
-                    { name: 'Chicken Biryani', count: 124, revenue: 34720 },
-                    { name: 'Butter Chicken', count: 89, revenue: 24920 },
-                    { name: 'Garlic Naan', count: 75, revenue: 3000 }
-                ],
-                recent_sales: [12000, 15000, 10000, 18000, 14000, 20000, 16000]
+                total_orders: 0,
+                total_revenue: 0,
+                avg_rating: 0.0,
+                top_items: [],
+                recent_sales: [0, 0, 0, 0, 0, 0, 0]
             });
         }).finally(() => setLoading(false));
     }, [period]);
@@ -32,7 +28,7 @@ const RestaurantAnalytics = () => {
                 <div className={`p-3 rounded-2xl ${color} bg-opacity-10`}>
                     <Icon size={20} className={color.replace('bg-', 'text-')} />
                 </div>
-                {growth !== undefined && (
+                {growth !== undefined && growth !== 0 && (
                     <div className={`flex items-center gap-1 text-[10px] font-black ${growth >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                         {growth >= 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
                         {Math.abs(growth)}%
@@ -76,11 +72,12 @@ const RestaurantAnalytics = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-                <StatCard icon={CreditCard} label="Net Revenue" value={`₹${data.total_revenue.toLocaleString()}`} growth={15.4} color="bg-[#ff4b3a]" />
-                <StatCard icon={ShoppingBag} label="Total Orders" value={data.total_orders} growth={9.8} color="bg-blue-500" />
-                <StatCard icon={Star} label="Avg. Rating" value={data.avg_rating} growth={1.2} color="bg-orange-500" />
-                <StatCard icon={TrendingUp} label="Daily Avg" value={`₹${Math.round(data.total_revenue / 30)}`} color="bg-purple-500" />
+                <StatCard icon={CreditCard} label="Net Revenue" value={`₹${data.total_revenue.toLocaleString()}`} growth={0} color="bg-[#ff4b3a]" />
+                <StatCard icon={ShoppingBag} label="Total Orders" value={data.total_orders} growth={0} color="bg-blue-500" />
+                <StatCard icon={Star} label="Avg. Rating" value={data.avg_rating} growth={0} color="bg-orange-500" />
+                <StatCard icon={TrendingUp} label="Daily Avg" value={`₹${data.total_revenue ? Math.round(data.total_revenue / 30) : 0}`} color="bg-purple-500" />
             </div>
+
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Sales Chart */}

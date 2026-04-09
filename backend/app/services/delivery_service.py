@@ -125,3 +125,39 @@ class DeliveryService:
             return partner.to_dict() if partner else None, None
         except Exception as e:
             return None, str(e)
+
+    @staticmethod
+    def get_available_orders():
+        """Get all orders ready for delivery that aren't assigned yet"""
+        try:
+            # Look for orders that are 'ready' but have no delivery partner
+            orders = Order.objects(status='ready', delivery_partner=None)
+            return [order.to_dict() for order in orders], None
+        except Exception as e:
+            return None, str(e)
+
+    @staticmethod
+    def claim_order(order_id: str, user_id: str):
+        """Claim an available order for delivery"""
+        try:
+            partner = DeliveryPartner.objects(user=user_id).first()
+            if not partner:
+                return None, "Delivery partner not found"
+            
+            # Check if partner is already busy
+            active = Order.objects(delivery_partner=user_id, status__in=['picked', 'on_the_way']).first()
+            if active:
+                return None, "You already have an active delivery. Complete it first."
+
+            order = Order.objects(id=order_id, delivery_partner=None).first()
+            if not order:
+                return None, "Order no longer available or already assigned"
+            
+            order.delivery_partner = User.objects(id=user_id).first()
+            order.status = 'picked' # Immediately mark as picked for simplicity in this flow
+            order.updated_at = datetime.utcnow()
+            order.save()
+            
+            return order.to_dict(), None
+        except Exception as e:
+            return None, str(e)

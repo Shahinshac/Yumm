@@ -11,11 +11,7 @@ const DeliveryHistory = () => {
         deliveryService.getHistory().then(res => {
             setHistory(res.history || []);
         }).catch(() => {
-            setHistory([
-                { id: 'ORD123', restaurant: 'Paragon', customer: 'John Doe', address: 'Apartment 4B, Hill Street', date: '2026-04-08', amount: 850, status: 'delivered' },
-                { id: 'ORD124', restaurant: 'Devi Prasad', customer: 'Sarah M.', address: 'Sector 4, Main Road', date: '2026-04-07', amount: 450, status: 'delivered' },
-                { id: 'ORD125', restaurant: 'Hot Spot', customer: 'Kevin L.', address: '12th Cross, Mall Avenue', date: '2026-04-07', amount: 1200, status: 'delivered' }
-            ]);
+            setHistory([]);
         }).finally(() => setLoading(false));
     }, []);
 

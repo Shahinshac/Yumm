@@ -1,18 +1,71 @@
 import React, { useState } from 'react';
-import { ShoppingCart, ArrowLeft, Trash2, Plus, Minus, CreditCard, MapPin } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Trash2, Plus, Minus, CreditCard, MapPin, Loader2, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../context/CartContext';
+import { customerService } from '../../services/customerService';
 
 const CustomerCart = () => {
   const navigate = useNavigate();
-  // Mock cart items for initial view since user said "no sample data" in DB
-  const [items, setItems] = useState([]); 
+  const { cart, addToCart, removeFromCart, clearCart, getCartTotal } = useCart();
   const [loading, setLoading] = useState(false);
-  const [userAddress, setUserAddress] = useState(localStorage.getItem('user_address') || 'Please set your delivery address');
+  const [placedOrder, setPlacedOrder] = useState(null);
 
-  const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = getCartTotal();
+  const deliveryFee = subtotal > 0 ? 40 : 0;
+  const platformFee = subtotal > 0 ? 5 : 0;
+  const total = subtotal + deliveryFee + platformFee;
+
+  const handlePlaceOrder = async () => {
+    if (cart.items.length === 0) return;
+    
+    setLoading(true);
+    try {
+        const orderData = {
+            restaurant_id: cart.restaurantId,
+            items: cart.items.map(i => ({
+                id: i.id,
+                name: i.name,
+                price: i.price,
+                quantity: i.quantity
+            })),
+            total_amount: total,
+            delivery_address: "My Default Address", // In a real app, this would come from profile
+            payment_method: "COD"
+        };
+        
+        const res = await customerService.placeOrder(orderData);
+        setPlacedOrder(res.order);
+        clearCart();
+        
+        // Redirect after a short delay to show success
+        setTimeout(() => {
+            navigate(`/orders/${res.order.id}/track`);
+        }, 2000);
+
+    } catch (err) {
+        alert("Failed to place order: " + (err.response?.data?.error || err.message));
+    } finally {
+        setLoading(false);
+    }
+  };
+
+  if (placedOrder) {
+      return (
+          <div className="max-w-xl mx-auto py-20 text-center space-y-6">
+              <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-500 animate-bounce">
+                  <CheckCircle size={60} />
+              </div>
+              <h1 className="text-3xl font-black text-gray-900">Order Placed!</h1>
+              <p className="text-gray-500 font-medium">Your order #{placedOrder.id.slice(-6).toUpperCase()} has been received. Redirecting to tracking...</p>
+              <div className="pt-4">
+                  <Loader2 className="animate-spin mx-auto text-[#ff4b3a]" size={30} />
+              </div>
+          </div>
+      )
+  }
 
   return (
-    <div className="max-w-4xl mx-auto pb-12">
+    <div className="max-w-4xl mx-auto pb-12 px-4">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <button 
@@ -23,16 +76,16 @@ const CustomerCart = () => {
           </button>
           <div>
             <h1 className="text-2xl font-black text-gray-900">Your Cart</h1>
-            <p className="text-sm text-gray-500">Ready to place your order?</p>
+            <p className="text-sm text-gray-500">Ready to place your order {cart.restaurantName ? `from ${cart.restaurantName}` : ''}?</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 text-sm font-bold text-gray-400 bg-white px-4 py-2 rounded-xl border border-gray-100">
+        <div className="flex items-center gap-2 text-sm font-bold text-gray-400 bg-white px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
           <ShoppingCart size={16} />
-          {items.length} items
+          {cart.items.reduce((a, b) => a + b.quantity, 0)} items
         </div>
       </div>
 
-      {items.length === 0 ? (
+      {cart.items.length === 0 ? (
         <div className="bg-white rounded-3xl border-2 border-dashed border-gray-100 p-20 text-center">
           <div className="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
             <ShoppingCart size={40} className="text-gray-300" />
@@ -41,7 +94,7 @@ const CustomerCart = () => {
           <p className="text-gray-500 mt-2 max-w-xs mx-auto">Looks like you haven't added anything to your cart yet.</p>
           <button 
             onClick={() => navigate('/home')}
-            className="mt-8 bg-[#ff4b3a] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#e03d2e] transition shadow-lg shadow-red-100"
+            className="mt-8 bg-[#ff4b3a] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#e03d2e] transition shadow-lg shadow-red-100 active:scale-95"
           >
             Browse Restaurants
           </button>
@@ -50,64 +103,87 @@ const CustomerCart = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Cart Items */}
           <div className="lg:col-span-2 space-y-4">
-            {items.map(item => (
-              <div key={item.id} className="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 hover:shadow-md transition">
-                <img src={item.image} alt={item.name} className="w-20 h-20 rounded-xl object-cover" />
+            {cart.items.map(item => (
+              <div key={item.id} className="bg-white p-4 rounded-2xl border border-gray-100 flex items-center gap-4 hover:shadow-md transition group">
+                <img 
+                    src={item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=300&q=80'} 
+                    alt={item.name} 
+                    className="w-20 h-20 rounded-xl object-cover" 
+                />
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-gray-900 truncate">{item.name}</h3>
-                  <p className="text-sm text-gray-500">₹{item.price}</p>
+                  <p className="text-sm text-gray-500 font-black">₹{item.price}</p>
                 </div>
-                <div className="flex items-center gap-3 bg-gray-50 p-1.5 rounded-xl border border-gray-100">
-                  <button className="p-1 hover:bg-white rounded-md transition text-gray-600"><Minus size={14} /></button>
+                <div className="flex items-center gap-3 bg-gray-50 p-1.5 rounded-xl border border-gray-100 shadow-inner">
+                  <button 
+                    onClick={() => removeFromCart(item.id)}
+                    className="p-1 hover:bg-white hover:shadow-sm rounded-md transition text-gray-600 active:scale-90"
+                  >
+                        <Minus size={14} />
+                  </button>
                   <span className="font-bold text-sm w-4 text-center">{item.quantity}</span>
-                  <button className="p-1 hover:bg-white rounded-md transition text-gray-600"><Plus size={14} /></button>
+                  <button 
+                    onClick={() => addToCart(item)}
+                    className="p-1 hover:bg-white hover:shadow-sm rounded-md transition text-gray-600 active:scale-90"
+                  >
+                        <Plus size={14} />
+                  </button>
                 </div>
-                <button className="p-2 text-gray-300 hover:text-red-500 transition"><Trash2 size={18} /></button>
               </div>
             ))}
+            
+            <button 
+                onClick={clearCart}
+                className="w-full py-4 text-gray-400 text-xs font-bold uppercase tracking-widest hover:text-red-500 transition"
+            >
+                Clear entire cart
+            </button>
           </div>
 
           {/* Checkout Summary */}
           <div className="space-y-6">
-            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+            <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-xl shadow-gray-200/50 sticky top-24">
               <h2 className="font-bold text-gray-900 mb-6 flex items-center gap-2">
                 <CreditCard size={18} className="text-[#ff4b3a]" /> Bill Summary
               </h2>
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between text-gray-500">
+                <div className="flex justify-between text-gray-500 font-medium">
                   <span>Item Total</span>
-                  <span>₹{total}</span>
+                  <span>₹{subtotal}</span>
                 </div>
-                <div className="flex justify-between text-gray-500">
+                <div className="flex justify-between text-gray-500 font-medium">
                   <span>Delivery Fee</span>
-                  <span>₹40</span>
+                  <span>₹{deliveryFee}</span>
                 </div>
-                <div className="flex justify-between text-gray-500">
+                <div className="flex justify-between text-gray-500 font-medium">
                   <span>Platform Fee</span>
-                  <span>₹5</span>
+                  <span>₹{platformFee}</span>
                 </div>
-                <div className="pt-3 border-t border-gray-100 flex justify-between items-center">
+                <div className="pt-3 border-t border-gray-100 flex justify-between items-center mt-4">
                   <span className="font-bold text-gray-900">Total Amount</span>
-                  <span className="text-xl font-black text-gray-900">₹{total + 45}</span>
+                  <span className="text-2xl font-black text-gray-900">₹{total}</span>
                 </div>
               </div>
               <button 
-                id="checkout-btn"
-                className="w-full mt-6 bg-[#ff4b3a] text-white py-4 rounded-2xl font-black hover:bg-[#e03d2e] transition shadow-lg shadow-red-100 flex items-center justify-center gap-2"
+                disabled={loading}
+                onClick={handlePlaceOrder}
+                className="w-full mt-8 bg-[#ff4b3a] text-white py-4 rounded-2xl font-black hover:bg-[#e03d2e] transition shadow-lg shadow-red-100 flex items-center justify-center gap-2 active:scale-95 disabled:opacity-50"
               >
+                {loading ? <Loader2 className="animate-spin" size={20} /> : <ShoppingCart size={20} />}
                 Place Order
               </button>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-gray-100 flex items-start gap-3">
-              <div className="p-2 bg-orange-50 rounded-lg shrink-0">
-                <MapPin size={16} className="text-orange-600" />
+            <div className="bg-white p-5 rounded-2xl border border-gray-100 flex items-start gap-4 shadow-sm">
+              <div className="p-3 bg-orange-50 rounded-xl shrink-0">
+                <MapPin size={20} className="text-orange-600" />
               </div>
               <div>
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Delivery To</p>
-                <p className="text-sm font-semibold text-gray-900 mt-0.5">
-                  {import.meta.env.VITE_USER_ADDRESS || 'Please set your delivery address'}
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Delivery Address</p>
+                <p className="text-sm font-bold text-gray-900 mt-1">
+                   Current Location / Selected Address
                 </p>
+                <button className="text-[10px] font-black text-orange-600 uppercase mt-2 hover:underline">Change Address</button>
               </div>
             </div>
           </div>

@@ -6,14 +6,16 @@ from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO
+from flask_mail import Mail
 from mongoengine import connect, ConnectionFailure
 import os
 import logging
 from datetime import timedelta
 
+# Initialize extensions
 jwt = JWTManager()
-# socketio instance shared across the app
 socketio = SocketIO(cors_allowed_origins="*", async_mode='threading')
+mail = Mail()
 
 
 def setup_logging(app):
@@ -70,11 +72,6 @@ def create_app():
         db_uri = app.config['MONGODB_SETTINGS'].get('host', 'mongodb://localhost:27017/fooddelivery')
         logger.info(f"Connecting to MongoDB: {db_uri[:50]}..." if len(db_uri) > 50 else f"Connecting to MongoDB: {db_uri}")
 
-        # MongoDB Atlas (mongodb+srv://) automatically handles SSL/TLS
-        # No additional SSL parameters needed - let PyMongo/MongoEngine handle it
-        if 'mongodb+srv://' in db_uri:
-            logger.info("Detected mongodb+srv:// connection - SSL/TLS automatically enabled by MongoDB Atlas")
-
         # Connection parameters
         conn_kwargs = {
             'serverSelectionTimeoutMS': app.config['MONGODB_SETTINGS'].get('serverSelectionTimeoutMS', 5000),
@@ -87,51 +84,21 @@ def create_app():
     except ConnectionFailure as e:
         error_str = str(e)
         logger.error(f"❌ MongoDB connection failed: {error_str}")
-
-        # Diagnostics
-        if 'IP whitelist' in error_str or 'Unauthorized' in error_str or '47' in error_str:
-            logger.error("⚠️  IP Whitelist Error - Render cannot access MongoDB Atlas:")
-            logger.error("   1. Go to: https://cloud.mongodb.com/ → foodhub project")
-            logger.error("   2. Network Access → IP Whitelist")
-            logger.error("   3. Add IP address: 0.0.0.0/0 (for testing)")
-            logger.error("   4. Wait 1-2 minutes for changes to apply")
-        elif 'authentication' in error_str.lower() or 'auth' in error_str.lower():
-            logger.error("⚠️  Authentication Error:")
-            logger.error("   Check MongoDB Atlas credentials in Render environment variables")
-            logger.error("   Verify MONGODB_URI is set correctly")
-        elif 'Timeout' in error_str or 'timeout' in error_str:
-            logger.error("⚠️  Connection Timeout:")
-            logger.error("   MongoDB Atlas may be unreachable or slow to respond")
-            logger.error("   Check: IP whitelist, network connectivity, cluster status")
-
         raise RuntimeError(f"Could not connect to MongoDB: {error_str}")
 
     except Exception as e:
         error_str = str(e)
         logger.error(f"❌ Unexpected error during MongoDB connection: {error_str}")
-        logger.error(f"Error type: {type(e).__name__}")
-
-        if "Unknown option" in error_str:
-            logger.error("💡 Invalid connection parameter detected")
-            logger.error("   This typically means an unsupported option was passed to MongoEngine.connect()")
-            logger.error("   Verify connection parameters are compatible with MongoEngine version")
-        elif 'IP' in error_str or 'whitelist' in error_str.lower():
-            logger.error("💡 Possible IP whitelist issue - Add 0.0.0.0/0 to MongoDB Atlas Network Access")
-        elif 'auth' in error_str.lower():
-            logger.error("💡 Possible authentication issue - Check MongoDB username and password in Render environment")
-
         raise
 
     # JWT Configuration
     app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', app.config['JWT_SECRET_KEY'])
 
-    # CORS - Handle both the correct name and common typos from the environment
+    # CORS
     origins_str = os.getenv('CORS_ORIGINS') or os.getenv('CORS_ORGINS')
-    
     if origins_str:
         cors_origins = [origin.strip() for origin in origins_str.split(',') if origin.strip()]
     else:
-        # Robust defaults for development and the specific production Vercel domain
         cors_origins = [
             "http://localhost:5173", 
             "http://127.0.0.1:5173",
@@ -147,8 +114,12 @@ def create_app():
     }})
     logger.info(f"✅ CORS configured for origins: {cors_origins}")
 
-    # JWT Initialization
+    # Initialize extensions with app
     jwt.init_app(app)
+    socketio.init_app(app, cors_allowed_origins="*")
+    mail.init_app(app)
+    
+    logger.info("✅ Core extensions (JWT, SocketIO, Mail) initialized")
 
     # JWT Error Handlers
     @jwt.expired_token_loader
@@ -163,70 +134,24 @@ def create_app():
     def missing_token_callback(error):
         return jsonify({'error': 'Authorization token is missing'}), 401
 
-    # Initialize SocketIO with the app
-    socketio.init_app(app, cors_allowed_origins="*")
-    logger.info("✅ SocketIO configured")
-
     # Register blueprints
     logger.info("Registering API blueprints...")
 
-    # Root endpoint
     @app.route('/', methods=['GET'])
     def root():
         return jsonify({
             'message': 'Welcome to Yumm FoodHub API',
             'status': 'online',
-            'health_check': '/api/health',
             'version': '2.0.1'
         }), 200
 
-    # Version endpoint
-    @app.route('/api/version', methods=['GET'])
-    def version_check():
-        return jsonify({
-            'version': '2.0.1',
-            'build': 'auth-approval-system-v2-fixed',
-            'features': ['google-signin', 'restaurant-registration', 'admin-approval', 'role-based-access'],
-            'status': 'production',
-            'timestamp': '2026-04-07T22:50:00Z'
-        }), 200
-
-    # Health check endpoint
-    @app.route('/api/health', methods=['GET'])
-    def health_check():
-        try:
-            # Try a simple database access to check connection
-            from backend.app.models.user import User
-            user_count = User.objects.count()
-            return jsonify({
-                'status': 'healthy',
-                'message': 'FoodHub Backend is running',
-                'database': 'connected',
-                'users': user_count
-            }), 200
-        except Exception as e:
-            return jsonify({
-                'status': 'unhealthy',
-                'message': 'FoodHub Backend is running but database is not accessible',
-                'error': str(e)
-            }), 503
-
     try:
         from backend.app.routes import (
-            auth, 
-            restaurants, 
-            orders, 
-            delivery, 
-            admin, 
-            reviews, 
-            promo,
-            customer,
-            restaurant_dashboard,
-            delivery_dashboard,
-            restaurant_dashboard,
-            delivery_dashboard,
-            admin_dashboard,
-            notifications
+            auth, customer, restaurant_dashboard, 
+            delivery_dashboard, admin_dashboard, 
+            notifications, restaurants, orders, 
+            delivery, admin, reviews, promo,
+            media # New media route
         )
 
         app.register_blueprint(auth.bp)
@@ -241,6 +166,7 @@ def create_app():
         app.register_blueprint(admin.bp)
         app.register_blueprint(reviews.bp)
         app.register_blueprint(promo.bp)
+        app.register_blueprint(media.bp) # Media blueprint
 
         logger.info("✅ All blueprints registered successfully")
     except Exception as e:
@@ -258,13 +184,11 @@ def create_app():
     # Activity Tracking Hook
     @app.before_request
     def track_user_activity():
-        """Update last_activity for authenticated users, throttled to 1 min"""
         try:
             from flask_jwt_extended import get_jwt_identity, verify_jwt_in_request
             from backend.app.models.user import User
             from datetime import datetime, timedelta
 
-            # Check if request has JWT without failing
             try:
                 verify_jwt_in_request(optional=True)
                 user_id = get_jwt_identity()
@@ -274,13 +198,11 @@ def create_app():
             if user_id:
                 user = User.objects(id=user_id).first()
                 if user:
-                    # Throttle: Only update if last_activity is older than 60 seconds
                     now = datetime.utcnow()
                     if not user.last_activity or (now - user.last_activity) > timedelta(seconds=60):
                         user.last_activity = now
                         user.save()
-        except Exception as e:
-            # Don't block requests if tracking fails
+        except:
             pass
 
     # Global error handlers
@@ -288,134 +210,10 @@ def create_app():
     def not_found(error):
         return jsonify({'error': 'Resource not found', 'status': 404}), 404
 
-    @app.errorhandler(405)
-    def method_not_allowed(error):
-        return jsonify({'error': 'Method not allowed', 'status': 405}), 405
-
     @app.errorhandler(500)
     def internal_error(error):
         logger.error(f"Internal server error: {str(error)}", exc_info=True)
-        return jsonify({
-            'error': 'Internal server error',
-            'status': 500,
-            'details': str(error)
-        }), 500
-
-    # System initialization complete
-    logger.info("✅ FoodHub App initialized successfully!")
-
-    # Seed demo data logic disabled as per user request for total system reset
-    # enable_demo_data = os.getenv('ENABLE_DEMO_DATA', 'false').lower() == 'true'
-    # if env in ['development', 'testing'] and enable_demo_data:
-    #     try:
-    #         logger.info("Creating demo data...")
-    #         create_demo_data(app, logger)
-    #     except Exception as e:
-    #         logger.error(f"Failed to create demo data: {str(e)}")
+        return jsonify({'error': 'Internal server error', 'status': 500}), 500
 
     logger.info("✅ FoodHub App initialized successfully!")
-
     return app
-
-
-def create_demo_data(app, logger):
-    """Create demo restaurants and items"""
-    from backend.app.models.restaurant import Restaurant, MenuItem
-    from backend.app.models.user import User
-    from backend.app.utils.security import PasswordSecurity
-
-    # Create demo restaurants if not exist
-    if Restaurant.objects.count() == 0:
-        restaurants_data = [
-            {
-                'name': 'Paragon',
-                'category': 'Biryani & Kerala',
-                'location': {'lat': 11.0089, 'lng': 76.0305},
-                'address': 'Malappuram, Kerala',
-                'rating': 4.7,
-                'image': '🍛',
-                'delivery_time': 30,
-                'min_order': 200
-            },
-            {
-                'name': 'Devi Prasad',
-                'category': 'Traditional Kerala',
-                'location': {'lat': 11.0089, 'lng': 76.0305},
-                'address': 'Malappuram, Kerala',
-                'rating': 4.5,
-                'image': '🥘',
-                'delivery_time': 35,
-                'min_order': 150
-            },
-            {
-                'name': 'Hot Spot',
-                'category': 'Multi-cuisine',
-                'location': {'lat': 11.0089, 'lng': 76.0305},
-                'address': 'Malappuram, Kerala',
-                'rating': 4.4,
-                'image': '🍴',
-                'delivery_time': 25,
-                'min_order': 250
-            },
-            {
-                'name': 'Sree Bhagavathy Palace',
-                'category': 'Seafood & Kerala',
-                'location': {'lat': 11.0089, 'lng': 76.0305},
-                'address': 'Malappuram, Kerala',
-                'rating': 4.6,
-                'image': '🦐',
-                'delivery_time': 40,
-                'min_order': 300
-            }
-        ]
-
-        for rest_data in restaurants_data:
-            restaurant = Restaurant(**rest_data)
-            restaurant.save()
-
-            # Add specific menu items based on restaurant
-            menus = {
-                'Paragon': [
-                    {'name': 'Chicken Biryani', 'price': 280, 'description': 'Fragrant basmati rice with tender chicken'},
-                    {'name': 'Mutton Biryani', 'price': 320, 'description': 'Premium mutton biryani'},
-                    {'name': 'Fish Curry', 'price': 250, 'description': 'Spiced fish in coconut gravy'},
-                    {'name': 'Paragon Biryanis Combo', 'price': 550, 'description': 'Chicken + Mutton + Naan'}
-                ],
-                'Devi Prasad': [
-                    {'name': 'Puttu Curry', 'price': 120, 'description': 'Traditional Kerala puttu'},
-                    {'name': 'Avial', 'price': 150, 'description': 'Mixed vegetables Kerala style'},
-                    {'name': 'Appam with Stew', 'price': 180, 'description': 'Soft appam with chicken stew'},
-                    {'name': 'Kerala Thali', 'price': 300, 'description': 'Complete Kerala meal'}
-                ],
-                'Hot Spot': [
-                    {'name': 'Biryanis - Chicken', 'price': 250, 'description': 'Fragrant biryani'},
-                    {'name': 'Murgh Makhani', 'price': 280, 'description': 'Creamy butter chicken'},
-                    {'name': 'Tandoori Chicken', 'price': 350, 'description': 'Spiced grilled chicken'},
-                    {'name': 'Mixed Grill', 'price': 450, 'description': 'Assorted kebabs and tandoori'}
-                ],
-                'Sree Bhagavathy Palace': [
-                    {'name': 'Fish Biryanis', 'price': 280, 'description': 'Fresh fish biryani'},
-                    {'name': 'Prawn Curry', 'price': 320, 'description': 'Cooking prawn in coconut gravy'},
-                    {'name': 'Squid Fry', 'price': 300, 'description': 'Crispy squid fry'},
-                    {'name': 'Seafood Special Thali', 'price': 400, 'description': 'Complete seafood meal'}
-                ]
-            }
-
-            items = menus.get(rest_data['name'], [
-                {'name': f'{rest_data["name"]} Special 1', 'price': 250, 'description': 'Popular item'},
-                {'name': f'{rest_data["name"]} Special 2', 'price': 350, 'description': 'Premium item'},
-                {'name': f'{rest_data["name"]} Special 3', 'price': 450, 'description': 'Deluxe item'},
-            ])
-
-            for item in items:
-                menu_item = MenuItem(
-                    restaurant=restaurant,
-                    name=item['name'],
-                    price=item['price'],
-                    description=item['description'],
-                    category=rest_data['category']
-                )
-                menu_item.save()
-
-        logger.info("✅ Demo restaurants created")
-

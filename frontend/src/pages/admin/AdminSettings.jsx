@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Settings, Shield, Bell, Database, Globe, Lock, Save, Trash2, Sliders, Info, CreditCard } from 'lucide-react';
+import { Settings, Shield, Bell, Database, Globe, Lock, Save, Trash2, Sliders, Info, CreditCard, Loader2 } from 'lucide-react';
+import { adminService } from '../../services/adminService';
 
 const AdminSettings = () => {
+  const [loading, setLoading] = useState(false);
   const [settings, setSettings] = useState({
     siteName: 'Yumm FoodHub',
     maintenance: false,
@@ -10,6 +12,32 @@ const AdminSettings = () => {
     allowRegistration: true,
     platformEmail: 'admin@yumm.com'
   });
+
+  const handleSave = async () => {
+    setLoading(true);
+    try {
+      await adminService.updateSystemSettings(settings);
+      alert('System settings updated successfully!');
+    } catch {
+      alert('Failed to update system settings');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleReset = async () => {
+    if (!window.confirm('Are you absolutely sure? This will delete all orders, reviews, and transaction data.')) return;
+    
+    setLoading(true);
+    try {
+      await adminService.wipeSystemData();
+      alert('Platform data has been successfully reset. The system is now completely fresh.');
+    } catch {
+      alert('Failed to reset system data');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const SettingItem = ({ icon: Icon, label, description, children }) => (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 hover:bg-gray-50/50 transition border-b border-gray-50 last:border-0 first:rounded-t-3xl last:rounded-b-3xl">
@@ -35,8 +63,12 @@ const AdminSettings = () => {
           <h1 className="text-2xl font-black text-gray-900 tracking-tight">System Configuration</h1>
           <p className="text-gray-500 text-sm mt-1 font-medium">Manage platform-wide rules, fees, and operational status.</p>
         </div>
-        <button className="flex items-center gap-2 px-6 py-2.5 bg-[#ff4b3a] text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-red-200 hover:scale-105 active:scale-95 transition-all">
-          <Save size={16} /> Save Changes
+        <button 
+          onClick={handleSave}
+          disabled={loading}
+          className="flex items-center gap-2 px-6 py-2.5 bg-[#ff4b3a] text-white rounded-2xl font-black text-xs uppercase tracking-widest shadow-lg shadow-red-200 hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+        >
+          {loading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save Changes
         </button>
       </div>
 
@@ -68,6 +100,7 @@ const AdminSettings = () => {
               <input 
                 type="email" 
                 value={settings.platformEmail} 
+                onChange={e => setSettings({...settings, platformEmail: e.target.value})}
                 className="px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold min-w-[200px]"
               />
             </SettingItem>
@@ -90,6 +123,7 @@ const AdminSettings = () => {
                 <input 
                   type="number" 
                   value={settings.serviceFee} 
+                  onChange={e => setSettings({...settings, serviceFee: e.target.value})}
                   className="w-20 px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-center"
                 />
                 <span className="text-gray-400 font-bold">%</span>
@@ -105,6 +139,7 @@ const AdminSettings = () => {
                 <input 
                   type="number" 
                   value={settings.deliveryBaseFee} 
+                  onChange={e => setSettings({...settings, deliveryBaseFee: e.target.value})}
                   className="w-24 px-4 py-2 bg-gray-50 border border-gray-100 rounded-xl text-sm font-bold text-center"
                 />
               </div>
@@ -121,7 +156,7 @@ const AdminSettings = () => {
           <div className="divide-y divide-gray-50">
              <SettingItem 
               icon={Lock} 
-              label="Maintenance Mode" 
+               label="Maintenance Mode" 
               description="Temporarily disable all orders for system updates."
             >
               <button 
@@ -136,8 +171,12 @@ const AdminSettings = () => {
               label="Wipe System Data" 
               description="Clear all order history while preserving user accounts."
             >
-              <button className="px-4 py-2 border border-red-100 text-red-500 bg-red-50 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all">
-                Reset Orders
+              <button 
+                onClick={handleReset}
+                disabled={loading}
+                className="px-4 py-2 border border-red-100 text-red-500 bg-red-50 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+              >
+                Reset Platform
               </button>
             </SettingItem>
           </div>
@@ -155,3 +194,4 @@ const AdminSettings = () => {
 };
 
 export default AdminSettings;
+

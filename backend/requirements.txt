@@ -12,3 +12,4 @@ gunicorn==21.2.0
 requests==2.31.0
 Werkzeug==2.3.7
 google-auth==2.23.0
+Flask-Mail==0.9.1

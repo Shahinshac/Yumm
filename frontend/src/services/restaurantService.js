@@ -63,5 +63,16 @@ export const restaurantService = {
   updateProfile: async (profileData) => {
     const resp = await api.put('/restaurant-dashboard/profile/update', profileData);
     return resp.data;
+  },
+
+  uploadImage: async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const resp = await api.post('/api/media/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+    return resp.data;
   }
 };

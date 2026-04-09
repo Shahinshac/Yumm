@@ -76,10 +76,10 @@ const AdminAnalytics = () => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-        <StatCard icon={CreditCard} label="Total Revenue" value={`₹${data.total_revenue.toLocaleString()}`} growth={8.2} color="bg-blue-500" />
-        <StatCard icon={ShoppingBag} label="Orders" value={data.total_orders} growth={12.5} color="bg-[#ff4b3a]" />
-        <StatCard icon={Users} label="New Customers" value="84" growth={5.1} color="bg-purple-500" />
-        <StatCard icon={TrendingUp} label="Avg Order Value" value={`₹${data.avg_order_value}`} growth={-2.4} color="bg-orange-500" />
+        <StatCard icon={CreditCard} label="Total Revenue" value={`₹${data.total_revenue.toLocaleString()}`} growth={0} color="bg-blue-500" />
+        <StatCard icon={ShoppingBag} label="Orders" value={data.total_orders} growth={0} color="bg-[#ff4b3a]" />
+        <StatCard icon={Users} label="New Customers" value="0" growth={0} color="bg-purple-500" />
+        <StatCard icon={TrendingUp} label="Avg Order Value" value={`₹${data.avg_order_value}`} growth={0} color="bg-orange-500" />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

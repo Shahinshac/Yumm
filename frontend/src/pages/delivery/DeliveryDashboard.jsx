@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, TrendingUp, Bike, MessageSquare } from 'lucide-react';
+import { Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, TrendingUp, Bike, MessageSquare, Loader2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { deliveryService } from '../../services/deliveryService';
 import useLocationTracking from '../../hooks/useLocationTracking';
-import ChatModule from '../../components/ChatModule';
-import { io } from 'socket.io-client';
-
-const DELIVERIES = [];
 
 const StatCard = ({ icon: Icon, label, value, iconColor, iconBg }) => (
   <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
@@ -22,170 +19,216 @@ const StatCard = ({ icon: Icon, label, value, iconColor, iconBg }) => (
 const DeliveryDashboard = () => {
     const { user } = useAuth();
     const [online, setOnline] = useState(true);
-    const [deliveries, setDeliveries] = useState(DELIVERIES);
+    const [availableOrders, setAvailableOrders] = useState([]);
     const [activeDelivery, setActiveDelivery] = useState(null);
-    const [showChat, setShowChat] = useState(false);
-    const [socket, setSocket] = useState(null);
+    const [stats, setStats] = useState({ deliveredToday: 0, earningsToday: 0, kmToday: 0, rate: '100%' });
+    const [loading, setLoading] = useState(true);
 
-    // Initialize socket for chat
-    useEffect(() => {
-        const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
-        setSocket(newSocket);
-        
-        if (activeDelivery) {
-            newSocket.emit('join_order_room', { order_id: activeDelivery.id });
-        }
-        
-        return () => newSocket.disconnect();
-    }, [activeDelivery?.id]);
-
-    // Initialize real-time location tracking
+    // Track real location if active delivery exists
     useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
 
-  const acceptDelivery = (id) => {
-    const d = deliveries.find(x => x.id === id);
-    setActiveDelivery({ ...d, status: 'pickup' });
-    setDeliveries(prev => prev.filter(x => x.id !== id));
-  };
+    useEffect(() => {
+        if (online) {
+            refreshDashboard();
+            const interval = setInterval(refreshDashboard, 30000); // Polling every 30s
+            return () => clearInterval(interval);
+        }
+    }, [online]);
 
-  const advanceStatus = () => {
-    if (!activeDelivery) return;
-    if (activeDelivery.status === 'pickup') setActiveDelivery(p => ({ ...p, status: 'delivering' }));
-    else if (activeDelivery.status === 'delivering') setActiveDelivery(p => ({ ...p, status: 'done' }));
-    else setActiveDelivery(null);
-  };
+    const refreshDashboard = async () => {
+        try {
+            const [avail, assigned, s] = await Promise.all([
+                deliveryService.getAvailableOrders(),
+                deliveryService.getOrders(), // This returns currently assigned
+                deliveryService.getStats().catch(() => ({ deliveredToday: 0, earningsToday: 0 }))
+            ]);
+            
+            setAvailableOrders(avail || []);
+            setStats(s || { deliveredToday: 0, earningsToday: 0, kmToday: 0, rate: '100%' });
+            
+            // Check if there's an active (not delivered) order
+            const active = assigned?.find(o => o.status !== 'delivered');
+            setActiveDelivery(active || null);
+        } catch (err) {
+            console.error("Dashboard refresh failed:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const STATUS_LABEL = { pickup: 'Heading to Restaurant', delivering: 'Out for Delivery', done: 'Delivered! 🎉' };
+    const handleClaim = async (id) => {
+        try {
+            setLoading(true);
+            await deliveryService.claimOrder(id);
+            await refreshDashboard();
+        } catch (err) {
+            alert("Claim failed: " + (err.response?.data?.error || err.message));
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleAdvanceStatus = async () => {
+        if (!activeDelivery) return;
+        
+        let nextStatus = '';
+        if (activeDelivery.status === 'picked') nextStatus = 'delivering';
+        else if (activeDelivery.status === 'on_the_way') nextStatus = 'done';
+        
+        if (!nextStatus) return;
+
+        try {
+            setLoading(true);
+            await deliveryService.updateStatus(activeDelivery.id, nextStatus);
+            await refreshDashboard();
+        } catch (err) {
+            alert("Status update failed.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const STATUS_UI = {
+        picked: { label: 'Picked Up - Head to Customer', next: 'On my Way' },
+        on_the_way: { label: 'Near Customer - Mark Delivered', next: 'Delivered' },
+        delivered: { label: 'Delivered! 🎉', next: '' }
+    };
+
+  if (loading && !activeDelivery && availableOrders.length === 0) {
+      return (
+          <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="animate-spin text-orange-500 mb-4" size={40} />
+              <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Syncing with hub...</p>
+          </div>
+      );
+  }
 
   return (
-    <div className="space-y-7 max-w-4xl mx-auto">
+    <div className="space-y-7 max-w-4xl mx-auto px-4">
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-gray-900">Delivery Hub</h1>
-          <p className="text-gray-500 text-sm mt-1">Manage your active deliveries and earnings.</p>
+          <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Delivery Control</h1>
+          <p className="text-gray-500 text-sm mt-1">Status: {online ? 'Searching for near orders...' : 'Resting'}</p>
         </div>
         <button
           onClick={() => setOnline(v => !v)}
-          className={`flex items-center gap-2.5 px-5 py-2.5 rounded-xl font-bold text-sm transition-all duration-200 ${
-            online ? 'bg-green-500 text-white shadow-lg shadow-green-200' : 'bg-gray-200 text-gray-600'
+          className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl font-black text-sm transition-all duration-300 active:scale-95 ${
+            online ? 'bg-green-500 text-white shadow-xl shadow-green-100' : 'bg-gray-100 text-gray-400'
           }`}
         >
-          <span className={`w-2.5 h-2.5 rounded-full ${online ? 'bg-white animate-pulse' : 'bg-gray-400'}`} />
-          {online ? 'You are Online' : 'You are Offline'}
+          <span className={`w-3 h-3 rounded-full ${online ? 'bg-white animate-pulse' : 'bg-gray-300'}`} />
+          {online ? 'ONLINE' : 'OFFLINE'}
         </button>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={CheckCircle} label="Delivered Today" value="6" iconColor="text-green-600" iconBg="bg-green-50" />
-        <StatCard icon={IndianRupee} label="Today's Earnings" value="₹380" iconColor="text-blue-600" iconBg="bg-blue-50" />
-        <StatCard icon={Navigation} label="KM Covered" value="24 km" iconColor="text-purple-600" iconBg="bg-purple-50" />
-        <StatCard icon={TrendingUp} label="Acceptance Rate" value="94%" iconColor="text-orange-600" iconBg="bg-orange-50" />
+        <StatCard icon={CheckCircle} label="Delivered" value={stats.deliveredToday || 0} iconColor="text-green-600" iconBg="bg-green-50" />
+        <StatCard icon={IndianRupee} label="Earnings" value={`₹${stats.earningsToday || 0}`} iconColor="text-blue-600" iconBg="bg-blue-50" />
+        <StatCard icon={Navigation} label="KM Covered" value={`${stats.kmToday || 0} km`} iconColor="text-purple-600" iconBg="bg-purple-50" />
+        <StatCard icon={TrendingUp} label="Rank" value="Gold" iconColor="text-orange-600" iconBg="bg-orange-50" />
       </div>
 
-      {/* Active Delivery */}
+      {/* Active Delivery Card */}
       {activeDelivery && (
-        <div className={`rounded-2xl p-6 text-white shadow-xl ${activeDelivery.status === 'done' ? 'bg-green-500' : 'bg-gradient-to-br from-gray-900 to-gray-800'}`}>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Bike size={18} />
-                <span className="font-bold text-sm uppercase tracking-wide">Active Delivery · {activeDelivery.id}</span>
-              </div>
-              <h2 className="text-xl font-black">{STATUS_LABEL[activeDelivery.status]}</h2>
-              {activeDelivery.status !== 'done' && (
-                <div className="mt-3 space-y-1">
-                  <p className="text-white/70 text-sm flex items-center gap-2">
-                    <MapPin size={14} />
-                    {activeDelivery.status === 'pickup' ? `📍 ${activeDelivery.restaurantAddr}` : `📍 ${activeDelivery.customerAddr}`}
-                  </p>
-                  <p className="text-white/60 text-xs">{activeDelivery.customer} · {activeDelivery.items}</p>
-                </div>
-              )}
-            </div>
-            <div className="text-right shrink-0">
-              <p className="text-2xl font-black">₹{activeDelivery.earnings}</p>
-              <p className="text-white/60 text-xs">Earnings</p>
-            </div>
+        <div className="bg-gray-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
+             <Bike size={160} />
           </div>
-
-          {/* Progress bar */}
-          <div className="mt-5 flex gap-2">
-            {['pickup', 'delivering', 'done'].map((s, i) => (
-              <div key={s} className={`h-1.5 flex-1 rounded-full transition-all duration-500 ${
-                ['pickup', 'delivering', 'done'].indexOf(activeDelivery.status) >= i ? 'bg-white' : 'bg-white/25'
-              }`} />
-            ))}
+          
+          <div className="relative z-10 flex flex-col md:flex-row items-start justify-between gap-6">
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-orange-400">
+                <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-ping" />
+                Live Mission · {activeDelivery.id.slice(-6).toUpperCase()}
+              </div>
+              <h2 className="text-3xl font-black tracking-tight leading-tight">
+                 {activeDelivery.status === 'picked' ? 'Heading to Restaurant' : 'Out for Delivery'}
+              </h2>
+              <div className="space-y-3 pt-2">
+                 <div className="flex items-start gap-3">
+                    <div className="p-2 bg-white/5 rounded-xl text-white/50"><MapPin size={18} /></div>
+                    <div>
+                        <p className="text-[10px] font-black uppercase text-white/30 tracking-widest">Target Location</p>
+                        <p className="text-sm font-bold text-white/80">{activeDelivery.status === 'picked' ? activeDelivery.restaurant?.address : activeDelivery.delivery_address}</p>
+                    </div>
+                 </div>
+              </div>
+            </div>
+            
+            <div className="text-right shrink-0">
+               <div className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
+                  <p className="text-3xl font-black text-orange-500">₹{activeDelivery.total_amount}</p>
+                  <p className="text-[10px] font-black text-white/40 uppercase tracking-tighter">Order Value</p>
+               </div>
+            </div>
           </div>
 
           <button
-            onClick={advanceStatus}
-            className="mt-4 w-full bg-white/15 hover:bg-white/25 border border-white/20 text-white font-bold py-3 rounded-xl transition text-sm"
+            onClick={handleAdvanceStatus}
+            disabled={loading}
+            className="mt-8 w-full bg-white text-gray-900 hover:bg-orange-500 hover:text-white font-black py-4 rounded-2xl transition-all duration-300 shadow-xl shadow-black/20 flex items-center justify-center gap-2 active:scale-[0.98]"
           >
-            {activeDelivery.status === 'pickup' ? '✅ Picked up — Start Delivery' :
-             activeDelivery.status === 'delivering' ? '🏁 Mark as Delivered' :
-             'Close'}
+            {loading ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle size={20} />}
+            {activeDelivery.status === 'picked' ? 'MARK AS PICKED UP' : 'MARK AS DELIVERED'}
           </button>
         </div>
       )}
 
-      {/* Available Deliveries */}
-      {online && (
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="flex items-center gap-2 px-6 py-5 border-b border-gray-100">
-            <Package size={18} className="text-orange-500" />
-            <h2 className="font-bold text-gray-800">Available Deliveries</h2>
-            <span className="ml-auto bg-orange-100 text-orange-700 text-xs font-bold px-2 py-0.5 rounded-full">{deliveries.length}</span>
+      {/* Available Jobs list */}
+      {online && !activeDelivery && (
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="flex items-center gap-2 px-8 py-6 border-b border-gray-50 bg-gray-50/50">
+            <Package size={20} className="text-orange-500" />
+            <h2 className="font-black text-gray-900 uppercase tracking-tight">Available Gigs</h2>
+            <span className="ml-auto bg-orange-100 text-orange-600 text-[10px] font-black px-2.5 py-1 rounded-full">{availableOrders.length} NEARBY</span>
           </div>
 
-          {deliveries.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-14 text-gray-400">
-              <Package size={40} className="mb-3 text-gray-300" />
-              <p className="font-medium">No deliveries available right now</p>
-              <p className="text-sm">Stay online — new orders appear here</p>
+          {availableOrders.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-gray-300">
+              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                  <Package size={32} />
+              </div>
+              <p className="font-bold text-gray-400">Hub is quiet right now...</p>
+              <p className="text-xs uppercase tracking-widest mt-1">New batches appear every minute</p>
             </div>
           ) : (
             <div className="divide-y divide-gray-50">
-              {deliveries.map(d => (
-                <div key={d.id} className="p-6 hover:bg-gray-50 transition">
-                  <div className="flex items-start justify-between gap-4 mb-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-bold text-gray-900">{d.id}</span>
-                        <span className="text-xs text-gray-400">· {d.distance}</span>
-                      </div>
-                      <p className="text-sm text-gray-600 font-medium">{d.items}</p>
+              {availableOrders.map(d => (
+                <div key={d.id} className="p-8 hover:bg-gray-50/50 transition-colors group">
+                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex-1 space-y-4">
+                        <div className="flex items-center gap-3">
+                            <span className="bg-gray-900 text-white text-[10px] font-black px-2 py-1 rounded-md">ORDER #{d.id.slice(-5).toUpperCase()}</span>
+                            <span className="text-xs font-bold text-gray-400 flex items-center gap-1"><Clock size={12} /> {d.restaurant?.delivery_time || 20}m ETA</span>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Restaurant</p>
+                                <p className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors">{d.restaurant?.name || 'Local Eatery'}</p>
+                                <p className="text-xs text-gray-500 truncate">{d.restaurant?.address}</p>
+                            </div>
+                            <div className="space-y-1">
+                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer Area</p>
+                                <p className="font-bold text-gray-900">{d.delivery_address?.split(',')[0] || 'Nearby Customer'}</p>
+                                <p className="text-xs text-gray-500">Cash on Delivery</p>
+                            </div>
+                        </div>
                     </div>
-                    <div className="text-right shrink-0">
-                      <p className="text-xl font-black text-gray-900">₹{d.earnings}</p>
-                      <p className="text-xs text-gray-400 flex items-center justify-end gap-1">
-                        <Clock size={11} /> {d.eta}
-                      </p>
+                    
+                    <div className="shrink-0 flex flex-col items-end gap-3 min-w-[120px]">
+                        <p className="text-3xl font-black text-gray-900">₹{d.total_amount}</p>
+                        <button
+                            disabled={loading}
+                            onClick={() => handleClaim(d.id)}
+                            className="bg-[#ff4b3a] text-white font-black px-6 py-3 rounded-xl hover:bg-black transition-all duration-300 active:scale-90 shadow-lg shadow-red-100 flex items-center gap-2 text-xs"
+                        >
+                            {loading ? <Loader2 className="animate-spin" size={14} /> : 'CLAIM'}
+                        </button>
                     </div>
                   </div>
-
-                  <div className="grid grid-cols-2 gap-3 text-xs text-gray-500 mb-4">
-                    <div className="bg-gray-50 rounded-xl p-3">
-                      <p className="font-bold text-gray-700 mb-0.5">🍽️ Pickup</p>
-                      <p>{d.restaurant}</p>
-                      <p className="text-gray-400">{d.restaurantAddr}</p>
-                    </div>
-                    <div className="bg-gray-50 rounded-xl p-3">
-                      <p className="font-bold text-gray-700 mb-0.5">📦 Deliver to</p>
-                      <p>{d.customer}</p>
-                      <p className="text-gray-400">{d.customerAddr}</p>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => acceptDelivery(d.id)}
-                    disabled={!!activeDelivery}
-                    className="w-full bg-[#ff4b3a] hover:bg-[#e03d2e] disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl transition-all duration-200 text-sm shadow-lg shadow-red-100"
-                  >
-                    {activeDelivery ? 'Complete current delivery first' : 'Accept Delivery'}
-                  </button>
                 </div>
               ))}
             </div>
@@ -193,11 +236,14 @@ const DeliveryDashboard = () => {
         </div>
       )}
 
+      {/* Offline View */}
       {!online && (
-        <div className="bg-white rounded-2xl border border-gray-100 p-16 flex flex-col items-center text-gray-400 shadow-sm">
-          <Bike size={48} className="mb-4 text-gray-300" />
-          <p className="font-bold text-lg text-gray-500">You're offline</p>
-          <p className="text-sm">Toggle online above to start receiving deliveries</p>
+        <div className="bg-white rounded-[40px] border border-gray-100 p-24 text-center shadow-sm space-y-4">
+          <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-300">
+              <Bike size={48} />
+          </div>
+          <h2 className="text-2xl font-black text-gray-800">Mission Control Offline</h2>
+          <p className="text-gray-400 max-w-xs mx-auto font-medium">Switch to online to start receiving live delivery requests from nearby restaurants.</p>
         </div>
       )}
     </div>

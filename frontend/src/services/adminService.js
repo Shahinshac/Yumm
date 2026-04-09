@@ -49,5 +49,15 @@ export const adminService = {
   createUser: async (userData) => {
     const response = await api.post('/admin/users/create', userData);
     return response.data;
+  },
+  
+  wipeSystemData: async () => {
+    const response = await api.post('/admin-dashboard/system/wipe');
+    return response.data;
+  },
+
+  updateSystemSettings: async (settingsData) => {
+    const response = await api.put('/admin-dashboard/system/settings', settingsData);
+    return response.data;
   }
 };
