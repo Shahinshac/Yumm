@@ -15,20 +15,27 @@ class EmailService:
     def send_email(subject, recipient, body, html=None):
         """Generic email sender"""
         try:
+            # Gmail SMTP requires the Sender to match the Authenticated User
+            # We prioritize the config sender but fallback to the authenticated username
+            auth_user = current_app.config.get('MAIL_USERNAME')
+            default_sender = current_app.config.get('MAIL_DEFAULT_SENDER')
+            
+            # Use auth_user if default_sender is missing or appears incorrect
+            sender = default_sender if default_sender and auth_user in str(default_sender) else auth_user
+
             msg = Message(
                 subject=subject,
                 recipients=[recipient],
                 body=body,
                 html=html,
-                sender=current_app.config.get('MAIL_DEFAULT_SENDER')
+                sender=sender
             )
             mail.send(msg)
-            logger.info(f"✅ Email sent to {recipient} with subject: {subject}")
+            logger.info(f"✅ Email sent successfully to {recipient}")
             return True
         except Exception as e:
-            logger.error(f"❌ Failed to send email to {recipient}: {str(e)}")
-            # Even if it fails, we don't want to crash the approval process
-            # just log it so the admin knows something went wrong with the mailer
+            logger.error(f"❌ SMTP Error sending to {recipient}: {str(e)}")
+            # We log the full error but don't crash the calling process
             return False
 
     @staticmethod

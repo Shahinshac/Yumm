@@ -48,7 +48,7 @@ class Config:
     MAIL_USE_TLS = os.getenv('MAIL_USE_TLS', 'true').lower() == 'true'
     MAIL_USERNAME = os.getenv('MAIL_USERNAME', '')
     MAIL_PASSWORD = os.getenv('MAIL_PASSWORD', '')
-    MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER', 'Yumm FoodHub <no-reply@yumm.com>')
+    MAIL_DEFAULT_SENDER = os.getenv('MAIL_DEFAULT_SENDER', 'Yumm FoodHub <noreply@yumm.com>')
 
     # Logging Configuration
     LOG_DIR = os.getenv("LOG_DIR", "logs")
