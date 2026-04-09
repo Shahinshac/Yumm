@@ -95,7 +95,7 @@ const OrderTracking = () => {
         );
     }
 
-    const destLocation = [11.0510, 76.0711]; // Mock destination (Malappuram)
+    const destLocation = order?.destination_coords || [0, 0]; 
     const points = driverLocation ? [[driverLocation.lat, driverLocation.lng], destLocation] : [destLocation];
 
     return (

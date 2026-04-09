@@ -7,6 +7,7 @@ const CustomerCart = () => {
   // Mock cart items for initial view since user said "no sample data" in DB
   const [items, setItems] = useState([]); 
   const [loading, setLoading] = useState(false);
+  const [userAddress, setUserAddress] = useState(localStorage.getItem('user_address') || 'Please set your delivery address');
 
   const total = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
@@ -104,7 +105,9 @@ const CustomerCart = () => {
               </div>
               <div>
                 <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Delivery To</p>
-                <p className="text-sm font-semibold text-gray-900 mt-0.5">Home · MG Road, Malappuram</p>
+                <p className="text-sm font-semibold text-gray-900 mt-0.5">
+                  {import.meta.env.VITE_USER_ADDRESS || 'Please set your delivery address'}
+                </p>
               </div>
             </div>
           </div>
