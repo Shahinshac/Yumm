@@ -398,13 +398,18 @@ def approve_user(user_id):
                 restaurant.is_approved = True
                 restaurant.save()
         
-        # Automatically send credentials over email
-        from backend.app.services.email_service import EmailService
-        email_sent = EmailService.send_credentials_email(
-            user_email=user.email,
-            user_name=user.full_name or user.username,
-            password=generated_password
-        )
+        # Automatically send credentials over email - Wrap in try-except so smtp errors don't block approval
+        email_sent = False
+        try:
+            from backend.app.services.email_service import EmailService
+            email_sent = EmailService.send_credentials_email(
+                user_email=user.email,
+                user_name=user.full_name or user.username,
+                password=generated_password
+            )
+        except Exception as email_err:
+            logger.error(f"Failed to send approval email: {str(email_err)}")
+            # We don't raise here, we want the approval to finish
 
         return jsonify({
             'success': True,
