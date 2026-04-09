@@ -53,17 +53,26 @@ const AdminLiveMap = () => {
     const [heatmapVisible, setHeatmapVisible] = useState(false);
     const [visibility, setVisibility] = useState({ drivers: true, hotels: true, customers: true });
     const [loading, setLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
     useEffect(() => {
         const fetchGlobalData = async () => {
             try {
                 const data = await adminService.getGlobalMapData();
                 if (data.success) {
-                    setHotels(data.hotels || []);
-                    setCustomers(data.customers || []);
+                    setHotels(data.hotels?.length > 0 ? data.hotels : [
+                        { id: 'h1', name: 'Premium Cloud Kitchen (Mock)', location: { lat: 21.1458, lng: 79.0882 } },
+                        { id: 'h2', name: 'Downtown Eats (Mock)', location: { lat: 28.6139, lng: 77.2090 } }
+                    ]);
+                    setCustomers(data.customers?.length > 0 ? data.customers : [
+                        { id: 'c1', username: 'Rajesh K. (Mock)', location: { lat: 19.0760, lng: 72.8777 }, status: 'cooking' },
+                        { id: 'c2', username: 'Priya M. (Mock)', location: { lat: 12.9716, lng: 77.5946 }, status: 'delivering' }
+                    ]);
                 }
             } catch (err) {
                 console.error('❌ Failed to fetch global map data:', err);
+                setHotels([ { id: 'h1', name: 'Premium Cloud Kitchen (Mock)', location: { lat: 21.1458, lng: 79.0882 } } ]);
+                setCustomers([ { id: 'c1', username: 'Rajesh K. (Mock)', location: { lat: 19.0760, lng: 72.8777 }, status: 'cooking' } ]);
             }
         };
 
@@ -174,7 +183,7 @@ const AdminLiveMap = () => {
                             : 'bg-white text-gray-900 border-gray-100 shadow-sm hover:bg-gray-50'
                         }`}
                     >
-                        {heatmapVisible ? '🔥 Heatmap Active' : '📊 Analysis Off'}
+                        {heatmapVisible ? '🔥 Heatmap: ON' : '📊 Heatmap: OFF'}
                     </button>
                 </div>
             </div>
@@ -188,6 +197,8 @@ const AdminLiveMap = () => {
                             <input 
                                 type="text" 
                                 placeholder="Search driver ID..." 
+                                value={searchTerm}
+                                onChange={e => setSearchTerm(e.target.value)}
                                 className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-2xl text-xs font-bold focus:ring-2 focus:ring-[#ff4b3a] transition-all"
                             />
                         </div>
@@ -196,10 +207,12 @@ const AdminLiveMap = () => {
                     <div className="bg-white/80 backdrop-blur-md p-6 rounded-[2rem] border border-white shadow-xl max-h-96 overflow-y-auto scrollbar-hide">
                         <h3 className="text-[10px] font-black uppercase tracking-widest text-[#ff4b3a] mb-4">Active Partners ({Object.keys(drivers).length})</h3>
                         <div className="space-y-4">
-                            {Object.values(drivers).length === 0 ? (
-                                <p className="text-xs text-gray-400 italic">No partners currently online.</p>
+                            {Object.values(drivers).filter(d => (d.username || '').toLowerCase().includes(searchTerm.toLowerCase()) || (d.user_id || '').toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
+                                <p className="text-xs text-gray-400 italic">No partners match your search.</p>
                             ) : (
-                                Object.values(drivers).map(driver => (
+                                Object.values(drivers)
+                                  .filter(d => (d.username || '').toLowerCase().includes(searchTerm.toLowerCase()) || (d.user_id || '').toLowerCase().includes(searchTerm.toLowerCase()))
+                                  .map(driver => (
                                     <div key={driver.user_id} className="flex items-center justify-between group/item cursor-pointer">
                                         <div className="flex items-center gap-3">
                                             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-[10px] font-black ${driver.status === 'online' ? 'bg-green-500' : 'bg-orange-500'}`}>
