@@ -306,3 +306,48 @@ def update_order_status(order_id):
     except Exception as e:
         logger.error(f"Error updating order status: {str(e)}")
         return jsonify({'error': str(e)}), 500
+
+@bp.route('/profile/update', methods=['PUT'])
+@restaurant_approved_required
+def update_profile():
+    """Update restaurant profile"""
+    try:
+        user_id = get_jwt_identity()
+        restaurant = Restaurant.objects(user=user_id).first()
+        
+        if not restaurant:
+            return jsonify({'error': 'Restaurant not found'}), 404
+        
+        data = request.get_json()
+        
+        # Update fields
+        if 'name' in data:
+            restaurant.name = Validators.sanitize_string(data['name'])
+        if 'address' in data:
+            restaurant.address = Validators.sanitize_string(data['address'])
+        if 'phone' in data:
+            if Validators.validate_phone(data['phone']):
+                restaurant.phone = data['phone']
+        if 'min_order' in data:
+            restaurant.min_order = float(data['min_order'])
+        if 'delivery_time' in data:
+            restaurant.delivery_time = int(data['delivery_time'])
+        if 'is_open' in data:
+            restaurant.is_open = bool(data['is_open'])
+            
+        # New Offer Fields
+        if 'special_offer' in data:
+            restaurant.special_offer = Validators.sanitize_string(data['special_offer'])
+        if 'offer_active' in data:
+            restaurant.offer_active = bool(data['offer_active'])
+            
+        restaurant.updated_at = datetime.utcnow()
+        restaurant.save()
+        
+        return jsonify({
+            'message': 'Profile updated successfully',
+            'profile': restaurant.to_dict()
+        }), 200
+    except Exception as e:
+        logger.error(f"Error updating profile: {str(e)}")
+        return jsonify({'error': str(e)}), 500

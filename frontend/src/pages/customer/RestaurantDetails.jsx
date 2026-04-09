@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { MapPin, Star, Clock, ArrowLeft, Loader2, Plus, Minus, ShoppingBag, Utensils } from 'lucide-react';
+import { MapPin, Star, Clock, ArrowLeft, Loader2, Plus, Minus, ShoppingBag, Utensils, Tag } from 'lucide-react';
 import { customerService } from '../../services/customerService';
 import { useCart } from '../../context/CartContext';
 
@@ -78,9 +78,6 @@ const RestaurantDetails = () => {
 
         <div className="absolute bottom-8 left-8 right-8 text-white">
           <div className="flex items-center gap-2 mb-2">
-             <span className="bg-orange-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full uppercase tracking-tighter shadow-lg shadow-orange-500/30">
-                {restaurant.category || 'Multi-cuisine'}
-             </span>
              <div className="bg-white/95 backdrop-blur px-2 py-0.5 rounded-lg flex items-center gap-1 text-gray-800 text-[10px] font-black shadow-sm">
                 <Star size={10} className="text-yellow-500 fill-yellow-500" />
                 {restaurant.rating || '4.5'}
@@ -98,6 +95,19 @@ const RestaurantDetails = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 px-2">
         {/* Menu Items */}
         <div className="lg:col-span-3 space-y-8">
+            {/* Active Special Offer */}
+            {restaurant?.offer_active && restaurant?.special_offer && (
+              <div className="bg-orange-50 border border-orange-100 rounded-3xl p-6 mb-8 flex items-center gap-4 animate-pulse">
+                <div className="p-3 bg-white rounded-2xl text-[#ff4b3a] shadow-md border border-orange-50">
+                  <Tag size={24} />
+                </div>
+                <div>
+                  <h4 className="font-black text-gray-900 text-xs uppercase tracking-widest leading-none">Restaurant Offer</h4>
+                  <p className="text-base font-black text-[#ff4b3a] mt-1.5">{restaurant.special_offer}</p>
+                </div>
+              </div>
+            )}
+
             <h2 className="text-2xl font-black text-gray-900 border-b-4 border-[#ff4b3a] inline-block pb-1">Recommended Menu</h2>
             
             {menu.length === 0 ? (

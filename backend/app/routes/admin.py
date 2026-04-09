@@ -107,10 +107,24 @@ def get_global_map_data():
                 })
                 seen_customers.add(cust_id)
 
+        # 3. Fetch online drivers (DeliveryPartners who are marked active/available or online)
+        online_drivers = DeliveryPartner.objects(is_active=True).select_related('user')
+        driver_data = []
+        for dp in online_drivers:
+            if dp.current_location:
+                driver_data.append({
+                    'user_id': str(dp.user.id),
+                    'username': dp.user.username,
+                    'location': dp.current_location,
+                    'status': 'busy' if not dp.is_available else 'online',
+                    'type': 'driver'
+                })
+
         return jsonify({
             'success': True,
             'hotels': hotel_data,
-            'customers': customer_data
+            'customers': customer_data,
+            'drivers': driver_data
         }), 200
 
     except Exception as e:

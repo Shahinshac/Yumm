@@ -99,7 +99,7 @@ def register_restaurant():
     phone = data.get('phone', '').strip()
     shop_name = data.get('shop_name', '').strip()
     address = data.get('address', '').strip()
-    category = data.get('category', 'Multi-cuisine').strip() or 'Multi-cuisine'
+    category = data.get('category', 'Restaurant').strip() or 'Restaurant'
 
     if not Validators.validate_name(name):
         return jsonify({'error': 'Invalid name. Must be 2-100 characters'}), 400

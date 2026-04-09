@@ -116,12 +116,54 @@ const RestaurantSettings = () => {
             <Section title="Store Identity" icon={Store}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <InputField label="Restaurant Name" value={profile.name} onChange={v => setProfile({...profile, name: v})} icon={Store} />
-                    <InputField label="Category" value={profile.category} onChange={v => setProfile({...profile, category: v})} icon={FileText} />
+                    <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 mt-4">
+                        <div>
+                            <p className="text-xs font-bold text-gray-900">Accepting Orders</p>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase mt-0.5">Toggle store status</p>
+                        </div>
+                        <button 
+                            onClick={() => setProfile({...profile, is_open: !profile.is_open})}
+                            className={`w-12 h-6 rounded-full transition-all relative ${profile.is_open ? 'bg-green-500' : 'bg-gray-300'}`}
+                        >
+                            <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${profile.is_open ? 'left-7' : 'left-1'}`} />
+                        </button>
+                    </div>
                 </div>
-                <InputField label="Street Address" value={profile.address} onChange={v => setProfile({...profile, address: v})} icon={MapPin} />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <InputField label="Contact Phone" value={profile.phone} onChange={v => setProfile({...profile, phone: v})} icon={Phone} />
-                    <InputField label="Website (Optional)" value="" onChange={() => {}} icon={Globe} placeholder="https://..." />
+            </Section>
+
+            <Section title="Special Offers" icon={FileText}>
+                <div className="grid grid-cols-1 gap-6">
+                    <div className="flex items-center justify-between p-6 bg-orange-50 rounded-[2rem] border border-orange-100">
+                        <div className="flex items-center gap-4">
+                            <div className="p-3 bg-white rounded-2xl text-[#ff4b3a] shadow-sm">
+                                <Globe size={24} />
+                            </div>
+                            <div>
+                                <h4 className="font-black text-gray-900 text-xs uppercase tracking-widest">Active Store Offer</h4>
+                                <p className="text-[10px] text-orange-800/60 font-bold uppercase mt-1">This will be shown to all customers on your menu page.</p>
+                            </div>
+                        </div>
+                        <button 
+                            onClick={() => setProfile({...profile, offer_active: !profile.offer_active})}
+                            className={`flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-lg ${
+                                profile.offer_active ? 'bg-orange-500 text-white shadow-orange-200' : 'bg-gray-200 text-gray-500'
+                            }`}
+                        >
+                            {profile.offer_active ? 'OFFER ON' : 'OFFER OFF'}
+                        </button>
+                    </div>
+                    
+                    {profile.offer_active && (
+                        <div className="animate-in fade-in slide-in-from-top-4 duration-300">
+                            <InputField 
+                                label="Offer Message" 
+                                value={profile.special_offer} 
+                                onChange={v => setProfile({...profile, special_offer: v})} 
+                                icon={FileText} 
+                                placeholder="e.g. 10% OFF ON ALL ORDERS ABOVE ₹500"
+                            />
+                        </div>
+                    )}
                 </div>
             </Section>
 

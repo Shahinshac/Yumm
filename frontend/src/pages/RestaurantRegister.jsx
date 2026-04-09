@@ -11,14 +11,18 @@ const RestaurantRegister = () => {
     phone: '',
     shop_name: '',
     address: '',
-    category: 'Multi-cuisine'
+    address: ''
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    if (e.target.name === 'phone') {
+      value = value.replace(/\s/g, ''); // Remove spaces from phone
+    }
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -36,7 +40,9 @@ const RestaurantRegister = () => {
       await authService.registerRestaurant(formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed. Please try again.');
+      const msg = err.response?.data?.error || 
+                  (err.message === 'Network Error' ? 'Cannot reach server. Please check your connectivity.' : 'Registration failed. Please try again.');
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -171,19 +177,6 @@ const RestaurantRegister = () => {
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700 ml-1">Cuisine / Category</label>
-            <select
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none"
-            >
-              {['Multi-cuisine','Biryani & Kerala','Seafood','Pizza','Burgers','Chinese','Tandoori','Desserts','Healthy','South Indian','North Indian'].map(c => (
-                <option key={c} value={c}>{c}</option>
-              ))}
-            </select>
-          </div>
 
           <div className="space-y-1">
             <label className="text-sm font-medium text-gray-700 ml-1">Full Address</label>

@@ -23,7 +23,9 @@ const Login = () => {
       login(data.user, data.access_token);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.error || 'Invalid credentials. Please try again.');
+      const msg = err.response?.data?.error || 
+                  (err.message === 'Network Error' ? 'Cannot reach server. Please check your internet or API URL.' : 'Invalid credentials. Please try again.');
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -84,7 +86,9 @@ const Login = () => {
       navigate('/');
     } catch (err) {
       console.error('Google Login Error:', err.response?.data || err.message);
-      setError(err.response?.data?.error || 'Google login failed. Please try again.');
+      const msg = err.response?.data?.error || 
+                  (err.message === 'Network Error' ? 'Cannot reach server. Use a real browser if on mobile.' : 'Google login failed.');
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -211,6 +215,9 @@ const Login = () => {
 
               <div className="bg-gray-50 rounded-xl p-4 text-sm text-gray-600 text-center">
                 Your first order? Just sign in with Google—we'll take care of the rest!
+                <div className="mt-2 text-xs text-gray-400 font-normal">
+                  (Note: If the button above is missing, please try opening in Chrome/Safari)
+                </div>
               </div>
             </div>
           )}

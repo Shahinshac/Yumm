@@ -4,16 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 
-const CATEGORIES = [
-  { label: 'Biryani', emoji: '🍛' },
-  { label: 'Pizza', emoji: '🍕' },
-  { label: 'Burgers', emoji: '🍔' },
-  { label: 'Sushi', emoji: '🍱' },
-  { label: 'Desserts', emoji: '🍰' },
-  { label: 'Healthy', emoji: '🥗' },
-  { label: 'Chinese', emoji: '🥡' },
-  { label: 'Tandoori', emoji: '🍗' },
-];
+const CATEGORIES = []; // Removed per request
 
 const BANNERS = [
   { title: '50% OFF', sub: 'On your first order', bg: 'from-orange-500 to-red-500', emoji: '🎉' },
@@ -61,7 +52,7 @@ const RestaurantCard = ({ rest, onClick }) => (
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-bold text-gray-900 text-base truncate">{rest.name}</h3>
       </div>
-      <p className="text-gray-500 text-sm truncate mt-0.5">{rest.category || 'Multi-cuisine'}</p>
+      <p className="text-gray-500 text-sm truncate mt-0.5">Approved Restaurant</p>
       <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
         <div className="flex items-center gap-1 text-gray-500 text-xs">
           <Clock size={13} />
@@ -144,8 +135,7 @@ const CustomerHome = () => {
 
   useEffect(() => {
     let list = [...restaurants];
-    if (search) list = list.filter(r => r.name.toLowerCase().includes(search.toLowerCase()) || (r.category || '').toLowerCase().includes(search.toLowerCase()));
-    if (activeCategory) list = list.filter(r => (r.category || '').toLowerCase().includes(activeCategory.toLowerCase()));
+    if (search) list = list.filter(r => r.name.toLowerCase().includes(search.toLowerCase()));
     setFiltered(list);
   }, [search, activeCategory, restaurants]);
 
@@ -200,32 +190,6 @@ const CustomerHome = () => {
         ))}
       </div>
 
-      <div>
-        <h2 className="text-lg font-black text-gray-900 mb-4 flex items-center gap-2">
-          <Tag size={18} className="text-[#ff4b3a] rotate-90" /> Order by category
-        </h2>
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-          <button
-            onClick={() => setActiveCategory('')}
-            className={`flex flex-col items-center gap-2 shrink-0 px-4 py-3 rounded-2xl border-2 transition-all duration-200 min-w-[72px] ${
-              activeCategory === '' ? 'border-[#ff4b3a] bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-            }`}
-          >
-            <span className="text-2xl">🍽️</span><span className="text-xs font-semibold text-gray-700">All</span>
-          </button>
-          {CATEGORIES.map(cat => (
-            <button
-              key={cat.label}
-              onClick={() => setActiveCategory(activeCategory === cat.label ? '' : cat.label)}
-              className={`flex flex-col items-center gap-2 shrink-0 px-4 py-3 rounded-2xl border-2 transition-all duration-200 min-w-[72px] ${
-                activeCategory === cat.label ? 'border-[#ff4b3a] bg-red-50' : 'border-gray-200 bg-white hover:border-gray-300'
-              }`}
-            >
-              <span className="text-2xl">{cat.emoji}</span><span className="text-xs font-semibold text-gray-700">{cat.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
 
       <div>
         <div className="flex items-center justify-between mb-5">

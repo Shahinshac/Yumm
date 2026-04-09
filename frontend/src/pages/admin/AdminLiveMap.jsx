@@ -62,6 +62,24 @@ const AdminLiveMap = () => {
                 if (data.success) {
                     setHotels(data.hotels || []);
                     setCustomers(data.customers || []);
+                    
+                    // Populate initial driver locations from API
+                    if (data.drivers) {
+                        setDrivers(prev => {
+                            const newDrivers = { ...prev };
+                            data.drivers.forEach(d => {
+                                if (!newDrivers[d.user_id]) {
+                                    newDrivers[d.user_id] = {
+                                        ...d,
+                                        lat: d.location.lat,
+                                        lng: d.location.lng,
+                                        lastSeen: 'just now'
+                                    };
+                                }
+                            });
+                            return newDrivers;
+                        });
+                    }
                 }
             } catch (err) {
                 console.error('❌ Failed to fetch global map data:', err);

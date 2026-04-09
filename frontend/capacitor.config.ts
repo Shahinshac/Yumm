@@ -5,7 +5,10 @@ const config: CapacitorConfig = {
   appName: 'Yumm Delivery',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    iosScheme: 'https',
+    hostname: 'localhost',
+    cleartext: true
   }
 };
 

@@ -16,7 +16,11 @@ const DeliveryRegister = () => {
   const [error, setError] = useState('');
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    let value = e.target.value;
+    if (e.target.name === 'phone') {
+      value = value.replace(/\s/g, ''); // Remove spaces from phone
+    }
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleSubmit = async (e) => {
@@ -34,7 +38,9 @@ const DeliveryRegister = () => {
       await authService.registerDelivery(formData);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed. Please try again.');
+      const msg = err.response?.data?.error || 
+                  (err.message === 'Network Error' ? 'Cannot reach server. Please check your connectivity.' : 'Registration failed. Please try again.');
+      setError(msg);
     } finally {
       setLoading(false);
     }

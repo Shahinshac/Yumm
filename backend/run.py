@@ -16,4 +16,4 @@ if __name__ == '__main__':
     port = int(os.getenv('PORT', 5000))
     debug = os.getenv('FLASK_ENV') == 'development'
     # Use socketio.run() instead of app.run() to support WebSockets
-    socketio.run(app, debug=debug, host='0.0.0.0', port=port)
+    socketio.run(app, debug=debug, host='0.0.0.0', port=port, allow_unsafe_werkzeug=True)

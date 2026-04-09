@@ -51,8 +51,20 @@ def create_order():
             else:
                 promo_discount = promo.discount_value
 
+    # Check if first order for 50% discount
+    is_first_order = Order.objects(customer=current['user_id']).count() == 0
+    first_order_discount = 0
+    
+    if is_first_order:
+        # User requested 50% off for first order
+        first_order_discount = subtotal * 0.5
+        logger.info(f"Applying 50% first order discount for user {current['user_id']}")
+
     # Create order
-    total_amount = subtotal + restaurant.delivery_charge - promo_discount
+    total_amount = subtotal + restaurant.delivery_charge - promo_discount - first_order_discount
+    
+    # Ensure total doesn't go below delivery charge (or 0)
+    total_amount = max(total_amount, restaurant.delivery_charge)
 
     order = Order(
         customer=User.objects(id=current['user_id']).first(),
@@ -60,7 +72,7 @@ def create_order():
         items=items,
         subtotal=subtotal,
         delivery_charge=restaurant.delivery_charge,
-        promo_discount=promo_discount,
+        promo_discount=promo_discount + first_order_discount,
         total_amount=total_amount,
         delivery_address=data.get('delivery_address'),
         special_instructions=data.get('special_instructions', ''),

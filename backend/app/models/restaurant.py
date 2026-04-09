@@ -10,7 +10,7 @@ class Restaurant(Document):
     user = ReferenceField('User')  # Link to user account
     
     name = StringField(required=True, max_length=100)
-    category = StringField(required=True)  # Pizza, Burger, Indian, etc
+    category = StringField(required=False)  # No longer required during registration
     location = DictField()  # {'lat': 28.6139, 'lng': 77.2090}
     address = StringField()
     phone = StringField()
@@ -30,6 +30,10 @@ class Restaurant(Document):
     is_approved = BooleanField(default=False)  # Admin approval
     is_active = BooleanField(default=True)
 
+    # Offers System
+    special_offer = StringField(max_length=200) # Message like "10% off"
+    offer_active = BooleanField(default=False)
+
     # Metadata
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
@@ -37,7 +41,7 @@ class Restaurant(Document):
 
     meta = {
         'collection': 'restaurants',
-        'indexes': ['name', 'category', 'user', 'is_approved'],
+        'indexes': ['name', 'user', 'is_approved', 'offer_active'],
         'strict': False
     }
 
@@ -60,6 +64,8 @@ class Restaurant(Document):
             'is_verified': self.is_verified,
             'is_approved': self.is_approved,
             'is_active': self.is_active,
+            'special_offer': self.special_offer,
+            'offer_active': self.offer_active,
             'created_at': self.created_at.isoformat() if self.created_at else None,
         }
 

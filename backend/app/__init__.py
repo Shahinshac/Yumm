@@ -103,13 +103,15 @@ def create_app():
             "http://localhost:5173", 
             "http://127.0.0.1:5173",
             "http://localhost:3000",
-            "https://yummfoodhub.vercel.app"
+            "https://yummfoodhub.vercel.app",
+            "capacitor://localhost",
+            "http://localhost"
         ]
         
     CORS(app, resources={r"/api/*": {
         "origins": cors_origins, 
         "supports_credentials": True,
-        "allow_headers": ["Content-Type", "Authorization"],
+        "allow_headers": ["Content-Type", "Authorization", "X-Requested-With", "Accept"],
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     }})
     logger.info(f"✅ CORS configured for origins: {cors_origins}")
