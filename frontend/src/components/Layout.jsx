@@ -5,7 +5,7 @@ import api from '../services/api';
 import {
   LayoutDashboard, ShoppingCart, ListOrdered, User, LogOut,
   CheckSquare, Menu, X, Bell, ChevronDown, Store, Package, 
-  TrendingUp, Settings, MapPin, Star, Wallet, History
+  TrendingUp, Settings, MapPin, Star, Wallet, History, Map as MapIcon
 } from 'lucide-react';
 
 const ROLE_LINKS = {
