@@ -3,3 +3,13 @@
 2026-04-07 21:51:03,926 - root - INFO - Detected mongodb+srv:// connection - SSL/TLS automatically enabled by MongoDB Atlas
 2026-04-07 21:51:05,981 - root - ERROR - ❌ Unexpected error during MongoDB connection: The DNS query name does not exist: _mongodb._tcp.cluster0.qugxr.mongodb.net.
 2026-04-07 21:51:05,981 - root - ERROR - Error type: ConfigurationError
+2026-04-09 10:01:13,728 - root - INFO - Starting FoodHub App in production mode
+2026-04-09 10:01:13,728 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-09 10:01:13,753 - root - INFO - ✅ MongoDB connected successfully
+2026-04-09 10:01:13,754 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app']
+2026-04-09 10:01:13,831 - root - INFO - ✅ SocketIO configured
+2026-04-09 10:01:13,831 - root - INFO - Registering API blueprints...
+2026-04-09 10:01:13,973 - root - INFO - ✅ All blueprints registered successfully
+2026-04-09 10:01:13,974 - root - INFO - ✅ SocketIO events registered
+2026-04-09 10:01:14,184 - root - INFO - ✅ Admin created/updated: shahinsha / 262007food
+2026-04-09 10:01:14,184 - root - INFO - ✅ FoodHub App initialized successfully!

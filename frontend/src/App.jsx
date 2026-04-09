@@ -6,10 +6,21 @@ import Login from './pages/Login';
 import Layout from './components/Layout';
 
 import CustomerHome from './pages/customer/CustomerHome';
+import CustomerCart from './pages/customer/CustomerCart';
+import CustomerOrders from './pages/customer/CustomerOrders';
+import CustomerProfile from './pages/customer/CustomerProfile';
+
 import RestaurantDashboard from './pages/restaurant/RestaurantDashboard';
+import RestaurantMenu from './pages/restaurant/RestaurantMenu';
+import RestaurantOrders from './pages/restaurant/RestaurantOrders';
+
 import DeliveryDashboard from './pages/delivery/DeliveryDashboard';
-import AdminApprovals from './pages/admin/AdminApprovals';
+import DeliveryOrders from './pages/delivery/DeliveryOrders';
+
 import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminApprovals from './pages/admin/AdminApprovals';
+import AdminUsers from './pages/admin/AdminUsers';
+
 import RestaurantRegister from './pages/RestaurantRegister';
 import DeliveryRegister from './pages/DeliveryRegister';
 
@@ -49,16 +60,23 @@ function AppRoutes() {
       <Route element={<Layout />}>
         {/* Customer Routes */}
         <Route path="/home" element={<ProtectedRoute allowedRoles={['customer']}><CustomerHome /></ProtectedRoute>} />
+        <Route path="/cart" element={<ProtectedRoute allowedRoles={['customer']}><CustomerCart /></ProtectedRoute>} />
+        <Route path="/orders" element={<ProtectedRoute allowedRoles={['customer']}><CustomerOrders /></ProtectedRoute>} />
+        <Route path="/profile" element={<ProtectedRoute allowedRoles={['customer']}><CustomerProfile /></ProtectedRoute>} />
         
         {/* Restaurant Routes */}
         <Route path="/restaurant/dashboard" element={<ProtectedRoute allowedRoles={['restaurant']}><RestaurantDashboard /></ProtectedRoute>} />
+        <Route path="/restaurant/menu" element={<ProtectedRoute allowedRoles={['restaurant']}><RestaurantMenu /></ProtectedRoute>} />
+        <Route path="/restaurant/orders" element={<ProtectedRoute allowedRoles={['restaurant']}><RestaurantOrders /></ProtectedRoute>} />
 
         {/* Delivery Routes */}
         <Route path="/delivery/dashboard" element={<ProtectedRoute allowedRoles={['delivery']}><DeliveryDashboard /></ProtectedRoute>} />
+        <Route path="/delivery/orders" element={<ProtectedRoute allowedRoles={['delivery']}><DeliveryOrders /></ProtectedRoute>} />
 
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/approvals" element={<ProtectedRoute allowedRoles={['admin']}><AdminApprovals /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><AdminUsers /></ProtectedRoute>} />
       </Route>
     </Routes>
   );

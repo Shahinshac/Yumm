@@ -1,0 +1,52 @@
+import api from './api';
+
+export const restaurantService = {
+  // Get restaurant profile
+  getProfile: async () => {
+    const resp = await api.get('/restaurant-dashboard/profile');
+    return resp.data;
+  },
+
+  // Menu Management
+  getMenu: async () => {
+    const resp = await api.get('/restaurant-dashboard/menu');
+    return resp.data;
+  },
+
+  addMenuItem: async (itemData) => {
+    const resp = await api.post('/restaurant-dashboard/menu/add', itemData);
+    return resp.data;
+  },
+
+  updateMenuItem: async (id, itemData) => {
+    const resp = await api.put(`/restaurant-dashboard/menu/${id}/update`, itemData);
+    return resp.data;
+  },
+
+  deleteMenuItem: async (id) => {
+    const resp = await api.delete(`/restaurant-dashboard/menu/${id}/delete`);
+    return resp.data;
+  },
+
+  // Order Management
+  getOrders: async (status = '') => {
+    const url = status ? `/restaurant-dashboard/orders?status=${status}` : '/restaurant-dashboard/orders';
+    const resp = await api.get(url);
+    return resp.data;
+  },
+
+  acceptOrder: async (id) => {
+    const resp = await api.post(`/restaurant-dashboard/orders/${id}/accept`);
+    return resp.data;
+  },
+
+  rejectOrder: async (id, reason = '') => {
+    const resp = await api.post(`/restaurant-dashboard/orders/${id}/reject`, { reason });
+    return resp.data;
+  },
+
+  updateOrderStatus: async (id, status) => {
+    const resp = await api.put(`/restaurant-dashboard/orders/${id}/status`, { status });
+    return resp.data;
+  }
+};
