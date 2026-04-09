@@ -33,13 +33,30 @@ const AdminLiveMap = () => {
 
     useEffect(() => {
         // Connect to Socket.IO
-        const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
+        // Use a more robust URL resolution
+        const apiUrl = import.meta.env.VITE_API_URL || window.location.origin.replace('3000', '5000');
+        const newSocket = io(apiUrl, {
+            transports: ['websocket', 'polling'],
+            reconnectionAttempts: 5,
+            timeout: 10000
+        });
+        
         setSocket(newSocket);
+
+        const connectionTimer = setTimeout(() => {
+            if (loading) setLoading(false);
+        }, 3000); // Fail-safe to show map even if socket stalls
 
         newSocket.on('connect', () => {
             console.log('🔌 Connected to Fleet Hub');
             newSocket.emit('join_fleet_room', {});
             setLoading(false);
+            clearTimeout(connectionTimer);
+        });
+
+        newSocket.on('connect_error', (err) => {
+            console.error('❌ Socket connection error:', err);
+            setLoading(false); // Show map even with error
         });
 
         newSocket.on('fleet_location_update', (data) => {
@@ -152,6 +169,7 @@ const AdminLiveMap = () => {
                     zoom={5} 
                     className="h-full w-full grayscale-[0.2] contrast-[1.1]"
                     zoomControl={false}
+                    style={{ minHeight: '500px' }}
                 >
                     <TileLayer
                         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'

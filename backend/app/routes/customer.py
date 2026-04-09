@@ -11,7 +11,23 @@ from backend.app.services.order_service import OrderService
 from backend.app.utils.validators import Validators
 import logging
 
+import logging
+import math
+
 logger = logging.getLogger(__name__)
+
+def haversine(lat1, lon1, lat2, lon2):
+    """Calculate the great circle distance in kilometers between two points on the earth."""
+    # Convert decimal degrees to radians 
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+
+    # Haversine formula 
+    dlon = lon2 - lon1 
+    dlat = lat2 - lat1 
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.asin(math.sqrt(a)) 
+    r = 6371 # Radius of earth in kilometers. Use 3956 for miles. Always use km as per plan.
+    return c * r
 
 bp = Blueprint('customer', __name__, url_prefix='/api/customer')
 
@@ -19,10 +35,31 @@ bp = Blueprint('customer', __name__, url_prefix='/api/customer')
 @bp.route('/restaurants', methods=['GET'])
 @customer_required
 def get_restaurants():
-    """Get all approved restaurants"""
+    """Get all approved restaurants with optional proximity sorting"""
     try:
+        user_lat = request.args.get('lat', type=float)
+        user_lng = request.args.get('lng', type=float)
+        
         restaurants = Restaurant.objects(is_approved=True, is_active=True)
-        return jsonify([r.to_dict() for r in restaurants]), 200
+        restaurant_list = []
+        
+        for r in restaurants:
+            r_dict = r.to_dict()
+            if user_lat is not None and user_lng is not None and r.location:
+                dist = haversine(
+                    user_lat, user_lng, 
+                    r.location.get('lat', 0), r.location.get('lng', 0)
+                )
+                r_dict['distance_km'] = round(dist, 1)
+            else:
+                r_dict['distance_km'] = None
+            restaurant_list.append(r_dict)
+            
+        # Sort by distance if coordinates provided
+        if user_lat is not None and user_lng is not None:
+            restaurant_list.sort(key=lambda x: x['distance_km'] if x['distance_km'] is not None else 999999)
+            
+        return jsonify(restaurant_list), 200
     except Exception as e:
         logger.error(f"Error fetching restaurants: {str(e)}")
         return jsonify({'error': str(e)}), 500

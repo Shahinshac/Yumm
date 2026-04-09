@@ -304,15 +304,14 @@ def create_app():
     # System initialization complete
     logger.info("✅ FoodHub App initialized successfully!")
 
-    # Seed demo data only when explicitly enabled in non-production environments.
-    enable_demo_data = os.getenv('ENABLE_DEMO_DATA', 'false').lower() == 'true'
-    if env in ['development', 'testing'] and enable_demo_data:
-        try:
-            logger.info("Creating demo data...")
-            create_demo_data(app, logger)
-        except Exception as e:
-            logger.error(f"Failed to create demo data: {str(e)}")
-            # Don't fail startup if demo data creation fails
+    # Seed demo data logic disabled as per user request for total system reset
+    # enable_demo_data = os.getenv('ENABLE_DEMO_DATA', 'false').lower() == 'true'
+    # if env in ['development', 'testing'] and enable_demo_data:
+    #     try:
+    #         logger.info("Creating demo data...")
+    #         create_demo_data(app, logger)
+    #     except Exception as e:
+    #         logger.error(f"Failed to create demo data: {str(e)}")
 
     logger.info("✅ FoodHub App initialized successfully!")
 
