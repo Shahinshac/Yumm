@@ -44,5 +44,10 @@ export const adminService = {
   getGlobalMapData: async () => {
     const response = await api.get('/admin/global-map-data');
     return response.data;
+  },
+
+  createUser: async (userData) => {
+    const response = await api.post('/admin/users/create', userData);
+    return response.data;
   }
 };

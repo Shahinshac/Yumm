@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { io } from 'socket.io-client';
 import L from 'leaflet';
@@ -235,13 +235,13 @@ const AdminLiveMap = () => {
                 <MapContainer 
                     center={[20.5937, 78.9629]} // Center of India
                     zoom={5} 
-                    className="h-full w-full grayscale-[0.2] contrast-[1.1]"
+                    className="h-full w-full"
                     zoomControl={false}
                     style={{ minHeight: '500px' }}
                 >
                     <TileLayer
                         attribution='&copy; <a href="https://www.basemaps.cartocdn.com/copyright">CartoDB</a>'
-                        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
                     />
                     
                     {/* Render Drivers */}

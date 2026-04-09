@@ -161,6 +161,59 @@ def list_users():
         'users': [u.to_dict() for u in users]
     }), 200
 
+@bp.route('/users/create', methods=['POST'])
+@role_required('admin')
+def create_user():
+    """Admin only: Create a user manually with username, email, password, and role"""
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        email = data.get('email')
+        password = data.get('password')
+        role = data.get('role', 'customer')
+
+        if not all([username, email, password]):
+            return jsonify({'error': 'Username, email and password are required'}), 400
+
+        # Check if user already exists
+        if User.objects(username=username).first():
+            return jsonify({'error': 'Username already exists'}), 400
+        if User.objects(email=email).first():
+            return jsonify({'error': 'Email already exists'}), 400
+
+        # Create user
+        new_user = User(
+            username=username,
+            email=email,
+            password_hash=PasswordSecurity.hash_password(password),
+            role=role,
+            is_verified=True,  # Admin created users are pre-verified
+            is_approved=True   # Admin created users are pre-approved
+        )
+        new_user.save()
+
+        # If it's a restaurant, create the restaurant record
+        if role == 'restaurant':
+            from backend.app.models.restaurant import Restaurant
+            Restaurant(user=new_user, name=username, category='Other').save()
+        
+        # If it's delivery, create the delivery record
+        elif role == 'delivery':
+            from backend.app.models.delivery_partner import DeliveryPartner
+            DeliveryPartner(user=new_user).save()
+
+        logger.info(f"New user {username} ({role}) created by admin")
+        
+        return jsonify({
+            'success': True,
+            'message': f'User {username} created successfully',
+            'user': new_user.to_dict()
+        }), 201
+
+    except Exception as e:
+        logger.error(f"Error creating user: {str(e)}", exc_info=True)
+        return jsonify({'error': str(e)}), 500
+
 @bp.route('/restaurants', methods=['GET'])
 @role_required('admin')
 def list_restaurants():
