@@ -34,7 +34,7 @@ const Login = () => {
     const initializeGoogle = () => {
       if (window.google && tab === 'customer') {
         window.google.accounts.id.initialize({
-          client_id: "your_google_client_id_here.apps.googleusercontent.com",
+          client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || "your_google_client_id_here.apps.googleusercontent.com",
           callback: handleCallbackResponse,
           auto_select: false,
           cancel_on_tap_outside: true,
