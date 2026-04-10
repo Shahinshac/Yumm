@@ -189,7 +189,7 @@ const CustomerCart = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto pb-12 px-4">
+    <div className="max-w-7xl mx-auto pb-12 px-4">
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate('/home')} className="p-2 hover:bg-white rounded-xl shadow-sm border border-transparent hover:border-gray-200 transition">

@@ -57,7 +57,7 @@ const CustomerProfile = () => {
   );
 
   return (
-    <div className="max-w-xl mx-auto pb-12 relative">
+    <div className="max-w-6xl mx-auto pb-12 relative">
       {/* Header Section */}
       <div className="mb-8 flex flex-col items-center">
         <div className="relative group">

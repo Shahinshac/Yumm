@@ -37,7 +37,7 @@ const CustomerPreferences = () => {
   );
 
   return (
-    <div className="max-w-xl mx-auto pb-12">
+    <div className="max-w-4xl mx-auto pb-12 px-4">
         <div className="mb-8">
             <Link to="/profile" className="flex items-center gap-2 text-gray-400 hover:text-[#ff4b3a] transition-all font-bold text-sm">
                 <ChevronLeft size={20} /> Back to Profile

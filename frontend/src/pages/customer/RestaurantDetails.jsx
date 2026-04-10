@@ -43,7 +43,7 @@ const RestaurantDetails = () => {
 
   if (error || !restaurant) {
     return (
-      <div className="max-w-4xl mx-auto py-20 text-center">
+      <div className="max-w-7xl mx-auto py-24 px-4 text-center">
         <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
           <Utensils size={40} className="text-red-500" />
         </div>
@@ -59,7 +59,7 @@ const RestaurantDetails = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto pb-24">
+    <div className="max-w-7xl mx-auto pb-12 px-4">
       {/* Header / Banner */}
       <div className="relative h-64 md:h-80 w-full overflow-hidden rounded-3xl mb-8 group">
         <img 

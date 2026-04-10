@@ -99,7 +99,7 @@ const OrderTracking = () => {
     const points = driverLocation ? [[driverLocation.lat, driverLocation.lng], destLocation] : [destLocation];
 
     return (
-        <div className="max-w-6xl mx-auto pb-20">
+        <div className="max-w-6xl mx-auto pb-20 px-4">
             <div className="mb-8">
                 <Link to="/orders" className="flex items-center gap-2 text-gray-400 hover:text-[#ff4b3a] transition-all font-bold text-sm">
                     <ChevronLeft size={20} /> Back to My Orders

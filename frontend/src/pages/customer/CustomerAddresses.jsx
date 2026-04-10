@@ -50,7 +50,7 @@ const CustomerAddresses = () => {
     }
 
     return (
-        <div className="max-w-4xl mx-auto pb-12">
+        <div className="max-w-6xl mx-auto pb-12">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
                 <div>
                     <h1 className="text-2xl font-black text-gray-900 tracking-tight">Saved Addresses</h1>

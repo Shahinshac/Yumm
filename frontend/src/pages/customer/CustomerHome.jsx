@@ -211,7 +211,7 @@ const CustomerHome = () => {
             <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-1">Try disabling Veg Mode or changing filters</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-10">
             {filtered.map(rest => (
               <RestaurantCard 
                 key={rest.id} 

@@ -149,12 +149,10 @@ const Layout = () => {
   return (
     <div className="min-h-screen flex bg-white text-gray-900 font-sans">
       
-      {/* Sidebar - Hidden for Customers on Desktop to match Zomato Clean UI */}
-      {!isCustomer && (
-        <aside className="hidden lg:flex w-64 bg-white border-r border-gray-100 flex-col shrink-0 shadow-sm">
-          <SidebarContent />
-        </aside>
-      )}
+      {/* Sidebar - Visible on Desktop */}
+      <aside className="hidden lg:flex w-72 bg-white border-r border-gray-100 flex-col shrink-0 shadow-sm">
+        <SidebarContent />
+      </aside>
 
       {/* Mobile Sidebar */}
       {sidebarOpen && (
@@ -170,7 +168,7 @@ const Layout = () => {
         
         {/* Dynamic Header */}
         <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'pt-4 pb-2' : 'py-4 border-b border-gray-100 px-6'}`}>
-          <div className={`${isCustomer ? 'max-w-4xl mx-auto px-6' : 'flex items-center justify-between w-full'}`}>
+          <div className={`${isCustomer ? 'max-w-7xl mx-auto px-6' : 'flex items-center justify-between w-full'}`}>
             
             {isCustomer ? (
               /* ZOMATO CLEAN HEADER (CUSTOMERS) */
@@ -262,7 +260,7 @@ const Layout = () => {
 
         {/* Page Content */}
         <main className={`flex-1 overflow-auto ${isCustomer ? 'bg-white' : 'p-6 lg:p-8 bg-gray-50'}`}>
-          <div className={`${isCustomer ? 'max-w-4xl mx-auto px-6' : 'max-w-7xl mx-auto'}`}>
+          <div className={`${isCustomer ? 'max-w-7xl mx-auto px-6 py-6' : 'max-w-7xl mx-auto'}`}>
             <Outlet context={{ vegMode, locationName }} />
           </div>
         </main>

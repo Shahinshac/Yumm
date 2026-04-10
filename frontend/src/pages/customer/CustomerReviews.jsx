@@ -25,7 +25,7 @@ const CustomerReviews = () => {
     }
 
     return (
-        <div className="max-w-3xl mx-auto pb-12">
+        <div className="max-w-5xl mx-auto pb-12 px-4">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
                 <div>
                     <h1 className="text-2xl font-black text-gray-900 tracking-tight">My Reviews</h1>
