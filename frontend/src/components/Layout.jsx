@@ -5,7 +5,8 @@ import api from '../services/api';
 import {
   LayoutDashboard, ShoppingCart, ListOrdered, User, LogOut,
   CheckSquare, Menu, X, Bell, ChevronDown, Store, Package, 
-  TrendingUp, Settings, MapPin, Star, Wallet, History, Map as MapIcon
+  TrendingUp, Settings, MapPin, Star, Wallet, History, Map as MapIcon,
+  Mic, Search
 } from 'lucide-react';
 
 const ROLE_LINKS = {
@@ -43,26 +44,47 @@ const ROLE_LINKS = {
   ],
 };
 
-const ROLE_COLORS = {
-  customer: 'bg-blue-100 text-blue-700',
-  restaurant: 'bg-orange-100 text-orange-700',
-  delivery: 'bg-green-100 text-green-700',
-  admin: 'bg-red-100 text-red-600',
-};
-
 const Layout = () => {
   const { user, logout: authLogout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  
+  // UI States
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
+  
+  // Feature States
+  const [vegMode, setVegMode] = useState(false);
+  const [locationName, setLocationName] = useState('Detecting Location...');
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
+  const isCustomer = user?.role === 'customer';
   const links = ROLE_LINKS[user?.role] || [];
   const activeLink = links.find(l => location.pathname.startsWith(l.path));
   const initials = (user?.full_name || user?.username || 'U').slice(0, 2).toUpperCase();
+
+  // Location Geocoding
+  useEffect(() => {
+    if (isCustomer && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          try {
+            const { latitude, longitude } = pos.coords;
+            // Free geocoding via Nominatim
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`);
+            const data = await res.json();
+            const city = data.address.city || data.address.town || data.address.village || 'Current Location';
+            setLocationName(city);
+          } catch (err) {
+            setLocationName('Kadungapuram'); // Fallback as requested in search logic
+          }
+        },
+        () => setLocationName('Kadungapuram')
+      );
+    }
+  }, [isCustomer]);
 
   // Load notifications
   useEffect(() => {
@@ -74,18 +96,10 @@ const Layout = () => {
         }).catch(() => {});
       };
       fetchNotifs();
-      const interval = setInterval(fetchNotifs, 30000); // Polling every 30s
+      const interval = setInterval(fetchNotifs, 30000);
       return () => clearInterval(interval);
     }
   }, [user]);
-
-  const handleMarkRead = async (id) => {
-    try {
-      await api.put(`/notifications/${id}/read`);
-      setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
-      setUnreadCount(prev => Math.max(0, prev - 1));
-    } catch {}
-  };
 
   const logout = () => {
     authLogout();
@@ -94,7 +108,6 @@ const Layout = () => {
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full">
-      {/* Brand */}
       <div className="px-6 py-5 border-b border-gray-100">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 bg-[#e23744] rounded-xl flex items-center justify-center shadow-lg shadow-red-200">
@@ -106,8 +119,6 @@ const Layout = () => {
           </div>
         </div>
       </div>
-
-      {/* Nav Links */}
       <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto scrollbar-hide">
         {links.map(link => {
           const Icon = link.icon;
@@ -117,166 +128,158 @@ const Layout = () => {
               key={link.path}
               to={link.path}
               onClick={() => setSidebarOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 ${
-                isActive
-                  ? 'bg-[#e23744] text-white shadow-lg shadow-red-200'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all duration-150 ${
+                isActive ? 'bg-[#e23744] text-white shadow-lg' : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
               <Icon size={18} />
               {link.name}
-              {isActive && <span className="ml-auto w-1.5 h-1.5 bg-white rounded-full" />}
             </Link>
           );
         })}
       </nav>
-
-      {/* User card + Logout */}
       <div className="px-3 py-4 border-t border-gray-100">
-        <button
-          onClick={logout}
-          className="flex items-center gap-3 w-full px-4 py-3 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all duration-150 text-sm font-bold"
-        >
-          <LogOut size={16} />
-          Sign Out
+        <button onClick={logout} className="flex items-center gap-3 w-full px-4 py-3 text-gray-500 hover:text-red-500 rounded-xl transition-all text-sm font-bold">
+          <LogOut size={16} /> Sign Out
         </button>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen flex bg-gray-50 text-gray-900">
+    <div className="min-h-screen flex bg-white text-gray-900 font-sans">
+      
+      {/* Sidebar - Hidden for Customers on Desktop to match Zomato Clean UI */}
+      {!isCustomer && (
+        <aside className="hidden lg:flex w-64 bg-white border-r border-gray-100 flex-col shrink-0 shadow-sm">
+          <SidebarContent />
+        </aside>
+      )}
 
-      {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex w-64 bg-white border-r border-gray-100 flex-col shrink-0 shadow-sm">
-        <SidebarContent />
-      </aside>
-
-      {/* Mobile Sidebar Overlay */}
+      {/* Mobile Sidebar */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setSidebarOpen(false)} />
-          <aside className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-xl animate-in slide-in-from-left duration-300">
-            <button onClick={() => setSidebarOpen(false)} className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100">
-              <X size={20} className="text-gray-600" />
-            </button>
-            <SidebarContent />
+          <aside className="absolute left-0 top-0 bottom-0 w-72 bg-white shadow-xl">
+             <SidebarContent />
           </aside>
         </div>
       )}
 
-      {/* Main Area */}
-      <div className="flex-1 flex flex-col min-h-screen overflow-hidden">
-
-        {/* Top Header */}
-        <header className="bg-white/80 backdrop-blur-md border-b border-gray-100 px-6 py-4 flex items-center justify-between shadow-sm sticky top-0 z-30">
-          <div className="flex items-center gap-4">
-            {/* Mobile hamburger */}
-            <button onClick={() => setSidebarOpen(true)} className="p-2 rounded-xl hover:bg-gray-100 lg:hidden">
-              <Menu size={20} className="text-gray-600" />
-            </button>
-            <div>
-              <h1 className="font-bold text-gray-900 text-base">
-                {activeLink?.name || 'Dashboard'}
-              </h1>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider hidden sm:block">
-                {new Date().toLocaleDateString('en-IN', { weekday: 'long', day: 'numeric', month: 'long' })}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Notification Bell */}
-            <div className="relative">
-              <button 
-                onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
-                className={`relative p-2.5 rounded-xl transition ${showNotifications ? 'bg-gray-100 text-[#e23744]' : 'hover:bg-gray-50 text-gray-500'}`}
-              >
-                <Bell size={20} />
-                {unreadCount > 0 && (
-                  <span className="absolute top-2 right-2.5 w-4 h-4 bg-[#e23744] text-white text-[8px] font-black rounded-full border-2 border-white flex items-center justify-center">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
-              </button>
-
-              {showNotifications && (
-                <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
-                  <div className="p-4 border-b border-gray-50 flex items-center justify-between">
-                    <h3 className="font-bold text-sm">Notifications</h3>
-                    <span className="text-[10px] font-black bg-red-50 text-[#e23744] px-2 py-0.5 rounded-full">{unreadCount} New</span>
-                  </div>
-                  <div className="max-h-96 overflow-y-auto">
-                    {notifications.length === 0 ? (
-                      <div className="p-10 text-center">
-                        <p className="text-gray-400 text-xs font-medium">No alerts yet</p>
+      <div className="flex-1 flex flex-col min-h-screen">
+        
+        {/* Dynamic Header */}
+        <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'pt-4 pb-2' : 'py-4 border-b border-gray-100 px-6'}`}>
+          <div className={`${isCustomer ? 'max-w-4xl mx-auto px-6' : 'flex items-center justify-between w-full'}`}>
+            
+            {isCustomer ? (
+              /* ZOMATO CLEAN HEADER (CUSTOMERS) */
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 group cursor-pointer">
+                    <MapPin className="text-[#e23744] fill-[#e23744]/20" size={24} />
+                    <div className="flex flex-col">
+                      <div className="flex items-center gap-1">
+                        <span className="font-black text-lg text-gray-900 tracking-tight">{locationName}</span>
+                        <ChevronDown size={18} className="text-gray-400 mt-1" />
                       </div>
-                    ) : (
-                      notifications.map(n => (
-                        <button 
-                          key={n.id}
-                          onClick={() => handleMarkRead(n.id)}
-                          className={`w-full p-4 text-left hover:bg-gray-50 transition border-b border-gray-50 last:border-0 flex gap-3 ${!n.is_read ? 'bg-red-50/30' : ''}`}
-                        >
-                          <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${n.is_read ? 'bg-gray-200' : 'bg-[#e23744]'}`} />
-                          <div>
-                            <p className="font-bold text-xs text-gray-900">{n.title}</p>
-                            <p className="text-[11px] text-gray-500 mt-0.5 line-clamp-2">{n.message}</p>
-                          </div>
-                        </button>
-                      ))
-                    )}
+                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">India</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-4">
+                     <div className="bg-[#f3f4f6] p-2 rounded-full cursor-pointer hover:bg-gray-200">
+                        <Wallet size={20} className="text-gray-600" />
+                     </div>
+                     <button onClick={() => setShowUserMenu(!showUserMenu)} className="w-10 h-10 rounded-full bg-[#1c1c1c] flex items-center justify-center text-white font-black text-sm border-2 border-white shadow-xl">
+                        {initials}
+                     </button>
                   </div>
                 </div>
-              )}
-            </div>
 
-            {/* Avatar / User Dropdown */}
-            <div className="relative">
-              <button 
-                onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); }}
-                className="flex items-center gap-2.5 pl-3 border-l border-gray-200 hover:opacity-80 transition"
-              >
-                <div className="w-8 h-8 bg-[#e23744] rounded-full flex items-center justify-center text-white font-black text-xs shadow-md shadow-red-100">
-                  {initials}
-                </div>
-                <div className="hidden sm:block text-left">
-                  <p className="text-xs font-bold text-gray-900 leading-none">{user?.full_name?.split(' ')[0] || user?.username}</p>
-                  <p className="text-[10px] text-gray-400 font-bold capitalize mt-0.5">{user?.role}</p>
-                </div>
-                <ChevronDown size={14} className={`text-gray-400 transition-transform duration-200 ${showUserMenu ? 'rotate-180' : ''}`} />
-              </button>
-
-              {showUserMenu && (
-                <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
-                  <div className="p-4 bg-gray-50/50 border-b border-gray-100">
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">Signed in as</p>
-                    <p className="text-sm font-bold text-gray-900 mt-1 truncate">{user?.email}</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 bg-white border border-gray-200 rounded-2xl shadow-sm flex items-center px-5 py-4 gap-3 focus-within:shadow-md transition-shadow">
+                     <Search className="text-[#e23744]" size={20} />
+                     <input 
+                        type="text" 
+                        placeholder='Search "comfort food"'
+                        className="flex-1 outline-none font-bold text-sm text-gray-800 placeholder-gray-400"
+                     />
+                     <div className="w-px h-6 bg-gray-100 mx-2" />
+                     <Mic className="text-[#e23744]" size={20} />
                   </div>
-                  <div className="p-2">
-                    <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#e23744] rounded-xl transition">
-                      <User size={16} /> My Account
-                    </Link>
-                    <Link to={user?.role === 'admin' ? '/admin/settings' : '/profile/settings'} onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#e23744] rounded-xl transition">
-                      <Settings size={16} /> Settings
-                    </Link>
-                    <div className="my-1 border-t border-gray-50" />
-                    <button onClick={logout} className="flex items-center gap-3 w-full px-3 py-2.5 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl transition">
-                      <LogOut size={16} /> Log Out
-                    </button>
+                  
+                  <div className="flex flex-col items-center">
+                     <span className="text-[8px] font-black text-gray-400 uppercase mb-1">Veg Mode</span>
+                     <button 
+                        onClick={() => setVegMode(!vegMode)}
+                        className={`w-12 h-6 rounded-full transition-colors relative flex items-center px-1 ${vegMode ? 'bg-green-500' : 'bg-gray-200'}`}
+                     >
+                        <div className={`w-4 h-4 bg-white rounded-full transition-transform shadow-sm ${vegMode ? 'translate-x-6' : 'translate-x-0'}`} />
+                     </button>
                   </div>
                 </div>
-              )}
-            </div>
+              </div>
+            ) : (
+              /* OPERATIONAL HEADER (ADMIN/PARTNERS) */
+              <>
+                <div className="flex items-center gap-4">
+                  <button onClick={() => setSidebarOpen(true)} className="lg:hidden p-2 rounded-xl hover:bg-gray-100">
+                    <Menu size={20} />
+                  </button>
+                  <h1 className="font-black text-xl tracking-tight">{activeLink?.name || 'Operations'}</h1>
+                </div>
+                <div className="flex items-center gap-3">
+                   <button className="p-2.5 rounded-xl hover:bg-gray-100 text-gray-500">
+                      <Bell size={20} />
+                   </button>
+                   <div className="w-9 h-9 bg-gray-900 rounded-full flex items-center justify-center text-white font-black text-xs">
+                      {initials}
+                   </div>
+                </div>
+              </>
+            )}
           </div>
         </header>
 
+        {/* User Dropdown Overlay (Simple for now) */}
+        {showUserMenu && isCustomer && (
+           <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)}>
+              <div className="absolute right-6 top-32 w-56 bg-white rounded-3xl shadow-2xl border border-gray-100 p-2 animate-in fade-in zoom-in duration-200">
+                  <div className="p-4 border-b border-gray-50 mb-2">
+                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Account</p>
+                     <p className="font-bold text-gray-900 truncate">{user?.email}</p>
+                  </div>
+                  <Link to="/profile" className="flex items-center gap-3 p-3 hover:bg-gray-50 rounded-2xl font-bold text-sm">
+                     <User size={18} /> Profile
+                  </Link>
+                  <button onClick={logout} className="w-full flex items-center gap-3 p-3 hover:bg-red-50 text-red-500 rounded-2xl font-bold text-sm">
+                     <LogOut size={18} /> Sign Out
+                  </button>
+              </div>
+           </div>
+        )}
+
         {/* Page Content */}
-        <main className="flex-1 overflow-auto p-6 lg:p-8 bg-[#fcfcfc]">
-          <div className="max-w-7xl mx-auto">
-            <Outlet />
+        <main className={`flex-1 overflow-auto ${isCustomer ? 'bg-white' : 'p-6 lg:p-8 bg-gray-50'}`}>
+          <div className={`${isCustomer ? 'max-w-4xl mx-auto px-6' : 'max-w-7xl mx-auto'}`}>
+            <Outlet context={{ vegMode, locationName }} />
           </div>
         </main>
+
+        {/* Mobile Bottom Nav (Visible for customers) */}
+        {isCustomer && (
+          <div className="lg:hidden sticky bottom-6 px-4 py-2 flex justify-center w-full z-40">
+             <div className="bg-white rounded-full shadow-2xl border border-gray-100 flex items-center gap-2 p-1.5 backdrop-blur-md bg-white/90">
+                <button className="bg-[#fdf2f2] text-[#e23744] px-6 py-2 rounded-full font-black text-xs uppercase tracking-widest flex items-center gap-2">
+                   <LayoutDashboard size={14} /> Delivery
+                </button>
+                <button className="text-gray-400 px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest flex items-center gap-2">
+                   <History size={14} /> History
+                </button>
+             </div>
+          </div>
+        )}
       </div>
     </div>
   );

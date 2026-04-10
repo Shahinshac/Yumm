@@ -1,19 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, TrendingUp, Bike, Loader2, QrCode, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, 
+  TrendingUp, Bike, Loader2, QrCode, X, Signal, Power, 
+  ChevronRight, Map as MapIcon
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { deliveryService } from '../../services/deliveryService';
 import useLocationTracking from '../../hooks/useLocationTracking';
 import { QRCodeSVG } from 'qrcode.react';
 
-const StatCard = ({ icon: Icon, label, value, iconColor, iconBg }) => (
-  <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
-    <div className={`${iconBg} p-3 rounded-xl`}>
-      <Icon size={20} className={iconColor} />
+const StatCard = ({ icon: Icon, label, value, color }) => (
+  <div className="bg-white rounded-[2rem] p-6 border border-gray-100 hover:border-gray-200 transition-all group">
+    <div className={`w-12 h-12 rounded-2xl ${color} bg-opacity-10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110`}>
+      <Icon size={20} className={color} />
     </div>
-    <div>
-      <p className="text-2xl font-black text-gray-900">{value}</p>
-      <p className="text-sm text-gray-500">{label}</p>
-    </div>
+    <p className="text-2xl font-black text-gray-900 tracking-tight">{value}</p>
+    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{label}</p>
   </div>
 );
 
@@ -29,11 +31,9 @@ const DeliveryDashboard = () => {
     const [requestTimeLeft, setRequestTimeLeft] = useState(60);
     const requestTimerRef = useRef(null);
 
-    // Track real location and get socket for real-time requests
     const { socket } = useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
 
     useEffect(() => {
-        // Sync online status with backend
         if (user) {
             deliveryService.updateStatus(null, online ? 'online' : 'offline').catch(() => {});
         }
@@ -42,14 +42,11 @@ const DeliveryDashboard = () => {
             refreshDashboard();
             const interval = setInterval(refreshDashboard, 30000); 
             
-            // Listen for real-time push requests
             if (socket) {
                 socket.on('new_delivery_request', (order) => {
-                    // Only show if not already on a delivery
                     if (!activeDelivery) {
                         setIncomingRequest(order);
                         setRequestTimeLeft(60);
-                        // Play alert sound if possible
                         try { new Audio('/assets/notification.mp3').play(); } catch(e) {}
                     }
                 });
@@ -71,7 +68,6 @@ const DeliveryDashboard = () => {
         }
     }, [online, activeDelivery, socket]);
 
-    // Timer logic for incoming request
     useEffect(() => {
         if (incomingRequest && requestTimeLeft > 0) {
             requestTimerRef.current = setTimeout(() => {
@@ -87,14 +83,13 @@ const DeliveryDashboard = () => {
         try {
             const [avail, assigned, s] = await Promise.all([
                 deliveryService.getAvailableOrders(),
-                deliveryService.getOrders(), // This returns currently assigned
+                deliveryService.getOrders(),
                 deliveryService.getStats().catch(() => ({ deliveredToday: 0, earningsToday: 0 }))
             ]);
             
             setAvailableOrders(avail || []);
             setStats(s || { deliveredToday: 0, earningsToday: 0, kmToday: 0, rate: '100%' });
             
-            // Check if there's an active (not delivered) order
             const active = assigned?.find(o => o.status !== 'delivered');
             setActiveDelivery(active || null);
         } catch (err) {
@@ -104,24 +99,11 @@ const DeliveryDashboard = () => {
         }
     };
 
-    const handleClaim = async (id) => {
-        try {
-            setLoading(true);
-            await deliveryService.claimOrder(id);
-            await refreshDashboard();
-        } catch (err) {
-            alert("Claim failed: " + (err.response?.data?.error || err.message));
-        } finally {
-            setLoading(false);
-        }
-    };
-
     const handleAdvanceStatus = async () => {
         if (!activeDelivery) return;
-        
         let nextStatus = '';
         if (activeDelivery.status === 'picked') nextStatus = 'delivering';
-        else if (activeDelivery.status === 'on_the_way') nextStatus = 'done';
+        else if (activeDelivery.status === 'on_the_way') nextStatus = 'completed';
         
         if (!nextStatus) return;
 
@@ -136,156 +118,173 @@ const DeliveryDashboard = () => {
         }
     };
 
-    const STATUS_UI = {
-        picked: { label: 'Picked Up - Head to Customer', next: 'On my Way' },
-        on_the_way: { label: 'Near Customer - Mark Delivered', next: 'Delivered' },
-        delivered: { label: 'Delivered! 🎉', next: '' }
-    };
-
   if (loading && !activeDelivery && availableOrders.length === 0) {
       return (
-          <div className="flex flex-col items-center justify-center py-20">
-              <Loader2 className="animate-spin text-orange-500 mb-4" size={40} />
-              <p className="text-gray-500 font-bold uppercase tracking-widest text-xs">Syncing with hub...</p>
+          <div className="flex flex-col items-center justify-center py-32">
+              <Loader2 className="animate-spin text-[#e23744] mb-6" size={48} />
+              <p className="text-gray-400 font-black uppercase tracking-[0.3em] text-[10px]">Fleet Pulse Syncing...</p>
           </div>
       );
   }
 
   return (
-    <div className="space-y-7 max-w-4xl mx-auto px-4">
+    <div className="space-y-10 max-w-4xl mx-auto pb-24 font-sans">
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      {/* RIDER CONSOLE HEADER */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-gray-100 pb-10 mt-6">
         <div>
-          <h1 className="text-2xl font-black text-gray-900 uppercase tracking-tight">Delivery Control</h1>
-          <p className="text-gray-500 text-sm mt-1">Status: {online ? 'Searching for near orders...' : 'Resting'}</p>
+           <div className="flex items-center gap-3 mb-2">
+              <div className={`w-3 h-3 rounded-full ${online ? 'bg-green-500 animate-ping' : 'bg-gray-300'}`} />
+              <span className={`text-[10px] font-black uppercase tracking-[0.3em] ${online ? 'text-green-500' : 'text-gray-400'}`}>
+                {online ? 'Active on Fleet' : 'System Standby'}
+              </span>
+           </div>
+           <h1 className="text-5xl font-black text-gray-900 tracking-tighter italic">Fleet Station</h1>
+           <p className="text-gray-400 font-bold text-sm mt-2">Pilot: {user?.full_name} • ID: #YUMM-FL-12</p>
         </div>
+        
         <button
-          onClick={() => setOnline(v => !v)}
-          className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl font-black text-sm transition-all duration-300 active:scale-95 ${
-            online ? 'bg-green-500 text-white shadow-xl shadow-green-100' : 'bg-gray-900 text-white shadow-xl shadow-gray-200'
+          onClick={() => setOnline(!online)}
+          className={`group flex items-center gap-4 pl-4 pr-8 py-4 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all duration-500 shadow-2xl ${
+            online ? 'bg-[#e23744] text-white shadow-red-100' : 'bg-black text-white shadow-gray-200'
           }`}
         >
-          <span className={`w-3 h-3 rounded-full ${online ? 'bg-white animate-pulse' : 'bg-red-500'}`} />
-          {online ? 'DUTY ON' : 'GO ONLINE'}
+          <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center group-hover:rotate-12 transition-transform">
+             <Power size={20} />
+          </div>
+          {online ? 'Duty On' : 'Go Online'}
         </button>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <StatCard icon={CheckCircle} label="Delivered" value={stats.deliveredToday || 0} iconColor="text-green-600" iconBg="bg-green-50" />
-        <StatCard icon={IndianRupee} label="Earnings" value={`₹${stats.earningsToday || 0}`} iconColor="text-blue-600" iconBg="bg-blue-50" />
-        <StatCard icon={Navigation} label="KM Covered" value={`${stats.kmToday || 0} km`} iconColor="text-purple-600" iconBg="bg-purple-50" />
-        <StatCard icon={TrendingUp} label="Rank" value="Gold" iconColor="text-orange-600" iconBg="bg-orange-50" />
+      {/* PERFORMANCE METRICS */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <StatCard icon={CheckCircle} label="Success" value={stats.deliveredToday || 0} color="text-green-500" />
+        <StatCard icon={IndianRupee} label="Daily Pay" value={`₹${stats.earningsToday || 0}`} color="text-blue-500" />
+        <StatCard icon={Navigation} label="Kms" value={`${stats.kmToday || 0}`} color="text-purple-500" />
+        <StatCard icon={TrendingUp} label="Rank" value="Gold" color="text-orange-500" />
       </div>
 
-      {/* Active Delivery Card */}
-      {activeDelivery && (
-        <div className="bg-gray-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-10 opacity-10 group-hover:scale-110 transition-transform duration-700">
-             <Bike size={160} />
+      {/* MISSION CARD (ACTIVE) */}
+      {activeDelivery ? (
+        <div className="bg-gray-950 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-12 opacity-5 scale-150 rotate-12 group-hover:rotate-0 transition-transform duration-1000">
+             <Bike size={200} />
           </div>
           
-          <div className="relative z-10 flex flex-col md:flex-row items-start justify-between gap-6">
-            <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 bg-white/10 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider text-orange-400">
-                <span className="w-1.5 h-1.5 bg-orange-500 rounded-full animate-ping" />
-                Live Mission · {activeDelivery.id.slice(-6).toUpperCase()}
+          <div className="relative z-10 flex flex-col md:flex-row items-start justify-between gap-10">
+            <div className="space-y-6 flex-1">
+              <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-orange-400">
+                <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
+                Mission in Progress · {activeDelivery.id.slice(-6).toUpperCase()}
               </div>
-              <h2 className="text-3xl font-black tracking-tight leading-tight">
-                 {activeDelivery.status === 'picked' ? 'Heading to Restaurant' : 'Out for Delivery'}
+              
+              <h2 className="text-5xl font-black tracking-tighter leading-[0.9]">
+                 {activeDelivery.status === 'picked' ? 'Navigate to \nStore' : 'Navigate to \nCustomer'}
               </h2>
-              <div className="space-y-3 pt-2">
-                 <div className="flex items-start gap-3">
-                    <div className="p-2 bg-white/5 rounded-xl text-white/50"><MapPin size={18} /></div>
+
+              <div className="space-y-6 pt-6">
+                 <div className="flex items-start gap-4">
+                    <div className="p-3 bg-white/5 rounded-2xl text-white/40"><MapPin size={24} /></div>
                     <div>
-                        <p className="text-[10px] font-black uppercase text-white/30 tracking-widest">Target Location</p>
-                        <p className="text-sm font-bold text-white/80">{activeDelivery.status === 'picked' ? activeDelivery.restaurant?.address : activeDelivery.delivery_address}</p>
+                        <p className="text-[10px] font-black uppercase text-white/20 tracking-[0.3em] mb-1">Target Address</p>
+                        <p className="text-xl font-bold text-white/90 leading-tight italic">
+                          {activeDelivery.status === 'picked' ? activeDelivery.restaurant?.address : activeDelivery.delivery_address}
+                        </p>
                     </div>
                  </div>
               </div>
             </div>
             
-            <div className="text-right shrink-0">
-               <div className="p-4 bg-white/5 rounded-2xl border border-white/10 backdrop-blur-md">
-                  <p className="text-3xl font-black text-orange-500">₹{activeDelivery.total_amount}</p>
-                  <p className="text-[10px] font-black text-white/40 uppercase tracking-tighter">Order Value</p>
+            <div className="flex flex-col items-center md:items-end gap-6 shrink-0">
+               <div className="p-8 bg-white/5 rounded-[2.5rem] border border-white/10 backdrop-blur-xl text-center md:text-right min-w-[180px]">
+                  <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-2">Pilot Payout</p>
+                  <p className="text-5xl font-black text-orange-500 tracking-tighter italic">₹{(activeDelivery.total_amount * 0.15 + 20).toFixed(0)}</p>
+                  <div className="h-px bg-white/10 my-4" />
+                  <div className="flex items-center justify-center md:justify-end gap-2 text-green-400">
+                     <Signal size={14} />
+                     <span className="text-[10px] font-black uppercase tracking-widest">Priority Task</span>
+                  </div>
                </div>
             </div>
           </div>
 
-          <button
-            onClick={handleAdvanceStatus}
-            disabled={loading}
-            className="mt-8 w-full bg-white text-gray-900 hover:bg-orange-500 hover:text-white font-black py-4 rounded-2xl transition-all duration-300 shadow-xl shadow-black/20 flex items-center justify-center gap-2 active:scale-[0.98]"
-          >
-            {loading ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle size={20} />}
-            {activeDelivery.status === 'picked' ? 'MARK AS PICKED UP' : 'MARK AS DELIVERED'}
-          </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12">
+             <button
+                onClick={handleAdvanceStatus}
+                disabled={loading}
+                className="bg-white text-black hover:bg-orange-500 hover:text-white font-black py-6 rounded-[2rem] transition-all duration-500 shadow-xl flex items-center justify-center gap-3 active:scale-95 group/btn"
+              >
+                {loading ? <Loader2 className="animate-spin" size={24} /> : <CheckCircle size={24} className="group-hover/btn:scale-110 transition-transform" />}
+                <span className="text-xs uppercase tracking-[0.2em]">{activeDelivery.status === 'picked' ? 'Arrived at Store' : 'Hand over Food'}</span>
+             </button>
 
-          {/* COD QR Button */}
-          {(activeDelivery.payment_method === 'cod' || !activeDelivery.payment_method) && activeDelivery.restaurant_upi_id && (
+             <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-black py-6 rounded-[2rem] transition-all flex items-center justify-center gap-3">
+                <MapIcon size={20} />
+                <span className="text-xs uppercase tracking-[0.2em]">Open Navigation</span>
+             </button>
+          </div>
+
+          {activeDelivery.payment_method === 'cod' && (
             <button
               onClick={() => setShowQrModal(true)}
-              className="mt-3 w-full bg-green-500/20 text-green-300 border border-green-500/30 hover:bg-green-500 hover:text-white font-black py-3 rounded-2xl transition-all flex items-center justify-center gap-2"
+              className="mt-4 w-full bg-green-500/10 text-green-400 border border-green-500/20 hover:bg-green-500 hover:text-white font-black py-5 rounded-[2rem] transition-all flex items-center justify-center gap-3"
             >
-              <QrCode size={18} /> SHOW PAYMENT QR TO CUSTOMER
+              <QrCode size={20} />
+              <span className="text-xs uppercase tracking-[0.2em]">Collection QR Code</span>
             </button>
           )}
         </div>
+      ) : (
+        /* STANDBY VIEW */
+        <div className={`bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-100 p-24 text-center transition-all ${online ? 'border-orange-500/30' : ''}`}>
+           <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 transition-all ${online ? 'bg-orange-50 text-orange-500 scale-110' : 'bg-white text-gray-200 shadow-sm'}`}>
+               <Bike size={48} className={online ? 'animate-bounce' : ''} />
+           </div>
+           <h2 className="text-3xl font-black text-gray-900 tracking-tight">
+              {online ? 'Connecting to Hub...' : 'Pilot Station Offline'}
+           </h2>
+           <p className="text-gray-400 font-bold text-sm tracking-tight mt-2 max-w-xs mx-auto">
+             {online ? 'Standby for high-priority delivery requests from nearby merchants.' : 'Access live requests by switching your pilot status to Duty On.'}
+           </p>
+        </div>
       )}
 
-      {/* Incoming Request Popup (Swiggy Style) */}
+      {/* REQUEST OVERLAY (SWIGGY/ZOMATO STYLE) */}
       {incomingRequest && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/80 backdrop-blur-md p-6">
-          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
-            <div className="bg-[#ff4b3a] p-8 text-white relative">
-               <div className="absolute top-4 right-8 flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full border-4 border-white/20 flex items-center justify-center font-black text-xl">
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-6">
+          <div className="bg-white w-full max-w-sm rounded-[3rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-500">
+            <div className="bg-[#e23744] p-10 text-white relative">
+               <div className="absolute top-6 right-10">
+                  <div className="w-16 h-16 rounded-full border-4 border-white/30 flex items-center justify-center font-black text-2xl animate-pulse">
                       {requestTimeLeft}
                   </div>
-                  <p className="text-[10px] uppercase font-bold mt-1 opacity-60">Sec left</p>
                </div>
-               <Bike size={40} className="mb-4" />
-               <h2 className="text-3xl font-black tracking-tight">New Order!</h2>
-               <p className="text-white/80 font-bold uppercase tracking-widest text-[10px] mt-2">Incoming Mission Assigned</p>
+               <Signal size={40} className="mb-6" />
+               <h2 className="text-4xl font-black tracking-tighter italic">NEW MISSION</h2>
+               <p className="text-white/60 font-black uppercase tracking-[0.3em] text-[10px] mt-2 italic">Priority Protocol Activated</p>
             </div>
             
-            <div className="p-8 space-y-6">
-                <div className="flex justify-between items-end">
-                    <div>
-                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Potential Earning</p>
-                        <p className="text-4xl font-black text-gray-900">₹{(incomingRequest.total_amount * 0.2 + 20).toFixed(0)}</p>
-                    </div>
-                    {incomingRequest.tip_amount > 0 && (
-                        <div className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-[10px] font-black">
-                           + ₹{incomingRequest.tip_amount} TIP
-                        </div>
-                    )}
+            <div className="p-10 space-y-8">
+                <div>
+                   <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-2">Guaranteed Earning</p>
+                   <p className="text-6xl font-black text-gray-900 tracking-tighter">₹{(incomingRequest.total_amount * 0.15 + 20).toFixed(0)}</p>
                 </div>
 
-                <div className="space-y-4 pt-4 border-t border-gray-100">
-                    <div className="flex items-start gap-3">
-                        <div className="p-2 bg-gray-50 rounded-xl text-gray-400"><MapPin size={16} /></div>
+                <div className="space-y-6 pt-6 border-t border-gray-100">
+                    <div className="flex items-start gap-4">
+                        <div className="p-3 bg-gray-50 rounded-2xl text-gray-400"><MapPin size={20} /></div>
                         <div>
-                            <p className="text-[10px] font-black text-gray-400 uppercase">From</p>
-                            <p className="text-sm font-bold text-gray-800">{incomingRequest.restaurant_name}</p>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Store Location</p>
+                            <p className="text-lg font-black text-gray-900 italic">{incomingRequest.restaurant_name}</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-4">
                     <button 
-                        onClick={() => setIncomingRequest(null)}
-                        className="py-4 bg-gray-100 text-gray-500 rounded-2xl font-black text-sm hover:bg-gray-200 transition active:scale-95"
-                    >
-                        IGNORE
-                    </button>
-                    <button 
-                         onClick={async () => {
+                        onClick={async () => {
                              try {
                                  setLoading(true);
-                                 // Emit through socket for instant feedback
                                  if (socket) {
                                      socket.emit('delivery_accept_request', { 
                                          order_id: incomingRequest.id, 
@@ -293,15 +292,18 @@ const DeliveryDashboard = () => {
                                      });
                                  }
                                  setIncomingRequest(null);
-                             } catch(e) { 
-                                 alert("Accept failed"); 
-                             } finally {
-                                 setLoading(false);
-                             }
-                         }}
-                        className="py-4 bg-[#ff4b3a] text-white rounded-2xl font-black text-sm hover:bg-black transition shadow-xl shadow-red-200 active:scale-95"
+                             } catch(e) { alert("Accept failed"); } 
+                             finally { setLoading(false); }
+                        }}
+                        className="py-6 bg-black text-white rounded-3xl font-black text-xs uppercase tracking-[0.3em] hover:scale-[1.02] transition-transform shadow-2xl active:scale-95"
                     >
-                        ACCEPT
+                        Accept Mission
+                    </button>
+                    <button 
+                        onClick={() => setIncomingRequest(null)}
+                        className="py-4 text-gray-400 font-black text-[10px] uppercase tracking-[0.3em] hover:text-gray-900"
+                    >
+                        Ignore Request
                     </button>
                 </div>
             </div>
@@ -309,46 +311,30 @@ const DeliveryDashboard = () => {
         </div>
       )}
 
-      {/* Offline View */}
-      {!online && (
-        <div className="bg-white rounded-[40px] border border-gray-100 p-24 text-center shadow-sm space-y-4">
-          <div className="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-gray-300">
-              <Bike size={48} />
-          </div>
-          <h2 className="text-2xl font-black text-gray-800">Mission Control Offline</h2>
-          <p className="text-gray-400 max-w-xs mx-auto font-medium">Switch to online to start receiving live delivery requests from nearby restaurants.</p>
-        </div>
-      )}
-      {/* COD Payment QR Modal */}
+      {/* QR MODAL */}
       {showQrModal && activeDelivery?.restaurant_upi_id && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
-          <div className="bg-white rounded-3xl w-full max-w-xs shadow-2xl overflow-hidden">
-            <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-5 text-white text-center relative">
-              <button onClick={() => setShowQrModal(false)} className="absolute top-4 right-4 text-white/50 hover:text-white">
-                <X size={20} />
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4">
+          <div className="bg-white rounded-[3rem] w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom duration-300">
+            <div className="bg-black p-8 text-white text-center relative">
+              <button onClick={() => setShowQrModal(false)} className="absolute top-6 right-6 text-white/30 hover:text-white">
+                <X size={24} />
               </button>
-              <QrCode size={24} className="mx-auto mb-2 text-orange-400" />
-              <h2 className="font-black">Show This to Customer</h2>
-              <p className="text-gray-400 text-sm mt-1">Order #{activeDelivery.id?.slice(-6).toUpperCase()}</p>
-              <p className="text-orange-400 font-black text-xl mt-1">₹{activeDelivery.total_amount}</p>
+              <h2 className="text-2xl font-black tracking-tight mb-2 italic">COLLECT PAYMENT</h2>
+              <p className="text-orange-500 font-black text-4xl tracking-tighter">₹{activeDelivery.total_amount}</p>
             </div>
-            <div className="p-6 flex flex-col items-center gap-4">
-              <div className="p-4 bg-white rounded-2xl shadow-xl border-2 border-gray-100">
+            <div className="p-10 flex flex-col items-center gap-6">
+              <div className="p-6 bg-white rounded-[2.5rem] shadow-2xl border-2 border-gray-50">
                 <QRCodeSVG
-                  value={`upi://pay?pa=${activeDelivery.restaurant_upi_id}&am=${activeDelivery.total_amount}&cu=INR&tn=FoodDelivery`}
-                  size={180}
+                  value={`upi://pay?pa=${activeDelivery.restaurant_upi_id}&am=${activeDelivery.total_amount}&cu=INR&tn=YummFood`}
+                  size={220}
                   bgColor="#ffffff"
-                  fgColor="#1a1a1a"
+                  fgColor="#000000"
                   level="H"
                 />
               </div>
-              <p className="text-xs font-bold text-gray-700 bg-gray-50 px-4 py-2 rounded-xl">{activeDelivery.restaurant_upi_id}</p>
-              <p className="text-[10px] text-gray-400 text-center font-medium">Ask customer to scan with GPay / PhonePe / Paytm</p>
-              <button
-                onClick={() => setShowQrModal(false)}
-                className="w-full py-3 bg-gray-900 text-white rounded-2xl font-black text-sm hover:bg-black transition"
-              >
-                Done
+              <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em]">Scan with any UPI App</p>
+              <button onClick={() => setShowQrModal(false)} className="w-full py-5 bg-black text-white rounded-[2rem] font-black text-xs uppercase tracking-[0.3em] hover:scale-105 transition-transform">
+                Payment Received
               </button>
             </div>
           </div>

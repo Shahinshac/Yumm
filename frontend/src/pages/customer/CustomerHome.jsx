@@ -1,216 +1,217 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, Star, Clock, ChevronRight, Zap, Tag, TrendingUp } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { 
+  Search, MapPin, Star, Clock, ChevronRight, Zap, Tag, TrendingUp,
+  SlidersHorizontal, ChevronDown, Bookmark, Percent, Play, Train, LayoutGrid
+} from 'lucide-react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 
-const CATEGORIES = []; // Removed per request
-
-const BANNERS = [
-  { title: '50% OFF', sub: 'On your first order', bg: 'from-orange-500 to-red-500', emoji: '🎉' },
-  { title: 'Free Delivery', sub: 'Orders above ₹299', bg: 'from-green-500 to-teal-500', emoji: '🛵' },
-  { title: 'New Arrivals', sub: 'Fresh restaurants near you', bg: 'from-purple-500 to-indigo-500', emoji: '✨' },
+const CATEGORIES = [
+  { name: 'All', icon: '🍽️' },
+  { name: 'Biryani', icon: '🍛' },
+  { name: 'Chicken', icon: '🍗' },
+  { name: 'Burger', icon: '🍔' },
+  { name: 'Rice', icon: '🍚' },
+  { name: 'Pizza', icon: '🍕' },
+  { name: 'Dosa', icon: '🥞' },
 ];
 
-const RestaurantCard = ({ rest, onClick }) => (
-  <div 
-    onClick={onClick}
-    className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
-  >
-    <div className="relative h-44 overflow-hidden">
-      <img
-        src={`https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=600&q=80&sig=${rest.id}`}
-        alt={rest.name}
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+const EXPLORE = [
+  { name: 'Offers', icon: <Percent className="text-blue-600" />, bg: 'bg-blue-50' },
+  { name: 'Play & win', icon: <Play className="text-orange-600" />, bg: 'bg-orange-50' },
+  { name: 'Food on train', icon: <Train className="text-indigo-600" />, bg: 'bg-indigo-50' },
+  { name: 'Collections', icon: <LayoutGrid className="text-pink-600" />, bg: 'bg-pink-50' },
+];
 
-      <div className="absolute top-3 left-3 flex gap-2">
-        {rest.promoted && (
-          <span className="bg-[#ff4b3a] text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">
-            Promoted
-          </span>
-        )}
-        {rest.distance_km !== undefined && rest.distance_km !== null && (
-          <span className="bg-white/90 backdrop-blur text-gray-900 text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1 border border-gray-100">
-            <MapPin size={10} className="text-[#ff4b3a] fill-[#ff4b3a]/20" /> {rest.distance_km} KM
-          </span>
-        )}
-      </div>
-      <div className="absolute top-3 right-3 bg-white/95 backdrop-blur px-2.5 py-1 rounded-xl flex items-center gap-1 shadow-sm">
-        <Star size={12} className="text-yellow-500 fill-yellow-500" />
-        <span className="font-bold text-xs text-gray-800">{rest.rating || '4.5'}</span>
-      </div>
-      {rest.offer && (
-        <div className="absolute bottom-3 left-3 bg-[#ff4b3a] text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-lg">
-          {rest.offer}
+const RestaurantCard = ({ rest, onClick }) => {
+  const ratingColor = rest.rating >= 4 ? 'bg-green-600' : 'bg-yellow-500';
+  
+  return (
+    <div 
+      onClick={onClick}
+      className="bg-white rounded-3xl overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group mb-6"
+    >
+      <div className="relative h-56 overflow-hidden rounded-[2rem]">
+        <img
+          src={rest.image_url || `https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80&sig=${rest.id}`}
+          alt={rest.name}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        
+        <div className="absolute top-4 right-4 bg-white/20 backdrop-blur-md p-2 rounded-full text-white hover:bg-white hover:text-red-500 transition-colors">
+           <Bookmark size={20} />
         </div>
-      )}
-    </div>
 
-    <div className="p-4">
-      <div className="flex items-start justify-between gap-2">
-        <h3 className="font-bold text-gray-900 text-base truncate">{rest.name}</h3>
-      </div>
-      <p className="text-gray-500 text-sm truncate mt-0.5">Approved Restaurant</p>
-      <div className="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
-        <div className="flex items-center gap-1 text-gray-500 text-xs">
-          <Clock size={13} />
-          <span>{rest.delivery_time || 30} mins</span>
-        </div>
-        <div className="flex items-center gap-1 text-gray-500 text-xs">
-          <MapPin size={13} />
-          <span className="truncate max-w-[100px]">{rest.address || 'Nearby'}</span>
-        </div>
-        <div className="text-xs font-semibold text-gray-500">
-          ₹{rest.min_order || 149} min
+        <div className="absolute bottom-4 left-4 flex flex-col gap-1">
+           <div className="flex items-center gap-2">
+              <div className={`${ratingColor} text-white text-[10px] font-black px-2 py-0.5 rounded-lg flex items-center gap-1 shadow-lg`}>
+                {rest.rating || '4.2'} <Star size={10} className="fill-white" />
+              </div>
+              <span className="text-white text-[10px] font-bold text-shadow">1.5 km • 25 mins</span>
+           </div>
+           {rest.offer && (
+             <div className="bg-[#1c1c1c]/80 backdrop-blur px-3 py-1 rounded-lg text-white text-[10px] font-black uppercase tracking-widest mt-1">
+                {rest.offer}
+             </div>
+           )}
         </div>
       </div>
-    </div>
-  </div>
-);
 
-const SkeletonCard = () => (
-  <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 animate-pulse">
-    <div className="h-44 bg-gray-200" />
-    <div className="p-4 space-y-2">
-      <div className="h-4 bg-gray-200 rounded w-3/4" />
-      <div className="h-3 bg-gray-200 rounded w-1/2" />
-      <div className="h-3 bg-gray-200 rounded-full w-full mt-4" />
+      <div className="py-4 px-1">
+        <div className="flex items-center justify-between">
+          <h3 className="font-black text-gray-900 text-lg tracking-tight truncate">{rest.name}</h3>
+          <span className="text-gray-400 font-bold text-xs">₹{rest.min_order * 2 || '400'} for two</span>
+        </div>
+        <div className="flex items-center gap-2 mt-1 text-gray-400 text-[11px] font-bold uppercase tracking-wider">
+           <span>{rest.category || 'Casual Dining'}</span>
+           <div className="w-1 h-1 bg-gray-200 rounded-full" />
+           <span>{rest.address?.split(',')[0] || 'Nearby'}</span>
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 const CustomerHome = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { vegMode, locationName } = useOutletContext();
   const [restaurants, setRestaurants] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState('');
-  const [activeCategory, setActiveCategory] = useState('');
-  const [activeBanner, setActiveBanner] = useState(0);
-  const [coords, setCoords] = useState(null);
-
-  useEffect(() => {
-    if (!navigator.geolocation) return;
-    
-    const watchId = navigator.geolocation.watchPosition(
-      (pos) => {
-        const { latitude, longitude } = pos.coords;
-        setCoords({ lat: latitude, lng: longitude });
-      },
-      (err) => console.error("Location error:", err),
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
-    );
-
-    return () => navigator.geolocation.clearWatch(watchId);
-  }, []);
+  const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         setLoading(true);
-        const params = coords ? `?lat=${coords.lat}&lng=${coords.lng}` : '';
-        const res = await api.get(`/customer/restaurants${params}`);
+        const res = await api.get('/customer/restaurants');
         const list = res.data || [];
         setRestaurants(list);
-        setFiltered(list);
+        applyFilters(list, 'All', vegMode);
       } catch (error) {
         console.error("Fetch error:", error);
-        setRestaurants([]);
-        setFiltered([]);
       } finally {
         setLoading(false);
       }
     };
-
     fetchRestaurants();
-  }, [coords]);
-
-  useEffect(() => {
-    const t = setInterval(() => setActiveBanner(b => (b + 1) % BANNERS.length), 4000);
-    return () => clearInterval(t);
   }, []);
 
-  useEffect(() => {
-    let list = [...restaurants];
-    if (search) list = list.filter(r => r.name.toLowerCase().includes(search.toLowerCase()));
-    setFiltered(list);
-  }, [search, activeCategory, restaurants]);
+  const applyFilters = (list, category, isVeg) => {
+    let result = [...list];
+    if (category !== 'All') {
+      result = result.filter(r => r.category === category || r.name.toLowerCase().includes(category.toLowerCase()));
+    }
+    if (isVeg) {
+      result = result.filter(r => r.is_veg || r.category === 'Veg' || r.name.toLowerCase().includes('veg'));
+    }
+    setFiltered(result);
+  };
 
-  const firstName = user?.full_name?.split(' ')[0] || user?.username || 'there';
+  useEffect(() => {
+    applyFilters(restaurants, activeCategory, vegMode);
+  }, [vegMode, activeCategory, restaurants]);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8 pb-12">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-black text-gray-900">Hey {firstName}! 👋</h1>
-          <p className="text-gray-500 text-sm mt-1">What are you craving today?</p>
-        </div>
-        {coords && (
-          <div className="bg-green-50 px-3 py-1.5 rounded-xl flex items-center gap-2 border border-green-100">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-[10px] font-bold text-green-700 uppercase tracking-wider">Live Proximity Active</span>
-          </div>
-        )}
+    <div className="space-y-8 pb-24">
+      
+      {/* 50% OFF HERO BANNER */}
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-[#e23744] h-72 flex items-center px-10 shadow-2xl shadow-red-100 group">
+         <div className="absolute inset-0 opacity-20 pointer-events-none">
+            <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-black rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+         </div>
+         
+         <div className="relative z-10 flex flex-col items-start gap-4 animate-in fade-in slide-in-from-left duration-700">
+            <h2 className="text-white text-6xl font-black italic tracking-tighter leading-none">
+               ITEMS AT <br /> <span className="text-7xl">50% OFF</span>
+            </h2>
+            <button className="bg-black text-white px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2">
+               Order now <ChevronRight size={18} />
+            </button>
+         </div>
+
+         <div className="absolute right-0 bottom-0 top-0 w-1/2 overflow-hidden hidden md:block">
+            <img 
+               src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80" 
+               className="w-full h-full object-cover transform rotate-3 scale-110 opacity-90 group-hover:scale-100 transition-transform duration-[2s]"
+               alt="Hero"
+            />
+         </div>
       </div>
 
-      <div className="flex bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden focus-within:border-[#ff4b3a] focus-within:shadow-md transition-all duration-200">
-        <div className="flex-1 flex items-center px-5 gap-3">
-          <Search className="text-gray-400 shrink-0" size={20} />
-          <input
-            type="text"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            placeholder="Search restaurants, cuisines..."
-            className="w-full py-4 outline-none text-gray-800 placeholder-gray-400 bg-transparent text-sm"
-          />
-        </div>
-      </div>
-
-      <div className="relative overflow-hidden rounded-2xl shadow-xl shadow-red-50">
-        {BANNERS.map((b, i) => (
-          <div
-            key={i}
-            className={`bg-gradient-to-r ${b.bg} text-white p-7 flex items-center justify-between transition-all duration-500 ${i === activeBanner ? 'block' : 'hidden'}`}
-          >
-            <div>
-              <div className="inline-flex items-center gap-1.5 bg-white/20 rounded-full px-3 py-1 text-xs font-semibold mb-3">
-                <Zap size={12} /> Limited Time
+      {/* CATEGORY CAROUSEL */}
+      <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide py-2">
+         {CATEGORIES.map(cat => (
+           <button 
+             key={cat.name}
+             onClick={() => setActiveCategory(cat.name)}
+             className="flex flex-col items-center gap-3 shrink-0 group"
+           >
+              <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-sm border transition-all ${activeCategory === cat.name ? 'border-[#e23744] bg-[#fdf2f2] scale-110 shadow-lg' : 'border-gray-100 bg-white group-hover:border-gray-200'}`}>
+                 {cat.icon}
               </div>
-              <h2 className="text-3xl font-black">{b.title}</h2>
-              <p className="text-white/80 mt-1">{b.sub}</p>
-              <button className="mt-4 bg-white text-gray-800 px-5 py-2 rounded-xl text-sm font-bold hover:bg-gray-100 transition inline-flex items-center gap-1 active:scale-95 shadow-lg">
-                Order Now <ChevronRight size={14} />
-              </button>
-            </div>
-            <div className="text-7xl hidden sm:block">{b.emoji}</div>
-          </div>
-        ))}
+              <span className={`text-xs font-black uppercase tracking-widest ${activeCategory === cat.name ? 'text-[#e23744]' : 'text-gray-500'}`}>
+                {cat.name}
+              </span>
+           </button>
+         ))}
       </div>
 
+      {/* FILTER PILLS */}
+      <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide py-2">
+         <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-700 hover:border-black transition shadow-sm">
+            <SlidersHorizontal size={14} /> Filters <ChevronDown size={14} />
+         </button>
+         <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-700 hover:border-black transition shadow-sm">
+            Under ₹200
+         </button>
+         <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-700 hover:border-black transition shadow-sm flex items-center gap-2">
+            Schedule <ChevronDown size={14} />
+         </button>
+         <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-700 hover:border-black transition shadow-sm">
+            Rating 4.0+
+         </button>
+      </div>
 
+      {/* EXPLORE MORE */}
       <div>
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
-            <TrendingUp size={18} className="text-[#ff4b3a]" />
-            {activeCategory ? `${activeCategory} Restaurants` : coords ? 'Nearest Restaurants for you' : 'Top picks near you'}
-          </h2>
-          <span className="text-sm text-gray-400 font-medium">{filtered.length} options</span>
-        </div>
+         <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4">Explore More</h4>
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {EXPLORE.map(item => (
+              <div key={item.name} className={`${item.bg} p-6 rounded-[2rem] flex flex-col items-center justify-center gap-3 cursor-pointer hover:shadow-xl transition-all border border-transparent hover:border-white/50 group`}>
+                 <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center group-hover:rotate-6 transition-transform">
+                    {item.icon}
+                 </div>
+                 <span className="text-xs font-black text-gray-900 tracking-tight">{item.name}</span>
+              </div>
+            ))}
+         </div>
+      </div>
+
+      {/* RESTAURANT FEED */}
+      <div className="pt-8">
+        <h2 className="text-xl font-black text-gray-900 flex items-center gap-3">
+          {filtered.length} RESTAURANTS DELIVERING TO YOU
+        </h2>
+        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 mb-8 italic">Featured Selections</p>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {Array(6).fill(0).map((_, i) => <SkeletonCard key={i} />)}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+            {Array(4).fill(0).map((_, i) => (
+              <div key={i} className="animate-pulse bg-gray-50 h-72 rounded-[2.5rem]" />
+            ))}
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-            <span className="text-6xl mb-4">🔍</span>
-            <p className="font-semibold text-lg text-gray-900 text-center">No restaurants found nearby</p>
+          <div className="flex flex-col items-center py-20 bg-gray-50 rounded-[3rem]">
+            <span className="text-5xl mb-4">🍽️</span>
+            <p className="text-gray-900 font-black text-lg">No matches found</p>
+            <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-1">Try disabling Veg Mode or changing filters</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12">
             {filtered.map(rest => (
               <RestaurantCard 
                 key={rest.id} 
