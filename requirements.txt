@@ -11,5 +11,7 @@ boto3==1.26.137
 requests==2.31.0
 Werkzeug==2.3.7
 python-multipart==0.0.6
-razorpay==1.4.1
+razorpay==2.0.1
+setuptools
+
 
