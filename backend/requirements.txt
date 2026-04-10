@@ -12,4 +12,9 @@ gunicorn==21.2.0
 requests==2.31.0
 Werkzeug==2.3.7
 google-auth==2.23.0
+google-auth-oauthlib==1.1.0
+google-auth-httplib2==0.1.1
 Flask-Mail==0.9.1
+razorpay==1.4.1
+cloudinary==1.44.1
+python-multipart==0.0.24
