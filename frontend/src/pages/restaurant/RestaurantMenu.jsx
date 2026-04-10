@@ -184,38 +184,30 @@ const RestaurantMenu = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredItems.map(item => (
             <div key={item.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 group">
-              <div className="relative h-44 overflow-hidden">
-                <img 
-                  src={item.image || 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80'} 
-                  alt={item.name} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute top-3 right-3">
-                  <span className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider backdrop-blur bg-white/90 ${item.is_available ? 'text-green-600' : 'text-red-500'}`}>
+              <div className="p-5">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 ${item.is_veg ? 'border-green-500' : 'border-red-500'}`}>
+                      <div className={`w-2 h-2 rounded-full ${item.is_veg ? 'bg-green-500' : 'bg-red-500'}`} />
+                    </div>
+                    <h3 className="font-bold text-lg text-gray-900">{item.name}</h3>
+                  </div>
+                  <span className={`px-2 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider ${item.is_available ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'}`}>
                     {item.is_available ? 'Available' : 'Sold Out'}
                   </span>
                 </div>
-                <div className="absolute top-3 left-3">
-                  <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center bg-white/80 backdrop-blur ${item.is_veg ? 'border-green-500' : 'border-red-500'}`}>
-                    <div className={`w-2 h-2 rounded-full ${item.is_veg ? 'bg-green-500' : 'bg-red-500'}`} />
-                  </div>
-                </div>
-              </div>
-              <div className="p-5">
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="font-bold text-lg text-gray-900 truncate">{item.name}</h3>
-                </div>
-                <p className="text-xs text-gray-500 line-clamp-2 h-8 mb-4">{item.description || 'No description provided.'}</p>
+                <p className="text-xs text-gray-400 line-clamp-2 h-8 mb-3">{item.description || 'No description provided.'}</p>
+                <span className="inline-block text-[9px] font-black uppercase tracking-wider bg-orange-50 text-orange-600 px-2 py-1 rounded-md mb-4">{item.category || 'General'}</span>
                 <div className="flex items-center justify-between border-t border-gray-50 pt-4">
                   <span className="text-xl font-black text-gray-900">₹{item.price}</span>
                   <div className="flex gap-2">
-                    <button 
+                    <button
                         onClick={() => handleOpenModal(item)}
                         className="p-2 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-100 transition active:scale-90"
                     >
                         <Edit3 size={16} />
                     </button>
-                    <button 
+                    <button
                         onClick={() => handleDelete(item.id)}
                         className="p-2 bg-red-50 text-red-500 rounded-xl hover:bg-red-100 transition active:scale-90"
                     >

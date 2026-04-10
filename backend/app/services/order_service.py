@@ -13,7 +13,7 @@ class OrderService:
     """Handle order operations"""
     
     @staticmethod
-    def create_order(customer_id: str, restaurant_id: str, items: list, total_amount: float, delivery_address: str, special_instructions: str = ""):
+    def create_order(customer_id: str, restaurant_id: str, items: list, total_amount: float, delivery_address: str, special_instructions: str = "", payment_method: str = "cod", restaurant_upi_id: str = ""):
         """Create a new order"""
         try:
             customer = User.objects(id=customer_id).first()
@@ -22,15 +22,24 @@ class OrderService:
             if not customer or not restaurant:
                 return None, "Customer or restaurant not found"
             
+            # Determine initial payment status
+            if payment_method == 'cod':
+                initial_payment_status = 'cod_pending'
+            else:
+                initial_payment_status = 'pending'
+            
             order = Order(
                 customer=customer,
                 restaurant=restaurant,
                 items=items,
-                subtotal=sum(item['price'] * item['qty'] for item in items),
+                subtotal=sum(item['price'] * item.get('qty', item.get('quantity', 1)) for item in items),
                 delivery_charge=50,
                 total_amount=total_amount,
                 delivery_address=delivery_address,
                 special_instructions=special_instructions,
+                payment_method=payment_method,
+                payment_status=initial_payment_status,
+                restaurant_upi_id=restaurant_upi_id,
                 status='placed'
             )
             order.save()
@@ -38,6 +47,7 @@ class OrderService:
             NotificationService.order_placed(
                 str(order.id),
                 customer.full_name or customer.username,
+                str(restaurant.id),
                 restaurant.name
             )
             
@@ -59,7 +69,8 @@ class OrderService:
             
             NotificationService.order_accepted(
                 str(order.id),
-                order.restaurant.name
+                order.restaurant.name,
+                str(order.customer.id)
             )
             
             # Assign delivery partner
@@ -86,6 +97,7 @@ class OrderService:
             NotificationService.order_rejected(
                 str(order.id),
                 order.restaurant.name,
+                str(order.customer.id),
                 reason
             )
             
@@ -142,7 +154,8 @@ class OrderService:
             
             NotificationService.delivery_assigned(
                 str(order.id),
-                delivery_partner.user.full_name or delivery_partner.user.username
+                str(delivery_partner.user.id),
+                str(order.customer.id)
             )
             
             return order, None

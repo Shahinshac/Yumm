@@ -34,6 +34,9 @@ class Restaurant(Document):
     special_offer = StringField(max_length=200) # Message like "10% off"
     offer_active = BooleanField(default=False)
 
+    # Payment
+    upi_id = StringField(max_length=100)  # e.g. restaurant@upi
+
     # Metadata
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
@@ -66,6 +69,7 @@ class Restaurant(Document):
             'is_active': self.is_active,
             'special_offer': self.special_offer,
             'offer_active': self.offer_active,
+            'upi_id': self.upi_id,
             'created_at': self.created_at.isoformat() if self.created_at else None,
         }
 

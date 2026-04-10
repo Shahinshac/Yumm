@@ -118,7 +118,9 @@ def place_order():
             items=data['items'],
             total_amount=total_amount,
             delivery_address=data.get('delivery_address', ''),
-            special_instructions=data.get('special_instructions', '')
+            special_instructions=data.get('special_instructions', ''),
+            payment_method=data.get('payment_method', 'cod'),
+            restaurant_upi_id=restaurant.upi_id or ''
         )
         
         if error:

@@ -10,6 +10,7 @@ from backend.app.middleware.role_auth import restaurant_required, restaurant_app
 from backend.app.services.restaurant_service import RestaurantService
 from backend.app.services.order_service import OrderService
 from backend.app.utils.validators import Validators
+from datetime import datetime
 import logging
 
 logger = logging.getLogger(__name__)
@@ -340,6 +341,10 @@ def update_profile():
             restaurant.special_offer = Validators.sanitize_string(data['special_offer'])
         if 'offer_active' in data:
             restaurant.offer_active = bool(data['offer_active'])
+
+        # UPI Payment
+        if 'upi_id' in data:
+            restaurant.upi_id = data['upi_id'].strip()
             
         restaurant.updated_at = datetime.utcnow()
         restaurant.save()
@@ -350,4 +355,46 @@ def update_profile():
         }), 200
     except Exception as e:
         logger.error(f"Error updating profile: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+@bp.route('/orders/<order_id>/verify-payment', methods=['POST'])
+@restaurant_approved_required
+def verify_payment(order_id):
+    """Restaurant confirms payment received (for UPI orders)"""
+    try:
+        user_id = get_jwt_identity()
+        restaurant = Restaurant.objects(user=user_id).first()
+        order = Order.objects(id=order_id).first()
+
+        if not order or str(order.restaurant.id) != str(restaurant.id):
+            return jsonify({'error': 'Order not found'}), 404
+
+        order.payment_status = 'paid'
+        order.updated_at = datetime.utcnow()
+        order.save()
+
+        return jsonify({'message': 'Payment verified', 'order': order.to_dict()}), 200
+    except Exception as e:
+        logger.error(f"Error verifying payment: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+
+@bp.route('/razorpay/create-order', methods=['POST'])
+@restaurant_approved_required
+def create_razorpay_order():
+    """Create Razorpay order for restaurant to receive payments"""
+    try:
+        import os
+        import razorpay
+        client = razorpay.Client(auth=(
+            os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_placeholder'),
+            os.environ.get('RAZORPAY_KEY_SECRET', 'placeholder')
+        ))
+        data = request.get_json()
+        amount = int(float(data.get('amount', 0)) * 100)  # Convert to paise
+        rz_order = client.order.create({'amount': amount, 'currency': 'INR', 'payment_capture': 1})
+        return jsonify({'razorpay_order_id': rz_order['id'], 'amount': amount}), 200
+    except Exception as e:
+        logger.error(f"Error creating Razorpay order: {str(e)}")
         return jsonify({'error': str(e)}), 500

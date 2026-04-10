@@ -31,6 +31,13 @@ class Order(Document):
         default='placed'
     )
 
+    # Payment
+    payment_method = StringField(choices=['razorpay', 'upi', 'cod'], default='cod')
+    payment_status = StringField(choices=['pending', 'paid', 'failed', 'cod_pending'], default='cod_pending')
+    razorpay_order_id = StringField()
+    razorpay_payment_id = StringField()
+    restaurant_upi_id = StringField()  # Snapshot of restaurant UPI ID at time of order
+
     # Tracking
     current_location = DictField()  # {'lat': float, 'lng': float}
     estimated_delivery = DateTimeField()
@@ -63,6 +70,10 @@ class Order(Document):
             'delivery_address': self.delivery_address,
             'special_instructions': self.special_instructions,
             'status': self.status,
+            'payment_method': self.payment_method,
+            'payment_status': self.payment_status,
+            'razorpay_order_id': self.razorpay_order_id,
+            'restaurant_upi_id': self.restaurant_upi_id,
             'current_location': self.current_location,
             'estimated_delivery': self.estimated_delivery.isoformat() if self.estimated_delivery else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,

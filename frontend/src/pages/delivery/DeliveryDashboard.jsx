@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, TrendingUp, Bike, MessageSquare, Loader2 } from 'lucide-react';
+import { Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, TrendingUp, Bike, Loader2, QrCode, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { deliveryService } from '../../services/deliveryService';
 import useLocationTracking from '../../hooks/useLocationTracking';
+import { QRCodeSVG } from 'qrcode.react';
 
 const StatCard = ({ icon: Icon, label, value, iconColor, iconBg }) => (
   <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 flex items-center gap-4">
@@ -23,6 +24,7 @@ const DeliveryDashboard = () => {
     const [activeDelivery, setActiveDelivery] = useState(null);
     const [stats, setStats] = useState({ deliveredToday: 0, earningsToday: 0, kmToday: 0, rate: '100%' });
     const [loading, setLoading] = useState(true);
+    const [showQrModal, setShowQrModal] = useState(false);
 
     // Track real location if active delivery exists
     useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
@@ -174,6 +176,16 @@ const DeliveryDashboard = () => {
             {loading ? <Loader2 className="animate-spin" size={20} /> : <CheckCircle size={20} />}
             {activeDelivery.status === 'picked' ? 'MARK AS PICKED UP' : 'MARK AS DELIVERED'}
           </button>
+
+          {/* COD QR Button */}
+          {(activeDelivery.payment_method === 'cod' || !activeDelivery.payment_method) && activeDelivery.restaurant_upi_id && (
+            <button
+              onClick={() => setShowQrModal(true)}
+              className="mt-3 w-full bg-green-500/20 text-green-300 border border-green-500/30 hover:bg-green-500 hover:text-white font-black py-3 rounded-2xl transition-all flex items-center justify-center gap-2"
+            >
+              <QrCode size={18} /> SHOW PAYMENT QR TO CUSTOMER
+            </button>
+          )}
         </div>
       )}
 
@@ -244,6 +256,41 @@ const DeliveryDashboard = () => {
           </div>
           <h2 className="text-2xl font-black text-gray-800">Mission Control Offline</h2>
           <p className="text-gray-400 max-w-xs mx-auto font-medium">Switch to online to start receiving live delivery requests from nearby restaurants.</p>
+        </div>
+      )}
+      {/* COD Payment QR Modal */}
+      {showQrModal && activeDelivery?.restaurant_upi_id && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/70 backdrop-blur-md p-4">
+          <div className="bg-white rounded-3xl w-full max-w-xs shadow-2xl overflow-hidden">
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 p-5 text-white text-center relative">
+              <button onClick={() => setShowQrModal(false)} className="absolute top-4 right-4 text-white/50 hover:text-white">
+                <X size={20} />
+              </button>
+              <QrCode size={24} className="mx-auto mb-2 text-orange-400" />
+              <h2 className="font-black">Show This to Customer</h2>
+              <p className="text-gray-400 text-sm mt-1">Order #{activeDelivery.id?.slice(-6).toUpperCase()}</p>
+              <p className="text-orange-400 font-black text-xl mt-1">₹{activeDelivery.total_amount}</p>
+            </div>
+            <div className="p-6 flex flex-col items-center gap-4">
+              <div className="p-4 bg-white rounded-2xl shadow-xl border-2 border-gray-100">
+                <QRCodeSVG
+                  value={`upi://pay?pa=${activeDelivery.restaurant_upi_id}&am=${activeDelivery.total_amount}&cu=INR&tn=FoodDelivery`}
+                  size={180}
+                  bgColor="#ffffff"
+                  fgColor="#1a1a1a"
+                  level="H"
+                />
+              </div>
+              <p className="text-xs font-bold text-gray-700 bg-gray-50 px-4 py-2 rounded-xl">{activeDelivery.restaurant_upi_id}</p>
+              <p className="text-[10px] text-gray-400 text-center font-medium">Ask customer to scan with GPay / PhonePe / Paytm</p>
+              <button
+                onClick={() => setShowQrModal(false)}
+                className="w-full py-3 bg-gray-900 text-white rounded-2xl font-black text-sm hover:bg-black transition"
+              >
+                Done
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -68,11 +68,26 @@ export const restaurantService = {
   uploadImage: async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    const resp = await api.post('/api/media/upload', formData, {
+    const resp = await api.post('/media/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
     });
+    return resp.data;
+  },
+
+  updateUpiId: async (upiId) => {
+    const resp = await api.put('/restaurant-dashboard/profile/update', { upi_id: upiId });
+    return resp.data;
+  },
+
+  verifyPayment: async (orderId) => {
+    const resp = await api.post(`/restaurant-dashboard/orders/${orderId}/verify-payment`);
+    return resp.data;
+  },
+
+  createRazorpayOrder: async (amount) => {
+    const resp = await api.post('/restaurant-dashboard/razorpay/create-order', { amount });
     return resp.data;
   }
 };

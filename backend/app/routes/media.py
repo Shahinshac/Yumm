@@ -5,7 +5,7 @@ import os
 import secrets
 from flask import Blueprint, request, jsonify, current_app, send_from_directory
 from werkzeug.utils import secure_filename
-from backend.app.middleware.auth import role_required, get_current_user
+from flask_jwt_extended import jwt_required
 import logging
 
 logger = logging.getLogger(__name__)
@@ -20,7 +20,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @bp.route('/upload', methods=['POST'])
-@role_required(['restaurant', 'admin'])
+@jwt_required()
 def upload_file():
     """Upload a file to the server"""
     try:
