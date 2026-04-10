@@ -51,7 +51,7 @@ const CustomerCart = () => {
 
     try {
       // Fetch official Razorpay Order ID from backend
-      const { data } = await customerService.api.post('/api/payments/create-razorpay-order', { order_id: order.id });
+      const data = await customerService.createRazorpayOrder(order.id);
       
       const options = {
         key: data.key_id || RAZORPAY_KEY,
@@ -62,7 +62,7 @@ const CustomerCart = () => {
         order_id: data.razorpay_order_id,
         handler: async (response) => {
           // Verify on backend
-          await customerService.api.post('/api/payments/verify-payment', {
+          await customerService.verifyPayment({
             razorpay_order_id: response.razorpay_order_id,
             razorpay_payment_id: response.razorpay_payment_id,
             razorpay_signature: response.razorpay_signature

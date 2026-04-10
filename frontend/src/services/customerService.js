@@ -55,5 +55,16 @@ export const customerService = {
   getMyReviews: async () => {
     const resp = await api.get('/customer/profile/reviews');
     return resp.data;
+  },
+
+  // Razorpay payment methods
+  createRazorpayOrder: async (orderId) => {
+    const resp = await api.post('/payments/create-razorpay-order', { order_id: orderId });
+    return resp.data;
+  },
+
+  verifyPayment: async (paymentData) => {
+    const resp = await api.post('/payments/verify-payment', paymentData);
+    return resp.data;
   }
 };

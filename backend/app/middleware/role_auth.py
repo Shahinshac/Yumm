@@ -5,6 +5,7 @@ from flask import jsonify
 from functools import wraps
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from backend.app.models.user import User
+from backend.app.constants import SUPPORT_EMAIL
 
 
 def role_required(required_roles):
@@ -63,7 +64,7 @@ def restaurant_approved_required(fn):
         # Check user approval status
         if not user.is_approved:
             return jsonify({
-                'error': 'You can login only after admin approval. Please contact admin: shaahnpvt7@gmail.com'
+                'error': f'You can login only after admin approval. Please contact admin: {SUPPORT_EMAIL}'
             }), 403
 
         from backend.app.models.restaurant import Restaurant
@@ -92,7 +93,7 @@ def delivery_approved_required(fn):
         # Check user approval status
         if not user.is_approved:
             return jsonify({
-                'error': 'You can login only after admin approval. Please contact admin: shaahnpvt7@gmail.com'
+                'error': f'You can login only after admin approval. Please contact admin: {SUPPORT_EMAIL}'
             }), 403
 
         return fn(*args, **kwargs)

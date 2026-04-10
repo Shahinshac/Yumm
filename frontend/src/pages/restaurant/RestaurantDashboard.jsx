@@ -35,6 +35,7 @@ const RestaurantDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('all');
   const [isOpen, setIsOpen] = useState(true);
+  const [actionLoading, setActionLoading] = useState({});
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -53,6 +54,7 @@ const RestaurantDashboard = () => {
   }, [activeFilter]);
 
   const updateStatus = async (id, newStatus) => {
+    setActionLoading(prev => ({ ...prev, [id]: true }));
     try {
       if (newStatus === 'preparing') {
         await restaurantService.acceptOrder(id);
@@ -64,6 +66,8 @@ const RestaurantDashboard = () => {
       fetchOrders();
     } catch {
       alert('Network Error: Could not update Kitchen state.');
+    } finally {
+      setActionLoading(prev => ({ ...prev, [id]: false }));
     }
   };
 
@@ -159,9 +163,13 @@ const RestaurantDashboard = () => {
                       <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 ${s.cls}`}>{s.label}</span>
                     </div>
                     <div className="flex items-center gap-4 text-gray-500 font-bold text-sm">
-                       <span className="text-gray-900">{order.customer || 'External Guest'}</span>
+                       <span className="text-gray-900">{order.customer_username || 'External Guest'}</span>
                        <div className="w-1.5 h-1.5 bg-gray-200 rounded-full" />
-                       <span className="line-clamp-1">{order.items || 'Standard Meal'}</span>
+                       <span className="line-clamp-1">
+                         {Array.isArray(order.items) 
+                           ? order.items.map(i => i.name).join(', ') 
+                           : (order.items || 'Standard Meal')}
+                       </span>
                     </div>
                     <div className="flex items-center gap-4 mt-3">
                        <div className="flex items-center gap-1.5 text-[10px] font-black text-gray-400 uppercase tracking-widest">

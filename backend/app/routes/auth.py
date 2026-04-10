@@ -10,6 +10,7 @@ from backend.app.models.delivery_partner import DeliveryPartner
 from backend.app.utils.security import PasswordSecurity
 from backend.app.utils.validators import Validators
 import logging
+from backend.app.constants import SUPPORT_EMAIL
 
 logger = logging.getLogger(__name__)
 
@@ -151,7 +152,7 @@ def register_restaurant():
         return jsonify({
             'message': 'Registration successful. Awaiting admin approval.',
             'user_id': str(user.id),
-            'next_step': 'Contact admin at shaahnpvt7@gmail.com to check approval status'
+            'next_step': f'Contact admin at {SUPPORT_EMAIL} to check approval status'
         }), 201
 
     except Exception as e:
@@ -223,7 +224,7 @@ def register_delivery():
         return jsonify({
             'message': 'Registration successful. Awaiting admin approval.',
             'user_id': str(user.id),
-            'next_step': 'Contact admin at shaahnpvt7@gmail.com to check approval status'
+            'next_step': f'Contact admin at {SUPPORT_EMAIL} to check approval status'
         }), 201
 
     except Exception as e:
@@ -366,7 +367,7 @@ def login():
                 return jsonify({'error': 'Customers must use Google login'}), 403
             else:
                 return jsonify({
-                    'error': 'You can login only after admin approval. Please contact admin: shaahnpvt7@gmail.com'
+                    'error': f'You can login only after admin approval. Please contact admin: {SUPPORT_EMAIL}'
                 }), 403
 
         # Verify password
@@ -381,7 +382,7 @@ def login():
         if user.role in ['restaurant', 'delivery']:
             if not user.is_approved:
                 return jsonify({
-                    'error': 'You can login only after admin approval. Please contact admin: shaahnpvt7@gmail.com'
+                    'error': f'You can login only after admin approval. Please contact admin: {SUPPORT_EMAIL}'
                 }), 403
 
         # Update last login

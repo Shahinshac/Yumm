@@ -95,6 +95,23 @@ const OrderTracking = () => {
         );
     }
 
+    if (!order) {
+        return (
+            <div className="flex flex-col items-center justify-center py-32 px-6 text-center">
+                <div className="w-24 h-24 bg-red-50 rounded-[2.5rem] flex items-center justify-center mb-8">
+                    <Package className="text-red-500" size={40} />
+                </div>
+                <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-4">Order Details Not Found</h1>
+                <p className="text-gray-500 font-medium max-w-sm mb-10 leading-relaxed">
+                    We couldn't retrieve the tracking information for this order. It might be delayed or the link might be incorrect.
+                </p>
+                <Link to="/orders" className="bg-[#1c1c1c] text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-gray-200">
+                    Back to My Orders
+                </Link>
+            </div>
+        );
+    }
+
     const destLocation = order?.destination_coords || [0, 0]; 
     const points = driverLocation ? [[driverLocation.lat, driverLocation.lng], destLocation] : [destLocation];
 

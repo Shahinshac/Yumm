@@ -10,7 +10,14 @@ const RestaurantAnalytics = () => {
     useEffect(() => {
         setLoading(true);
         restaurantService.getAnalytics(period).then(res => {
-            setData(res);
+            setData({
+                total_orders: 0,
+                total_revenue: 0,
+                avg_rating: 0.0,
+                top_items: [],
+                recent_sales: [0, 0, 0, 0, 0, 0, 0],
+                ...res
+            });
         }).catch(() => {
             setData({
                 total_orders: 0,

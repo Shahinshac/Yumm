@@ -56,6 +56,16 @@ const DeliveryDashboard = () => {
                         setIncomingRequest(null);
                     }
                 });
+
+                socket.on('request_accepted_success', (data) => {
+                    setIncomingRequest(null);
+                    refreshDashboard();
+                });
+
+                socket.on('request_accepted_failed', (data) => {
+                    alert(data.error || "Mission was taken by another pilot.");
+                    setIncomingRequest(null);
+                });
             }
 
             return () => {
