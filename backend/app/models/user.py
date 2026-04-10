@@ -28,7 +28,8 @@ class User(Document):
     # Google OAuth
     google_id = StringField(unique=True, sparse=True)  # For Google Sign-In users
 
-    # Admin-generated password tracking
+    # KYC / Verification
+    id_proof_url = StringField()  # Cloudinary URL for ID Card / Aadhaar
     password_generated_at = DateTimeField()
 
     # Preferences
@@ -59,6 +60,7 @@ class User(Document):
             'is_active': self.is_active,
             'is_approved': self.is_approved,
             'google_id': self.google_id,
+            'id_proof_url': self.id_proof_url,
             'address': self.address,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'last_login': self.last_login.isoformat() if self.last_login else None,

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/authService';
-import { Bike, User, Mail, Phone, Truck, ArrowLeft, Loader2, CheckCircle2 } from 'lucide-react';
+import { 
+    Bike, User, Mail, Phone, Truck, ArrowLeft, 
+    Loader2, CheckCircle2, ShieldCheck, Banknote, Clock, MapPin
+} from 'lucide-react';
 
 const DeliveryRegister = () => {
   const navigate = useNavigate();
@@ -9,8 +12,10 @@ const DeliveryRegister = () => {
     name: '',
     email: '',
     phone: '',
-    vehicle_type: 'bike'
+    vehicle_type: 'bike',
+    id_proof_url: ''
   });
+  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -18,18 +23,40 @@ const DeliveryRegister = () => {
   const handleChange = (e) => {
     let value = e.target.value;
     if (e.target.name === 'phone') {
-      value = value.replace(/\s/g, ''); // Remove spaces from phone
+      value = value.replace(/\s/g, ''); 
     }
     setFormData({ ...formData, [e.target.name]: value });
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const data = new FormData();
+    data.append('file', file);
+
+    try {
+      const res = await authService.uploadIdentityProof(data);
+      setFormData(prev => ({ ...prev, id_proof_url: res.url }));
+    } catch (err) {
+      setError('Failed to upload ID. Please try again.');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     
-    // basic phone validation
     if (formData.phone.length < 10) {
       setError('Please enter a valid phone number');
+      return;
+    }
+
+    if (!formData.id_proof_url) {
+      setError('Please upload ID proof for verification');
       return;
     }
 
@@ -38,9 +65,7 @@ const DeliveryRegister = () => {
       await authService.registerDelivery(formData);
       setSuccess(true);
     } catch (err) {
-      const msg = err.response?.data?.error || 
-                  (err.message === 'Network Error' ? 'Cannot reach server. Please check your connectivity.' : 'Registration failed. Please try again.');
-      setError(msg);
+      setError('Registration failed. Please check your connectivity.');
     } finally {
       setLoading(false);
     }
@@ -48,20 +73,31 @@ const DeliveryRegister = () => {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <CheckCircle2 className="w-10 h-10 text-green-500" />
+      <div className="min-h-screen flex items-center justify-center bg-white px-4">
+        <div className="bg-white p-12 rounded-[3rem] shadow-2xl w-full max-w-lg text-center border-8 border-gray-100/50">
+          <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-8 animate-pulse">
+            <CheckCircle2 className="w-12 h-12 text-[#e23744]" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Application Received!</h2>
-          <p className="text-gray-500 mb-8">
-            Your delivery partner registration has been submitted. You will be able to log in once an admin verifies your details.
-          </p>
+          <h2 className="text-3xl font-black text-gray-900 mb-4 tracking-tight">Application Logged!</h2>
+          <div className="space-y-4 mb-10 text-left bg-gray-50 p-6 rounded-3xl">
+             <div className="flex gap-3">
+                <div className="w-5 h-5 bg-[#e23744] rounded-full shrink-0 flex items-center justify-center text-white text-[10px]">✓</div>
+                <p className="text-xs text-gray-600 font-bold">Profile received and queued</p>
+             </div>
+             <div className="flex gap-3">
+                <div className="w-5 h-5 bg-orange-400 rounded-full shrink-0 flex items-center justify-center text-white text-[10px] animate-bounce">!</div>
+                <p className="text-xs text-gray-800 font-black">Documentation verification in progress (24h)</p>
+             </div>
+             <div className="flex gap-3">
+                <div className="w-5 h-5 bg-gray-200 rounded-full shrink-0 flex items-center justify-center text-white text-[10px]">?</div>
+                <p className="text-xs text-gray-400 font-medium">Training materials will be sent over email</p>
+             </div>
+          </div>
           <button 
             onClick={() => navigate('/login')}
-            className="w-full bg-[#ff4b3a] text-white py-3 rounded-xl font-medium hover:bg-[#e03d2e] transition shadow-lg shadow-red-200"
+            className="w-full bg-[#1c1c1c] text-white py-4 rounded-[1.5rem] font-black uppercase text-xs tracking-widest hover:bg-black transition shadow-xl"
           >
-            Return to Login
+            Check Status at Login
           </button>
         </div>
       </div>
@@ -69,135 +105,160 @@ const DeliveryRegister = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-orange-50 px-4 py-12">
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-orange-100 w-full max-w-lg relative overflow-hidden">
-        {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-32 h-32 bg-orange-100 rounded-br-full -z-10 opacity-50"></div>
-        <div className="absolute bottom-0 right-0 w-24 h-24 bg-red-50 rounded-tl-full -z-10 opacity-50"></div>
-
-        <button 
-          onClick={() => navigate('/login')}
-          className="flex items-center text-gray-400 hover:text-gray-600 transition mb-6 group"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back
-        </button>
-
-        <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-3 bg-orange-100 rounded-xl">
-              <Bike className="w-6 h-6 text-[#ff4b3a]" />
+    <div className="min-h-screen flex flex-col bg-white">
+      {/* Navbar */}
+      <nav className="px-6 py-5 border-b border-gray-50 flex items-center justify-between sticky top-0 bg-white z-50">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-[#e23744] rounded-lg flex items-center justify-center">
+              <span className="text-white font-black text-xs">Y</span>
             </div>
-            <h1 className="text-2xl font-bold text-gray-800">Become a Rider</h1>
-          </div>
-          <p className="text-gray-500">Earn money on your own schedule by delivering food.</p>
+            <span className="text-[#e23744] font-black text-xl tracking-tight">Yumm <span className="text-gray-300 font-medium tracking-tight">Delivery Partner</span></span>
+          </Link>
+          <Link to="/login" className="text-xs font-black uppercase tracking-widest text-[#e23744] hover:underline">Log In</Link>
+      </nav>
+
+      <div className="flex-1 flex flex-col lg:flex-row">
+        {/* Left: Rider Perks */}
+        <div className="lg:w-[40%] bg-[#e23744] p-12 lg:p-24 text-white flex flex-col justify-center">
+             <h2 className="text-4xl lg:text-5xl font-black leading-[1.1] mb-12">
+                Drive more, <br />
+                <span className="text-white/40">earn</span> more. <br />
+                On your own <br />
+                terms.
+             </h2>
+
+             <div className="space-y-10">
+                 {[
+                    { icon: <Banknote className="text-[#e23744]" />, title: "Weekly Payouts", desc: "No delays. Get your earnings directly in your bank account every week." },
+                    { icon: <Clock className="text-[#e23744]" />, title: "Flexible Shifts", desc: "Choose when you want to work. Morning, late-night, or weekends." },
+                    { icon: <MapPin className="text-[#e23744]" />, title: "Smart Routing", desc: "Our AI helps you find the fastest routes to ensure high frequency." },
+                    { icon: <ShieldCheck className="text-[#e23744]" />, title: "Health Cover", desc: "Comprehensive insurance coverage for all active fleet partners." }
+                 ].map((perc, i) => (
+                    <div key={i} className="flex gap-5">
+                        <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0">
+                            {perc.icon}
+                        </div>
+                        <div>
+                            <h4 className="text-sm font-black uppercase tracking-widest mb-1">{perc.title}</h4>
+                            <p className="text-xs text-white/60 font-medium leading-relaxed">{perc.desc}</p>
+                        </div>
+                    </div>
+                 ))}
+             </div>
         </div>
 
-        {error && (
-          <div className="mb-6 bg-red-50 border border-red-100 text-red-600 p-4 rounded-xl text-sm flex gap-2 items-start">
-            <span className="mt-0.5">⚠️</span>
-            <span>{error}</span>
-          </div>
-        )}
+        {/* Right: Application Form */}
+        <div className="flex-1 p-8 lg:p-24 flex items-center justify-center">
+            <div className="w-full max-w-md">
+                <div className="text-center mb-12">
+                    <div className="inline-block p-4 bg-gray-50 rounded-[2rem] mb-4">
+                        <Bike size={32} className="text-[#e23744]" />
+                    </div>
+                    <h3 className="text-3xl font-black text-gray-900">Partner Registration</h3>
+                    <p className="text-gray-400 text-sm font-bold mt-2">Become a part of the Yumm delivery family.</p>
+                </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4 relative z-10">
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700 ml-1">Full Name</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <User className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                placeholder="John Doe"
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none"
-              />
+                {error && (
+                    <div className="mb-8 p-4 bg-red-50 text-red-500 rounded-2xl text-xs font-bold border border-red-100 flex items-center gap-3">
+                        <span className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center shrink-0">!</span>
+                        {error}
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Full Name</label>
+                        <input
+                            type="text"
+                            name="name"
+                            value={formData.name}
+                            onChange={handleChange}
+                            placeholder="e.g. Rahul Sharma"
+                            required
+                            className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-[#e23744] transition-all outline-none font-bold text-sm shadow-sm"
+                        />
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Email</label>
+                            <input
+                                type="email"
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                placeholder="name@email.com"
+                                required
+                                className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-[#e23744] transition-all outline-none font-bold text-sm shadow-sm"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Mobile</label>
+                            <input
+                                type="tel"
+                                name="phone"
+                                value={formData.phone}
+                                onChange={handleChange}
+                                placeholder="10 Digit Phone"
+                                required
+                                className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-[#e23744] transition-all outline-none font-bold text-sm shadow-sm"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Identity Proof (Aadhaar / License)</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileUpload}
+                            className="hidden"
+                            id="id-upload"
+                        />
+                        <label 
+                            htmlFor="id-upload"
+                            className={`w-full flex items-center justify-between px-6 py-4 bg-gray-50 border-2 border-dashed rounded-2xl cursor-pointer hover:border-[#e23744] transition-all ${formData.id_proof_url ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}
+                        >
+                            <span className={`text-xs font-bold ${formData.id_proof_url ? 'text-green-700' : 'text-gray-400'}`}>
+                                {uploading ? 'Processing...' : formData.id_proof_url ? 'ID Linked ✓' : 'Click to scan ID'}
+                            </span>
+                            <ShieldCheck className={formData.id_proof_url ? 'text-green-500' : 'text-gray-300'} size={20} />
+                        </label>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Vehicle Selection</label>
+                        <div className="relative">
+                            <select
+                                name="vehicle_type"
+                                value={formData.vehicle_type}
+                                onChange={handleChange}
+                                required
+                                className="w-full px-6 py-4 bg-gray-50 border-2 border-transparent rounded-2xl focus:border-[#e23744] transition-all outline-none appearance-none font-bold text-sm shadow-sm pr-12"
+                            >
+                                <option value="bike">Motorcycle (Fastest)</option>
+                                <option value="scooter">Electric Scooter</option>
+                                <option value="car">Car (Rain Preferred)</option>
+                                <option value="bicycle">Bicycle (Eco Friendly)</option>
+                            </select>
+                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-300">
+                                ▼
+                            </div>
+                        </div>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        disabled={loading}
+                        className="w-full py-4 bg-[#1c1c1c] text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:bg-black transition shadow-xl mt-4 flex items-center justify-center gap-2"
+                    >
+                        {loading ? <Loader2 className="animate-spin" size={18} /> : 'Submit Application →'}
+                    </button>
+
+                    <Link to="/login" className="block text-center text-[10px] text-[#e23744] font-black uppercase tracking-tight hover:underline">Already a partner? Login</Link>
+                </form>
             </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700 ml-1">Email Address</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Mail className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                placeholder="rider@example.com"
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700 ml-1">Phone Number</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Phone className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                required
-                placeholder="+1 (555) 000-0000"
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none"
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700 ml-1">Vehicle Type</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Truck className="h-5 w-5 text-gray-400" />
-              </div>
-              <select
-                name="vehicle_type"
-                value={formData.vehicle_type}
-                onChange={handleChange}
-                required
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none appearance-none"
-              >
-                <option value="bike">Motorbike</option>
-                <option value="scooter">Scooter</option>
-                <option value="car">Car</option>
-                <option value="bicycle">Bicycle</option>
-              </select>
-              {/* Custom dropdown arrow */}
-              <div className="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none">
-                <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-              </div>
-            </div>
-          </div>
-
-          <button 
-            type="submit" 
-            disabled={loading}
-            className="w-full bg-[#ff4b3a] text-white py-3.5 rounded-xl font-medium hover:bg-[#e03d2e] transition shadow-lg shadow-red-200 mt-6 flex justify-center items-center gap-2 group"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-5 h-5 animate-spin" /> Processing...
-              </>
-            ) : (
-              'Submit Application'
-            )}
-          </button>
-
-          <p className="text-center text-sm text-gray-500 mt-4">
-            Already registered and approved? <Link to="/login" className="text-[#ff4b3a] font-medium hover:underline">Login here</Link>
-          </p>
-        </form>
+        </div>
       </div>
     </div>
   );

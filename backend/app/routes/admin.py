@@ -124,7 +124,13 @@ def get_global_map_data():
             'success': True,
             'hotels': hotel_data,
             'customers': customer_data,
-            'drivers': driver_data
+            'drivers': driver_data,
+            'debug': {
+                'hotels_count': len(hotel_data),
+                'customers_count': len(customer_data),
+                'drivers_count': len(driver_data),
+                'timestamp': datetime.utcnow().isoformat()
+            }
         }), 200
 
     except Exception as e:

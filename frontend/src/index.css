@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --primary: #ff4b3a; /* App theme orange/red */
+  --primary: #e23744; /* Zomato Red */
   --background: #ffffff;
-  --text-main: #1e1e1e;
-  --text-muted: #6b7280;
+  --text-main: #1c1c1c;
+  --text-muted: #696969;
 }
 
 body {

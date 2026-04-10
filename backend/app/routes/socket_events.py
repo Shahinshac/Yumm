@@ -102,12 +102,58 @@ def emit_delivery_location_update(order_id, lat, lng, delivery_partner_id=None):
         'timestamp': datetime.utcnow().isoformat() if 'datetime' in globals() else None
     }
     socketio.emit('delivery_location_update', payload, room=f'order_{order_id}')
-    # Also broadcast for Admin global map
-    socketio.emit('fleet_location_update', {
-        'user_id': delivery_partner_id,
-        'lat': lat,
-        'lng': lng
-    }, room='admin_fleet')
+
+
+def broadcast_delivery_request(order_data):
+    """
+    Broadcast a new delivery request to all ONLINE and AVAILABLE delivery partners.
+    Payload includes tip_amount and order details.
+    """
+    from backend.app.models.delivery_partner import DeliveryPartner
+    
+    # Find all online and available riders
+    online_riders = DeliveryPartner.objects(is_online=True, is_available=True)
+    
+    for rider in online_riders:
+        room = f'delivery_{rider.user.id}'
+        socketio.emit('new_delivery_request', order_data, room=room)
+        print(f'🔔 Push request sent to {rider.user.username} (Room: {room})')
+
+
+@socketio.on('delivery_accept_request')
+def handle_delivery_accept(data):
+    """
+    Handle a rider accepting a broadcasted request.
+    Payload: { order_id: str, token: str }
+    """
+    from backend.app.services.order_service import OrderService
+    from backend.app.models.models import Order
+    
+    token = data.get('token')
+    order_id = data.get('order_id')
+    
+    if not token or not order_id:
+        return
+        
+    try:
+        identity = decode_token(token)['sub']
+        order = Order.objects(id=order_id).first()
+        
+        if order and order.status == 'accepted':
+            # Assign first responder
+            success, error = OrderService.assign_delivery(order_id, str(identity))
+            if success:
+                # Notify the rider of success
+                emit('request_accepted_success', {'order_id': order_id, 'message': 'Order assigned to you!'})
+                # Notify other riders to clear the request
+                socketio.emit('clear_delivery_request', {'order_id': order_id}) 
+            else:
+                emit('request_accepted_failed', {'error': error})
+        else:
+            emit('request_accepted_failed', {'error': 'Order already taken or unavailable'})
+            
+    except Exception as e:
+        print(f"❌ Accept request error: {str(e)}")
 
 
 @socketio.on('update_location')

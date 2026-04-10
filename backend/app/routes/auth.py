@@ -88,7 +88,7 @@ def register_restaurant():
     logger.info(f"Restaurant registration attempt: {data.get('email', 'unknown')}")
 
     # Validate required fields
-    required_fields = ['name', 'email', 'phone', 'shop_name', 'address']
+    required_fields = ['name', 'email', 'phone', 'shop_name', 'address', 'id_proof_url']
     missing = [f for f in required_fields if not data.get(f)]
     if missing:
         return jsonify({'error': f'Missing required fields: {", ".join(missing)}'}), 400
@@ -131,6 +131,7 @@ def register_restaurant():
             is_approved=False,
             is_verified=False,
             is_active=True,
+            id_proof_url=data.get('id_proof_url'),
             password_hash=None  # No password until admin approves
         )
         user.save()
@@ -165,7 +166,7 @@ def register_delivery():
     data = request.get_json()
 
     # Validate required fields
-    required_fields = ['name', 'email', 'phone', 'vehicle_type']
+    required_fields = ['name', 'email', 'phone', 'vehicle_type', 'id_proof_url']
     missing = [f for f in required_fields if not data.get(f)]
     if missing:
         return jsonify({'error': f'Missing required fields: {", ".join(missing)}'}), 400
@@ -203,6 +204,7 @@ def register_delivery():
             is_approved=False,
             is_verified=False,
             is_active=True,
+            id_proof_url=data.get('id_proof_url'),
             password_hash=None  # No password until admin approves
         )
         user.save()
@@ -396,6 +398,9 @@ def login():
         }), 200
     except Exception as e:
         logger.error(f"Login error: {str(e)}", exc_info=True)
+        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
+
+
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 

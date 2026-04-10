@@ -13,7 +13,7 @@ class OrderService:
     """Handle order operations"""
     
     @staticmethod
-    def create_order(customer_id: str, restaurant_id: str, items: list, total_amount: float, delivery_address: str, special_instructions: str = "", payment_method: str = "cod", restaurant_upi_id: str = ""):
+    def create_order(customer_id: str, restaurant_id: str, items: list, total_amount: float, delivery_address: str, special_instructions: str = "", payment_method: str = "cod", restaurant_upi_id: str = "", tip_amount: float = 0):
         """Create a new order"""
         try:
             customer = User.objects(id=customer_id).first()
@@ -34,6 +34,8 @@ class OrderService:
                 items=items,
                 subtotal=sum(item['price'] * item.get('qty', item.get('quantity', 1)) for item in items),
                 delivery_charge=50,
+                promo_discount=data.get('promo_discount', 0) if 'data' in locals() else 0, # Handle from route
+                tip_amount=tip_amount,
                 total_amount=total_amount,
                 delivery_address=delivery_address,
                 special_instructions=special_instructions,
@@ -73,10 +75,7 @@ class OrderService:
                 str(order.customer.id)
             )
             
-            # Assign delivery partner
-            delivery_partner = DeliveryPartner.objects(is_available=True, is_active=True).first()
-            if delivery_partner:
-                OrderService.assign_delivery(order_id, str(delivery_partner.user.id))
+            # Do NOT auto-assign anymore. Assignment happens via push requests.
             
             return order, None
         except Exception as e:
@@ -107,8 +106,8 @@ class OrderService:
     
     @staticmethod
     def update_order_status(order_id: str, new_status: str):
-        """Update order status"""
-        valid_statuses = ['placed', 'accepted', 'preparing', 'picked', 'delivered', 'cancelled']
+        """Update order status with extended choices"""
+        valid_statuses = ['placed', 'accepted', 'preparing', 'ready', 'waiting', 'picked', 'delivered', 'cancelled']
         if new_status not in valid_statuses:
             return None, f"Invalid status. Must be one of {valid_statuses}"
         

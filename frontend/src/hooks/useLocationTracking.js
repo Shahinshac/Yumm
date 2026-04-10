@@ -46,7 +46,7 @@ const useLocationTracking = (userId, userToken, activeOrderId = null) => {
         };
     }, [userId, userToken, activeOrderId]);
 
-    return coords;
+    return { coords, socket };
 };
 
 export default useLocationTracking;

@@ -8,6 +8,8 @@ const STATUS_STYLES = {
   pending: { label: 'Pending', cls: 'bg-yellow-100 text-yellow-700' },
   preparing: { label: 'Preparing', cls: 'bg-blue-100 text-blue-700' },
   completed: { label: 'Completed', cls: 'bg-green-100 text-green-700' },
+  ready: { label: 'Ready for Pickup', cls: 'bg-indigo-100 text-indigo-700' },
+  waiting: { label: 'Waiting for Agent', cls: 'bg-purple-100 text-purple-700' },
   rejected: { label: 'Rejected', cls: 'bg-red-100 text-red-600' },
 };
 
@@ -86,11 +88,10 @@ const RestaurantDashboard = () => {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
         <StatCard icon={ShoppingBag} label="Pending Orders" value="0" sub="" iconColor="text-orange-600" iconBg="bg-orange-50" />
         <StatCard icon={CheckCircle} label="Completed Today" value="0" sub="" iconColor="text-green-600" iconBg="bg-green-50" />
         <StatCard icon={IndianRupee} label="Today's Revenue" value="₹0" sub="" iconColor="text-blue-600" iconBg="bg-blue-50" />
-        <StatCard icon={Star} label="Avg Rating" value="0.0" sub="" iconColor="text-yellow-500" iconBg="bg-yellow-50" />
       </div>
 
       {/* Orders Table */}

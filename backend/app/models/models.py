@@ -18,6 +18,7 @@ class Order(Document):
     subtotal = FloatField(required=True)
     delivery_charge = FloatField(default=50)
     promo_discount = FloatField(default=0)
+    tip_amount = FloatField(default=0)
     total_amount = FloatField(required=True)
 
     # Addresses
@@ -27,7 +28,7 @@ class Order(Document):
     # Order status
     status = StringField(
         required=True,
-        choices=['placed', 'accepted', 'assigned', 'picked', 'delivered', 'cancelled'],
+        choices=['placed', 'accepted', 'preparing', 'ready', 'waiting', 'assigned', 'picked', 'delivered', 'cancelled'],
         default='placed'
     )
 
@@ -66,6 +67,7 @@ class Order(Document):
             'subtotal': self.subtotal,
             'delivery_charge': self.delivery_charge,
             'promo_discount': self.promo_discount,
+            'tip_amount': self.tip_amount,
             'total_amount': self.total_amount,
             'delivery_address': self.delivery_address,
             'special_instructions': self.special_instructions,

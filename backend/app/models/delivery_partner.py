@@ -15,6 +15,7 @@ class DeliveryPartner(Document):
     vehicle_number = StringField()
     
     # Status
+    is_online = BooleanField(default=False)
     is_available = BooleanField(default=False)
     is_active = BooleanField(default=True)
     is_verified = BooleanField(default=False)
@@ -44,6 +45,7 @@ class DeliveryPartner(Document):
             'phone': self.phone,
             'vehicle_type': self.vehicle_type,
             'vehicle_number': self.vehicle_number,
+            'is_online': self.is_online,
             'is_available': self.is_available,
             'is_active': self.is_active,
             'is_verified': self.is_verified,

@@ -18,11 +18,12 @@ const CustomerCart = () => {
   const [paymentMethod, setPaymentMethod] = useState('razorpay'); // razorpay | upi | cod
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [paymentOrder, setPaymentOrder] = useState(null); // order data after placement
+  const [tipAmount, setTipAmount] = useState(0);
 
   const subtotal = getCartTotal();
   const deliveryFee = subtotal > 0 ? 40 : 0;
   const platformFee = subtotal > 0 ? 5 : 0;
-  const total = subtotal + deliveryFee + platformFee;
+  const total = subtotal + deliveryFee + platformFee + tipAmount;
 
   // Build UPI deep-link from restaurant's UPI ID
   const buildUpiLink = (upiId, name, amount) => {
@@ -47,32 +48,46 @@ const CustomerCart = () => {
       alert('Failed to load Razorpay. Please try again.');
       return;
     }
-    const options = {
-      key: RAZORPAY_KEY,
-      amount: Math.round(total * 100), // paise
-      currency: 'INR',
-      name: cart.restaurantName || 'Yumm Food',
-      description: `Order #${order.id?.slice(-6).toUpperCase()}`,
-      order_id: order.razorpay_order_id || undefined,
-      handler: (response) => {
-        // Payment successful
-        setPlacedOrder({ ...order, payment_status: 'paid' });
-        clearCart();
-        setTimeout(() => navigate(`/orders/${order.id}/track`), 2000);
-      },
-      prefill: { name: '', email: '', contact: '' },
-      theme: { color: '#ff4b3a' },
-      modal: {
-        ondismiss: () => {
-          alert('Payment cancelled. Your order has been placed but payment is pending.');
-          setPlacedOrder(order);
+
+    try {
+      // Fetch official Razorpay Order ID from backend
+      const { data } = await customerService.api.post('/api/payments/create-razorpay-order', { order_id: order.id });
+      
+      const options = {
+        key: data.key_id || RAZORPAY_KEY,
+        amount: data.amount,
+        currency: data.currency,
+        name: cart.restaurantName || 'Yumm Food',
+        description: `Order #${order.id?.slice(-6).toUpperCase()}`,
+        order_id: data.razorpay_order_id,
+        handler: async (response) => {
+          // Verify on backend
+          await customerService.api.post('/api/payments/verify-payment', {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature
+          });
+          
+          setPlacedOrder({ ...order, payment_status: 'paid' });
           clearCart();
           setTimeout(() => navigate(`/orders/${order.id}/track`), 2000);
+        },
+        prefill: { name: '', email: '', contact: '' },
+        theme: { color: '#ff4b3a' },
+        modal: {
+          ondismiss: () => {
+            alert('Payment cancelled or interrupted.');
+            setPlacedOrder(order);
+            clearCart();
+            setTimeout(() => navigate(`/orders/${order.id}/track`), 2000);
+          }
         }
-      }
-    };
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      alert("Payment initialization failed: " + (err.response?.data?.error || err.message));
+    }
   };
 
   const handlePlaceOrder = async () => {
@@ -92,6 +107,7 @@ const CustomerCart = () => {
         total_amount: total,
         delivery_address: deliveryAddress,
         payment_method: paymentMethod,
+        tip_amount: tipAmount,
         special_instructions: ''
       };
 
@@ -279,10 +295,41 @@ const CustomerCart = () => {
                 <div className="flex justify-between text-gray-500 font-medium">
                   <span>Platform Fee</span><span>₹{platformFee}</span>
                 </div>
+                {tipAmount > 0 && (
+                  <div className="flex justify-between text-[#ff4b3a] font-bold">
+                    <span>Delivery Partner Tip</span><span>₹{tipAmount}</span>
+                  </div>
+                )}
                 <div className="pt-3 border-t border-gray-100 flex justify-between items-center mt-4">
                   <span className="font-bold text-gray-900">Total Amount</span>
                   <span className="text-2xl font-black text-gray-900">₹{total}</span>
                 </div>
+              </div>
+
+              {/* Tips Section like Swiggy */}
+              <div className="mt-6 pt-6 border-t border-gray-100">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">Tip your delivery partner</p>
+                <div className="flex flex-wrap gap-2">
+                  {[20, 30, 50, 100].map(amt => (
+                    <button
+                      key={amt}
+                      onClick={() => setTipAmount(tipAmount === amt ? 0 : amt)}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${tipAmount === amt ? 'bg-orange-500 text-white shadow-md' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
+                    >
+                      ₹{amt}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => {
+                      const val = prompt("Enter custom tip amount:");
+                      if (val && !isNaN(val)) setTipAmount(Number(val));
+                    }}
+                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${tipAmount > 0 && ![20,30,50,100].includes(tipAmount) ? 'bg-orange-500 text-white shadow-md' : 'bg-gray-50 text-gray-600 hover:bg-gray-100'}`}
+                  >
+                    Custom
+                  </button>
+                </div>
+                <p className="text-[9px] text-gray-400 mt-2 italic">100% of the tip goes to your delivery partner.</p>
               </div>
 
               {/* Payment badge */}

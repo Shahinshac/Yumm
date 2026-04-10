@@ -120,7 +120,8 @@ def place_order():
             delivery_address=data.get('delivery_address', ''),
             special_instructions=data.get('special_instructions', ''),
             payment_method=data.get('payment_method', 'cod'),
-            restaurant_upi_id=restaurant.upi_id or ''
+            restaurant_upi_id=restaurant.upi_id or '',
+            tip_amount=float(data.get('tip_amount', 0))
         )
         
         if error:

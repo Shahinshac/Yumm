@@ -3,7 +3,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 
-import Login from './pages/Login';
+import CustomerLogin from './pages/CustomerLogin';
+import PartnerLogin from './pages/PartnerLogin';
+import AdminLogin from './pages/AdminLogin';
 import Layout from './components/Layout';
 
 import CustomerHome from './pages/customer/CustomerHome';
@@ -57,7 +59,10 @@ function AppRoutes() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+      <Route path="/login" element={!user ? <CustomerLogin /> : <Navigate to="/" />} />
+      <Route path="/partner-login" element={!user ? <PartnerLogin /> : <Navigate to="/" />} />
+      <Route path="/admin-login" element={!user ? <AdminLogin /> : <Navigate to="/" />} />
+      
       <Route path="/register/restaurant" element={!user ? <RestaurantRegister /> : <Navigate to="/" />} />
       <Route path="/register/delivery" element={!user ? <DeliveryRegister /> : <Navigate to="/" />} />
       <Route path="/unauthorized" element={<div className="p-10 text-red-500 font-bold text-center">Unauthorized Access</div>} />

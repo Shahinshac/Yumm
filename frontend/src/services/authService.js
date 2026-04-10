@@ -21,6 +21,13 @@ export const authService = {
     return response.data;
   },
 
+  uploadIdentityProof: async (formData) => {
+    const response = await api.post('/uploads/identity-proof', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+  },
+
   updateProfile: async (data) => {
     const response = await api.put('/auth/profile', data);
     return response.data;

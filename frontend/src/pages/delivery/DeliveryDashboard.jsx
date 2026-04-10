@@ -19,23 +19,69 @@ const StatCard = ({ icon: Icon, label, value, iconColor, iconBg }) => (
 
 const DeliveryDashboard = () => {
     const { user } = useAuth();
-    const [online, setOnline] = useState(true);
+    const [online, setOnline] = useState(false);
     const [availableOrders, setAvailableOrders] = useState([]);
     const [activeDelivery, setActiveDelivery] = useState(null);
     const [stats, setStats] = useState({ deliveredToday: 0, earningsToday: 0, kmToday: 0, rate: '100%' });
     const [loading, setLoading] = useState(true);
     const [showQrModal, setShowQrModal] = useState(false);
+    const [incomingRequest, setIncomingRequest] = useState(null);
+    const [requestTimeLeft, setRequestTimeLeft] = useState(60);
+    const requestTimerRef = useRef(null);
 
-    // Track real location if active delivery exists
-    useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
+    // Track real location and get socket for real-time requests
+    const { socket } = useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
 
     useEffect(() => {
+        // Sync online status with backend
+        if (user) {
+            deliveryService.updateStatus(null, online ? 'online' : 'offline').catch(() => {});
+        }
+
         if (online) {
             refreshDashboard();
-            const interval = setInterval(refreshDashboard, 30000); // Polling every 30s
-            return () => clearInterval(interval);
+            const interval = setInterval(refreshDashboard, 30000); 
+            
+            // Listen for real-time push requests
+            if (socket) {
+                socket.on('new_delivery_request', (order) => {
+                    // Only show if not already on a delivery
+                    if (!activeDelivery) {
+                        setIncomingRequest(order);
+                        setRequestTimeLeft(60);
+                        // Play alert sound if possible
+                        try { new Audio('/assets/notification.mp3').play(); } catch(e) {}
+                    }
+                });
+
+                socket.on('clear_delivery_request', (data) => {
+                    if (incomingRequest?.id === data.order_id) {
+                        setIncomingRequest(null);
+                    }
+                });
+            }
+
+            return () => {
+                clearInterval(interval);
+                if (socket) {
+                    socket.off('new_delivery_request');
+                    socket.off('clear_delivery_request');
+                }
+            };
         }
-    }, [online]);
+    }, [online, activeDelivery, socket]);
+
+    // Timer logic for incoming request
+    useEffect(() => {
+        if (incomingRequest && requestTimeLeft > 0) {
+            requestTimerRef.current = setTimeout(() => {
+                setRequestTimeLeft(prev => prev - 1);
+            }, 1000);
+        } else if (requestTimeLeft === 0) {
+            setIncomingRequest(null);
+        }
+        return () => clearTimeout(requestTimerRef.current);
+    }, [incomingRequest, requestTimeLeft]);
 
     const refreshDashboard = async () => {
         try {
@@ -117,11 +163,11 @@ const DeliveryDashboard = () => {
         <button
           onClick={() => setOnline(v => !v)}
           className={`flex items-center gap-2.5 px-6 py-3 rounded-2xl font-black text-sm transition-all duration-300 active:scale-95 ${
-            online ? 'bg-green-500 text-white shadow-xl shadow-green-100' : 'bg-gray-100 text-gray-400'
+            online ? 'bg-green-500 text-white shadow-xl shadow-green-100' : 'bg-gray-900 text-white shadow-xl shadow-gray-200'
           }`}
         >
-          <span className={`w-3 h-3 rounded-full ${online ? 'bg-white animate-pulse' : 'bg-gray-300'}`} />
-          {online ? 'ONLINE' : 'OFFLINE'}
+          <span className={`w-3 h-3 rounded-full ${online ? 'bg-white animate-pulse' : 'bg-red-500'}`} />
+          {online ? 'DUTY ON' : 'GO ONLINE'}
         </button>
       </div>
 
@@ -189,62 +235,77 @@ const DeliveryDashboard = () => {
         </div>
       )}
 
-      {/* Available Jobs list */}
-      {online && !activeDelivery && (
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-          <div className="flex items-center gap-2 px-8 py-6 border-b border-gray-50 bg-gray-50/50">
-            <Package size={20} className="text-orange-500" />
-            <h2 className="font-black text-gray-900 uppercase tracking-tight">Available Gigs</h2>
-            <span className="ml-auto bg-orange-100 text-orange-600 text-[10px] font-black px-2.5 py-1 rounded-full">{availableOrders.length} NEARBY</span>
-          </div>
-
-          {availableOrders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-gray-300">
-              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
-                  <Package size={32} />
-              </div>
-              <p className="font-bold text-gray-400">Hub is quiet right now...</p>
-              <p className="text-xs uppercase tracking-widest mt-1">New batches appear every minute</p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-50">
-              {availableOrders.map(d => (
-                <div key={d.id} className="p-8 hover:bg-gray-50/50 transition-colors group">
-                  <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div className="flex-1 space-y-4">
-                        <div className="flex items-center gap-3">
-                            <span className="bg-gray-900 text-white text-[10px] font-black px-2 py-1 rounded-md">ORDER #{d.id.slice(-5).toUpperCase()}</span>
-                            <span className="text-xs font-bold text-gray-400 flex items-center gap-1"><Clock size={12} /> {d.restaurant?.delivery_time || 20}m ETA</span>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-1">
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Restaurant</p>
-                                <p className="font-bold text-gray-900 group-hover:text-orange-600 transition-colors">{d.restaurant?.name || 'Local Eatery'}</p>
-                                <p className="text-xs text-gray-500 truncate">{d.restaurant?.address}</p>
-                            </div>
-                            <div className="space-y-1">
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Customer Area</p>
-                                <p className="font-bold text-gray-900">{d.delivery_address?.split(',')[0] || 'Nearby Customer'}</p>
-                                <p className="text-xs text-gray-500">Cash on Delivery</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div className="shrink-0 flex flex-col items-end gap-3 min-w-[120px]">
-                        <p className="text-3xl font-black text-gray-900">₹{d.total_amount}</p>
-                        <button
-                            disabled={loading}
-                            onClick={() => handleClaim(d.id)}
-                            className="bg-[#ff4b3a] text-white font-black px-6 py-3 rounded-xl hover:bg-black transition-all duration-300 active:scale-90 shadow-lg shadow-red-100 flex items-center gap-2 text-xs"
-                        >
-                            {loading ? <Loader2 className="animate-spin" size={14} /> : 'CLAIM'}
-                        </button>
-                    </div>
+      {/* Incoming Request Popup (Swiggy Style) */}
+      {incomingRequest && (
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/80 backdrop-blur-md p-6">
+          <div className="bg-white w-full max-w-sm rounded-[2.5rem] shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-300">
+            <div className="bg-[#ff4b3a] p-8 text-white relative">
+               <div className="absolute top-4 right-8 flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-full border-4 border-white/20 flex items-center justify-center font-black text-xl">
+                      {requestTimeLeft}
                   </div>
-                </div>
-              ))}
+                  <p className="text-[10px] uppercase font-bold mt-1 opacity-60">Sec left</p>
+               </div>
+               <Bike size={40} className="mb-4" />
+               <h2 className="text-3xl font-black tracking-tight">New Order!</h2>
+               <p className="text-white/80 font-bold uppercase tracking-widest text-[10px] mt-2">Incoming Mission Assigned</p>
             </div>
-          )}
+            
+            <div className="p-8 space-y-6">
+                <div className="flex justify-between items-end">
+                    <div>
+                        <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Potential Earning</p>
+                        <p className="text-4xl font-black text-gray-900">₹{(incomingRequest.total_amount * 0.2 + 20).toFixed(0)}</p>
+                    </div>
+                    {incomingRequest.tip_amount > 0 && (
+                        <div className="bg-green-100 text-green-700 px-3 py-1 rounded-lg text-[10px] font-black">
+                           + ₹{incomingRequest.tip_amount} TIP
+                        </div>
+                    )}
+                </div>
+
+                <div className="space-y-4 pt-4 border-t border-gray-100">
+                    <div className="flex items-start gap-3">
+                        <div className="p-2 bg-gray-50 rounded-xl text-gray-400"><MapPin size={16} /></div>
+                        <div>
+                            <p className="text-[10px] font-black text-gray-400 uppercase">From</p>
+                            <p className="text-sm font-bold text-gray-800">{incomingRequest.restaurant_name}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                    <button 
+                        onClick={() => setIncomingRequest(null)}
+                        className="py-4 bg-gray-100 text-gray-500 rounded-2xl font-black text-sm hover:bg-gray-200 transition active:scale-95"
+                    >
+                        IGNORE
+                    </button>
+                    <button 
+                         onClick={async () => {
+                             try {
+                                 setLoading(true);
+                                 // Emit through socket for instant feedback
+                                 if (socket) {
+                                     socket.emit('delivery_accept_request', { 
+                                         order_id: incomingRequest.id, 
+                                         token: localStorage.getItem('access_token') 
+                                     });
+                                 }
+                                 setIncomingRequest(null);
+                             } catch(e) { 
+                                 alert("Accept failed"); 
+                             } finally {
+                                 setLoading(false);
+                             }
+                         }}
+                        className="py-4 bg-[#ff4b3a] text-white rounded-2xl font-black text-sm hover:bg-black transition shadow-xl shadow-red-200 active:scale-95"
+                    >
+                        ACCEPT
+                    </button>
+                </div>
+            </div>
+          </div>
         </div>
       )}
 

@@ -336,11 +336,14 @@ def update_order_status(order_id):
     current_status = order.status
     status_flow = {
         'placed': ['accepted', 'cancelled'],
-        'accepted': ['assigned', 'cancelled'],
+        'accepted': ['preparing', 'cancelled'],
+        'preparing': ['ready', 'cancelled'],
+        'ready': ['waiting', 'assigned', 'cancelled'],
+        'waiting': ['assigned', 'cancelled'],
         'assigned': ['picked', 'cancelled'],
         'picked': ['delivered'],
         'delivered': [],
-        'waiting_for_delivery': ['assigned', 'cancelled']
+        'cancelled': []
     }
 
     if new_status not in status_flow.get(current_status, []):

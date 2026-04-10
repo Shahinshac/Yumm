@@ -97,7 +97,7 @@ const Layout = () => {
       {/* Brand */}
       <div className="px-6 py-5 border-b border-gray-100">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-[#ff4b3a] rounded-xl flex items-center justify-center shadow-lg shadow-red-200">
+          <div className="w-9 h-9 bg-[#e23744] rounded-xl flex items-center justify-center shadow-lg shadow-red-200">
             <span className="text-white font-black text-base">Y</span>
           </div>
           <div>
@@ -119,7 +119,7 @@ const Layout = () => {
               onClick={() => setSidebarOpen(false)}
               className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-sm transition-all duration-150 ${
                 isActive
-                  ? 'bg-[#ff4b3a] text-white shadow-lg shadow-red-200'
+                  ? 'bg-[#e23744] text-white shadow-lg shadow-red-200'
                   : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
               }`}
             >
@@ -190,11 +190,11 @@ const Layout = () => {
             <div className="relative">
               <button 
                 onClick={() => { setShowNotifications(!showNotifications); setShowUserMenu(false); }}
-                className={`relative p-2.5 rounded-xl transition ${showNotifications ? 'bg-gray-100 text-[#ff4b3a]' : 'hover:bg-gray-50 text-gray-500'}`}
+                className={`relative p-2.5 rounded-xl transition ${showNotifications ? 'bg-gray-100 text-[#e23744]' : 'hover:bg-gray-50 text-gray-500'}`}
               >
                 <Bell size={20} />
                 {unreadCount > 0 && (
-                  <span className="absolute top-2 right-2.5 w-4 h-4 bg-[#ff4b3a] text-white text-[8px] font-black rounded-full border-2 border-white flex items-center justify-center">
+                  <span className="absolute top-2 right-2.5 w-4 h-4 bg-[#e23744] text-white text-[8px] font-black rounded-full border-2 border-white flex items-center justify-center">
                     {unreadCount > 9 ? '9+' : unreadCount}
                   </span>
                 )}
@@ -204,7 +204,7 @@ const Layout = () => {
                 <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden animate-in fade-in zoom-in duration-200">
                   <div className="p-4 border-b border-gray-50 flex items-center justify-between">
                     <h3 className="font-bold text-sm">Notifications</h3>
-                    <span className="text-[10px] font-black bg-red-50 text-[#ff4b3a] px-2 py-0.5 rounded-full">{unreadCount} New</span>
+                    <span className="text-[10px] font-black bg-red-50 text-[#e23744] px-2 py-0.5 rounded-full">{unreadCount} New</span>
                   </div>
                   <div className="max-h-96 overflow-y-auto">
                     {notifications.length === 0 ? (
@@ -218,7 +218,7 @@ const Layout = () => {
                           onClick={() => handleMarkRead(n.id)}
                           className={`w-full p-4 text-left hover:bg-gray-50 transition border-b border-gray-50 last:border-0 flex gap-3 ${!n.is_read ? 'bg-red-50/30' : ''}`}
                         >
-                          <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${n.is_read ? 'bg-gray-200' : 'bg-[#ff4b3a]'}`} />
+                          <div className={`w-2 h-2 mt-1.5 rounded-full shrink-0 ${n.is_read ? 'bg-gray-200' : 'bg-[#e23744]'}`} />
                           <div>
                             <p className="font-bold text-xs text-gray-900">{n.title}</p>
                             <p className="text-[11px] text-gray-500 mt-0.5 line-clamp-2">{n.message}</p>
@@ -237,7 +237,7 @@ const Layout = () => {
                 onClick={() => { setShowUserMenu(!showUserMenu); setShowNotifications(false); }}
                 className="flex items-center gap-2.5 pl-3 border-l border-gray-200 hover:opacity-80 transition"
               >
-                <div className="w-8 h-8 bg-[#ff4b3a] rounded-full flex items-center justify-center text-white font-black text-xs shadow-md shadow-red-100">
+                <div className="w-8 h-8 bg-[#e23744] rounded-full flex items-center justify-center text-white font-black text-xs shadow-md shadow-red-100">
                   {initials}
                 </div>
                 <div className="hidden sm:block text-left">
@@ -254,10 +254,10 @@ const Layout = () => {
                     <p className="text-sm font-bold text-gray-900 mt-1 truncate">{user?.email}</p>
                   </div>
                   <div className="p-2">
-                    <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#ff4b3a] rounded-xl transition">
+                    <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#e23744] rounded-xl transition">
                       <User size={16} /> My Account
                     </Link>
-                    <Link to={user?.role === 'admin' ? '/admin/settings' : '/profile/settings'} onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#ff4b3a] rounded-xl transition">
+                    <Link to={user?.role === 'admin' ? '/admin/settings' : '/profile/settings'} onClick={() => setShowUserMenu(false)} className="flex items-center gap-3 px-3 py-2.5 text-sm font-bold text-gray-600 hover:bg-gray-50 hover:text-[#e23744] rounded-xl transition">
                       <Settings size={16} /> Settings
                     </Link>
                     <div className="my-1 border-t border-gray-50" />

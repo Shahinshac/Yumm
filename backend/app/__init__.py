@@ -153,7 +153,7 @@ def create_app():
             delivery_dashboard, admin_dashboard, 
             notifications, restaurants, orders, 
             delivery, admin, reviews, promo,
-            media # New media route
+            media, payments, uploads # Added payments and uploads
         )
 
         app.register_blueprint(auth.bp)
@@ -169,6 +169,8 @@ def create_app():
         app.register_blueprint(reviews.bp)
         app.register_blueprint(promo.bp)
         app.register_blueprint(media.bp) # Media blueprint
+        app.register_blueprint(payments.bp) # Payments blueprint
+        app.register_blueprint(uploads.bp) # Uploads blueprint
 
         logger.info("✅ All blueprints registered successfully")
     except Exception as e:
