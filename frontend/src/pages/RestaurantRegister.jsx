@@ -10,7 +10,7 @@ const RestaurantRegister = () => {
     email: '',
     phone: '',
     shop_name: '',
-    address: '',
+    category: 'Restaurant',
     address: ''
   });
   const [loading, setLoading] = useState(false);
@@ -159,21 +159,45 @@ const RestaurantRegister = () => {
             </div>
           </div>
 
-          <div className="space-y-1">
-            <label className="text-sm font-medium text-gray-700 ml-1">Restaurant / Shop Name</label>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Store className="h-5 w-5 text-gray-400" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700 ml-1">Restaurant / Shop Name</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Store className="h-5 w-5 text-gray-400" />
+                </div>
+                <input
+                  type="text"
+                  name="shop_name"
+                  value={formData.shop_name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Delicious Bites"
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none"
+                />
               </div>
-              <input
-                type="text"
-                name="shop_name"
-                value={formData.shop_name}
-                onChange={handleChange}
-                required
-                placeholder="Delicious Bites"
-                className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none"
-              />
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-sm font-medium text-gray-700 ml-1">Category</label>
+              <div className="relative">
+                <select
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:border-[#ff4b3a] focus:ring-2 focus:ring-orange-100 transition-all outline-none appearance-none font-medium"
+                >
+                  <option value="Restaurant">Restaurant</option>
+                  <option value="Bakery">Bakery</option>
+                  <option value="Cafe">Cafe</option>
+                  <option value="Fast Food">Fast Food</option>
+                  <option value="Desserts">Desserts</option>
+                  <option value="Beverages">Beverages</option>
+                </select>
+                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-gray-400">
+                  ▼
+                </div>
+              </div>
             </div>
           </div>
 

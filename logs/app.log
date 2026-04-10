@@ -52,3 +52,17 @@
  * Running on http://127.0.0.1:5000
  * Running on http://192.168.1.3:5000
 2026-04-09 20:24:41,876 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-04-10 09:42:03,427 - root - INFO - Starting FoodHub App in production mode
+2026-04-10 09:42:03,427 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-10 09:42:03,488 - root - INFO - ✅ MongoDB connected successfully
+2026-04-10 09:42:03,488 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-10 09:42:03,536 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-10 09:42:03,536 - root - INFO - Registering API blueprints...
+2026-04-10 09:42:03,690 - root - INFO - ✅ All blueprints registered successfully
+2026-04-10 09:42:03,690 - root - INFO - ✅ SocketIO events registered
+2026-04-10 09:42:03,690 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-10 09:42:03,727 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.3:5000
+2026-04-10 09:42:03,727 - werkzeug - INFO - [33mPress CTRL+C to quit[0m

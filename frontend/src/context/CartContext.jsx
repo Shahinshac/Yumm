@@ -36,13 +36,20 @@ export const CartProvider = ({ children }) => {
       if (existing) {
         return {
           ...prev,
-          items: prev.items.map(i => i.id === item.id ? { ...i, quantity: i.quantity + 1 } : i)
+          items: prev.items.map(i => {
+            if (i.id === item.id) {
+               const currentQty = i.quantity || i.qty || 0;
+               return { ...i, quantity: currentQty + 1, qty: currentQty + 1 };
+            }
+            return i;
+          })
         };
       }
 
+      const q = item.quantity || item.qty || 1;
       return {
         ...prev,
-        items: [...prev.items, { ...item, quantity: 1 }],
+        items: [...prev.items, { ...item, quantity: q, qty: q }],
         restaurantId: restaurant.id,
         restaurantName: restaurant.name
       };
@@ -51,9 +58,14 @@ export const CartProvider = ({ children }) => {
 
   const removeFromCart = (itemId) => {
     setCart(prev => {
-      const updatedItems = prev.items.map(i => 
-        i.id === itemId ? { ...i, quantity: i.quantity - 1 } : i
-      ).filter(i => i.quantity > 0);
+      const updatedItems = prev.items.map(i => {
+        if (i.id === itemId) {
+          const currentQty = i.quantity || i.qty || 1;
+          const nextQty = Math.max(0, currentQty - 1);
+          return { ...i, quantity: nextQty, qty: nextQty };
+        }
+        return i;
+      }).filter(i => (i.quantity || i.qty) > 0);
 
       return {
         ...prev,
@@ -69,11 +81,15 @@ export const CartProvider = ({ children }) => {
   };
 
   const getItemQuantity = (itemId) => {
-    return cart.items.find(i => i.id === itemId)?.quantity || 0;
+    const item = cart.items.find(i => i.id === itemId);
+    return item ? (item.quantity || item.qty || 0) : 0;
   };
 
   const getCartTotal = () => {
-    return cart.items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.items.reduce((total, item) => {
+        const q = item.quantity || item.qty || 0;
+        return total + (item.price * q);
+    }, 0);
   };
 
   return (
