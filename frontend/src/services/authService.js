@@ -31,5 +31,10 @@ export const authService = {
   updateProfile: async (data) => {
     const response = await api.put('/auth/profile', data);
     return response.data;
+  },
+
+  testCustomerLogin: async () => {
+    const response = await api.post('/auth/test-customer-login', { email: 'testcust@yumm.com' });
+    return response.data;
   }
 };

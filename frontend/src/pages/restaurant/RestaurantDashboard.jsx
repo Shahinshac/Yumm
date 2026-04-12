@@ -6,7 +6,8 @@ import {
 import { restaurantService } from '../../services/restaurantService';
 
 const STATUS_STYLES = {
-  pending: { label: 'New Order', cls: 'bg-red-50 text-red-500 border-red-100' },
+  pending: { label: 'Awaiting', cls: 'bg-red-50 text-red-500 border-red-100' },
+  placed: { label: 'New Order', cls: 'bg-orange-50 text-orange-500 border-orange-100 animate-pulse' },
   preparing: { label: 'Preparing', cls: 'bg-blue-50 text-blue-500 border-blue-100' },
   completed: { label: 'Handed Over', cls: 'bg-green-50 text-green-500 border-green-100' },
   ready: { label: 'Ready', cls: 'bg-indigo-50 text-indigo-500 border-indigo-100' },
@@ -41,7 +42,8 @@ const RestaurantDashboard = () => {
     setLoading(true);
     try {
       const res = await restaurantService.getOrders(activeFilter === 'all' ? '' : activeFilter);
-      setOrders(res.orders || []);
+      // Backend now returns { orders: [...] }
+      setOrders(res.orders || res || []);
     } catch {
       setOrders([]);
     } finally {
@@ -184,9 +186,10 @@ const RestaurantDashboard = () => {
                   <div className="flex items-center gap-6 shrink-0">
                     <span className="text-3xl font-black text-gray-900 tracking-tighter">₹{order.total}</span>
                     <div className="flex gap-2">
-                       {order.status === 'pending' ? (
+                       {(order.status === 'pending' || order.status === 'placed') ? (
                          <>
                             <button
+                              id={`confirm_${order.id}`}
                               onClick={() => updateStatus(order.id, 'preparing')}
                               className="px-6 py-3 bg-black text-white hover:bg-gray-800 rounded-2xl text-[10px] font-black uppercase tracking-widest transition shadow-xl"
                             >

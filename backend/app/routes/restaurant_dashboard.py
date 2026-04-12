@@ -200,7 +200,11 @@ def get_orders():
             query = query(status=status)
         
         orders = query.order_by('-created_at')
-        return jsonify([order.to_dict() for order in orders]), 200
+        return jsonify({
+            'success': True,
+            'orders': [order.to_dict() for order in orders],
+            'count': query.count()
+        }), 200
     except Exception as e:
         logger.error(f"Error fetching orders: {str(e)}")
         return jsonify({'error': str(e)}), 500

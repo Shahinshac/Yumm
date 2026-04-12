@@ -34,7 +34,7 @@ class OrderService:
                 items=items,
                 subtotal=sum(item['price'] * item.get('qty', item.get('quantity', 1)) for item in items),
                 delivery_charge=50,
-                promo_discount=data.get('promo_discount', 0) if 'data' in locals() else 0, # Handle from route
+                promo_discount=0, # Initial default, can be updated if promo applied
                 tip_amount=tip_amount,
                 total_amount=total_amount,
                 delivery_address=delivery_address,

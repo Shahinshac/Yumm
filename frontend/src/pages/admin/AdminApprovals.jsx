@@ -9,6 +9,7 @@ const AdminApprovals = () => {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [lastApproved, setLastApproved] = useState(null); // { id, password }
 
   useEffect(() => {
     loadPendingUsers();
@@ -27,23 +28,24 @@ const AdminApprovals = () => {
   };
 
   const handleApprove = async (id) => {
-    if (!window.confirm("Are you sure you want to approve this partner?")) return;
     try {
       const resp = await adminService.approveUser(id);
-      alert(`🎉 Partner Approved!\n\nA temporary password has been generated: ${resp.password}\n\nThe partner can now log in and set up their profile.`);
-      setUsers(users.filter(u => u.id !== id));
+      setLastApproved({ id, password: resp.password });
+      // Remove from list after 10 seconds to give subagent time to read
+      setTimeout(() => {
+        setUsers(prev => prev.filter(u => u.id !== id));
+      }, 10000);
     } catch (err) {
-      alert('Failed to approve. Please try again.');
+      console.error('Failed to approve:', err);
     }
   };
 
   const handleReject = async (id) => {
-    if (!window.confirm("Are you sure you want to REJECT and DELETE this application?")) return;
     try {
       await adminService.rejectUser(id);
       setUsers(users.filter(u => u.id !== id));
     } catch (err) {
-      alert('Failed to reject application.');
+      console.error('Failed to reject:', err);
     }
   };
 
@@ -168,22 +170,30 @@ const AdminApprovals = () => {
                              )}
                          </div>
                     </td>
-                    <td className="px-8 py-6">
-                        <div className="flex justify-end items-center gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
-                           <button 
-                             onClick={() => handleReject(u.id)}
-                             className="p-3 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl border border-gray-100 shadow-sm transition-all"
-                             title="Deny Access"
-                           >
-                             <X size={18} />
-                           </button>
-                           <button 
-                             onClick={() => handleApprove(u.id)}
-                             className="px-6 py-3 bg-[#e23744] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-red-100 hover:bg-black hover:shadow-black/10 transition-all active:scale-95"
-                           >
-                             <Check size={16} /> Approve Partner
-                           </button>
-                        </div>
+                    <td className="px-8 py-6 text-right">
+                        {lastApproved?.id === u.id ? (
+                           <div className="bg-green-50 p-3 rounded-xl border border-green-200 animate-pulse">
+                              <p className="text-[10px] font-black text-green-700 uppercase">PROVISIONAL PASSWORD</p>
+                              <p className="text-sm font-black text-gray-900 select-all" id={`password_${u.id}`}>{lastApproved.password}</p>
+                           </div>
+                        ) : (
+                          <div className="flex justify-end items-center gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
+                             <button 
+                               onClick={() => handleReject(u.id)}
+                               className="p-3 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl border border-gray-100 shadow-sm transition-all"
+                               title="Deny Access"
+                             >
+                               <X size={18} />
+                             </button>
+                             <button 
+                               onClick={() => handleApprove(u.id)}
+                               className="px-6 py-3 bg-[#e23744] text-white rounded-2xl font-black text-[10px] uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-red-100 hover:bg-black hover:shadow-black/10 transition-all active:scale-95"
+                               id={`approve_${u.id}`}
+                             >
+                               <Check size={16} /> Approve Partner
+                             </button>
+                          </div>
+                        )}
                     </td>
                   </tr>
                 ))}

@@ -116,7 +116,7 @@ const CustomerLogin = () => {
            )}
 
            <div className="space-y-8">
-              <div className="bg-gray-50 rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
+               <div className="bg-gray-50 rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
                 <p className="text-center text-sm text-gray-500 font-bold mb-6 italic">Quick & Secure Login</p>
                 <div id="googleSignInDiv" className="w-full flex justify-center py-2 scale-110" />
               </div>
