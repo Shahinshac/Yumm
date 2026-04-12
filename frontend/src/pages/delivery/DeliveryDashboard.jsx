@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, 
   TrendingUp, Bike, Loader2, QrCode, X, Signal, Power, 
-  ChevronRight, Map as MapIcon
+  ChevronRight, Map as MapIcon, Phone, FileText, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { deliveryService } from '../../services/deliveryService';
@@ -27,6 +27,7 @@ const DeliveryDashboard = () => {
     const [stats, setStats] = useState({ deliveredToday: 0, earningsToday: 0, kmToday: 0, rate: '100%' });
     const [loading, setLoading] = useState(true);
     const [showQrModal, setShowQrModal] = useState(false);
+    const [showItems, setShowItems] = useState(false);
     const [incomingRequest, setIncomingRequest] = useState(null);
     const [requestTimeLeft, setRequestTimeLeft] = useState(60);
     const requestTimerRef = useRef(null);
@@ -128,6 +129,31 @@ const DeliveryDashboard = () => {
         }
     };
 
+    const handleNavigation = () => {
+        if (!activeDelivery) return;
+        const isPickup = activeDelivery.status === 'picked';
+        let dest = isPickup ? activeDelivery.restaurant?.address : activeDelivery.delivery_address;
+        
+        // Use coordinates if available for better accuracy
+        if (isPickup && activeDelivery.restaurant?.location?.coordinates) {
+             const [lng, lat] = activeDelivery.restaurant.location.coordinates;
+             dest = `${lat},${lng}`;
+        } else if (!isPickup && activeDelivery.destination_coords) {
+             const [lat, lng] = activeDelivery.destination_coords;
+             dest = `${lat},${lng}`;
+        }
+
+        const encodedDest = encodeURIComponent(dest || '');
+        window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodedDest}`, '_blank');
+    };
+
+    const handleCallStoreOrCustomer = () => {
+        if (!activeDelivery) return;
+        const phone = activeDelivery.status === 'picked' ? activeDelivery.restaurant?.phone : activeDelivery.customer_phone;
+        if (phone) window.open(`tel:${phone}`);
+        else alert("Phone number not available.");
+    };
+
   if (loading && !activeDelivery && availableOrders.length === 0) {
       return (
           <div className="flex flex-col items-center justify-center py-32">
@@ -141,7 +167,7 @@ const DeliveryDashboard = () => {
     <div className="space-y-10 max-w-4xl mx-auto pb-24 font-sans">
 
       {/* RIDER CONSOLE HEADER */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 border-b border-gray-100 pb-10 mt-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-gray-100 pb-8 mt-6">
         <div>
            <div className="flex items-center gap-3 mb-2">
               <div className={`w-3 h-3 rounded-full ${online ? 'bg-green-500 animate-ping' : 'bg-gray-300'}`} />
@@ -149,13 +175,13 @@ const DeliveryDashboard = () => {
                 {online ? 'Active on Fleet' : 'System Standby'}
               </span>
            </div>
-           <h1 className="text-5xl font-black text-gray-900 tracking-tighter italic">Fleet Station</h1>
+           <h1 className="text-4xl md:text-5xl font-black text-gray-900 tracking-tighter italic">Fleet Station</h1>
            <p className="text-gray-400 font-bold text-sm mt-2">Pilot: {user?.full_name} • ID: #YUMM-FL-12</p>
         </div>
         
         <button
           onClick={() => setOnline(!online)}
-          className={`group flex items-center gap-4 pl-4 pr-8 py-4 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all duration-500 shadow-2xl ${
+          className={`group flex w-full md:w-auto justify-center md:justify-start items-center gap-4 pl-4 pr-8 py-3 md:py-4 rounded-[2rem] font-black text-xs uppercase tracking-widest transition-all duration-500 shadow-2xl ${
             online ? 'bg-[#e23744] text-white shadow-red-100' : 'bg-black text-white shadow-gray-200'
           }`}
         >
@@ -176,39 +202,64 @@ const DeliveryDashboard = () => {
 
       {/* MISSION CARD (ACTIVE) */}
       {activeDelivery ? (
-        <div className="bg-gray-950 rounded-[3rem] p-10 text-white shadow-2xl relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-12 opacity-5 scale-150 rotate-12 group-hover:rotate-0 transition-transform duration-1000">
+        <div className="bg-gray-950 rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-white shadow-2xl relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-6 md:p-12 opacity-5 scale-150 rotate-12 group-hover:rotate-0 transition-transform duration-1000 origin-top-right">
              <Bike size={200} />
           </div>
           
-          <div className="relative z-10 flex flex-col md:flex-row items-start justify-between gap-10">
-            <div className="space-y-6 flex-1">
+          <div className="relative z-10 flex flex-col md:flex-row items-start justify-between gap-8 md:gap-10">
+            <div className="space-y-6 flex-1 w-full">
               <div className="inline-flex items-center gap-3 bg-white/5 border border-white/10 px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-[0.2em] text-orange-400">
                 <span className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
                 Mission in Progress · {activeDelivery.id.slice(-6).toUpperCase()}
               </div>
               
-              <h2 className="text-5xl font-black tracking-tighter leading-[0.9]">
+              <h2 className="text-4xl md:text-5xl font-black tracking-tighter leading-[0.9]">
                  {activeDelivery.status === 'picked' ? 'Navigate to \nStore' : 'Navigate to \nCustomer'}
               </h2>
 
-              <div className="space-y-6 pt-6">
-                 <div className="flex items-start gap-4">
-                    <div className="p-3 bg-white/5 rounded-2xl text-white/40"><MapPin size={24} /></div>
-                    <div>
-                        <p className="text-[10px] font-black uppercase text-white/20 tracking-[0.3em] mb-1">Target Address</p>
-                        <p className="text-xl font-bold text-white/90 leading-tight italic">
-                          {activeDelivery.status === 'picked' ? activeDelivery.restaurant?.address : activeDelivery.delivery_address}
-                        </p>
+              <div className="space-y-4 pt-4 border-t border-white/10 mt-6">
+                 <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-start gap-4">
+                        <div className="p-3 bg-white/5 rounded-2xl text-white/40"><MapPin size={24} /></div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase text-white/20 tracking-[0.3em] mb-1">Target Address</p>
+                            <p className="text-lg md:text-xl font-bold text-white/90 leading-tight italic line-clamp-3">
+                              {activeDelivery.status === 'picked' ? activeDelivery.restaurant?.address : activeDelivery.delivery_address}
+                            </p>
+                        </div>
                     </div>
+                    <button onClick={handleCallStoreOrCustomer} className="p-4 bg-white/10 hover:bg-white/20 rounded-2xl text-white transition shrink-0 active:scale-95">
+                        <Phone size={20} />
+                    </button>
                  </div>
+              </div>
+
+              {/* Order Payload Content Verifier */}
+              <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden mt-4">
+                  <button onClick={() => setShowItems(!showItems)} className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 transition">
+                      <div className="flex items-center gap-2">
+                          <FileText size={16} className="text-white/50" />
+                          <span className="text-xs font-black uppercase tracking-widest text-white/80">Payload Verification</span>
+                      </div>
+                      {showItems ? <ChevronUp size={16} className="text-white/50" /> : <ChevronDown size={16} className="text-white/50" />}
+                  </button>
+                  {showItems && (
+                      <div className="p-4 space-y-2 border-t border-white/10 text-sm font-medium text-white/70">
+                          {activeDelivery.items?.map((item, idx) => (
+                              <div key={idx} className="flex justify-between">
+                                  <span>{item.quantity}x {item.name}</span>
+                              </div>
+                          ))}
+                      </div>
+                  )}
               </div>
             </div>
             
-            <div className="flex flex-col items-center md:items-end gap-6 shrink-0">
-               <div className="p-8 bg-white/5 rounded-[2.5rem] border border-white/10 backdrop-blur-xl text-center md:text-right min-w-[180px]">
+            <div className="flex flex-col items-center md:items-end gap-6 shrink-0 w-full md:w-auto">
+               <div className="p-6 md:p-8 bg-white/5 rounded-[2rem] md:rounded-[2.5rem] border border-white/10 backdrop-blur-xl text-center md:text-right w-full md:min-w-[180px]">
                   <p className="text-[10px] font-black text-white/30 uppercase tracking-[0.3em] mb-2">Pilot Payout</p>
-                  <p className="text-5xl font-black text-orange-500 tracking-tighter italic">₹{(activeDelivery.total_amount * 0.15 + 20).toFixed(0)}</p>
+                  <p className="text-4xl md:text-5xl font-black text-orange-500 tracking-tighter italic">₹{(activeDelivery.total_amount * 0.15 + 20).toFixed(0)}</p>
                   <div className="h-px bg-white/10 my-4" />
                   <div className="flex items-center justify-center md:justify-end gap-2 text-green-400">
                      <Signal size={14} />
@@ -218,17 +269,17 @@ const DeliveryDashboard = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 md:mt-12">
              <button
                 onClick={handleAdvanceStatus}
                 disabled={loading}
-                className="bg-white text-black hover:bg-orange-500 hover:text-white font-black py-6 rounded-[2rem] transition-all duration-500 shadow-xl flex items-center justify-center gap-3 active:scale-95 group/btn"
+                className="bg-white text-black hover:bg-orange-500 hover:text-white font-black py-4 md:py-6 rounded-[2rem] transition-all duration-500 shadow-xl flex items-center justify-center gap-3 active:scale-95 group/btn"
               >
                 {loading ? <Loader2 className="animate-spin" size={24} /> : <CheckCircle size={24} className="group-hover/btn:scale-110 transition-transform" />}
                 <span className="text-xs uppercase tracking-[0.2em]">{activeDelivery.status === 'picked' ? 'Arrived at Store' : 'Hand over Food'}</span>
              </button>
 
-             <button className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-black py-6 rounded-[2rem] transition-all flex items-center justify-center gap-3">
+             <button onClick={handleNavigation} className="bg-white/5 border border-white/10 hover:bg-white/10 text-white font-black py-4 md:py-6 rounded-[2rem] transition-all flex items-center justify-center gap-3 active:scale-95">
                 <MapIcon size={20} />
                 <span className="text-xs uppercase tracking-[0.2em]">Open Navigation</span>
              </button>
@@ -246,14 +297,14 @@ const DeliveryDashboard = () => {
         </div>
       ) : (
         /* STANDBY VIEW */
-        <div className={`bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-100 p-24 text-center transition-all ${online ? 'border-orange-500/30' : ''}`}>
-           <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 transition-all ${online ? 'bg-orange-50 text-orange-500 scale-110' : 'bg-white text-gray-200 shadow-sm'}`}>
-               <Bike size={48} className={online ? 'animate-bounce' : ''} />
+        <div className={`bg-gray-50 rounded-[2rem] md:rounded-[3rem] border-2 border-dashed border-gray-100 p-12 md:p-24 text-center transition-all ${online ? 'border-orange-500/30' : ''}`}>
+           <div className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center mx-auto mb-6 transition-all ${online ? 'bg-orange-50 text-orange-500 scale-110' : 'bg-white text-gray-200 shadow-sm'}`}>
+               <Bike size={40} className={`md:w-[48px] md:h-[48px] ${online ? 'animate-bounce' : ''}`} />
            </div>
-           <h2 className="text-3xl font-black text-gray-900 tracking-tight">
+           <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">
               {online ? 'Connecting to Hub...' : 'Pilot Station Offline'}
            </h2>
-           <p className="text-gray-400 font-bold text-sm tracking-tight mt-2 max-w-xs mx-auto">
+           <p className="text-gray-400 font-bold text-xs md:text-sm tracking-tight mt-2 max-w-xs mx-auto">
              {online ? 'Standby for high-priority delivery requests from nearby merchants.' : 'Access live requests by switching your pilot status to Duty On.'}
            </p>
         </div>
