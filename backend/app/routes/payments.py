@@ -14,11 +14,11 @@ logger = logging.getLogger(__name__)
 
 bp = Blueprint('payments', __name__, url_prefix='/api/payments')
 
-# Initialize Razorpay client
-client = razorpay.Client(auth=(
-    os.getenv('RAZORPAY_KEY_ID', 'rzp_test_placeholder'),
-    os.getenv('RAZORPAY_KEY_SECRET', 'placeholder')
-))
+def get_razorpay_client():
+    return razorpay.Client(auth=(
+        os.getenv('RAZORPAY_KEY_ID', 'rzp_test_placeholder'),
+        os.getenv('RAZORPAY_KEY_SECRET', 'placeholder')
+    ))
 
 @bp.route('/create-razorpay-order', methods=['POST'])
 @customer_required
@@ -46,6 +46,7 @@ def create_razorpay_order():
         }
         
         # Create Razorpay order
+        client = get_razorpay_client()
         razorpay_order = client.order.create(data=razorpay_order_data)
         
         # Save Razorpay order ID to our order
@@ -86,6 +87,7 @@ def verify_payment():
         }
         
         try:
+            client = get_razorpay_client()
             client.utility.verify_payment_signature(params_dict)
         except Exception:
             return jsonify({'error': 'Payment verification failed (Invalid signature)'}), 400

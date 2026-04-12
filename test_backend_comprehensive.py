@@ -6,7 +6,7 @@ import json
 
 sys.path.insert(0, os.getcwd())
 os.environ['FLASK_ENV'] = 'development'
-os.environ['MONGODB_URI'] = 'mongodb+srv://fooduser:Fv7%40FoodApp123@cluster0.qugxr.mongodb.net/fooddelivery?retryWrites=true&w=majority'
+os.environ['MONGODB_URI'] = 'mongodb://127.0.0.1:27017/fooddelivery_test_comprehensive'
 
 from backend.app import create_app
 
@@ -59,7 +59,8 @@ def main():
             'email': 'testchef@pizza.com',
             'phone': '9876543210',
             'shop_name': 'Test Pizza House',
-            'address': 'Test Address Street 123'
+            'address': 'Test Address Street 123',
+            'id_proof_url': 'http://example.com/id'
         })
         rest_user_id = resp3.get('user_id') if resp3 else None
         print(f"[INFO] Restaurant User ID: {rest_user_id}")
@@ -75,7 +76,8 @@ def main():
             'name': 'Test Runner',
             'email': 'runner@delivery.com',
             'phone': '9123456789',
-            'vehicle_type': 'bike'
+            'vehicle_type': 'bike',
+            'id_proof_url': 'http://example.com/id'
         })
         delivery_user_id = resp5.get('user_id') if resp5 else None
         print(f"[INFO] Delivery User ID: {delivery_user_id}")
@@ -126,7 +128,8 @@ def main():
             'email': 'testchef@pizza.com',  # Same email as Test 3
             'phone': '9999999999',
             'shop_name': 'Another Pizza Place',
-            'address': 'Another Address'
+            'address': 'Another Address',
+            'id_proof_url': 'http://example.com/id'
         })
 
         # Test 13: Invalid Phone
@@ -134,7 +137,8 @@ def main():
             'name': 'Invalid Runner',
             'email': 'invalid@delivery.com',
             'phone': '123',  # Too short
-            'vehicle_type': 'bike'
+            'vehicle_type': 'bike',
+            'id_proof_url': 'http://example.com/id'
         })
 
         # Test 14: Invalid Vehicle Type
@@ -142,7 +146,8 @@ def main():
             'name': 'Test Runner 2',
             'email': 'runner2@delivery.com',
             'phone': '9876543210',
-            'vehicle_type': 'rocket'  # Invalid
+            'vehicle_type': 'rocket',  # Invalid
+            'id_proof_url': 'http://example.com/id'
         })
 
         print("\n\n")

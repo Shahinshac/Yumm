@@ -353,8 +353,8 @@ def update_order_status(order_id):
         }), 400
 
     # Role-based permission checks
-    if current.role == 'restaurant' and new_status not in ['accepted', 'cancelled']:
-        return jsonify({'error': 'Restaurants can only accept or cancel orders'}), 403
+    if current.role == 'restaurant' and new_status not in ['accepted', 'preparing', 'ready', 'cancelled']:
+        return jsonify({'error': 'Restaurants can only update to accepted, preparing, ready, or cancelled'}), 403
 
     if current.role == 'delivery' and new_status not in ['picked', 'delivered']:
         return jsonify({'error': 'Delivery partners can only update to picked or delivered'}), 403

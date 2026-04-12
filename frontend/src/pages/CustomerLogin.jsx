@@ -43,7 +43,11 @@ const CustomerLogin = () => {
       login(data.user, data.access_token);
       navigate('/home');
     } catch (err) {
-      setError('Google login failed. Please try again or use another account.');
+      const backendError = err.response?.data?.error;
+      const details = err.response?.data?.details;
+      let errMsg = backendError || 'Google login failed. Please try again or use another account.';
+      if (details) errMsg += ` (${details})`;
+      setError(errMsg);
     } finally {
       setLoading(false);
     }

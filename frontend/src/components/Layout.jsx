@@ -167,8 +167,8 @@ const Layout = () => {
       <div className="flex-1 flex flex-col min-h-screen">
         
         {/* Dynamic Header */}
-        <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'pt-4 pb-2' : 'py-4 border-b border-gray-100 px-6'}`}>
-          <div className={`${isCustomer ? 'max-w-7xl mx-auto px-6' : 'flex items-center justify-between w-full'}`}>
+        <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'pt-4 pb-2' : 'py-4 border-b border-gray-100 px-4 md:px-6'}`}>
+          <div className={`${isCustomer ? 'max-w-7xl mx-auto px-4 md:px-6' : 'flex items-center justify-between w-full'}`}>
             
             {isCustomer ? (
               /* ZOMATO CLEAN HEADER (CUSTOMERS) */
@@ -195,15 +195,15 @@ const Layout = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 bg-white border border-gray-200 rounded-2xl shadow-sm flex items-center px-5 py-4 gap-3 focus-within:shadow-md transition-shadow">
+                <div className="flex items-center gap-2 md:gap-3 mt-1 md:mt-0">
+                  <div className="flex-1 bg-white border border-gray-200 rounded-2xl shadow-sm flex items-center px-3 md:px-5 py-3 md:py-4 gap-2 md:gap-3 focus-within:shadow-md transition-shadow">
                      <Search className="text-[#e23744]" size={20} />
                      <input 
                         type="text" 
                         placeholder='Search "comfort food"'
-                        className="flex-1 outline-none font-bold text-sm text-gray-800 placeholder-gray-400"
+                        className="flex-1 w-full outline-none font-bold text-sm text-gray-800 placeholder-gray-400"
                      />
-                     <div className="w-px h-6 bg-gray-100 mx-2" />
+                     <div className="w-px h-6 bg-gray-100 mx-1 md:mx-2" />
                      <Mic className="text-[#e23744]" size={20} />
                   </div>
                   
@@ -259,8 +259,8 @@ const Layout = () => {
         )}
 
         {/* Page Content */}
-        <main className={`flex-1 overflow-auto ${isCustomer ? 'bg-white' : 'p-6 lg:p-8 bg-gray-50'}`}>
-          <div className={`${isCustomer ? 'max-w-7xl mx-auto px-6 py-6' : 'max-w-7xl mx-auto'}`}>
+        <main className={`flex-1 overflow-auto ${isCustomer ? 'bg-white' : 'p-4 md:p-6 lg:p-8 bg-gray-50'}`}>
+          <div className={`${isCustomer ? 'max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6' : 'max-w-7xl mx-auto'}`}>
             <Outlet context={{ vegMode, locationName }} />
           </div>
         </main>

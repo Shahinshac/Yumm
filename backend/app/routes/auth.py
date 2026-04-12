@@ -234,24 +234,25 @@ def register_delivery():
 
 @bp.route('/google-login', methods=['POST'])
 def google_login():
-    """Google Sign-In for customers using Access Token
+    """Google Sign-In for customers using ID Token
 
-    Accepts the access_token from Google OAuth2 (via google_sign_in Flutter plugin),
+    Accepts the id_token from Google OAuth2 (via google_sign_in Flutter plugin or React),
     verifies it directly against Google's userinfo endpoint, then logs the user in.
     """
-    from google.oauth2 import id_token
+    from google.oauth2 import id_token as google_id_token
     from google.auth.transport import requests as google_auth_req
     import os
 
     data = request.get_json()
 
-    access_token = data.get('access_token', '').strip()
-    if not access_token:
-        return jsonify({'error': 'Missing access_token'}), 400
+    # Support both id_token and access_token for backward compatibility during migration
+    id_token_str = data.get('id_token', data.get('access_token', '')).strip()
+    if not id_token_str:
+        return jsonify({'error': 'Missing id_token'}), 400
 
     try:
         # Mock logic for local testing without actual Google Auth flow
-        if access_token == 'mock_test_user':
+        if id_token_str == 'mock_test_user':
             logger.info("Using mock google verification for local testing")
             google_id = "mock_google_12345"
             email = "testcustomer@example.com"
@@ -266,9 +267,8 @@ def google_login():
 
             try:
                 # Verify the ID Token
-                # 'access_token' variable in this context contains the ID Token string
-                id_info = id_token.verify_oauth2_token(
-                    access_token,
+                id_info = google_id_token.verify_oauth2_token(
+                    id_token_str,
                     google_auth_req.Request(),
                     client_id
                 )
@@ -399,9 +399,6 @@ def login():
         }), 200
     except Exception as e:
         logger.error(f"Login error: {str(e)}", exc_info=True)
-        return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
-
-
         return jsonify({'error': 'Internal server error', 'details': str(e)}), 500
 
 

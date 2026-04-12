@@ -6,8 +6,8 @@ export const authService = {
     return response.data;
   },
 
-  googleLogin: async (accessToken) => {
-    const response = await api.post('/auth/google-login', { access_token: accessToken });
+  googleLogin: async (idToken) => {
+    const response = await api.post('/auth/google-login', { id_token: idToken });
     return response.data;
   },
 

@@ -1,0 +1,23 @@
+{
+  "name": "yumm",
+  "version": "1.0.0",
+  "description": "A full-stack food delivery application built with **Flutter** (mobile & web), **Flask** backend, and **MongoDB** database.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shahinshac/Yumm.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Shahinshac/Yumm/issues"
+  },
+  "homepage": "https://github.com/Shahinshac/Yumm#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.59.1"
+  }
+}

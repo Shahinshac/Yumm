@@ -118,15 +118,15 @@ const CustomerHome = () => {
     <div className="space-y-8 pb-24">
       
       {/* 50% OFF HERO BANNER */}
-      <div className="relative overflow-hidden rounded-[2.5rem] bg-[#e23744] h-72 flex items-center px-10 shadow-2xl shadow-red-100 group">
+      <div className="relative overflow-hidden rounded-[2.5rem] bg-[#e23744] h-60 md:h-72 flex items-center px-6 md:px-10 shadow-2xl shadow-red-100 group">
          <div className="absolute inset-0 opacity-20 pointer-events-none">
             <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
             <div className="absolute bottom-0 left-0 w-64 h-64 bg-black rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
          </div>
          
          <div className="relative z-10 flex flex-col items-start gap-4 animate-in fade-in slide-in-from-left duration-700">
-            <h2 className="text-white text-6xl font-black italic tracking-tighter leading-none">
-               ITEMS AT <br /> <span className="text-7xl">50% OFF</span>
+            <h2 className="text-white text-4xl md:text-6xl font-black italic tracking-tighter leading-none">
+               ITEMS AT <br /> <span className="text-5xl md:text-7xl">50% OFF</span>
             </h2>
             <button className="bg-black text-white px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2">
                Order now <ChevronRight size={18} />
@@ -193,7 +193,7 @@ const CustomerHome = () => {
 
       {/* RESTAURANT FEED */}
       <div className="pt-8">
-        <h2 className="text-xl font-black text-gray-900 flex items-center gap-3">
+        <h2 className="text-lg md:text-xl font-black text-gray-900 flex items-center gap-3">
           {filtered.length} RESTAURANTS DELIVERING TO YOU
         </h2>
         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1 mb-8 italic">Featured Selections</p>

@@ -71,20 +71,20 @@ const RestaurantDetails = () => {
         
         <button 
           onClick={() => navigate('/home')}
-          className="absolute top-6 left-6 p-3 bg-white/20 backdrop-blur-md hover:bg-white/40 text-white rounded-2xl transition-all border border-white/30 active:scale-95"
+          className="absolute top-4 left-4 md:top-6 md:left-6 p-2 md:p-3 bg-white/20 backdrop-blur-md hover:bg-white/40 text-white rounded-2xl transition-all border border-white/30 active:scale-95"
         >
           <ArrowLeft size={20} />
         </button>
 
-        <div className="absolute bottom-8 left-8 right-8 text-white">
+        <div className="absolute bottom-4 left-4 right-4 md:bottom-8 md:left-8 md:right-8 text-white">
           <div className="flex items-center gap-2 mb-2">
              <div className="bg-white/95 backdrop-blur px-2 py-0.5 rounded-lg flex items-center gap-1 text-gray-800 text-[10px] font-black shadow-sm">
                 <Star size={10} className="text-yellow-500 fill-yellow-500" />
                 {restaurant.rating || '4.5'}
              </div>
           </div>
-          <h1 className="text-4xl font-black mb-2 drop-shadow-md">{restaurant.name}</h1>
-          <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-white/90">
+          <h1 className="text-3xl md:text-4xl font-black mb-2 drop-shadow-md">{restaurant.name}</h1>
+          <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs md:text-sm font-medium text-white/90">
              <div className="flex items-center gap-1.5"><MapPin size={16} className="text-orange-500" /> {restaurant.address}</div>
              <div className="flex items-center gap-1.5"><Clock size={16} className="text-orange-500" /> {restaurant.delivery_time || 30} mins Delivery</div>
              <div className="flex items-center gap-1.5"><TrendingUp size={16} className="text-orange-500" /> ₹{restaurant.min_order || 149} min order</div>

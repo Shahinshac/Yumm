@@ -93,11 +93,16 @@ def add_menu_item(restaurant_id):
     if not data.get('name') or data.get('price') is None:
         return jsonify({'error': 'Name and price are required'}), 400
 
+    try:
+        price = float(data['price'])
+    except ValueError:
+        return jsonify({'error': 'price must be a valid number'}), 400
+
     menu_item = MenuItem(
         restaurant=restaurant,
         name=data['name'],
         description=data.get('description', ''),
-        price=float(data['price']),
+        price=price,
         category=data.get('category', 'Other'),
         image=data.get('image', ''),
         is_available=data.get('is_available', True),
@@ -133,7 +138,10 @@ def update_menu_item(restaurant_id, item_id):
     if 'description' in data:
         menu_item.description = data['description']
     if 'price' in data:
-        menu_item.price = float(data['price'])
+        try:
+            menu_item.price = float(data['price'])
+        except ValueError:
+            return jsonify({'error': 'price must be a valid number'}), 400
     if 'category' in data:
         menu_item.category = data['category']
     if 'image' in data:
