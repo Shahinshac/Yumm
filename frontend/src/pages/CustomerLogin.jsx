@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/authService';
-import { ShieldCheck, ChevronRight } from 'lucide-react';
+import { ShieldCheck, ChevronRight, Pizza, Coffee } from 'lucide-react';
 
 const CustomerLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -54,7 +54,8 @@ const CustomerLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-white font-sans overflow-hidden">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-[#fff6f5] via-[#ffe8dc] to-[#fff8f3] font-sans overflow-hidden relative">
+      <div className="absolute inset-x-0 top-0 h-56 bg-[radial-gradient(circle_at_top,_rgba(226,71,85,0.14),_transparent_60%)] pointer-events-none" />
       {/* Left Side: Brand & Visuals (Hidden on Mobile) */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#e23744] items-center justify-center p-12 overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -95,17 +96,24 @@ const CustomerLogin = () => {
 
       {/* Right Side: Login Form */}
       <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 lg:p-12 relative">
+        <div className="absolute top-10 left-1/2 -translate-x-1/2 w-60 h-60 rounded-full bg-[#fff1ef] opacity-80 blur-3xl" />
+        <div className="absolute bottom-10 right-10 w-40 h-40 rounded-full bg-[#ffe8d9] opacity-70 blur-3xl" />
+
         {/* Mobile Logo */}
-        <div className="lg:hidden mb-8 text-center">
-           <div className="w-16 h-16 bg-[#e23744] rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-xl">
-             <span className="text-white font-black text-2xl">Y</span>
+        <div className="lg:hidden mb-6 text-center">
+           <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center mx-auto mb-4 shadow-2xl">
+             <span className="text-[#e23744] font-black text-2xl">Y</span>
+           </div>
+           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/90 border border-white rounded-full shadow-sm">
+              <Pizza className="w-4 h-4 text-[#e23744]" />
+              <span className="text-xs uppercase tracking-[0.32em] text-[#e23744] font-black">Foodie Login</span>
            </div>
         </div>
 
-        <div className="w-full max-w-[440px] space-y-10">
+        <div className="w-full max-w-[440px] space-y-10 relative z-10">
            <div className="text-center lg:text-left">
-              <h2 className="text-4xl font-black text-gray-900 tracking-tight mb-3">Welcome back</h2>
-              <p className="text-gray-400 font-bold text-sm uppercase tracking-widest">Customer Portal Access</p>
+              <h2 className="text-4xl sm:text-5xl font-black text-gray-900 tracking-tight mb-3">Hungry? Let's get you fed.</h2>
+              <p className="text-[#e23744] font-black text-sm uppercase tracking-widest">Fresh meals, fast delivery</p>
            </div>
 
            {error && (
@@ -116,8 +124,18 @@ const CustomerLogin = () => {
            )}
 
            <div className="space-y-8">
-               <div className="bg-gray-50 rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
-                <p className="text-center text-sm text-gray-500 font-bold mb-6 italic">Quick & Secure Login</p>
+               <div className="bg-white/95 rounded-[2.5rem] p-8 border border-[#fde8df] shadow-[0_25px_60px_-30px_rgba(226,71,85,0.6)]">
+                 <div className="flex items-center justify-between gap-4 mb-6">
+                   <div>
+                     <p className="text-sm text-[#e23744] font-black uppercase tracking-[0.3em]">Food Mood</p>
+                     <h3 className="text-2xl font-black text-gray-900 mt-2">Tap to continue with Google</h3>
+                   </div>
+                   <div className="grid grid-cols-2 gap-2">
+                     <div className="w-12 h-12 rounded-3xl bg-[#fff2ef] flex items-center justify-center text-[#e23744] shadow-sm"><Pizza className="w-5 h-5" /></div>
+                     <div className="w-12 h-12 rounded-3xl bg-[#fff2ef] flex items-center justify-center text-[#e23744] shadow-sm"><Coffee className="w-5 h-5" /></div>
+                   </div>
+                 </div>
+                <p className="text-center text-sm text-gray-500 font-bold mb-6 italic">Quick, safe and tasty login</p>
                 <div id="googleSignInDiv" className="w-full flex justify-center py-2 scale-110" />
               </div>
               
