@@ -28,7 +28,7 @@ class Order(Document):
     # Order status
     status = StringField(
         required=True,
-        choices=['placed', 'accepted', 'preparing', 'ready', 'waiting', 'assigned', 'picked', 'delivered', 'cancelled'],
+        choices=['placed', 'accepted', 'preparing', 'ready', 'waiting', 'assigned', 'on_the_way', 'picked', 'delivered', 'cancelled'],
         default='placed'
     )
 
