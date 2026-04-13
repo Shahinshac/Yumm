@@ -149,8 +149,8 @@ const RestaurantOrders = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
-          {orders.map(order => {
-            if (!order || !order.id) return null;
+          {orders?.map(order => {
+            if (!order?.id) return null;
             const isLoading = !!actionLoading[order.id];
             const payBadge = PAYMENT_BADGE[order.payment_method || 'cod'] || PAYMENT_BADGE.cod;
             const payStatus = PAYMENT_STATUS_BADGE[order.payment_status || 'pending'] || PAYMENT_STATUS_BADGE.pending;
@@ -174,7 +174,7 @@ const RestaurantOrders = () => {
                         <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase ${payBadge.color}`}>{payBadge.label}</span>
                         <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase ${payStatus.color}`}>{payStatus.label}</span>
                         <span className="text-[10px] font-bold text-gray-400 flex items-center gap-1">
-                          <Clock size={12} /> {new Date(order.created_at).toLocaleTimeString()}
+                          <Clock size={12} /> {order.created_at ? new Date(order.created_at).toLocaleTimeString() : 'Recently'}
                         </span>
                       </div>
 
@@ -291,7 +291,7 @@ const RestaurantOrders = () => {
             <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-5 text-white text-center">
               <QrCode size={24} className="mx-auto mb-2" />
               <h2 className="font-black">Order Payment QR</h2>
-              <p className="text-green-100 text-sm">#{showQrModal.id.slice(-6).toUpperCase()} · ₹{showQrModal.total_amount}</p>
+              <p className="text-green-100 text-sm">#{showQrModal?.id?.slice(-6)?.toUpperCase() || 'ORDER'} · ₹{showQrModal?.total_amount || showQrModal?.total || 0}</p>
             </div>
             <div className="p-6 flex flex-col items-center gap-4">
               {showQrModal.restaurant_upi_id ? (

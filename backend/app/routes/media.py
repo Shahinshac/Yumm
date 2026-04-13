@@ -39,10 +39,19 @@ def upload_file():
             folder = request.form.get('folder', 'general')
             
             # Upload to Cloudinary
-            url = CloudinaryService.upload_document(file, folder=f"yumm_{folder}")
+            result = CloudinaryService.upload_document(file, folder=f"yumm_{folder}")
+            
+            # Handle return of (url, error) or just url
+            if isinstance(result, tuple):
+                url, error_msg = result
+            else:
+                url, error_msg = result, "Unknown Cloudinary error"
             
             if not url:
-                return jsonify({'error': 'Failed to upload to cloud storage'}), 500
+                return jsonify({
+                    'error': 'Failed to upload to cloud storage',
+                    'details': error_msg
+                }), 500
                 
             logger.info(f"File uploaded to Cloudinary successfully")
             

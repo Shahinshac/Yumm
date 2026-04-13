@@ -27,8 +27,9 @@ class CloudinaryService:
             )
             return upload_result.get('secure_url')
         except Exception as e:
-            print(f"Cloudinary Upload Error: {str(e)}")
-            return None
+            error_msg = str(e)
+            print(f"Cloudinary Upload Error: {error_msg}")
+            return None, error_msg
 
     @staticmethod
     def delete_document(public_id):

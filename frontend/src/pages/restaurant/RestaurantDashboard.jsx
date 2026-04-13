@@ -154,12 +154,12 @@ const RestaurantDashboard = () => {
             <p className="text-gray-400 font-bold text-xs uppercase tracking-widest mt-1">Ready for next rush</p>
           </div>
         ) : (
-          <div className="divide-y divide-gray-50">
-            {orders.map(order => {
-              if (!order || !order.id) return null;
-              const s = STATUS_STYLES[order.status] || STATUS_STYLES.pending;
-              const orderId = order.id || '000000000000';
-              const totalAmount = order.total || order.total_amount || 0;
+           <div className="divide-y divide-gray-50">
+             {orders?.map(order => {
+               if (!order?.id) return null;
+               const s = STATUS_STYLES[order.status] || STATUS_STYLES.pending;
+               const orderId = order.id || '000000000000';
+               const totalAmount = order.total || order.total_amount || 0;
               return (
                 <div key={order.id} className="flex flex-col md:flex-row md:items-center gap-8 px-10 py-10 hover:bg-gray-50/50 transition-colors group">
                   <div className="flex-1 min-w-0">
@@ -167,7 +167,11 @@ const RestaurantDashboard = () => {
                       <span className="font-black text-2xl text-gray-900 tracking-tighter">#{orderId.slice(-4).toUpperCase()}</span>
                       <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 ${s.cls}`}>{s.label}</span>
                     </div>
-                    <div className="flex items-center gap-4 text-gray-500 font-bold text-sm">
+                     <div className="flex items-center gap-4 text-gray-500 font-bold text-sm">
+                       <span className="flex items-center gap-2"><Clock size={14} className="text-gray-300" /> {order.created_at ? new Date(order.created_at).toLocaleTimeString() : 'Recent'}</span>
+                       <span className="flex items-center gap-2"><CreditCard size={14} className="text-gray-300" /> {order.payment_method?.toUpperCase() || 'COD'}</span>
+                     </div>
+                     <div className="flex items-center gap-4 text-gray-500 font-bold text-sm mt-2">
                        <span className="text-gray-900">{order.customer_username || 'External Guest'}</span>
                        <div className="w-1.5 h-1.5 bg-gray-200 rounded-full" />
                        <span className="line-clamp-1">
@@ -176,7 +180,6 @@ const RestaurantDashboard = () => {
                            : (order.items || 'Standard Meal')}
                        </span>
                     </div>
-                    <div className="flex items-center gap-4 mt-3">
                        <div className="flex items-center gap-1.5 text-[10px] font-black text-gray-400 uppercase tracking-widest">
                           <Clock size={12} /> Received 5m ago
                        </div>
