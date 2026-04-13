@@ -9,6 +9,7 @@ from backend.app.models.restaurant import Restaurant
 from backend.app.models.delivery_partner import DeliveryPartner
 from backend.app.utils.security import PasswordSecurity
 from backend.app.utils.validators import Validators
+from backend.app.services.email_service import EmailService
 import logging
 from backend.app.constants import SUPPORT_EMAIL
 
@@ -465,6 +466,48 @@ def change_password():
         
     except Exception as e:
         logger.error(f"Error changing password: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+
+@bp.route('/reset-password', methods=['POST'])
+def reset_password():
+    """Send a temporary password to the restaurant or delivery email"""
+    try:
+        data = request.get_json(silent=True) or {}
+        identifier = data.get('email') or data.get('username')
+
+        if not identifier:
+            return jsonify({'error': 'Email or username is required'}), 400
+
+        user = User.objects(email=identifier).first() or User.objects(username=identifier).first()
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+
+        if user.role == 'customer' and not user.password_hash:
+            return jsonify({'error': 'Customers must use Google login or contact support'}), 400
+
+        if not user.email:
+            return jsonify({'error': 'No email address available for this account'}), 400
+
+        temporary_password = PasswordSecurity.generate_secure_password(8)
+        user.password_hash = PasswordSecurity.hash_password(temporary_password)
+        user.password_generated_at = datetime.utcnow()
+        user.save()
+
+        email_sent = EmailService.send_password_reset_email(
+            user_email=user.email,
+            user_name=user.full_name or user.username,
+            username=user.username,
+            password=temporary_password
+        )
+
+        if not email_sent:
+            logger.error(f"Password reset email failed for user {user.email}")
+            return jsonify({'error': 'Failed to send password reset email'}), 500
+
+        return jsonify({'message': 'A temporary password has been emailed to you.'}), 200
+    except Exception as e:
+        logger.error(f"Error resetting password: {str(e)}", exc_info=True)
         return jsonify({'error': 'Internal server error'}), 500
 
 

@@ -85,6 +85,47 @@ Yumm FoodHub Team
         return EmailService.send_email(subject, user_email, body, html)
 
     @staticmethod
+    def send_password_reset_email(user_email, user_name, username, password):
+        """Send a password reset notification with a temporary password"""
+        subject = "Yumm FoodHub Password Reset Request"
+        body = f"""
+Hi {user_name},
+
+A password reset request was received for your Yumm FoodHub account.
+
+Your temporary password is:
+
+Username: {username}
+Temporary Password: {password}
+
+Please log in at https://yummfoodhub.vercel.app/login and change your password immediately.
+
+If you did not request this password reset, please contact support.
+
+Regards,
+Yumm FoodHub Team
+"""
+        html = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f0f0f0; border-radius: 10px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <h1 style="color: #ff4b3a;">Yumm FoodHub</h1>
+            </div>
+            <h2 style="color: #333;">Password Reset Request</h2>
+            <p>Hi {user_name},</p>
+            <p>We received a request to reset your password. Use the temporary password below to log in:</p>
+            <div style="background-color: #f9f9f9; padding: 20px; border-radius: 10px; margin: 25px 0;">
+                <p style="margin: 0; font-weight: bold; color: #666;">Temporary Credentials:</p>
+                <p style="margin: 10px 0 0 0;"><strong>Username:</strong> {username}</p>
+                <p style="margin: 5px 0 0 0;"><strong>Password:</strong> <code style="background: #eee; padding: 2px 5px; border-radius: 3px;">{password}</code></p>
+                <p style="margin: 10px 0 0 0; font-size: 11px; color: #999;">Email: {user_email}</p>
+            </div>
+            <p>Please log in at <a href="https://yummfoodhub.vercel.app/login" style="color: #ff4b3a;">Yumm FoodHub</a> and change your password immediately.</p>
+            <p style="color: #999; font-size: 12px; margin-top: 40px;">If you did not request this password reset, please contact support.</p>
+        </div>
+        """
+        return EmailService.send_email(subject, user_email, body, html)
+
+    @staticmethod
     def send_rejection_email(user_email, user_name, reason="Your account application did not meet our current requirements."):
         """Send rejection notice to the user"""
         subject = "Update regarding your Yumm FoodHub Application"

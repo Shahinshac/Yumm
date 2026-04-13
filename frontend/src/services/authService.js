@@ -31,6 +31,16 @@ export const authService = {
     return response.data;
   },
 
+  changePassword: async (data) => {
+    const response = await api.post('/auth/change-password', data);
+    return response.data;
+  },
+
+  resetPassword: async (data) => {
+    const response = await api.post('/auth/reset-password', data);
+    return response.data;
+  },
+
   testCustomerLogin: async () => {
     const response = await api.post('/auth/test-customer-login', { email: 'testcust@yumm.com' });
     return response.data;

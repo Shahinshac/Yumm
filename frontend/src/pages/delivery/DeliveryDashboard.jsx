@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { deliveryService } from '../../services/deliveryService';
+import { authService } from '../../services/authService';
 import useLocationTracking from '../../hooks/useLocationTracking';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -30,6 +31,10 @@ const DeliveryDashboard = () => {
     const [showItems, setShowItems] = useState(false);
     const [incomingRequest, setIncomingRequest] = useState(null);
     const [requestTimeLeft, setRequestTimeLeft] = useState(60);
+    const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
+    const [passwordSaving, setPasswordSaving] = useState(false);
+    const [passwordMessage, setPasswordMessage] = useState('');
+    const [passwordError, setPasswordError] = useState('');
     const requestTimerRef = useRef(null);
 
     const { socket } = useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
@@ -154,6 +159,37 @@ const DeliveryDashboard = () => {
         else alert("Phone number not available.");
     };
 
+  const handleChangePassword = async () => {
+      if (!passwordData.current || !passwordData.new || !passwordData.confirm) {
+          setPasswordError('Please fill in all password fields.');
+          return;
+      }
+      if (passwordData.new !== passwordData.confirm) {
+          setPasswordError('New passwords do not match.');
+          return;
+      }
+      if (passwordData.new.length < 6) {
+          setPasswordError('New password must be at least 6 characters.');
+          return;
+      }
+
+      setPasswordSaving(true);
+      setPasswordError('');
+      setPasswordMessage('');
+      try {
+          await authService.changePassword({
+              current_password: passwordData.current,
+              new_password: passwordData.new
+          });
+          setPasswordMessage('Password changed successfully.');
+          setPasswordData({ current: '', new: '', confirm: '' });
+      } catch (err) {
+          setPasswordError(err.response?.data?.error || 'Failed to change password.');
+      } finally {
+          setPasswordSaving(false);
+      }
+  };
+
   if (loading && !activeDelivery && availableOrders.length === 0) {
       return (
           <div className="flex flex-col items-center justify-center py-32">
@@ -198,6 +234,52 @@ const DeliveryDashboard = () => {
         <StatCard icon={IndianRupee} label="Daily Pay" value={`₹${stats.earningsToday || 0}`} color="text-blue-500" />
         <StatCard icon={Navigation} label="Kms" value={`${stats.kmToday || 0}`} color="text-purple-500" />
         <StatCard icon={TrendingUp} label="Rank" value="Gold" color="text-orange-500" />
+      </div>
+
+      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 mt-8">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+              <div>
+                  <h2 className="text-xl font-black text-gray-900">Change Account Password</h2>
+                  <p className="text-sm text-gray-500 mt-1">Update your delivery account password securely.</p>
+              </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <input
+                  type="password"
+                  value={passwordData.current}
+                  onChange={e => setPasswordData({ ...passwordData, current: e.target.value })}
+                  placeholder="Current password"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm outline-none focus:border-[#ff4b3a] focus:bg-white transition"
+              />
+              <input
+                  type="password"
+                  value={passwordData.new}
+                  onChange={e => setPasswordData({ ...passwordData, new: e.target.value })}
+                  placeholder="New password"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm outline-none focus:border-[#ff4b3a] focus:bg-white transition"
+              />
+              <input
+                  type="password"
+                  value={passwordData.confirm}
+                  onChange={e => setPasswordData({ ...passwordData, confirm: e.target.value })}
+                  placeholder="Confirm new password"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-sm outline-none focus:border-[#ff4b3a] focus:bg-white transition"
+              />
+          </div>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-6">
+              <div className="space-y-2">
+                  {passwordMessage && <p className="text-green-600 font-bold text-sm">{passwordMessage}</p>}
+                  {passwordError && <p className="text-red-500 font-bold text-sm">{passwordError}</p>}
+              </div>
+              <button
+                  type="button"
+                  onClick={handleChangePassword}
+                  disabled={passwordSaving}
+                  className="bg-[#ff4b3a] text-white rounded-2xl px-6 py-4 uppercase text-[10px] font-black tracking-[0.2em] shadow-lg hover:bg-[#e03d2e] disabled:opacity-50 transition"
+              >
+                  {passwordSaving ? 'Updating...' : 'Change Password'}
+              </button>
+          </div>
       </div>
 
       {/* MISSION CARD (ACTIVE) */}
