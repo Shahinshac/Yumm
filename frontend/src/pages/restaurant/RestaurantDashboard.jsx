@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ShoppingBag, TrendingUp, IndianRupee, Star, Clock, CheckCircle, 
-  XCircle, ChevronRight, Package, Users, Loader2, Signal, BellRing
+  CreditCard, XCircle, ChevronRight, Package, Users, Loader2, Signal, BellRing
 } from 'lucide-react';
 import { restaurantService } from '../../services/restaurantService';
 
@@ -71,6 +71,76 @@ const RestaurantDashboard = () => {
     } finally {
       setActionLoading(prev => ({ ...prev, [id]: false }));
     }
+  };
+
+  const renderOrderCard = (order) => {
+    if (!order?.id) return null;
+
+    const statusStyle = STATUS_STYLES[order.status] || STATUS_STYLES.pending;
+    const orderId = order.id || '000000000000';
+    const totalAmount = order.total || order.total_amount || 0;
+
+    return (
+      <div key={order.id} className="flex flex-col md:flex-row md:items-center gap-8 px-10 py-10 hover:bg-gray-50/50 transition-colors group">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-4 mb-3">
+            <span className="font-black text-2xl text-gray-900 tracking-tighter">#{orderId.slice(-4).toUpperCase()}</span>
+            <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 ${statusStyle.cls}`}>{statusStyle.label}</span>
+          </div>
+          <div className="flex items-center gap-4 text-gray-500 font-bold text-sm">
+            <span className="flex items-center gap-2"><Clock size={14} className="text-gray-300" /> {order.created_at ? new Date(order.created_at).toLocaleTimeString() : 'Recent'}</span>
+            <span className="flex items-center gap-2"><CreditCard size={14} className="text-gray-300" /> {order.payment_method?.toUpperCase() || 'COD'}</span>
+          </div>
+          <div className="flex items-center gap-4 text-gray-500 font-bold text-sm mt-2">
+            <span className="text-gray-900">{order.customer_username || 'External Guest'}</span>
+            <div className="w-1.5 h-1.5 bg-gray-200 rounded-full" />
+            <span className="line-clamp-1">
+              {Array.isArray(order.items) ? order.items.map(i => i.name).join(', ') : (order.items || 'Standard Meal')}
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 text-[10px] font-black text-gray-400 uppercase tracking-widest mt-3">
+            <Clock size={12} /> Received 5m ago
+          </div>
+          <div className="flex items-center gap-1.5 text-[10px] font-black text-blue-400 uppercase tracking-widest cursor-pointer hover:underline">
+            View details <ChevronRight size={12} />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-6 shrink-0">
+          <span className="text-3xl font-black text-gray-900 tracking-tighter">₹{totalAmount}</span>
+          <div className="flex gap-2">
+            {(order.status === 'pending' || order.status === 'placed') ? (
+              <>
+                <button
+                  id={`confirm_${order.id}`}
+                  onClick={() => updateStatus(order.id, 'preparing')}
+                  className="px-6 py-3 bg-black text-white hover:bg-gray-800 rounded-2xl text-[10px] font-black uppercase tracking-widest transition shadow-xl"
+                >
+                  Confirm
+                </button>
+                <button
+                  onClick={() => updateStatus(order.id, 'rejected')}
+                  className="p-3 bg-white border border-gray-100 hover:bg-red-50 hover:text-red-500 rounded-2xl transition shadow-sm"
+                >
+                  <XCircle size={20} />
+                </button>
+              </>
+            ) : order.status === 'preparing' ? (
+              <button
+                onClick={() => updateStatus(order.id, 'ready')}
+                className="px-8 py-3 bg-[#e23744] text-white hover:bg-black rounded-2xl text-[10px] font-black uppercase tracking-widest transition shadow-xl shadow-red-100"
+              >
+                Mark Ready
+              </button>
+            ) : (
+              <div className="bg-green-50 p-3 rounded-2xl text-green-500">
+                <CheckCircle size={24} />
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   if (loading && orders.length === 0) {
@@ -155,76 +225,7 @@ const RestaurantDashboard = () => {
           </div>
         ) : (
            <div className="divide-y divide-gray-50">
-             {orders?.map(order => {
-               if (!order?.id) return null;
-               const s = STATUS_STYLES[order.status] || STATUS_STYLES.pending;
-               const orderId = order.id || '000000000000';
-               const totalAmount = order.total || order.total_amount || 0;
-              return (
-                <div key={order.id} className="flex flex-col md:flex-row md:items-center gap-8 px-10 py-10 hover:bg-gray-50/50 transition-colors group">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-4 mb-3">
-                      <span className="font-black text-2xl text-gray-900 tracking-tighter">#{orderId.slice(-4).toUpperCase()}</span>
-                      <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 ${s.cls}`}>{s.label}</span>
-                    </div>
-                     <div className="flex items-center gap-4 text-gray-500 font-bold text-sm">
-                       <span className="flex items-center gap-2"><Clock size={14} className="text-gray-300" /> {order.created_at ? new Date(order.created_at).toLocaleTimeString() : 'Recent'}</span>
-                       <span className="flex items-center gap-2"><CreditCard size={14} className="text-gray-300" /> {order.payment_method?.toUpperCase() || 'COD'}</span>
-                     </div>
-                     <div className="flex items-center gap-4 text-gray-500 font-bold text-sm mt-2">
-                       <span className="text-gray-900">{order.customer_username || 'External Guest'}</span>
-                       <div className="w-1.5 h-1.5 bg-gray-200 rounded-full" />
-                       <span className="line-clamp-1">
-                         {Array.isArray(order.items) 
-                           ? order.items.map(i => i.name).join(', ') 
-                           : (order.items || 'Standard Meal')}
-                       </span>
-                    </div>
-                       <div className="flex items-center gap-1.5 text-[10px] font-black text-gray-400 uppercase tracking-widest">
-                          <Clock size={12} /> Received 5m ago
-                       </div>
-                       <div className="flex items-center gap-1.5 text-[10px] font-black text-blue-400 uppercase tracking-widest cursor-pointer hover:underline">
-                          View details <ChevronRight size={12} />
-                       </div>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-6 shrink-0">
-                    <span className="text-3xl font-black text-gray-900 tracking-tighter">₹{totalAmount}</span>
-                    <div className="flex gap-2">
-                       {(order.status === 'pending' || order.status === 'placed') ? (
-                         <>
-                            <button
-                              id={`confirm_${order.id}`}
-                              onClick={() => updateStatus(order.id, 'preparing')}
-                              className="px-6 py-3 bg-black text-white hover:bg-gray-800 rounded-2xl text-[10px] font-black uppercase tracking-widest transition shadow-xl"
-                            >
-                              Confirm
-                            </button>
-                            <button
-                              onClick={() => updateStatus(order.id, 'rejected')}
-                              className="p-3 bg-white border border-gray-100 hover:bg-red-50 hover:text-red-500 rounded-2xl transition shadow-sm"
-                            >
-                              <XCircle size={20} />
-                            </button>
-                         </>
-                       ) : order.status === 'preparing' ? (
-                          <button
-                            onClick={() => updateStatus(order.id, 'ready')}
-                            className="px-8 py-3 bg-[#e23744] text-white hover:bg-black rounded-2xl text-[10px] font-black uppercase tracking-widest transition shadow-xl shadow-red-100"
-                          >
-                            Mark Ready
-                          </button>
-                       ) : (
-                         <div className="bg-green-50 p-3 rounded-2xl text-green-500">
-                           <CheckCircle size={24} />
-                         </div>
-                       )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+             {orders?.map(renderOrderCard)}
           </div>
         )}
       </div>

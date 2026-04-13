@@ -147,6 +147,21 @@ def create_app():
             'version': '2.0.1'
         }), 200
 
+    @app.route('/api/health', methods=['GET'])
+    def api_health():
+        return jsonify({
+            'status': 'online',
+            'message': 'Yumm FoodHub API is healthy',
+            'version': '2.0.1'
+        }), 200
+
+    @app.route('/api/version', methods=['GET'])
+    def api_version():
+        return jsonify({
+            'status': 'online',
+            'version': '2.0.1'
+        }), 200
+
     try:
         from backend.app.routes import (
             auth, customer, restaurant_dashboard, 
