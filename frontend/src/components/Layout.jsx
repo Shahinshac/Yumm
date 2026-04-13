@@ -167,53 +167,53 @@ const Layout = () => {
       <div className="flex-1 flex flex-col min-h-screen">
         
         {/* Dynamic Header */}
-        <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'pt-4 pb-2' : 'py-4 border-b border-gray-100 px-4 md:px-6'}`}>
+        <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'pt-2 pb-1' : 'py-3 border-b border-gray-100 px-4 md:px-6'}`}>
           <div className={`${isCustomer ? 'max-w-7xl mx-auto px-4 md:px-6' : 'flex items-center justify-between w-full'}`}>
             
             {isCustomer ? (
               /* ZOMATO CLEAN HEADER (CUSTOMERS) */
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2 group cursor-pointer">
-                    <MapPin className="text-[#e23744] fill-[#e23744]/20" size={24} />
+                    <MapPin className="text-[#e23744] fill-[#e23744]/20" size={20} />
                     <div className="flex flex-col">
                       <div className="flex items-center gap-1">
-                        <span className="font-black text-lg text-gray-900 tracking-tight">{locationName}</span>
-                        <ChevronDown size={18} className="text-gray-400 mt-1" />
+                        <span className="font-black text-base text-gray-900 tracking-tight">{locationName}</span>
+                        <ChevronDown size={14} className="text-gray-400 mt-1" />
                       </div>
-                      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none">India</span>
+                      <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest leading-none">India</span>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-4">
-                     <div className="bg-[#f3f4f6] p-2 rounded-full cursor-pointer hover:bg-gray-200">
-                        <Wallet size={20} className="text-gray-600" />
+                  <div className="flex items-center gap-3">
+                     <div className="bg-[#f3f4f6] p-1.5 rounded-full cursor-pointer hover:bg-gray-200">
+                        <Wallet size={18} className="text-gray-600" />
                      </div>
-                     <button onClick={() => setShowUserMenu(!showUserMenu)} className="w-10 h-10 rounded-full bg-[#1c1c1c] flex items-center justify-center text-white font-black text-sm border-2 border-white shadow-xl">
+                     <button onClick={() => setShowUserMenu(!showUserMenu)} className="w-8 h-8 rounded-full bg-[#1c1c1c] flex items-center justify-center text-white font-black text-xs border-2 border-white shadow-xl">
                         {initials}
                      </button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 md:gap-3 mt-1 md:mt-0">
-                  <div className="flex-1 bg-white border border-gray-200 rounded-2xl shadow-sm flex items-center px-3 md:px-5 py-3 md:py-4 gap-2 md:gap-3 focus-within:shadow-md transition-shadow">
-                     <Search className="text-[#e23744]" size={20} />
+                <div className="flex items-center gap-2 mt-1">
+                  <div className="flex-1 bg-white border border-gray-200 rounded-xl shadow-sm flex items-center px-3 py-2 gap-2 focus-within:shadow-md transition-shadow">
+                     <Search className="text-[#e23744]" size={16} />
                      <input 
                         type="text" 
                         placeholder='Search "comfort food"'
-                        className="flex-1 w-full outline-none font-bold text-sm text-gray-800 placeholder-gray-400"
+                        className="flex-1 w-full outline-none font-bold text-xs text-gray-800 placeholder-gray-400"
                      />
-                     <div className="w-px h-6 bg-gray-100 mx-1 md:mx-2" />
-                     <Mic className="text-[#e23744]" size={20} />
+                     <div className="w-px h-4 bg-gray-100 mx-1" />
+                     <Mic className="text-[#e23744]" size={16} />
                   </div>
                   
                   <div className="flex flex-col items-center">
-                     <span className="text-[8px] font-black text-gray-400 uppercase mb-1">Veg Mode</span>
+                     <span className="text-[7px] font-black text-gray-400 uppercase mb-0.5">Veg</span>
                      <button 
                         onClick={() => setVegMode(!vegMode)}
-                        className={`w-12 h-6 rounded-full transition-colors relative flex items-center px-1 ${vegMode ? 'bg-green-500' : 'bg-gray-200'}`}
+                        className={`w-10 h-5 rounded-full transition-colors relative flex items-center px-1 ${vegMode ? 'bg-green-500' : 'bg-gray-200'}`}
                      >
-                        <div className={`w-4 h-4 bg-white rounded-full transition-transform shadow-sm ${vegMode ? 'translate-x-6' : 'translate-x-0'}`} />
+                        <div className={`w-3 h-3 bg-white rounded-full transition-transform shadow-sm ${vegMode ? 'translate-x-5' : 'translate-x-0'}`} />
                      </button>
                   </div>
                 </div>
@@ -267,14 +267,20 @@ const Layout = () => {
 
         {/* Mobile Bottom Nav (Visible for customers) */}
         {isCustomer && (
-          <div className="lg:hidden sticky bottom-6 px-4 py-2 flex justify-center w-full z-40">
-             <div className="bg-white rounded-full shadow-2xl border border-gray-100 flex items-center gap-2 p-1.5 backdrop-blur-md bg-white/90">
-                <button className="bg-[#fdf2f2] text-[#e23744] px-6 py-2 rounded-full font-black text-xs uppercase tracking-widest flex items-center gap-2">
-                   <LayoutDashboard size={14} /> Delivery
-                </button>
-                <button className="text-gray-400 px-6 py-2 rounded-full font-bold text-xs uppercase tracking-widest flex items-center gap-2">
-                   <History size={14} /> History
-                </button>
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 px-4 py-3 flex justify-center w-full z-40 bg-white/80 backdrop-blur-md border-t border-gray-100">
+             <div className="flex items-center gap-8">
+                <Link to="/home" className={`flex flex-col items-center gap-1 ${location.pathname === '/home' ? 'text-[#e23744]' : 'text-gray-400'}`}>
+                   <LayoutDashboard size={20} />
+                   <span className="text-[10px] font-black uppercase tracking-widest">Delivery</span>
+                </Link>
+                <Link to="/orders" className={`flex flex-col items-center gap-1 ${location.pathname === '/orders' ? 'text-[#e23744]' : 'text-gray-400'}`}>
+                   <History size={20} />
+                   <span className="text-[10px] font-black uppercase tracking-widest">History</span>
+                </Link>
+                <Link to="/cart" className={`flex flex-col items-center gap-1 ${location.pathname === '/cart' ? 'text-[#e23744]' : 'text-gray-400'}`}>
+                   <ShoppingCart size={20} />
+                   <span className="text-[10px] font-black uppercase tracking-widest">Cart</span>
+                </Link>
              </div>
           </div>
         )}

@@ -10,7 +10,7 @@ const AdminUsers = () => {
   const [showModal, setShowModal] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [errorProp, setErrorProp] = useState('');
-  const [formData, setFormData] = useState({ username: '', email: '', password: '', role: 'customer' });
+  const [formData, setFormData] = useState({ username: '', email: '', password: '', phone: '', role: 'customer' });
 
   const fetchUsers = () => {
     adminService.getAllUsers().then(res => {
@@ -32,7 +32,7 @@ const AdminUsers = () => {
         const res = await adminService.createUser(formData);
         if(res.success) {
             setShowModal(false);
-            setFormData({ username: '', email: '', password: '', role: 'customer' });
+            setFormData({ username: '', email: '', password: '', phone: '', role: 'customer' });
             fetchUsers();
         } else {
             setErrorProp(res.error || 'Failed to create user');
@@ -225,6 +225,10 @@ const AdminUsers = () => {
                     <div>
                         <label className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Email Address</label>
                         <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold focus:border-[#ff4b3a] focus:bg-white outline-none transition-all" placeholder="user@example.com" />
+                    </div>
+                    <div>
+                        <label className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Phone Number</label>
+                        <input required type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-sm font-bold focus:border-[#ff4b3a] focus:bg-white outline-none transition-all" placeholder="10-digit mobile..." />
                     </div>
                     <div>
                         <label className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1.5 block">Password</label>

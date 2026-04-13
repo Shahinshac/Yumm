@@ -34,3 +34,33 @@ body {
     text-shadow: 0 2px 4px rgba(0,0,0,0.3);
   }
 }
+
+/* Mobile Compact Overrides */
+@media (max-width: 640px) {
+  .rounded-\[2\.5rem\], .rounded-\[3rem\], .rounded-\[2rem\] {
+    border-radius: 1.5rem !important;
+  }
+  
+  .p-24, .p-12, .p-8 {
+    padding: 1rem !important;
+  }
+  
+  .px-24, .px-12, .px-8 {
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+  }
+
+  .py-24, .py-12, .py-8 {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  h2 {
+    font-size: 1.875rem !important; /* text-3xl fallback */
+    line-height: 2.25rem !important;
+  }
+
+  .h-72, .h-60 {
+    height: 12rem !important; /* More compact hero banner */
+  }
+}

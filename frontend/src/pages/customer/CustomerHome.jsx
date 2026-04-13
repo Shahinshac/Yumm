@@ -118,18 +118,18 @@ const CustomerHome = () => {
     <div className="space-y-8 pb-24">
       
       {/* 50% OFF HERO BANNER */}
-      <div className="relative overflow-hidden rounded-[2.5rem] bg-[#e23744] h-60 md:h-72 flex items-center px-6 md:px-10 shadow-2xl shadow-red-100 group">
+      <div className="relative overflow-hidden rounded-3xl bg-[#e23744] h-48 md:h-72 flex items-center px-6 md:px-10 shadow-2xl shadow-red-100 group">
          <div className="absolute inset-0 opacity-20 pointer-events-none">
-            <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-64 h-64 bg-black rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-black rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
          </div>
          
-         <div className="relative z-10 flex flex-col items-start gap-4 animate-in fade-in slide-in-from-left duration-700">
-            <h2 className="text-white text-4xl md:text-6xl font-black italic tracking-tighter leading-none">
-               ITEMS AT <br /> <span className="text-5xl md:text-7xl">50% OFF</span>
+         <div className="relative z-10 flex flex-col items-start gap-2 animate-in fade-in slide-in-from-left duration-700">
+            <h2 className="text-white text-3xl md:text-6xl font-black italic tracking-tighter leading-none">
+               ITEMS AT <br /> <span className="text-4xl md:text-7xl">50% OFF</span>
             </h2>
-            <button className="bg-black text-white px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2">
-               Order now <ChevronRight size={18} />
+            <button className="bg-black text-white px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-transform flex items-center gap-2">
+               Order now <ChevronRight size={14} />
             </button>
          </div>
 
@@ -143,17 +143,17 @@ const CustomerHome = () => {
       </div>
 
       {/* CATEGORY CAROUSEL */}
-      <div className="flex items-center gap-6 overflow-x-auto scrollbar-hide py-2">
+      <div className="flex items-center gap-4 overflow-x-auto scrollbar-hide py-1">
          {CATEGORIES.map(cat => (
            <button 
              key={cat.name}
              onClick={() => setActiveCategory(cat.name)}
-             className="flex flex-col items-center gap-3 shrink-0 group"
+             className="flex flex-col items-center gap-2 shrink-0 group"
            >
-              <div className={`w-20 h-20 rounded-full flex items-center justify-center text-3xl shadow-sm border transition-all ${activeCategory === cat.name ? 'border-[#e23744] bg-[#fdf2f2] scale-110 shadow-lg' : 'border-gray-100 bg-white group-hover:border-gray-200'}`}>
+              <div className={`w-14 h-14 rounded-full flex items-center justify-center text-xl shadow-sm border transition-all ${activeCategory === cat.name ? 'border-[#e23744] bg-[#fdf2f2] scale-105 shadow-md' : 'border-gray-100 bg-white group-hover:border-gray-200'}`}>
                  {cat.icon}
               </div>
-              <span className={`text-xs font-black uppercase tracking-widest ${activeCategory === cat.name ? 'text-[#e23744]' : 'text-gray-500'}`}>
+              <span className={`text-[8px] font-black uppercase tracking-widest ${activeCategory === cat.name ? 'text-[#e23744]' : 'text-gray-500'}`}>
                 {cat.name}
               </span>
            </button>
@@ -161,31 +161,28 @@ const CustomerHome = () => {
       </div>
 
       {/* FILTER PILLS */}
-      <div className="flex items-center gap-3 overflow-x-auto scrollbar-hide py-2">
-         <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-700 hover:border-black transition shadow-sm">
-            <SlidersHorizontal size={14} /> Filters <ChevronDown size={14} />
+      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide py-1">
+         <button className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-black text-gray-700 hover:border-black transition shadow-sm">
+            <SlidersHorizontal size={12} /> Filters <ChevronDown size={12} />
          </button>
-         <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-700 hover:border-black transition shadow-sm">
+         <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-black text-gray-700 hover:border-black transition shadow-sm">
             Under ₹200
          </button>
-         <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-700 hover:border-black transition shadow-sm flex items-center gap-2">
-            Schedule <ChevronDown size={14} />
-         </button>
-         <button className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-xs font-black text-gray-700 hover:border-black transition shadow-sm">
-            Rating 4.0+
+         <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-lg text-[10px] font-black text-gray-700 hover:border-black transition shadow-sm">
+            4.0+
          </button>
       </div>
 
       {/* EXPLORE MORE */}
       <div>
-         <h4 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4">Explore More</h4>
-         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+         <h4 className="text-[9px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Explore</h4>
+         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {EXPLORE.map(item => (
-              <div key={item.name} className={`${item.bg} p-6 rounded-[2rem] flex flex-col items-center justify-center gap-3 cursor-pointer hover:shadow-xl transition-all border border-transparent hover:border-white/50 group`}>
-                 <div className="w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center group-hover:rotate-6 transition-transform">
-                    {item.icon}
+              <div key={item.name} className={`${item.bg} p-4 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:shadow-lg transition-all border border-transparent hover:border-white/50 group`}>
+                 <div className="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center group-hover:rotate-6 transition-transform">
+                    {React.cloneElement(item.icon, { size: 16 })}
                  </div>
-                 <span className="text-xs font-black text-gray-900 tracking-tight">{item.name}</span>
+                 <span className="text-[10px] font-black text-gray-900 tracking-tight">{item.name}</span>
               </div>
             ))}
          </div>

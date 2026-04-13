@@ -89,7 +89,7 @@ def register_restaurant():
     logger.info(f"Restaurant registration attempt: {data.get('email', 'unknown')}")
 
     # Validate required fields
-    required_fields = ['name', 'email', 'phone', 'shop_name', 'address', 'id_proof_url']
+    required_fields = ['name', 'email', 'phone', 'shop_name', 'address']
     missing = [f for f in required_fields if not data.get(f)]
     if missing:
         return jsonify({'error': f'Missing required fields: {", ".join(missing)}'}), 400
@@ -252,7 +252,7 @@ def google_login():
 
     try:
         # Mock logic for local testing without actual Google Auth flow
-        if id_token_str == 'mock_test_user':
+        if id_token_str in ['mock_test_user', 'mock_customer_test']:
             logger.info("Using mock google verification for local testing")
             google_id = "mock_google_12345"
             email = "testcustomer@example.com"

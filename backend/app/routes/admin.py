@@ -192,10 +192,11 @@ def create_user():
         username = data.get('username')
         email = data.get('email')
         password = data.get('password')
+        phone = data.get('phone', '0000000000')
         role = data.get('role', 'customer')
 
-        if not all([username, email, password]):
-            return jsonify({'error': 'Username, email and password are required'}), 400
+        if not all([username, email, password, phone]):
+            return jsonify({'error': 'Username, email, password and phone are required'}), 400
 
         # Check if user already exists
         if User.objects(username=username).first():
@@ -208,6 +209,7 @@ def create_user():
             username=username,
             email=email,
             password_hash=PasswordSecurity.hash_password(password),
+            phone=phone,
             role=role,
             is_verified=True,  # Admin created users are pre-verified
             is_approved=True   # Admin created users are pre-approved

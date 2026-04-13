@@ -236,3 +236,1516 @@
 2026-04-12 21:27:53,410 - root - INFO - ✅ All blueprints registered successfully
 2026-04-12 21:27:53,410 - root - INFO - ✅ SocketIO events registered
 2026-04-12 21:27:53,410 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 21:49:21,782 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 21:49:21,782 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 21:49:21,787 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 21:49:21,788 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 21:49:21,825 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 21:49:21,825 - root - INFO - Registering API blueprints...
+2026-04-12 21:49:21,977 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 21:49:21,977 - root - INFO - ✅ SocketIO events registered
+2026-04-12 21:49:21,977 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 21:49:53,083 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 21:49:53,083 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 21:49:53,087 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 21:49:53,087 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 21:49:53,127 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 21:49:53,127 - root - INFO - Registering API blueprints...
+2026-04-12 21:49:53,291 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 21:49:53,291 - root - INFO - ✅ SocketIO events registered
+2026-04-12 21:49:53,291 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 21:51:37,604 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 21:51:37,606 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 21:51:37,609 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 21:51:37,610 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 21:51:37,648 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 21:51:37,648 - root - INFO - Registering API blueprints...
+2026-04-12 21:51:37,796 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 21:51:37,796 - root - INFO - ✅ SocketIO events registered
+2026-04-12 21:51:37,797 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 21:51:37,797 - werkzeug - WARNING - Werkzeug appears to be used in a production deployment. Consider switching to a production web server instead.
+2026-04-12 21:51:37,807 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.3:5000
+2026-04-12 21:51:37,807 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-04-12 21:54:25,287 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:54:25] "[33mGET /api/health HTTP/1.1[0m" 404 -
+2026-04-12 21:54:25,334 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:54:25] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-04-12 21:56:34,500 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:34] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 21:56:35,089 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 21:56:35,168 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:56:35,482 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:56:35,484 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:56:35,486 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:56:35,486 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:56:35,623 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:56:35,844 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:56:35,857 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:56:35,970 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:35] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:56:36,173 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:36] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:56:36,186 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:36] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:56:48,605 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:48] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:56:48,606 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:48] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:56:48,876 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:48] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:56:48,941 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:56:48] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:57:05,180 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:57:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:57:05,499 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:57:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:57:35,182 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:57:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:57:35,512 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:57:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:58:05,298 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:58:05,619 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:58:20,310 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:20] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:58:20,621 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:20] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:58:20,623 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:20] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:58:20,623 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:20] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:58:20,653 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:20] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:58:20,962 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:20] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:58:20,989 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:20] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:58:21,288 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:21] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:58:50,634 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:50] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:58:50,890 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:58:50] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:18,326 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:18] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:18,648 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:18] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:18,649 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:18] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:18,650 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:18] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:18,653 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:18] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:18,654 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:18] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:18,702 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:18] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:18,984 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:18] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:19,002 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:19] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:19,053 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:19] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:19,300 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:19] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:19,349 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:19] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:26,940 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:26] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:26,942 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:26] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:26,942 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:26] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:26,943 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:26] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:26,943 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:26] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:26,944 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:26] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:27,284 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:27] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:27,298 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:27] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:27,307 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:27] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:27,539 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:27] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:27,622 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:27] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:27,648 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:27] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:37,972 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:37] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:38,285 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:38,287 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:38,287 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:38,288 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:38,289 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:38,334 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:38,611 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:38,626 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:38,681 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 21:59:38,938 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:38,961 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:38] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:54,169 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:54] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:54,171 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:54] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:54,173 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:54] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:54,174 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:54] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:54,747 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:54] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 21:59:54,753 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:54] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:54,793 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:54] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 21:59:55,127 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 21:59:55] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:00:24,153 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:24] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:00:24,424 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:24] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:00:28,572 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:28] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:00:28,879 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:28] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:00:28,881 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:28] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:00:28,891 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:28] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:00:28,905 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:28] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:00:28,949 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:28] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:00:29,215 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:29] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:00:29,228 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:29] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:00:29,300 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:29] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:00:29,618 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:29] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:00:46,642 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:46] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:00:46,644 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:46] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:00:46,927 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:46] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:00:46,987 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:46] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:00:58,578 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:58] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:00:58,899 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:00:58] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:01:51,252 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:01:51] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:01:51,798 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:01:51] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 403 -
+2026-04-12 22:02:27,352 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:27] "OPTIONS /api/auth/test-customer-login HTTP/1.1" 200 -
+2026-04-12 22:02:27,669 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:27] "POST /api/auth/test-customer-login HTTP/1.1" 200 -
+2026-04-12 22:02:27,925 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:27] "OPTIONS /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:02:28,051 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:28] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:02:28,054 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:28] "OPTIONS /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:02:28,055 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:28] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:02:28,068 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:28] "GET /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:02:28,244 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:28] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:02:28,368 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:28] "GET /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:02:28,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:28] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:02:57,737 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:57] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:02:58,066 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:02:58] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:03:27,738 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:03:27] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:03:28,068 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:03:28] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:04:11,181 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:11] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:04:11,737 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:11] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:04:11,825 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:11] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:04:12,206 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:04:12,208 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:04:12,210 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:04:12,212 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:04:12,247 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:04:12,441 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:04:12,545 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:04:12,580 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:04:12,586 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:04:12,762 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:12] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:04:25,916 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:25] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:04:26,223 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:26] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:04:26,261 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:26] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:04:26,606 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:26] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:04:42,126 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:42] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:04:42,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:04:42] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:05:09,401 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:09] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:05:09,717 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:09] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:05:09,718 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:09] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:05:09,719 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:09] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:05:09,760 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:09] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:05:10,060 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:10] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:05:10,105 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:10] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:05:10,387 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:10] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:05:12,124 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:05:12,401 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:12] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:05:16,107 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:16] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:05:16,415 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:16] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:05:16,417 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:16] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:05:16,418 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:16] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:05:16,440 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:16] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:05:16,473 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:16] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:05:16,762 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:16] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:05:16,764 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:16] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:05:16,822 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:16] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:05:17,095 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:17] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:05:46,419 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:46] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:05:46,609 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:46] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-12 22:05:46,610 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:46] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-12 22:05:46,695 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:46] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:05:46,743 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:46] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-12 22:05:46,929 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:05:46] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-12 22:06:16,116 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:16] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:06:16,450 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:16] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:06:34,667 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:34] "OPTIONS /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 22:06:34,972 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:34] "OPTIONS /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 22:06:34,991 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:34] "GET /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 22:06:35,307 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:35] "GET /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 22:06:46,426 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:46] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:06:46,698 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:46] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:06:52,915 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:52] "GET /socket.io/?EIO=4&transport=polling&t=zkt9mjad HTTP/1.1" 200 -
+2026-04-12 22:06:53,245 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:53] "OPTIONS /api/admin/global-map-data HTTP/1.1" 200 -
+2026-04-12 22:06:53,247 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:53] "OPTIONS /api/admin/global-map-data HTTP/1.1" 200 -
+2026-04-12 22:06:53,248 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:53] "GET /socket.io/?EIO=4&transport=polling&t=zkt9uuru HTTP/1.1" 200 -
+2026-04-12 22:06:53,573 - backend.app.routes.admin - ERROR - Error fetching global map data: can only concatenate str (not "int") to str
+2026-04-12 22:06:53,573 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:53] "[35m[1mGET /api/admin/global-map-data HTTP/1.1[0m" 500 -
+2026-04-12 22:06:53,580 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:53] "POST /socket.io/?EIO=4&transport=polling&t=zktjimw1&sid=tnb02Vvx4PdFeZWCAAAB HTTP/1.1" 200 -
+2026-04-12 22:06:53,582 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:53] "GET /socket.io/?EIO=4&transport=polling&t=zktjmrxi&sid=tnb02Vvx4PdFeZWCAAAB HTTP/1.1" 200 -
+2026-04-12 22:06:53,890 - backend.app.routes.admin - ERROR - Error fetching global map data: can only concatenate str (not "int") to str
+2026-04-12 22:06:53,891 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:53] "[35m[1mGET /api/admin/global-map-data HTTP/1.1[0m" 500 -
+2026-04-12 22:06:53,968 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:53] "GET /socket.io/?EIO=4&transport=polling&t=zkttz49n&sid=tnb02Vvx4PdFeZWCAAAB HTTP/1.1" 200 -
+2026-04-12 22:06:53,970 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:06:53] "POST /socket.io/?EIO=4&transport=polling&t=zktu11si&sid=tnb02Vvx4PdFeZWCAAAB HTTP/1.1" 200 -
+2026-04-12 22:07:01,864 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:07:01] "GET /socket.io/?EIO=4&transport=websocket&sid=tnb02Vvx4PdFeZWCAAAB HTTP/1.1" 200 -
+2026-04-12 22:07:27,379 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:07:27] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:07:27,862 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:07:27] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 403 -
+2026-04-12 22:08:04,791 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:04] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:08:05,326 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:05] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:08:05,392 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:05] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:08:05,710 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:05] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:08:05,711 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:08:05,711 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:05] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:08:05,711 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:05] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:08:05,713 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:08:05,754 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:05] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:08:06,044 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:06] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:08:06,058 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:06] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:08:06,099 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:06] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:08:06,365 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:06] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:08:06,392 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:06] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:08:14,746 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:14] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:08:14,747 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:14] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:08:15,020 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:15] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:08:15,079 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:15] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:08:35,393 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:08:35,712 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:08:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:09:05,395 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:09:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:09:05,705 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:09:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:09:35,393 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:09:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:09:35,709 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:09:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:10:05,392 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:10:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:10:05,707 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:10:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:10:35,402 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:10:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:10:35,714 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:10:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:10:42,610 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:10:42] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:10:42,951 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:10:42] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:11:05,401 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:11:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:11:05,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:11:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:11:35,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:11:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:11:35,713 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:11:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:12:05,396 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:12:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:12:05,711 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:12:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:12:35,392 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:12:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:12:35,704 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:12:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:13:05,392 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:13:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:13:05,708 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:13:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:13:35,392 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:13:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:13:35,705 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:13:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:14:05,397 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:14:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:14:05,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:14:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:14:35,399 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:14:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:14:35,712 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:14:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:15:05,398 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:15:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:15:05,711 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:15:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:15:35,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:15:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:15:35,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:15:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:16:05,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:16:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:16:05,716 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:16:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:16:35,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:16:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:16:35,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:16:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:17:05,391 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:17:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:17:05,703 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:17:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:17:35,398 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:17:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:17:35,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:17:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:18:05,404 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:18:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:18:05,720 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:18:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:18:35,404 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:18:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:18:36,067 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:18:36] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:19:05,393 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:19:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:19:05,708 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:19:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:19:35,407 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:19:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:19:35,720 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:19:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:20:05,397 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:20:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:20:05,711 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:20:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:20:35,391 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:20:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:20:35,702 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:20:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:21:05,397 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:21:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:21:05,708 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:21:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:21:35,398 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:21:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:21:35,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:21:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:22:05,396 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:22:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:22:05,709 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:22:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:22:35,391 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:22:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:22:35,910 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:22:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:23:05,403 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:23:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:23:05,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:23:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:23:35,396 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:23:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:23:35,714 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:23:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:24:05,402 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:24:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:24:05,719 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:24:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:24:35,402 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:24:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:24:36,010 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:24:36] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:25:05,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:25:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:25:05,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:25:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:25:35,397 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:25:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:25:35,713 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:25:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:26:05,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:26:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:26:05,716 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:26:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:26:35,398 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:26:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:26:35,716 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:26:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:27:05,413 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:27:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:27:05,735 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:27:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:27:35,404 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:27:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:27:35,720 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:27:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:28:05,392 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:28:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:28:05,709 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:28:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:28:35,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:28:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:28:35,712 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:28:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:29:05,397 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:29:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:29:05,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:29:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:29:35,397 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:29:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:29:35,712 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:29:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:30:05,393 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:30:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:30:05,710 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:30:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:30:35,394 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:30:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:30:35,708 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:30:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:31:05,406 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:31:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:31:05,717 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:31:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:31:35,392 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:31:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:31:35,705 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:31:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:32:05,398 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:32:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:32:05,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:32:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:32:35,404 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:32:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:32:35,720 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:32:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:33:05,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:33:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:33:05,717 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:33:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:33:35,398 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:33:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:33:35,711 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:33:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:34:05,396 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:34:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:34:05,708 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:34:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:34:35,406 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:34:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:34:35,725 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:34:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:35:05,394 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:35:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:35:05,710 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:35:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:35:35,401 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:35:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:35:35,712 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:35:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:36:05,397 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:36:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:36:05,713 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:36:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:36:35,406 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:36:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:36:35,720 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:36:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:37:05,398 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:37:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:37:05,712 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:37:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:37:35,395 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:37:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:37:35,712 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:37:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:38:05,393 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:38:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:38:05,707 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:38:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:38:35,394 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:38:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:38:35,710 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:38:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:39:05,394 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:39:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:39:05,707 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:39:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:39:35,406 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:39:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:39:35,724 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:39:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:40:05,393 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:40:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:40:05,713 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:40:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:40:35,402 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:40:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:40:35,719 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:40:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:41:05,401 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:41:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:41:05,717 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:41:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:41:35,396 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:41:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:41:35,711 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:41:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:42:05,399 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:42:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:42:05,714 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:42:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:42:35,393 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:42:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:42:35,859 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:42:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:43:05,397 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:43:05,714 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:43:22,152 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 22:43:22,152 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 22:43:22,216 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 22:43:22,217 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 22:43:22,277 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 22:43:22,277 - root - INFO - Registering API blueprints...
+2026-04-12 22:43:22,486 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 22:43:22,487 - root - INFO - ✅ SocketIO events registered
+2026-04-12 22:43:22,487 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 22:43:35,407 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:43:35,719 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:43:40,860 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:40] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:43:41,172 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:41] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:43:41,182 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:41] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:43:41,492 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:41] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:43:42,853 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:42] "OPTIONS /api/admin/analytics/orders?period=month HTTP/1.1" 200 -
+2026-04-12 22:43:43,172 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:43] "OPTIONS /api/admin/analytics/orders?period=month HTTP/1.1" 200 -
+2026-04-12 22:43:43,183 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:43] "GET /api/admin/analytics/orders?period=month HTTP/1.1" 200 -
+2026-04-12 22:43:43,657 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:43] "GET /api/admin/analytics/orders?period=month HTTP/1.1" 200 -
+2026-04-12 22:43:46,362 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:46] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:43:46,668 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:46] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:43:46,670 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:46] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:43:46,671 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:46] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:43:46,707 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:46] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:43:47,005 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:47] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:43:47,048 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:47] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:43:47,340 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:47] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:43:56,368 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:43:56,369 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:43:56,371 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:43:56,373 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:43:56,374 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:43:56,375 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:43:56,717 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:43:56,737 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:43:56,750 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:43:56,972 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:56] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:43:57,050 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:57] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:43:57,090 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:43:57] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:44:05,405 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:44:05,730 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:44:20,289 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:20] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:44:20,597 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:20] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:44:20,620 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:20] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:44:20,952 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:20] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:44:26,297 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:26] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:44:26,567 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:26] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:44:35,393 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:44:35,704 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:44:35,989 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:35] "OPTIONS /api/admin/approve/69dbc60a43fc6fb2037cdc78 HTTP/1.1" 200 -
+2026-04-12 22:44:36,543 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:36] "POST /api/admin/approve/69dbc60a43fc6fb2037cdc78 HTTP/1.1" 200 -
+2026-04-12 22:44:38,845 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to pending_rest@yumm.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. d2e1a72fcca58-82f0c34f7d0sm9229934b3a.14 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-12 22:44:49,060 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:49] "OPTIONS /api/admin/approve/69dbc60a43fc6fb2037cdc7a HTTP/1.1" 200 -
+2026-04-12 22:44:49,604 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:49] "POST /api/admin/approve/69dbc60a43fc6fb2037cdc7a HTTP/1.1" 200 -
+2026-04-12 22:44:51,608 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to pending_rider@yumm.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. d9443c01a7336-2b2d4f0ada5sm95254565ad.42 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-12 22:44:55,994 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:55] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:44:56,308 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:44:56] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:05,407 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:05,720 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:19,254 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:45:19,570 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:45:19,571 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:19,571 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:45:19,571 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:45:19,573 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:19,615 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:45:19,903 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:19,915 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:45:19,951 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:19] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:45:20,223 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:20] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:20,246 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:20] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:45:35,712 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:35,979 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:42,972 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:42] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:45:43,281 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:45:43,282 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:43,284 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:45:43,285 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:45:43,285 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:43,316 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:45:43,611 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:43,619 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:45:43,646 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:45:43,920 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:45:43,938 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:45:43] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:46:05,708 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:46:05,981 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:46:12,624 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:12] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:46:12,941 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:12] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:46:12,941 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:46:12,943 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:12] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:46:12,944 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:12] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:46:12,944 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:46:12,983 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:12] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:46:13,279 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:13] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:46:13,291 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:13] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:46:13,322 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:13] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:46:13,604 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:13] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:46:13,611 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:13] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:46:35,710 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:46:35,976 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:46:43,198 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:43] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:46:43,526 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:46:43] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:47:05,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:47:05,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:47:12,638 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:47:12,957 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:12] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:47:35,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:35] "[31m[1mGET /api/notifications HTTP/1.1[0m" 401 -
+2026-04-12 22:47:45,201 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:45] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:47:45,672 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:45] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:47:45,716 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:45] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:47:46,022 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:46] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:47:46,023 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:46] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:47:46,024 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:46] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:47:46,039 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:46] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:47:46,349 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:46] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:47:46,366 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:46] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:47:46,671 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:47:46] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:48:08,188 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:08] "OPTIONS /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-12 22:48:08,189 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:08] "OPTIONS /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-12 22:48:08,460 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:08] "GET /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-12 22:48:08,519 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:08] "GET /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-12 22:48:15,728 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:15] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:48:16,042 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:16] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:48:33,764 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:33] "OPTIONS /api/restaurant-dashboard/menu/add HTTP/1.1" 200 -
+2026-04-12 22:48:34,084 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:34] "[35m[1mPOST /api/restaurant-dashboard/menu/add HTTP/1.1[0m" 201 -
+2026-04-12 22:48:34,335 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:34] "OPTIONS /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-12 22:48:34,409 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:34] "GET /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-12 22:48:45,723 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:45] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:48:46,037 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:48:46] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:49:10,034 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:10] "OPTIONS /api/auth/test-customer-login HTTP/1.1" 200 -
+2026-04-12 22:49:10,356 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:10] "POST /api/auth/test-customer-login HTTP/1.1" 200 -
+2026-04-12 22:49:10,617 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:10] "OPTIONS /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:49:10,746 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:10] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:49:10,747 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:10] "OPTIONS /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:49:10,747 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:10] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:49:10,765 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:10] "GET /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:49:10,931 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:10] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:49:11,088 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:11] "GET /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:49:11,089 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:11] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:49:40,433 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:40] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:49:40,759 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:49:40] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:50:01,629 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:50:01] "OPTIONS /api/customer/restaurants/69dbc60a43fc6fb2037cdc79 HTTP/1.1" 200 -
+2026-04-12 22:50:01,938 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:50:01] "OPTIONS /api/customer/restaurants/69dbc60a43fc6fb2037cdc79 HTTP/1.1" 200 -
+2026-04-12 22:50:01,948 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:50:01] "GET /api/customer/restaurants/69dbc60a43fc6fb2037cdc79 HTTP/1.1" 200 -
+2026-04-12 22:50:02,275 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:50:02] "GET /api/customer/restaurants/69dbc60a43fc6fb2037cdc79 HTTP/1.1" 200 -
+2026-04-12 22:50:10,445 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:50:10] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:50:10,759 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:50:10] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:50:40,437 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:50:40] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:50:40,750 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:50:40] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:51:10,445 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:10] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:51:10,763 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:10] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:51:23,468 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:23] "OPTIONS /api/customer/orders/place HTTP/1.1" 200 -
+2026-04-12 22:51:23,804 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:23] "[35m[1mPOST /api/customer/orders/place HTTP/1.1[0m" 201 -
+2026-04-12 22:51:25,847 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:25] "GET /socket.io/?EIO=4&transport=polling&t=163ppicu HTTP/1.1" 200 -
+2026-04-12 22:51:26,163 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:26] "OPTIONS /api/customer/orders/69dbd493eeecd77029788759 HTTP/1.1" 200 -
+2026-04-12 22:51:26,166 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:26] "OPTIONS /api/customer/orders/69dbd493eeecd77029788759 HTTP/1.1" 200 -
+2026-04-12 22:51:26,166 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:26] "GET /socket.io/?EIO=4&transport=polling&t=163pvlia HTTP/1.1" 200 -
+2026-04-12 22:51:26,481 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:26] "GET /api/customer/orders/69dbd493eeecd77029788759 HTTP/1.1" 200 -
+2026-04-12 22:51:26,490 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:26] "POST /socket.io/?EIO=4&transport=polling&t=163z0iwg&sid=86cb1FJV8jn7GcMUAAAE HTTP/1.1" 200 -
+2026-04-12 22:51:26,496 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:26] "GET /socket.io/?EIO=4&transport=polling&t=163z392l&sid=86cb1FJV8jn7GcMUAAAE HTTP/1.1" 200 -
+2026-04-12 22:51:26,537 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:26] "GET /socket.io/?EIO=4&transport=websocket&sid=86cb1FJV8jn7GcMUAAAE HTTP/1.1" 200 -
+2026-04-12 22:51:26,804 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:26] "GET /api/customer/orders/69dbd493eeecd77029788759 HTTP/1.1" 200 -
+2026-04-12 22:51:26,844 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:26] "POST /socket.io/?EIO=4&transport=polling&t=16491i7t&sid=86cb1FJV8jn7GcMUAAAE HTTP/1.1" 200 -
+2026-04-12 22:51:58,341 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:58] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:51:58,343 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:58] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:51:58,359 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:58] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:51:58,686 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:51:58] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:52:28,424 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:28] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:52:29,025 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:29] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:52:29,073 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:29] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:52:29,381 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:29] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:52:29,383 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:29] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:52:29,384 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:29] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:52:29,404 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:29] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:52:29,721 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:29] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:52:29,737 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:29] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:52:30,039 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:30] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:52:42,584 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:42] "OPTIONS /api/restaurant-dashboard/orders?status=pending HTTP/1.1" 200 -
+2026-04-12 22:52:42,868 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:42] "GET /api/restaurant-dashboard/orders?status=pending HTTP/1.1" 200 -
+2026-04-12 22:52:57,367 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:57] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:52:57,692 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:57] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:52:59,089 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:59] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:52:59,404 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:52:59] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:01,586 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:01] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:53:01,888 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:01] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:01,905 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:01] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:53:02,216 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:02] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:07,389 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:07] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:07,390 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:07] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:07,660 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:07] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:07,704 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:07] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:11,387 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:11] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:53:11,713 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:11] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:11,715 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:11] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:53:11,972 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:11] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:12,035 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:12] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:53:38,812 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:38] "OPTIONS /api/auth/test-customer-login HTTP/1.1" 200 -
+2026-04-12 22:53:39,127 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:39] "POST /api/auth/test-customer-login HTTP/1.1" 200 -
+2026-04-12 22:53:39,379 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:39] "OPTIONS /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:53:39,521 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:39] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:39,522 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:39] "OPTIONS /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:53:39,524 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:39] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:39,538 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:39] "GET /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:53:39,697 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:39] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:53:39,855 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:39] "GET /api/customer/restaurants HTTP/1.1" 200 -
+2026-04-12 22:53:39,855 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:53:39] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:09,217 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:09] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:09,529 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:09] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:40,774 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:54:41,389 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:41] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:54:41,438 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:41] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:54:41,746 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:41] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:41,748 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:41] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:54:41,748 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:41] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:41,771 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:41] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:54:42,077 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:42] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:42,095 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:42] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:54:42,404 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:42] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:54,501 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:54] "OPTIONS /api/restaurant-dashboard/orders?status=pending HTTP/1.1" 200 -
+2026-04-12 22:54:54,759 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:54] "GET /api/restaurant-dashboard/orders?status=pending HTTP/1.1" 200 -
+2026-04-12 22:54:59,004 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:59] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:54:59,318 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:59] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:59,319 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:59] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:54:59,320 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:59] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:59,341 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:59] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:54:59,659 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:59] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:54:59,666 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:59] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:54:59,984 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:54:59] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:55:29,324 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:29] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:55:29,579 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:29] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:55:57,343 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:57] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:55:57,939 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:57] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:55:58,005 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:55:58,333 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:55:58,335 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:55:58,336 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:55:58,337 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:55:58,379 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:55:58,666 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:55:58,684 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:55:58,718 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:55:58,986 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:58] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:55:59,010 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:55:59] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:56:17,941 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:17] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:56:17,942 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:17] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:56:18,214 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:18] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:56:18,275 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:18] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:56:28,018 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:28] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:56:28,336 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:28] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:56:42,485 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:42] "OPTIONS /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 22:56:42,803 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:42] "OPTIONS /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 22:56:42,817 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:42] "GET /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 22:56:43,135 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:43] "GET /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 22:56:58,316 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:58] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:56:58,586 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:56:58] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:57:28,005 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:28] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:57:28,333 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:28] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:57:41,110 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:57:41,420 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:57:41,421 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:57:41,422 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:57:41,423 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:57:41,424 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:57:41,464 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:57:41,765 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:57:41,766 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:57:41,815 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:41] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:57:42,098 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:42] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:57:42,114 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:57:42] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:58:14,506 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:14] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:58:15,041 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:15] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:58:15,093 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:15] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:58:15,399 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:15] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:58:15,400 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:15] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:58:15,402 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:15] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:58:15,428 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:15] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:58:15,735 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:15] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:58:15,754 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:15] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 22:58:16,057 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:58:16] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:59:05,470 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:05] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:59:05,943 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:05] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 22:59:06,010 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:59:06,327 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:59:06,327 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:59:06,328 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:59:06,330 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:59:06,332 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:59:06,367 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:59:06,656 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:59:06,664 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:59:06,709 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:06] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 22:59:07,056 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:07] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:59:07,067 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:07] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 22:59:29,079 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:29] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:59:29,080 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:29] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:59:29,331 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:29] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:59:29,409 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:29] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 22:59:36,028 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:36] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 22:59:36,368 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 22:59:36] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:00:06,018 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:00:06] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:00:06,342 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:00:06] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:00:25,880 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:00:25] "OPTIONS /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 23:00:26,187 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:00:26] "OPTIONS /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 23:00:26,200 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:00:26] "GET /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 23:00:26,522 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:00:26] "GET /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-12 23:00:36,329 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:00:36] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:00:36,595 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:00:36] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:01:01,520 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:01] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:01:01,828 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:01] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:01:01,836 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:01] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:01:01,837 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:01] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:01:01,839 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:01] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:01:01,879 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:01] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:01:02,146 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:02] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:01:02,175 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:02] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:01:02,219 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:02] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:01:02,469 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:02] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:01:02,494 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:02] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:01:42,207 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:42] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 23:01:42,680 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:42] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 23:01:42,738 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:42] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 23:01:43,054 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:43] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:01:43,055 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:43] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 23:01:43,055 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:43] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:01:43,077 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:43] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 23:01:43,381 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:43] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:01:43,401 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:43] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-12 23:01:43,706 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:01:43] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:02:24,102 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:24] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 23:02:24,750 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:24] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 23:02:24,818 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:24] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:02:25,125 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:02:25,126 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:02:25,128 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:02:25,140 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:02:25,141 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:02:25,186 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:02:25,461 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:02:25,474 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:02:25,530 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:02:25,781 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:02:25,807 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:25] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:02:37,167 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:37] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 23:02:37,169 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:37] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 23:02:37,438 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:37] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 23:02:37,485 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:37] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 23:02:54,820 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:54] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:02:55,139 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:02:55] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:03:18,624 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:18] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 23:03:19,189 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:19] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 23:03:19,244 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:19] "OPTIONS /api/delivery-dashboard/orders/null/status HTTP/1.1" 200 -
+2026-04-12 23:03:19,564 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:19] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:03:19,565 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:19] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:03:19,569 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:19] "OPTIONS /api/delivery-dashboard/orders/null/status HTTP/1.1" 200 -
+2026-04-12 23:03:19,578 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:19] "[31m[1mPUT /api/delivery-dashboard/orders/null/status HTTP/1.1[0m" 400 -
+2026-04-12 23:03:19,895 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:19] "[31m[1mPUT /api/delivery-dashboard/orders/null/status HTTP/1.1[0m" 400 -
+2026-04-12 23:03:19,896 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:19] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:03:20,217 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:20] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:03:49,258 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:49] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:03:49,573 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:49] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:03:55,115 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:55] "OPTIONS /api/delivery/my-orders HTTP/1.1" 200 -
+2026-04-12 23:03:55,430 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:55] "OPTIONS /api/delivery/my-orders HTTP/1.1" 200 -
+2026-04-12 23:03:55,442 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:55] "GET /api/delivery/my-orders HTTP/1.1" 200 -
+2026-04-12 23:03:55,763 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:03:55] "GET /api/delivery/my-orders HTTP/1.1" 200 -
+2026-04-12 23:04:39,107 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:39] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-12 23:04:39,649 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:39] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-12 23:04:39,698 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:39] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:04:40,013 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:04:40,014 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:04:40,015 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:04:40,022 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:04:40,057 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:04:40,345 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:04:40,359 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:04:40,399 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-12 23:04:40,669 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:04:40,683 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:04:40] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-12 23:05:04,180 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:05:04] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 23:05:04,182 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:05:04] "OPTIONS /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 23:05:04,451 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:05:04] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 23:05:04,500 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:05:04] "GET /api/admin/orders HTTP/1.1" 200 -
+2026-04-12 23:05:09,700 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:05:09] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:05:10,014 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:05:10] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:05:39,701 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:05:39] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:05:40,015 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:05:40] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:06:09,704 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:09] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:06:10,026 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:10] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-12 23:06:15,354 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:15] "GET /socket.io/?EIO=4&transport=polling&t=1p62bn65 HTTP/1.1" 200 -
+2026-04-12 23:06:15,671 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:15] "OPTIONS /api/admin/global-map-data HTTP/1.1" 200 -
+2026-04-12 23:06:15,672 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:15] "OPTIONS /api/admin/global-map-data HTTP/1.1" 200 -
+2026-04-12 23:06:15,672 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:15] "GET /socket.io/?EIO=4&transport=polling&t=1p62emo5 HTTP/1.1" 200 -
+2026-04-12 23:06:15,994 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:15] "POST /socket.io/?EIO=4&transport=polling&t=1p6blu88&sid=zvhAtZrsiML0xlvgAAAH HTTP/1.1" 200 -
+2026-04-12 23:06:16,001 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:16] "GET /socket.io/?EIO=4&transport=polling&t=1p6bnh7z&sid=zvhAtZrsiML0xlvgAAAH HTTP/1.1" 200 -
+2026-04-12 23:06:16,014 - backend.app.routes.admin - ERROR - Error fetching global map data: can only concatenate str (not "int") to str
+2026-04-12 23:06:16,015 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:16] "[35m[1mGET /api/admin/global-map-data HTTP/1.1[0m" 500 -
+2026-04-12 23:06:16,363 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:16] "GET /socket.io/?EIO=4&transport=polling&t=1p6krczc&sid=zvhAtZrsiML0xlvgAAAH HTTP/1.1" 200 -
+2026-04-12 23:06:16,366 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:16] "POST /socket.io/?EIO=4&transport=polling&t=1p6kt3dz&sid=zvhAtZrsiML0xlvgAAAH HTTP/1.1" 200 -
+2026-04-12 23:06:16,375 - backend.app.routes.admin - ERROR - Error fetching global map data: can only concatenate str (not "int") to str
+2026-04-12 23:06:16,377 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:16] "[35m[1mGET /api/admin/global-map-data HTTP/1.1[0m" 500 -
+2026-04-12 23:06:39,040 - werkzeug - INFO - 127.0.0.1 - - [12/Apr/2026 23:06:39] "GET /socket.io/?EIO=4&transport=websocket&sid=zvhAtZrsiML0xlvgAAAH HTTP/1.1" 200 -
+2026-04-12 23:14:31,529 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:14:31,539 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:14:31,544 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:14:31,544 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:14:31,581 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:14:31,581 - root - INFO - Registering API blueprints...
+2026-04-12 23:14:31,722 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:14:31,722 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:14:31,722 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:28:43,249 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:28:43,249 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:28:43,256 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:28:43,256 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:28:43,300 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:28:43,300 - root - INFO - Registering API blueprints...
+2026-04-12 23:28:43,469 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:28:43,469 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:28:43,469 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:28:44,680 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:28:44,680 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:28:44,686 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:28:44,686 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:28:44,721 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:28:44,721 - root - INFO - Registering API blueprints...
+2026-04-12 23:28:44,875 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:28:44,875 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:28:44,876 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:29:31,150 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:29:31,150 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:29:31,156 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:29:31,156 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:29:31,194 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:29:31,194 - root - INFO - Registering API blueprints...
+2026-04-12 23:29:31,329 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:29:31,329 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:29:31,329 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:29:32,656 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:29:32,656 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:29:32,660 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:29:32,660 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:29:32,699 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:29:32,699 - root - INFO - Registering API blueprints...
+2026-04-12 23:29:32,866 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:29:32,866 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:29:32,867 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:30:31,887 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:30:31,887 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:30:31,892 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:30:31,892 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:30:31,931 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:30:31,932 - root - INFO - Registering API blueprints...
+2026-04-12 23:30:32,070 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:30:32,071 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:30:32,071 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:30:33,311 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:30:33,311 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:30:33,317 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:30:33,317 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:30:33,356 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:30:33,356 - root - INFO - Registering API blueprints...
+2026-04-12 23:30:33,492 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:30:33,492 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:30:33,492 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:31:01,148 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:31:01,149 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:31:01,153 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:31:01,154 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:31:01,191 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:31:01,191 - root - INFO - Registering API blueprints...
+2026-04-12 23:31:01,329 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:31:01,329 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:31:01,329 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:31:02,589 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:31:02,589 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:31:02,593 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:31:02,593 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:31:02,631 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:31:02,632 - root - INFO - Registering API blueprints...
+2026-04-12 23:31:02,772 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:31:02,772 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:31:02,772 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:31:59,050 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:31:59,050 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:31:59,056 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:31:59,056 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:31:59,094 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:31:59,095 - root - INFO - Registering API blueprints...
+2026-04-12 23:31:59,225 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:31:59,226 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:31:59,226 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:32:00,492 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:32:00,492 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:32:00,495 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:32:00,495 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:32:00,532 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:32:00,532 - root - INFO - Registering API blueprints...
+2026-04-12 23:32:00,679 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:32:00,680 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:32:00,680 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:33:13,661 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:33:13,661 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:33:13,667 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:33:13,668 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:33:13,715 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:33:13,715 - root - INFO - Registering API blueprints...
+2026-04-12 23:33:13,852 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:33:13,853 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:33:13,853 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:33:44,729 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:33:44,729 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:33:44,735 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:33:44,735 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:33:44,771 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:33:44,771 - root - INFO - Registering API blueprints...
+2026-04-12 23:33:44,915 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:33:44,916 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:33:44,916 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:33:46,153 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:33:46,153 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:33:46,159 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:33:46,159 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:33:46,195 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:33:46,195 - root - INFO - Registering API blueprints...
+2026-04-12 23:33:46,339 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:33:46,339 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:33:46,339 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:33:48,624 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:33:48,624 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:33:48,629 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:33:48,629 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:33:48,665 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:33:48,665 - root - INFO - Registering API blueprints...
+2026-04-12 23:33:48,829 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:33:48,829 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:33:48,829 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-12 23:39:01,432 - root - INFO - Starting FoodHub App in production mode
+2026-04-12 23:39:01,432 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-12 23:39:01,436 - root - INFO - ✅ MongoDB connected successfully
+2026-04-12 23:39:01,437 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-12 23:39:01,471 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-12 23:39:01,471 - root - INFO - Registering API blueprints...
+2026-04-12 23:39:01,633 - root - INFO - ✅ All blueprints registered successfully
+2026-04-12 23:39:01,633 - root - INFO - ✅ SocketIO events registered
+2026-04-12 23:39:01,634 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 11:03:36,391 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 11:03:36,392 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 11:03:36,497 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 11:03:36,498 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 11:03:36,601 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 11:03:36,601 - root - INFO - Registering API blueprints...
+2026-04-13 11:03:36,941 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 11:03:36,941 - root - INFO - ✅ SocketIO events registered
+2026-04-13 11:03:36,941 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 11:03:36,971 - werkzeug - WARNING - Werkzeug appears to be used in a production deployment. Consider switching to a production web server instead.
+2026-04-13 11:03:36,986 - werkzeug - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.3:5000
+2026-04-13 11:03:36,986 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
+2026-04-13 11:06:25,316 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:06:25] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:06:25,319 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:06:25] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:06:25,323 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:06:25] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:06:25,328 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:06:25] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:06:25,333 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:06:25] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:06:25,338 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:06:25] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:06:25,657 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:06:25] "[31m[1mGET /api/notifications HTTP/1.1[0m" 401 -
+2026-04-13 11:06:25,661 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:06:25] "[31m[1mGET /api/admin/pending-users HTTP/1.1[0m" 401 -
+2026-04-13 11:06:25,663 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:06:25] "[31m[1mGET /api/admin-dashboard/stats HTTP/1.1[0m" 401 -
+2026-04-13 11:09:04,235 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:09:04] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:09:04,501 - backend.app.routes.auth - INFO - Restaurant registration attempt: john@example.com
+2026-04-13 11:09:04,502 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:09:04] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 11:09:25,110 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:09:25] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:09:25,429 - backend.app.routes.auth - INFO - Restaurant registration attempt: john@example.com
+2026-04-13 11:09:25,430 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:09:25] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 11:13:59,615 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:13:59] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:13:59,863 - backend.app.routes.auth - INFO - Restaurant registration attempt: bistro_dom@test.com
+2026-04-13 11:13:59,865 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:13:59] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 11:15:23,928 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:15:23] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:15:24,190 - backend.app.routes.auth - INFO - Restaurant registration attempt: bistro_dom_unique_123@test.com
+2026-04-13 11:15:24,190 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:15:24] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 11:16:54,037 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:16:54] "POST /api/uploads/identity-proof HTTP/1.1" 200 -
+2026-04-13 11:16:58,456 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:16:58] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:16:58,769 - backend.app.routes.auth - INFO - Restaurant registration attempt: bistro_dom_final_test@yumm.com
+2026-04-13 11:16:58,870 - backend.app.routes.auth - INFO - Restaurant registration submitted: bistro_dom_final_test@yumm.com
+2026-04-13 11:16:58,871 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:16:58] "[35m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 201 -
+2026-04-13 11:18:00,475 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:18:00] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:18:00,742 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:18:00] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2026-04-13 11:18:32,643 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:18:32] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:18:32,993 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:18:32] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2026-04-13 11:19:04,976 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:19:04] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:19:05,297 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:19:05] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2026-04-13 11:19:40,005 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:19:40] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:19:40,330 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:19:40] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2026-04-13 11:20:15,037 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:20:15] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:20:15,355 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:20:15] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2026-04-13 11:20:54,274 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:20:54] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:20:55,515 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:20:55,519 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:20:55] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:21:31,690 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:21:31] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:21:32,004 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:21:32] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2026-04-13 11:22:44,176 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:22:44] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:22:44,446 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:22:44] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2026-04-13 11:23:15,355 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:23:15] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:23:16,402 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:23:16,405 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:23:16] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:23:37,230 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:23:37] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:23:38,104 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:23:38,108 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:23:38] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:23:43,788 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:23:43] "[33mGET /api/health HTTP/1.1[0m" 404 -
+2026-04-13 11:23:43,869 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:23:43] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2026-04-13 11:23:50,305 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:23:50] "GET / HTTP/1.1" 200 -
+2026-04-13 11:25:07,248 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:25:07] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:25:07,515 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:25:07] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2026-04-13 11:25:24,911 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:25:24] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:25:26,376 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:25:26,378 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:25:26] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:26:07,291 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:26:07] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:26:07,607 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:26:07] "[31m[1mPOST /api/auth/login HTTP/1.1[0m" 401 -
+2026-04-13 11:26:37,107 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:26:37] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:26:37,938 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:26:37,942 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:26:37] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:29:06,693 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 11:29:06,693 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 11:29:06,700 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 11:29:06,701 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 11:29:06,743 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 11:29:06,743 - root - INFO - Registering API blueprints...
+2026-04-13 11:29:06,919 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 11:29:06,919 - root - INFO - ✅ SocketIO events registered
+2026-04-13 11:29:06,920 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 11:29:52,766 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 11:29:52,767 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 11:29:52,772 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 11:29:52,772 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 11:29:52,817 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 11:29:52,817 - root - INFO - Registering API blueprints...
+2026-04-13 11:29:52,984 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 11:29:52,984 - root - INFO - ✅ SocketIO events registered
+2026-04-13 11:29:52,984 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 11:30:48,914 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:30:48] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:30:49,175 - backend.app.routes.auth - INFO - Restaurant registration attempt: e2e@razorpay.com
+2026-04-13 11:30:49,177 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:30:49] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 11:32:29,528 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:32:29] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:32:29,790 - backend.app.routes.auth - INFO - Restaurant registration attempt: testing_e2e_1@razorpay.com
+2026-04-13 11:32:29,791 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:32:29] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 11:32:52,131 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:32:52] "[33mGET /api/health HTTP/1.1[0m" 404 -
+2026-04-13 11:33:16,167 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:16] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:33:16,890 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:16] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:33:17,016 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:17,325 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:17,328 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:17,330 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:17,342 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:17,346 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:17,495 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:17,672 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:17,674 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:17,861 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:17] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:18,004 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:18] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:18,005 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:18] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:18,916 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:18] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:18,944 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:18] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:19,179 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:19] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:19,237 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:19] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:35,029 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:35] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:35,353 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:35] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:35,355 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:35,371 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:35] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:35,374 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:35,418 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:35] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:35,685 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:35] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:35,708 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:35] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:35,791 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:35] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:36,008 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:36] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:36,041 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:36] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:40,354 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:40] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:40,389 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:40] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:40,415 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:40] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:40,607 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:40] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:40,681 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:40] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:40,743 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:40] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:48,598 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:48] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:48,958 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:48] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:52,775 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:52] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:53,095 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:53] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:53,097 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:53] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:53,098 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:53] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:53,110 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:53] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:53,151 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:53] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:53,424 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:53] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:33:53,441 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:53] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:33:53,500 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:53] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:33:53,753 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:33:53] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:34:10,340 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:34:10] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:34:10,611 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:34:10] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:34:40,039 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:34:40] "[31m[1mGET /api/notifications HTTP/1.1[0m" 401 -
+2026-04-13 11:34:58,729 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:34:58] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:34:58,977 - backend.app.routes.auth - INFO - Restaurant registration attempt: e2e_final@test.com
+2026-04-13 11:34:58,977 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:34:58] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 11:35:31,698 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:31] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:35:32,407 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:32] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:35:32,530 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:32] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:35:32,843 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:32] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:35:32,850 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:32] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:35:32,854 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:32] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:35:32,857 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:32] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:35:32,865 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:32] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:35:32,909 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:32] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:35:33,180 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:33] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:35:33,211 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:33] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:35:33,256 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:33] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:35:33,502 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:33] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:35:33,529 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:33] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:35:41,266 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:41] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:35:41,268 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:41] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:35:41,543 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:41] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:35:41,588 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:41] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:35:50,241 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:50] "OPTIONS /api/admin/approve/69dc83523a9a55d62c3ccdac HTTP/1.1" 200 -
+2026-04-13 11:35:50,942 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:35:50] "POST /api/admin/approve/69dc83523a9a55d62c3ccdac HTTP/1.1" 200 -
+2026-04-13 11:35:53,490 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to bistro_dom_final_test@yumm.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. 98e67ed59e1d1-35fb1ed394csm3180382a91.11 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 11:36:02,540 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:02] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:36:02,877 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:02] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:36:29,151 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:29] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:36:29,843 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:29] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:36:29,912 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:29] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:36:30,231 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:30] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:36:30,232 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:30] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:36:30,234 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:30] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:36:30,260 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:30] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:36:30,563 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:30] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:36:30,584 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:30] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:36:30,889 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:30] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:36:48,740 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:48] "OPTIONS /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:36:48,742 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:48] "OPTIONS /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:36:49,030 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:49] "GET /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:36:49,080 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:49] "GET /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:36:59,921 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:36:59] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:00,249 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:00] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:13,596 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:13] "OPTIONS /api/restaurant-dashboard/menu/add HTTP/1.1" 200 -
+2026-04-13 11:37:13,961 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:13] "[35m[1mPOST /api/restaurant-dashboard/menu/add HTTP/1.1[0m" 201 -
+2026-04-13 11:37:14,163 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:14] "OPTIONS /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:37:14,301 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:14] "GET /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:37:23,919 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:23] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:37:24,224 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:24] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:24,227 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:24] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:37:24,230 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:24] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:24,253 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:24] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:37:24,556 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:24] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:24,581 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:24] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:37:24,884 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:24] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:33,008 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:33] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:37:33,010 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:33] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:33,011 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:33] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:37:33,013 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:33] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:33,288 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:33] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:37:33,347 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:33] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:33,356 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:33] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:37:33,613 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:33] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:37:53,932 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:37:53] "[31m[1mGET /api/notifications HTTP/1.1[0m" 401 -
+2026-04-13 11:38:10,320 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:38:10] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:38:11,394 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:38:11,397 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:38:11] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:38:29,595 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:38:29] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:38:30,788 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:38:30,791 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:38:30] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:38:38,970 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:38:38] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:38:40,104 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:38:40,107 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:38:40] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:39:17,986 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:17] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:39:18,671 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:18] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:39:18,850 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:18] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:39:19,161 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:39:19,165 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:39:19,167 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:39:19,170 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:39:19,180 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:39:19,229 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:39:19,497 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:39:19,529 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:39:19,582 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:39:19,817 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:39:19,850 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:19] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:39:36,772 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:36] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:39:36,774 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:36] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:39:37,071 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:37] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:39:37,106 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:37] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:39:48,780 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:48] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:39:49,097 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:39:49] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:40:06,865 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:06] "OPTIONS /api/admin/users/create HTTP/1.1" 200 -
+2026-04-13 11:40:07,553 - backend.app.routes.admin - ERROR - Error creating user: ValidationError (User:None) (Field is required: ['phone'])
+Traceback (most recent call last):
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\routes\admin.py", line 215, in create_user
+    new_user.save()
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\document.py", line 399, in save
+    self.validate(clean=clean)
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\base\document.py", line 438, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (User:None) (Field is required: ['phone'])
+2026-04-13 11:40:07,670 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:07] "[35m[1mPOST /api/admin/users/create HTTP/1.1[0m" 500 -
+2026-04-13 11:40:31,801 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:31] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:40:32,120 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:40:32,122 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:40:32,124 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:40:32,125 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:40:32,130 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:40:32,202 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:40:32,469 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:40:32,469 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:40:32,549 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:40:32,790 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:40:32,794 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:40:32] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:41:24,909 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:24] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:41:25,551 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:25] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:41:25,651 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:25] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:41:25,961 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:25] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:41:25,964 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:25] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:41:25,965 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:25] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:41:25,966 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:25] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:41:25,973 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:25] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:41:26,013 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:26] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:41:26,295 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:26] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:41:26,297 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:26] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:41:26,368 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:26] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:41:26,623 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:26] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:41:26,625 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:26] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:41:37,621 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:37] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:41:37,622 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:37] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:41:37,906 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:37] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:41:37,958 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:37] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:41:56,870 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:56] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:41:57,259 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:41:57] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:42:22,340 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:22] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:42:22,672 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:22] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:42:22,675 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:22] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:42:22,676 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:22] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:42:22,680 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:22] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:42:22,728 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:22] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:42:22,940 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:22] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:42:23,017 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:23] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:42:23,047 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:23] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:42:23,047 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:23] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:42:23,263 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:42:23] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:43:22,233 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:43:22] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:43:23,319 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:43:23,321 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:43:23] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:43:41,317 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:43:41] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:43:42,484 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:43:42,488 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:43:42] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:46:43,845 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:46:43] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:46:44,109 - backend.app.routes.auth - INFO - Restaurant registration attempt: final@razor.com
+2026-04-13 11:46:44,109 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:46:44] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 11:47:32,025 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:47:32] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:47:32,341 - backend.app.routes.auth - INFO - Restaurant registration attempt: final_alpha@razor.com
+2026-04-13 11:47:32,342 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:47:32] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 11:49:00,295 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:00] "POST /api/uploads/identity-proof HTTP/1.1" 200 -
+2026-04-13 11:49:06,716 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:06] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 11:49:07,029 - backend.app.routes.auth - INFO - Restaurant registration attempt: final_alpha_2@razor.com
+2026-04-13 11:49:07,035 - backend.app.routes.auth - INFO - Restaurant registration submitted: final_alpha_2@razor.com
+2026-04-13 11:49:07,036 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:07] "[35m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 201 -
+2026-04-13 11:49:47,509 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:47] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:49:50,077 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:49:50,224 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:49:50,541 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:49:50,550 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:49:50,553 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:49:50,564 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:49:50,615 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:49:50,812 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:49:50,878 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:49:50,915 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:49:50,931 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:50] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:49:51,140 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:49:51] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:50:04,576 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:04] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:50:06,452 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:06] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:50:06,467 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:06] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:50:06,851 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:06] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:50:20,532 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:20] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:50:20,804 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:20] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:50:22,859 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:22] "OPTIONS /api/admin/approve/69dc8adb3a9a55d62c3ccdaf HTTP/1.1" 200 -
+2026-04-13 11:50:23,590 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:23] "POST /api/admin/approve/69dc8adb3a9a55d62c3ccdaf HTTP/1.1" 200 -
+2026-04-13 11:50:26,389 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to final_alpha_2@razor.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. d2e1a72fcca58-82f0c4b5a79sm10613017b3a.30 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 11:50:50,232 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:50] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:50:52,146 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:50:52] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:51:34,876 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:34] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:51:35,560 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:35] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:51:35,621 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:35] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:51:35,931 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:51:35,932 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:35] "OPTIONS /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:51:35,933 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:35] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:51:35,951 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:35] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:51:36,261 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:36] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:51:36,279 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:36] "GET /api/restaurant-dashboard/orders HTTP/1.1" 200 -
+2026-04-13 11:51:36,588 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:51:36] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:52:00,199 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:00] "OPTIONS /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:52:00,201 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:00] "OPTIONS /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:52:00,468 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:00] "GET /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:52:00,543 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:00] "GET /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:52:05,638 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:52:05,970 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:05] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:52:37,443 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:37] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:52:39,133 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:39] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:52:49,834 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:49] "OPTIONS /api/restaurant-dashboard/menu/add HTTP/1.1" 200 -
+2026-04-13 11:52:50,186 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:50] "[35m[1mPOST /api/restaurant-dashboard/menu/add HTTP/1.1[0m" 201 -
+2026-04-13 11:52:50,605 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:50] "OPTIONS /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:52:50,726 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:52:50] "GET /api/restaurant-dashboard/menu HTTP/1.1" 200 -
+2026-04-13 11:53:05,944 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:53:05] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:53:06,216 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:53:06] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:53:29,715 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:53:29] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:53:30,928 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:53:30,931 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:53:30] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:53:53,529 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:53:53] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:53:54,637 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:53:54,670 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:53:54] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:54:12,520 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:54:12] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:54:13,755 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:54:13,758 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:54:13] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:54:46,895 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:54:46] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:54:48,214 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:54:48,219 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:54:48] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:55:15,808 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:55:15] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:55:17,187 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:55:17,189 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:55:17] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:55:17,304 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:55:17,309 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:55:17] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:56:11,397 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:11] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:56:11,954 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:11] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 11:56:12,012 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:56:12,319 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:56:12,320 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:56:12,321 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:56:12,325 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:56:12,328 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:56:12,372 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:56:12,647 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:56:12,652 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:56:12,715 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 11:56:12,974 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 11:56:12,974 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:12] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:56:35,274 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:35] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:56:35,275 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:35] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:56:35,542 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:35] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:56:35,599 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:35] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:56:42,025 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:42] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:56:42,343 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:56:42] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:57:12,036 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:57:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:57:12,364 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:57:12] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:57:20,252 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:57:20] "OPTIONS /api/admin/users/create HTTP/1.1" 200 -
+2026-04-13 11:57:20,788 - backend.app.routes.admin - ERROR - Error creating user: ValidationError (User:None) (Field is required: ['phone'])
+Traceback (most recent call last):
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\routes\admin.py", line 215, in create_user
+    new_user.save()
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\document.py", line 399, in save
+    self.validate(clean=clean)
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\base\document.py", line 438, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (User:None) (Field is required: ['phone'])
+2026-04-13 11:57:20,790 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:57:20] "[35m[1mPOST /api/admin/users/create HTTP/1.1[0m" 500 -
+2026-04-13 11:57:42,014 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:57:42] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:57:42,332 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:57:42] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:57:43,140 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:57:43] "OPTIONS /api/admin/users/create HTTP/1.1" 200 -
+2026-04-13 11:57:43,679 - backend.app.routes.admin - ERROR - Error creating user: ValidationError (User:None) (Field is required: ['phone'])
+Traceback (most recent call last):
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\routes\admin.py", line 215, in create_user
+    new_user.save()
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\document.py", line 399, in save
+    self.validate(clean=clean)
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\base\document.py", line 438, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (User:None) (Field is required: ['phone'])
+2026-04-13 11:57:43,680 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:57:43] "[35m[1mPOST /api/admin/users/create HTTP/1.1[0m" 500 -
+2026-04-13 11:58:07,563 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:07] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:58:08,202 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:08] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:58:08,203 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:08] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:58:08,204 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:08] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:58:08,215 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:08] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:58:08,535 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:08] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 11:58:08,535 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:08] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:58:08,856 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:08] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:58:37,577 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:37] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:58:37,890 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:37] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 11:58:42,452 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:42] "OPTIONS /api/admin/users/create HTTP/1.1" 200 -
+2026-04-13 11:58:42,974 - backend.app.routes.admin - ERROR - Error creating user: ValidationError (User:None) (Field is required: ['phone'])
+Traceback (most recent call last):
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\routes\admin.py", line 215, in create_user
+    new_user.save()
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\document.py", line 399, in save
+    self.validate(clean=clean)
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\base\document.py", line 438, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (User:None) (Field is required: ['phone'])
+2026-04-13 11:58:42,976 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:42] "[35m[1mPOST /api/admin/users/create HTTP/1.1[0m" 500 -
+2026-04-13 11:58:53,476 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:53] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 11:58:54,328 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 11:58:54,330 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:58:54] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 11:59:07,569 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 11:59:07] "[31m[1mGET /api/notifications HTTP/1.1[0m" 401 -
+2026-04-13 12:00:43,869 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:00:43] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 12:00:44,132 - backend.app.routes.auth - INFO - Restaurant registration attempt: master@razor.com
+2026-04-13 12:00:44,133 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:00:44] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 12:01:40,705 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:01:40] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 12:01:41,015 - backend.app.routes.auth - INFO - Restaurant registration attempt: e2etest@razor.com
+2026-04-13 12:01:41,016 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:01:41] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 12:02:13,946 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:13] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 12:02:14,263 - backend.app.routes.auth - INFO - Restaurant registration attempt: e2etest@razor.com
+2026-04-13 12:02:14,263 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:14] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 12:02:41,987 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:41] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 12:02:42,523 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:42] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 12:02:42,580 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:42] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:02:42,891 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:42] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:02:42,892 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:42] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:02:42,893 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:42] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:02:42,895 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:42] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:02:42,934 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:42] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:02:43,225 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:43] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:02:43,225 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:43] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:02:43,278 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:43] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:02:43,549 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:43] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:02:43,550 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:02:43] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:03:06,594 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:06] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 12:03:06,595 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:06] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 12:03:06,847 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:06] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 12:03:06,926 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:06] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 12:03:12,587 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:12] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:03:12,913 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:12] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:03:42,597 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:42] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:03:42,911 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:42] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:03:46,067 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:46] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:03:46,377 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:46] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:03:46,385 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:46] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:03:46,709 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:03:46] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:04:02,594 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:02] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:04:02,596 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:02] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:04:02,597 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:02] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:04:02,599 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:02] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:04:02,600 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:02] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:04:02,601 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:02] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:04:02,933 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:02] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:04:02,934 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:02] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:04:02,966 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:02] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:04:03,188 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:03] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:04:03,257 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:03] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:04:03,287 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:03] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:04:58,620 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:58] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 12:04:58,931 - backend.app.routes.auth - INFO - Restaurant registration attempt: master_test@razor.com
+2026-04-13 12:04:58,932 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:04:58] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 12:05:24,754 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:24] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 12:05:25,293 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:25] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 12:05:25,349 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:25] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:05:25,661 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:25] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:05:25,662 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:25] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:05:25,664 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:25] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:05:25,666 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:25] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:05:25,703 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:25] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:05:25,996 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:25] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:05:25,996 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:25] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:05:26,051 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:26] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:05:26,321 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:26] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:05:26,323 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:26] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:05:38,693 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:38] "OPTIONS /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-13 12:05:38,693 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:38] "OPTIONS /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-13 12:05:38,978 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:38] "GET /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-13 12:05:39,013 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:05:39] "GET /api/admin/restaurants HTTP/1.1" 200 -
+2026-04-13 12:06:47,178 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:06:47] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 12:06:47,441 - backend.app.routes.auth - INFO - Restaurant registration attempt: master_e2e_3@razor.com
+2026-04-13 12:06:47,442 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:06:47] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 12:07:33,436 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:07:33] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 12:07:34,258 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 12:07:34,261 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:07:34] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 12:07:43,617 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:07:43] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 12:07:44,343 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 12:07:44,346 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:07:44] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 12:08:10,186 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:10] "OPTIONS /api/auth/login HTTP/1.1" 200 -
+2026-04-13 12:08:10,716 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:10] "POST /api/auth/login HTTP/1.1" 200 -
+2026-04-13 12:08:10,789 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:10] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:08:11,092 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:08:11,094 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:08:11,101 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:08:11,102 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:08:11,104 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:08:11,149 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:08:11,405 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:08:11,417 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:08:11,493 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:08:11,734 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:08:11,735 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:11] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:08:21,567 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:21] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 12:08:21,568 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:21] "OPTIONS /api/admin/users HTTP/1.1" 200 -
+2026-04-13 12:08:21,836 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:21] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 12:08:21,896 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:21] "GET /api/admin/users HTTP/1.1" 200 -
+2026-04-13 12:08:40,794 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:40] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:08:41,111 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:41] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:08:45,039 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:45] "OPTIONS /api/admin/users/create HTTP/1.1" 200 -
+2026-04-13 12:08:45,576 - backend.app.routes.admin - ERROR - Error creating user: ValidationError (User:None) (Field is required: ['phone'])
+Traceback (most recent call last):
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\routes\admin.py", line 215, in create_user
+    is_approved=True   # Admin created users are pre-approved
+    ^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\document.py", line 399, in save
+    self.validate(clean=clean)
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\base\document.py", line 438, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (User:None) (Field is required: ['phone'])
+2026-04-13 12:08:45,582 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:08:45] "[35m[1mPOST /api/admin/users/create HTTP/1.1[0m" 500 -
+2026-04-13 12:09:08,366 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:08] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:09:08,687 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:08] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:09:08,688 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:08] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:09:08,688 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:08] "OPTIONS /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:09:08,690 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:08] "OPTIONS /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:09:08,690 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:08] "OPTIONS /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:09:08,731 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:08] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:09:09,026 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:09] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:09:09,030 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:09] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:09:09,073 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:09] "GET /api/admin-dashboard/stats HTTP/1.1" 200 -
+2026-04-13 12:09:09,352 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:09] "GET /api/admin/pending-users HTTP/1.1" 200 -
+2026-04-13 12:09:09,354 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:09] "GET /api/notifications HTTP/1.1" 200 -
+2026-04-13 12:09:28,469 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:28] "OPTIONS /api/auth/google-login HTTP/1.1" 200 -
+2026-04-13 12:09:29,876 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'mock_customer_test'
+2026-04-13 12:09:29,880 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:09:29] "[31m[1mPOST /api/auth/google-login HTTP/1.1[0m" 401 -
+2026-04-13 12:10:19,525 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:10:19] "OPTIONS /api/auth/register/restaurant HTTP/1.1" 200 -
+2026-04-13 12:10:20,322 - backend.app.routes.auth - INFO - Restaurant registration attempt: final@test.com
+2026-04-13 12:10:20,323 - werkzeug - INFO - 127.0.0.1 - - [13/Apr/2026 12:10:20] "[31m[1mPOST /api/auth/register/restaurant HTTP/1.1[0m" 400 -
+2026-04-13 12:12:45,858 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 12:12:45,858 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 12:12:45,910 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 12:12:45,911 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 12:12:45,995 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 12:12:45,995 - root - INFO - Registering API blueprints...
+2026-04-13 12:12:46,241 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 12:12:46,241 - root - INFO - ✅ SocketIO events registered
+2026-04-13 12:12:46,241 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 12:18:50,724 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 12:18:50,724 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 12:18:50,730 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 12:18:50,730 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 12:18:50,767 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 12:18:50,767 - root - INFO - Registering API blueprints...
+2026-04-13 12:18:50,914 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 12:18:50,915 - root - INFO - ✅ SocketIO events registered
+2026-04-13 12:18:50,915 - root - INFO - ✅ FoodHub App initialized successfully!

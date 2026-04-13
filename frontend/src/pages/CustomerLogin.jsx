@@ -132,8 +132,30 @@ const CustomerLogin = () => {
               </div>
            </div>
 
+           {/* Test Mode Quick Login */}
+           <div className="bg-orange-50 p-6 rounded-[2rem] border border-orange-100">
+              <p className="text-[10px] font-black text-orange-600 uppercase tracking-[0.2em] mb-3">Test Mode</p>
+              <button 
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const data = await authService.googleLogin('mock_customer_test');
+                    login(data.user, data.access_token);
+                    navigate('/home');
+                  } catch (err) {
+                    setError('Test login failed');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+                className="w-full py-3 bg-white border-2 border-orange-200 text-orange-600 rounded-xl font-black text-xs uppercase tracking-widest hover:bg-orange-100 transition flex items-center justify-center gap-2"
+              >
+                Quick Customer Login
+              </button>
+           </div>
+
            {/* Link to Partner Login */}
-           <div className="pt-10 border-t border-gray-100 text-center lg:text-left">
+           <div className="pt-8 border-t border-gray-100 text-center lg:text-left">
               <p className="text-gray-400 text-xs font-bold mb-4">Are you a restaurant or delivery partner?</p>
               <Link 
                 to="/partner-login" 
