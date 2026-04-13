@@ -395,10 +395,12 @@ def create_razorpay_order():
     try:
         import os
         import razorpay
-        client = razorpay.Client(auth=(
-            os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_placeholder'),
-            os.environ.get('RAZORPAY_KEY_SECRET', 'placeholder')
-        ))
+        razorpay_key_id = os.environ.get('RAZORPAY_KEY_ID')
+        razorpay_key_secret = os.environ.get('RAZORPAY_KEY_SECRET')
+        if not razorpay_key_id or not razorpay_key_secret:
+            raise RuntimeError('Missing Razorpay credentials: set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET')
+
+        client = razorpay.Client(auth=(razorpay_key_id, razorpay_key_secret))
         data = request.get_json()
         amount = int(float(data.get('amount', 0)) * 100)  # Convert to paise
         rz_order = client.order.create({'amount': amount, 'currency': 'INR', 'payment_capture': 1})

@@ -14,11 +14,16 @@ logger = logging.getLogger(__name__)
 
 bp = Blueprint('payments', __name__, url_prefix='/api/payments')
 
+def get_razorpay_credentials():
+    razorpay_key_id = os.getenv('RAZORPAY_KEY_ID')
+    razorpay_key_secret = os.getenv('RAZORPAY_KEY_SECRET')
+    if not razorpay_key_id or not razorpay_key_secret:
+        raise RuntimeError('Missing Razorpay credentials: set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET')
+    return razorpay_key_id, razorpay_key_secret
+
 def get_razorpay_client():
-    return razorpay.Client(auth=(
-        os.getenv('RAZORPAY_KEY_ID', 'rzp_test_placeholder'),
-        os.getenv('RAZORPAY_KEY_SECRET', 'placeholder')
-    ))
+    key_id, key_secret = get_razorpay_credentials()
+    return razorpay.Client(auth=(key_id, key_secret))
 
 @bp.route('/create-razorpay-order', methods=['POST'])
 @customer_required

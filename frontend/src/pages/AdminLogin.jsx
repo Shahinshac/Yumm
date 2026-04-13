@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/authService';
-import { ShieldCheck, Lock, Mail, Eye, EyeOff, Terminal } from 'lucide-react';
+import { ShieldCheck, Lock, Mail, Eye, EyeOff, Terminal, Pizza } from 'lucide-react';
 
 const AdminLogin = () => {
   const [identifier, setIdentifier] = useState('');
@@ -36,20 +36,20 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0a0a0a] font-mono relative overflow-hidden">
-      {/* Matrix-like subtle background grid or dark theme */}
-      <div className="absolute inset-0 bg-[radial-gradient(#1a1a1a_1px,transparent_1px)] [background-size:20px_20px] opacity-20" />
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#e23744] to-transparent animate-pulse" />
-
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#fff4f0] via-[#ffe1d8] to-[#fff2ef] font-mono relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(226,71,68,0.14),_transparent_30%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(255,175,125,0.18),_transparent_40%)]" />
+      <div className="absolute top-10 left-10 w-24 h-24 rounded-full bg-[#ffebdf] opacity-70" />
+      <div className="absolute bottom-10 right-10 w-28 h-28 rounded-full bg-[#ffe2d5] opacity-70" />
       <div className="relative z-10 w-full max-w-[420px] p-6">
-        <div className="bg-[#141414] rounded-[2.5rem] border border-[#222] shadow-[0_0_50px_rgba(226,55,68,0.05)] p-10 lg:p-14 animate-in fade-in zoom-in duration-700">
+        <div className="bg-white/95 rounded-[2.5rem] border border-[#ffe0d7] shadow-[0_30px_80px_-40px_rgba(226,71,68,0.25)] p-10 lg:p-14 animate-in fade-in zoom-in duration-700">
            {/* Terminal Identity */}
            <div className="text-center mb-10">
-              <div className="w-16 h-16 bg-[#222] border border-[#333] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
-                <Terminal size={32} className="text-[#e23744]" />
+              <div className="w-16 h-16 bg-[#fff2ee] border border-[#ffd5c8] rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
+                <Pizza size={32} className="text-[#e23744]" />
               </div>
-              <h2 className="text-2xl font-black text-white tracking-widest uppercase">System Core</h2>
-              <p className="text-gray-500 text-[10px] font-black mt-2 uppercase tracking-[0.3em]">Administrator Validation</p>
+              <h2 className="text-2xl font-black text-gray-900 tracking-widest uppercase">Admin Gateway</h2>
+              <p className="text-[#e23744] text-[10px] font-black mt-2 uppercase tracking-[0.3em]">Secure operations access</p>
            </div>
 
            {error && (

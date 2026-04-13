@@ -177,10 +177,10 @@ const AdminApprovals = () => {
                               <p className="text-sm font-black text-gray-900 select-all" id={`password_${u.id}`}>{lastApproved.password}</p>
                            </div>
                         ) : (
-                          <div className="flex justify-end items-center gap-3 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-all duration-300">
+                          <div className="flex justify-end items-center gap-3 transition-all duration-300">
                              <button 
                                onClick={() => handleReject(u.id)}
-                               className="p-3 bg-white text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-2xl border border-gray-100 shadow-sm transition-all"
+                               className="p-3 bg-white text-gray-500 hover:text-red-500 hover:bg-red-50 rounded-2xl border border-gray-100 shadow-sm transition-all"
                                title="Deny Access"
                              >
                                <X size={18} />

@@ -36,23 +36,23 @@ const PartnerLogin = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-white font-sans">
-      <div className="absolute inset-0 bg-[#f8fafc]" />
-      
+    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-gradient-to-br from-[#fff6f5] via-[#ffe7df] to-[#fff2ed] font-sans">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(226,71,68,0.16),_transparent_35%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(255,175,125,0.18),_transparent_40%)]" />
       <div className="relative z-10 w-full max-w-[500px] p-6">
         <Link to="/login" className="inline-flex items-center gap-2 mb-8 text-gray-400 hover:text-gray-900 font-bold text-xs transition-all uppercase tracking-widest">
            <ChevronLeft size={16} /> Back to Customer Portal
         </Link>
 
         {/* Partner Auth Card */}
-        <div className="bg-white rounded-[2.5rem] shadow-2xl p-10 lg:p-14 animate-in fade-in slide-in-from-bottom duration-500 border border-gray-100">
+        <div className="bg-white/95 rounded-[2.5rem] shadow-[0_30px_80px_-40px_rgba(226,71,68,0.35)] p-10 lg:p-14 animate-in fade-in slide-in-from-bottom duration-500 border border-gray-100">
            {/* Logo and Greeting */}
            <div className="mb-10 sm:text-left text-center">
               <div className="w-14 h-14 bg-[#e23744] rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-red-100 mx-auto sm:mx-0">
                 <span className="text-white font-black text-xl">Y</span>
               </div>
-              <h2 className="text-3xl font-black text-gray-900 tracking-tight">Partner Dashboard</h2>
-              <p className="text-gray-400 text-sm font-bold mt-2 leading-relaxed">Secure access for merchants and riders.</p>
+              <h2 className="text-3xl font-black text-gray-900 tracking-tight">Partner Portal</h2>
+              <p className="text-[#e23744] text-sm font-bold mt-2 leading-relaxed">Access to merchant and rider operations.</p>
            </div>
 
            {error && (

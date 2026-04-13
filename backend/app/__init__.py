@@ -8,9 +8,13 @@ from flask_jwt_extended import JWTManager
 from flask_socketio import SocketIO
 from flask_mail import Mail
 from mongoengine import connect, ConnectionFailure
+from dotenv import load_dotenv
 import os
 import logging
 from datetime import timedelta
+
+# Load .env automatically for backend startup
+load_dotenv()
 
 # Initialize extensions
 jwt = JWTManager()
