@@ -86,7 +86,8 @@ const CustomerCart = () => {
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (err) {
-      alert("Payment initialization failed: " + (err.response?.data?.error || err.message));
+      const detail = err.response?.data?.details ? ` (${err.response.data.details})` : '';
+      alert("Payment initialization failed: " + (err.response?.data?.error || err.message) + detail);
     }
   };
 

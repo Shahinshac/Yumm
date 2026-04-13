@@ -63,7 +63,7 @@ const RestaurantDetails = () => {
       {/* Header / Banner */}
       <div className="relative h-64 md:h-80 w-full overflow-hidden rounded-3xl mb-8 group">
         <img 
-          src={`https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80&sig=${restaurant.id}`} 
+          src={restaurant.image || `https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80&sig=${restaurant.id}`} 
           alt={restaurant.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
         />

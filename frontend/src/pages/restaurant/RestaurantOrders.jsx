@@ -149,14 +149,15 @@ const RestaurantOrders = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
-          {orders.map(order => {
+            if (!order || !order.id) return null;
             const isLoading = !!actionLoading[order.id];
-            const payBadge = PAYMENT_BADGE[order.payment_method] || PAYMENT_BADGE.cod;
-            const payStatus = PAYMENT_STATUS_BADGE[order.payment_status] || PAYMENT_STATUS_BADGE.cod_pending;
+            const payBadge = PAYMENT_BADGE[order.payment_method || 'cod'] || PAYMENT_BADGE.cod;
+            const payStatus = PAYMENT_STATUS_BADGE[order.payment_status || 'pending'] || PAYMENT_STATUS_BADGE.pending;
             const needsPayment = (order.payment_method === 'upi') && order.payment_status !== 'paid' && order.status === 'placed';
             const upiQrValue = order.restaurant_upi_id
-              ? `upi://pay?pa=${order.restaurant_upi_id}&am=${order.total_amount}&cu=INR&tn=Order${order.id?.slice(-6)}`
+              ? `upi://pay?pa=${order.restaurant_upi_id}&am=${order.total_amount || 0}&cu=INR&tn=Order${order.id?.slice(-6)}`
               : '';
+            const items = order.items || [];
 
             return (
               <div key={order.id} className="bg-white rounded-3xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
@@ -177,14 +178,15 @@ const RestaurantOrders = () => {
                       </div>
 
                       <div className="flex flex-wrap gap-x-6 gap-y-2">
-                        {order.items.map((item, i) => (
+                        {items.map((item, i) => (
                           <div key={i} className="flex items-center gap-2">
                             <div className="w-6 h-6 bg-orange-50 text-orange-600 rounded-md flex items-center justify-center text-[10px] font-black">
-                              {item.quantity || item.qty}
+                              {item.quantity || item.qty || 0}
                             </div>
-                            <span className="text-sm font-bold text-gray-700">{item.name}</span>
+                            <span className="text-sm font-bold text-gray-700">{item.name || 'Unknown Item'}</span>
                           </div>
                         ))}
+                        {items.length === 0 && <p className="text-xs text-gray-400 italic">No items listed</p>}
                       </div>
 
                       {order.delivery_address && (

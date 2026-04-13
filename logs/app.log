@@ -1992,3 +1992,12 @@ mongoengine.errors.ValidationError: ValidationError (Payment:None) (Value must b
 2026-04-13 14:35:33,083 - root - INFO - ✅ All blueprints registered successfully
 2026-04-13 14:35:33,083 - root - INFO - ✅ SocketIO events registered
 2026-04-13 14:35:33,083 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 15:32:50,623 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 15:32:50,624 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 15:32:50,632 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 15:32:50,632 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 15:32:50,695 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 15:32:50,695 - root - INFO - Registering API blueprints...
+2026-04-13 15:32:51,025 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 15:32:51,025 - root - INFO - ✅ SocketIO events registered
+2026-04-13 15:32:51,025 - root - INFO - ✅ FoodHub App initialized successfully!

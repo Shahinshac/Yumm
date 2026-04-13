@@ -61,8 +61,12 @@ def create_razorpay_order():
         }), 200
         
     except Exception as e:
-        logger.error(f"Razorpay order creation failed: {str(e)}")
-        return jsonify({'error': 'Failed to initialize payment gateway'}), 500
+        error_msg = str(e)
+        logger.error(f"Razorpay order creation failed: {error_msg}")
+        return jsonify({
+            'error': 'Failed to initialize payment gateway',
+            'details': error_msg
+        }), 500
 
 @bp.route('/verify-payment', methods=['POST'])
 @customer_required

@@ -22,7 +22,7 @@ def allowed_file(filename):
 @bp.route('/upload', methods=['POST'])
 @jwt_required()
 def upload_file():
-    """Upload a file to the server"""
+    """Upload a file to Cloudinary"""
     try:
         if 'file' not in request.files:
             return jsonify({'error': 'No file part'}), 400
@@ -33,30 +33,29 @@ def upload_file():
             return jsonify({'error': 'No selected file'}), 400
         
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            # Add a random prefix to avoid collisions
-            random_hex = secrets.token_hex(8)
-            _, extension = os.path.splitext(filename)
-            new_filename = f"{random_hex}{extension}"
+            from backend.app.services.cloudinary_service import CloudinaryService
             
-            # Ensure the upload folder exists
-            if not os.path.exists(UPLOAD_FOLDER):
-                os.makedirs(UPLOAD_FOLDER)
+            # Determine folder based on context if possible, default to general
+            folder = request.form.get('folder', 'general')
+            
+            # Upload to Cloudinary
+            url = CloudinaryService.upload_document(file, folder=f"yumm_{folder}")
+            
+            if not url:
+                return jsonify({'error': 'Failed to upload to cloud storage'}), 500
                 
-            file_path = os.path.join(UPLOAD_FOLDER, new_filename)
-            file.save(file_path)
-            
-            # Use real host or fallback to localhost if not set in config
-            base_url = current_app.config.get('BASE_URL', request.host_url).rstrip('/')
-            file_url = f"{base_url}/api/media/serve/{new_filename}"
-            
-            logger.info(f"File uploaded successfully: {new_filename}")
+            logger.info(f"File uploaded to Cloudinary successfully")
             
             return jsonify({
                 'success': True,
-                'filename': new_filename,
-                'url': file_url
+                'url': url
             }), 201
+        
+        return jsonify({'error': 'Invalid file type'}), 400
+
+    except Exception as e:
+        logger.error(f"Media upload failed: {str(e)}")
+        return jsonify({'error': 'Upload failed', 'details': str(e)}), 500
         
         return jsonify({'error': 'File type not allowed'}), 400
         

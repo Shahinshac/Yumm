@@ -156,12 +156,15 @@ const RestaurantDashboard = () => {
         ) : (
           <div className="divide-y divide-gray-50">
             {orders.map(order => {
+              if (!order || !order.id) return null;
               const s = STATUS_STYLES[order.status] || STATUS_STYLES.pending;
+              const orderId = order.id || '000000000000';
+              const totalAmount = order.total || order.total_amount || 0;
               return (
                 <div key={order.id} className="flex flex-col md:flex-row md:items-center gap-8 px-10 py-10 hover:bg-gray-50/50 transition-colors group">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-4 mb-3">
-                      <span className="font-black text-2xl text-gray-900 tracking-tighter">#{order.id.slice(-4).toUpperCase()}</span>
+                      <span className="font-black text-2xl text-gray-900 tracking-tighter">#{orderId.slice(-4).toUpperCase()}</span>
                       <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border-2 ${s.cls}`}>{s.label}</span>
                     </div>
                     <div className="flex items-center gap-4 text-gray-500 font-bold text-sm">
@@ -184,7 +187,7 @@ const RestaurantDashboard = () => {
                   </div>
 
                   <div className="flex items-center gap-6 shrink-0">
-                    <span className="text-3xl font-black text-gray-900 tracking-tighter">₹{order.total}</span>
+                    <span className="text-3xl font-black text-gray-900 tracking-tighter">₹{totalAmount}</span>
                     <div className="flex gap-2">
                        {(order.status === 'pending' || order.status === 'placed') ? (
                          <>
