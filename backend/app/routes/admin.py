@@ -417,6 +417,7 @@ def approve_user(user_id):
                     EmailService.send_credentials_email(
                         user_email=user_email,
                         user_name=user_name,
+                        username=username,
                         password=password
                     )
                 except Exception as e:
@@ -425,7 +426,7 @@ def approve_user(user_id):
         # Start background thread
         thread = threading.Thread(
             target=send_async_email,
-            args=(current_app._get_current_object(), user.email, user.full_name or user.username, generated_password)
+            args=(current_app._get_current_object(), user.email, user.full_name or user.username, user.username, generated_password)
         )
         thread.start()
 
@@ -475,9 +476,25 @@ def reject_user(user_id):
                 # Delete restaurant profile
                 restaurant.delete()
         elif user.role == 'delivery':
-            delivery = DeliveryPartner.objects(user=user).first()
             if delivery:
                 delivery.delete()
+
+        # Send rejection email in background before final response
+        import threading
+        from flask import current_app
+        from backend.app.services.email_service import EmailService
+
+        def send_async_rejection(app_instance, user_email, user_name, reason):
+            with app_instance.app_context():
+                try:
+                    EmailService.send_rejection_email(user_email, user_name, reason)
+                except Exception as e:
+                    logger.error(f"Failed to send rejection email: {str(e)}")
+
+        threading.Thread(
+            target=send_async_rejection,
+            args=(current_app._get_current_object(), email, user.full_name or user.username, reason)
+        ).start()
 
         user.delete()
 
