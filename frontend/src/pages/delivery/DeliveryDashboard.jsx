@@ -44,9 +44,11 @@ const DeliveryDashboard = () => {
             deliveryService.updateStatus(null, online ? 'online' : 'offline').catch(() => {});
         }
 
+        // Always keep the dashboard data fresh on initial load.
+        refreshDashboard();
+
         if (online) {
-            refreshDashboard();
-            const interval = setInterval(refreshDashboard, 30000); 
+            const interval = setInterval(refreshDashboard, 30000);
             
             if (socket) {
                 socket.on('new_delivery_request', (order) => {
@@ -234,6 +236,24 @@ const DeliveryDashboard = () => {
         <StatCard icon={IndianRupee} label="Daily Pay" value={`₹${stats.earningsToday || 0}`} color="text-blue-500" />
         <StatCard icon={Navigation} label="Kms" value={`${stats.kmToday || 0}`} color="text-purple-500" />
         <StatCard icon={TrendingUp} label="Rank" value="Gold" color="text-orange-500" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Available Orders</p>
+          <p className="text-4xl font-black text-gray-900">{availableOrders.length}</p>
+          <p className="text-xs text-gray-500 mt-2">Nearby delivery requests waiting for pickup</p>
+        </div>
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Current Assignment</p>
+          <p className="text-4xl font-black text-gray-900">{activeDelivery ? 'Active' : 'None'}</p>
+          <p className="text-xs text-gray-500 mt-2">{activeDelivery ? `Order ${activeDelivery.id.slice(-6).toUpperCase()} · ${activeDelivery.status}` : 'No active delivery yet'}</p>
+        </div>
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Drive Mode</p>
+          <p className="text-4xl font-black text-gray-900">{online ? 'Online' : 'Offline'}</p>
+          <p className="text-xs text-gray-500 mt-2">Toggle to receive new assignments and stay synced.</p>
+        </div>
       </div>
 
       <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-8 mt-8">

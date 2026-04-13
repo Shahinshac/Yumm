@@ -66,7 +66,7 @@ const AdminUsers = () => {
     if (!lastActivityDate) return false;
     const lastActivity = new Date(lastActivityDate);
     const now = new Date();
-    return (now - lastActivity) < 5 * 60 * 1000;
+    return (now - lastActivity) < 10 * 60 * 1000;
   };
 
   const filteredUsers = users.filter(u => 
