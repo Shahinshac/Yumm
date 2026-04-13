@@ -22,9 +22,7 @@ export const authService = {
   },
 
   uploadIdentityProof: async (formData) => {
-    const response = await api.post('/uploads/identity-proof', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    });
+    const response = await api.post('/uploads/identity-proof', formData);
     return response.data;
   },
 

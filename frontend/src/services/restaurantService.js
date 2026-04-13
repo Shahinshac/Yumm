@@ -68,11 +68,7 @@ export const restaurantService = {
   uploadImage: async (file) => {
     const formData = new FormData();
     formData.append('file', file);
-    const resp = await api.post('/media/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    });
+    const resp = await api.post('/media/upload', formData);
     return resp.data;
   },
 
