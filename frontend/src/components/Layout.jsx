@@ -167,8 +167,8 @@ const Layout = () => {
       <div className="flex-1 flex flex-col min-h-screen">
         
         {/* Dynamic Header */}
-        <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'pt-2 pb-1' : 'py-3 border-b border-gray-100 px-4 md:px-6'}`}>
-          <div className={`${isCustomer ? 'max-w-7xl mx-auto px-4 md:px-6' : 'flex items-center justify-between w-full'}`}>
+        <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'border-b border-gray-100 pt-2 pb-2' : 'py-3 border-b border-gray-100 px-4 md:px-6'}`}>
+          <div className={`${isCustomer ? 'w-full px-3 sm:px-4 md:px-6' : 'flex items-center justify-between w-full'}`}>
             
             {isCustomer ? (
               /* ZOMATO CLEAN HEADER (CUSTOMERS) */
@@ -259,27 +259,31 @@ const Layout = () => {
         )}
 
         {/* Page Content */}
-        <main className={`flex-1 overflow-auto ${isCustomer ? 'bg-white' : 'p-4 md:p-6 lg:p-8 bg-gray-50'}`}>
-          <div className={`${isCustomer ? 'max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-6' : 'max-w-7xl mx-auto'}`}>
+        <main className={`flex-1 overflow-y-auto overflow-x-hidden min-w-0 ${isCustomer ? 'bg-white' : 'p-4 md:p-6 lg:p-8 bg-gray-50'}`}>
+          <div className={`${isCustomer ? 'w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-3 md:py-6' : 'max-w-7xl mx-auto'}`}>
             <Outlet context={{ vegMode, locationName }} />
           </div>
         </main>
 
-        {/* Mobile Bottom Nav (Visible for customers) */}
+        {/* Mobile Bottom Nav (Customers only, hidden on lg+) */}
         {isCustomer && (
-          <div className="lg:hidden fixed bottom-0 left-0 right-0 px-4 py-3 flex justify-center w-full z-40 bg-white/80 backdrop-blur-md border-t border-gray-100">
-             <div className="flex items-center gap-8">
-                <Link to="/home" className={`flex flex-col items-center gap-1 ${location.pathname === '/home' ? 'text-[#e23744]' : 'text-gray-400'}`}>
-                   <LayoutDashboard size={20} />
-                   <span className="text-[10px] font-black uppercase tracking-widest">Delivery</span>
+          <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-100 shadow-lg">
+             <div className="flex items-center justify-around px-2 py-2 pb-safe">
+                <Link to="/home" className={`flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl transition ${location.pathname === '/home' ? 'text-[#e23744]' : 'text-gray-400'}`}>
+                   <LayoutDashboard size={22} />
+                   <span className="text-[9px] font-black uppercase tracking-widest">Home</span>
                 </Link>
-                <Link to="/orders" className={`flex flex-col items-center gap-1 ${location.pathname === '/orders' ? 'text-[#e23744]' : 'text-gray-400'}`}>
-                   <History size={20} />
-                   <span className="text-[10px] font-black uppercase tracking-widest">History</span>
+                <Link to="/orders" className={`flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl transition ${location.pathname.startsWith('/orders') ? 'text-[#e23744]' : 'text-gray-400'}`}>
+                   <History size={22} />
+                   <span className="text-[9px] font-black uppercase tracking-widest">Orders</span>
                 </Link>
-                <Link to="/cart" className={`flex flex-col items-center gap-1 ${location.pathname === '/cart' ? 'text-[#e23744]' : 'text-gray-400'}`}>
-                   <ShoppingCart size={20} />
-                   <span className="text-[10px] font-black uppercase tracking-widest">Cart</span>
+                <Link to="/cart" className={`flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl transition ${location.pathname === '/cart' ? 'text-[#e23744]' : 'text-gray-400'}`}>
+                   <ShoppingCart size={22} />
+                   <span className="text-[9px] font-black uppercase tracking-widest">Cart</span>
+                </Link>
+                <Link to="/profile" className={`flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-xl transition ${location.pathname === '/profile' ? 'text-[#e23744]' : 'text-gray-400'}`}>
+                   <User size={22} />
+                   <span className="text-[9px] font-black uppercase tracking-widest">Profile</span>
                 </Link>
              </div>
           </div>

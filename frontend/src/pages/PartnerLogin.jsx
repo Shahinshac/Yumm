@@ -104,19 +104,6 @@ const PartnerLogin = () => {
               </button>
            </form>
 
-           {/* Test Mode Quick Access */}
-           <div className="mt-8 p-6 bg-blue-50 rounded-[2rem] border border-blue-100">
-              <p className="text-[10px] font-black text-blue-600 uppercase tracking-[0.2em] mb-4">Quick Test Access</p>
-              <div className="flex flex-col gap-3">
-                 <button 
-                  onClick={() => { setIdentifier('admin'); setPassword('admin123'); }}
-                  className="w-full py-2 bg-white border border-blue-200 text-blue-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-100 transition shadow-sm"
-                 >
-                   Autofill Admin
-                 </button>
-              </div>
-           </div>
-
            {/* Onboarding Links */}
            <div className="mt-8 pt-6 border-t border-gray-50 flex gap-4 w-full">
               <Link to="/register/restaurant" className="flex-1 p-4 bg-white rounded-2xl border-2 border-gray-50 hover:border-[#e23744] transition-all flex flex-col items-center text-center gap-2">

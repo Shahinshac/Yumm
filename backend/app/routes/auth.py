@@ -251,40 +251,31 @@ def google_login():
         return jsonify({'error': 'Missing id_token'}), 400
 
     try:
-        # Mock logic for local testing without actual Google Auth flow
-        if id_token_str in ['mock_test_user', 'mock_customer_test']:
-            logger.info("Using mock google verification for local testing")
-            google_id = "mock_google_12345"
-            email = "testcustomer@example.com"
-            name = "Test Customer"
-        else:
-            # For web, Google Identity Services (GIS) provides an ID Token (JWT)
-            # which must be verified against the GOOGLE_CLIENT_ID
-            client_id = os.getenv('GOOGLE_CLIENT_ID')
-            if not client_id:
-                logger.error("GOOGLE_CLIENT_ID not found in environment")
-                return jsonify({'error': 'Server configuration error: missing client ID'}), 500
+        # Verify the Google ID Token
+        client_id = os.getenv('GOOGLE_CLIENT_ID')
+        if not client_id:
+            logger.error("GOOGLE_CLIENT_ID not found in environment")
+            return jsonify({'error': 'Server configuration error: missing client ID'}), 500
 
-            try:
-                # Verify the ID Token
-                id_info = google_id_token.verify_oauth2_token(
-                    id_token_str,
-                    google_auth_req.Request(),
-                    client_id
-                )
+        try:
+            id_info = google_id_token.verify_oauth2_token(
+                id_token_str,
+                google_auth_req.Request(),
+                client_id
+            )
 
-                google_id = id_info.get('sub')
-                email = id_info.get('email')
-                name = id_info.get('name', email)
+            google_id = id_info.get('sub')
+            email = id_info.get('email')
+            name = id_info.get('name', email)
 
-                if not email or not google_id:
-                    return jsonify({'error': 'Unable to retrieve required user info from Google'}), 400
+            if not email or not google_id:
+                return jsonify({'error': 'Unable to retrieve required user info from Google'}), 400
 
-                logger.info(f"Google ID token verified for: {email}")
+            logger.info(f"Google ID token verified for: {email}")
 
-            except ValueError as ve:
-                logger.warning(f"Google ID token verification failed: {str(ve)}")
-                return jsonify({'error': 'Invalid or expired Google token', 'details': str(ve)}), 401
+        except ValueError as ve:
+            logger.warning(f"Google ID token verification failed: {str(ve)}")
+            return jsonify({'error': 'Invalid or expired Google token', 'details': str(ve)}), 401
 
         # Check if user exists by google_id or email
         existing_user = User.objects(google_id=google_id).first()
