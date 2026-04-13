@@ -149,6 +149,7 @@ const RestaurantOrders = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6">
+          {orders.map(order => {
             if (!order || !order.id) return null;
             const isLoading = !!actionLoading[order.id];
             const payBadge = PAYMENT_BADGE[order.payment_method || 'cod'] || PAYMENT_BADGE.cod;
