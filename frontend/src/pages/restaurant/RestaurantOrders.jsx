@@ -20,7 +20,7 @@ const RestaurantOrders = () => {
     setLoading(true);
     try {
       const data = await restaurantService.getOrders(activeTab === 'all' ? '' : activeTab);
-      setOrders(data);
+      setOrders(Array.isArray(data) ? data : (data?.orders || []));
     } catch (err) {
       setOrders([]);
     } finally {

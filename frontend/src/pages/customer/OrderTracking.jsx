@@ -135,7 +135,9 @@ const OrderTracking = () => {
 
     const pipeline = order.status === 'cancelled' ? CANCELLED_PIPELINE : STATUS_PIPELINE;
     const currentIdx = pipeline.findIndex(s => s.key === order.status);
-    const destLocation = order?.destination_coords || [12.9716, 77.5946];
+    const destLocation = order?.restaurant_location?.lat && order?.restaurant_location?.lng
+        ? [order.restaurant_location.lat, order.restaurant_location.lng]
+        : (order?.current_location ? [order.current_location.lat, order.current_location.lng] : [12.9716, 77.5946]);
     const points = driverLocation ? [[driverLocation.lat, driverLocation.lng], destLocation] : [destLocation];
 
     const formatTime = (isoStr) => {

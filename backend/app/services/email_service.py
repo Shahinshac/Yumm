@@ -18,6 +18,11 @@ class EmailService:
             # Gmail SMTP strictly requires the 'sender' to match the 'MAIL_USERNAME' account.
             # Using any other address in the sender field often causes authentication or relay errors.
             sender = current_app.config.get('MAIL_USERNAME')
+            mail_password = current_app.config.get('MAIL_PASSWORD')
+
+            if not sender or not mail_password:
+                logger.warning(f"⚠️  Email config missing, skipping send to {recipient}")
+                return False
 
             msg = Message(
                 subject=subject,

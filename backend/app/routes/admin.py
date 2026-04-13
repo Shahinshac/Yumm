@@ -400,17 +400,28 @@ def approve_user(user_id):
         # Hash and save password
         user.password_hash = PasswordSecurity.hash_password(generated_password)
         user.is_approved = True
+        user.is_verified = True
         user.password_generated_at = datetime.utcnow()
         user.save()
 
-        # Update restaurant/delivery record if exists
+        # Update role-specific related records if they exist
+        if user.role == 'restaurant':
+            restaurant = Restaurant.objects(user=user).first()
+            if restaurant:
+                restaurant.is_approved = True
+                restaurant.approved_at = datetime.utcnow()
                 restaurant.save()
-        
+        elif user.role == 'delivery':
+            delivery = DeliveryPartner.objects(user=user).first()
+            if delivery:
+                delivery.is_verified = True
+                delivery.save()
+
         # Automatically send credentials over email in the background
         import threading
         from flask import current_app
         
-        def send_async_email(app_instance, user_email, user_name, password):
+        def send_async_email(app_instance, user_email, user_name, username, password):
             with app_instance.app_context():
                 try:
                     from backend.app.services.email_service import EmailService

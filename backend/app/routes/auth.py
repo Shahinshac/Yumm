@@ -19,7 +19,7 @@ bp = Blueprint('auth', __name__, url_prefix='/api/auth')
 @bp.route('/register', methods=['POST'])
 def register():
     """Register new user (legacy - maintains backward compatibility)"""
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     required = ['username', 'email', 'password', 'phone', 'role']
     if not all(data.get(f) for f in required):
@@ -85,7 +85,7 @@ def register_restaurant():
     """Register restaurant for approval workflow"""
     from backend.app.models.restaurant import Restaurant
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     logger.info(f"Restaurant registration attempt: {data.get('email', 'unknown')}")
 
     # Validate required fields
@@ -166,10 +166,10 @@ def register_restaurant():
 def register_delivery():
     """Register delivery partner for approval workflow"""
 
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
 
     # Validate required fields
-    required_fields = ['name', 'email', 'phone', 'vehicle_type', 'id_proof_url']
+    required_fields = ['name', 'email', 'phone', 'vehicle_type']
     missing = [f for f in required_fields if not data.get(f)]
     if missing:
         return jsonify({'error': f'Missing required fields: {", ".join(missing)}'}), 400
@@ -209,7 +209,6 @@ def register_delivery():
             is_approved=False,
             is_verified=False,
             is_active=True,
-            id_proof_url=data.get('id_proof_url'),
             password_hash=None  # No password until admin approves
         )
         user.save()

@@ -8,6 +8,7 @@ import os
 import json
 import uuid
 import time
+import random
 
 # Add root to path
 sys.path.append(os.getcwd())
@@ -59,10 +60,12 @@ def run_tests():
         print("\n--- Phase 2: Restaurant Lifecycle ---")
         unique_id = str(uuid.uuid4())[:8]
         rest_email = f"rest_{unique_id}@test.com"
+        rest_phone = f"12345{random.randint(10000, 99999)}"
+        del_phone = f"99988{random.randint(10000, 99999)}"
         reg_data, status = api_call(client, 'POST', '/api/auth/register/restaurant', {
             'name': 'Test Owner',
             'email': rest_email,
-            'phone': '1234567890',
+            'phone': rest_phone,
             'shop_name': f'Pizza Paradise {unique_id}',
             'category': 'Fast Food',
             'address': '123 Chef Street'
@@ -107,11 +110,28 @@ def run_tests():
 
         # 5. Customer Flow
         print("\n--- Phase 3: Customer Order Flow ---")
-        cust_login, status = api_call(client, 'POST', '/api/auth/google-login', {
-            'id_token': 'mock_customer_test'
+        cust_username = f"cust_{unique_id}"
+        cust_email = f"{cust_username}@test.com"
+        cust_password = "CustPass123!"
+        cust_reg, status = api_call(client, 'POST', '/api/auth/register', {
+            'username': cust_username,
+            'email': cust_email,
+            'password': cust_password,
+            'phone': f"77755{random.randint(10000, 99999)}",
+            'role': 'customer'
         })
+        if status != 201:
+            print(f"❌ Customer registration failed ({status}): {cust_reg}")
+            return
+        cust_login, status = api_call(client, 'POST', '/api/auth/login', {
+            'email': cust_email,
+            'password': cust_password
+        })
+        if status != 200:
+            print(f"❌ Customer login failed ({status}): {cust_login}")
+            return
         cust_token = cust_login['access_token']
-        print("✅ Customer logged in (Google)")
+        print("✅ Customer logged in")
 
         # Find the restaurant in the list
         rest_name = f'Pizza Paradise {unique_id}'
@@ -162,7 +182,7 @@ def run_tests():
         api_call(client, 'POST', '/api/auth/register/delivery', {
             'name': 'Speedy Rider',
             'email': del_email,
-            'phone': '9998887770',
+            'phone': del_phone,
             'vehicle_type': 'bike'
         })
         pending_del, _ = api_call(client, 'GET', '/api/admin/pending-users', token=admin_token)

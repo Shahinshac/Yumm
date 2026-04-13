@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { 
-    Bike, User, Mail, Phone, Truck, ArrowLeft, 
-    Loader2, CheckCircle2, ShieldCheck, Banknote, Clock, MapPin
+    Bike, Phone, Loader2, CheckCircle2, ShieldCheck, Banknote, Clock, MapPin
 } from 'lucide-react';
 
 const DeliveryRegister = () => {
@@ -12,10 +11,8 @@ const DeliveryRegister = () => {
     name: '',
     email: '',
     phone: '',
-    vehicle_type: 'bike',
-    id_proof_url: ''
+    vehicle_type: 'bike'
   });
-  const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
@@ -26,24 +23,6 @@ const DeliveryRegister = () => {
       value = value.replace(/\s/g, ''); 
     }
     setFormData({ ...formData, [e.target.name]: value });
-  };
-
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setUploading(true);
-    const data = new FormData();
-    data.append('file', file);
-
-    try {
-      const res = await authService.uploadIdentityProof(data);
-      setFormData(prev => ({ ...prev, id_proof_url: res.url }));
-    } catch (err) {
-      setError('Failed to upload ID. Please try again.');
-    } finally {
-      setUploading(false);
-    }
   };
 
   const handleSubmit = async (e) => {

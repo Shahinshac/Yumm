@@ -32,7 +32,7 @@ export const restaurantService = {
   getOrders: async (status = '') => {
     const url = status ? `/restaurant-dashboard/orders?status=${status}` : '/restaurant-dashboard/orders';
     const resp = await api.get(url);
-    return resp.data;
+    return resp.data.orders || [];
   },
 
   acceptOrder: async (id) => {
