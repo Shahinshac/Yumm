@@ -62,7 +62,11 @@ const RestaurantRegister = () => {
       await authService.registerRestaurant(formData);
       setSuccess(true);
     } catch (err) {
-      setError('Registration failed. Please check your network or try again.');
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(err.response.data.error);
+      } else {
+        setError('Registration failed. Please check your connectivity.');
+      }
     } finally {
       setLoading(false);
     }

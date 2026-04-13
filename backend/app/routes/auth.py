@@ -117,9 +117,11 @@ def register_restaurant():
     if not Validators.validate_address(address):
         return jsonify({'error': 'Invalid address. Must be 5-500 characters'}), 400
 
-    # Check if email already exists
+    # Check if email or phone already exists
     if User.objects(email=email).first():
         return jsonify({'error': 'Email already registered'}), 409
+    if User.objects(phone=phone).first():
+        return jsonify({'error': 'Phone number already registered'}), 409
 
     try:
         # Create user with restaurant role (not approved)
@@ -190,9 +192,11 @@ def register_delivery():
     if not Validators.validate_vehicle_type(vehicle_type):
         return jsonify({'error': 'Invalid vehicle type. Must be: bike, scooter, car, or bicycle'}), 400
 
-    # Check if email already exists
+    # Check if email or phone already exists
     if User.objects(email=email).first():
         return jsonify({'error': 'Email already registered'}), 409
+    if User.objects(phone=phone).first():
+        return jsonify({'error': 'Phone number already registered'}), 409
 
     try:
         # Create user with delivery role (not approved)
