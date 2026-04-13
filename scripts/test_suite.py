@@ -14,7 +14,8 @@ sys.path.append(os.getcwd())
 
 from backend.app import create_app
 from backend.app.models.user import User
-from backend.app.models.models import Order, Restaurant, MenuItem
+from backend.app.models.models import Order
+from backend.app.models.restaurant import Restaurant, MenuItem
 from backend.app.models.delivery_partner import DeliveryPartner
 
 app = create_app()
@@ -89,37 +90,59 @@ def run_tests():
         print("✅ Restaurant logged in")
 
         # Create a menu item
-        menu_item, status = api_call(client, 'POST', '/api/restaurant/menu', {
+        menu_item, status = api_call(client, 'POST', '/api/restaurant-dashboard/menu/add', {
             'name': 'Classic Margherita',
             'description': 'Tomato, Mozzarella, Basil',
             'price': 499,
             'category': 'Pizza',
-            'image_url': 'https://example.com/pizza.jpg'
+            'is_veg': True
         }, token=rest_token)
-        menu_item_id = menu_item.get('id') or menu_item.get('_id')
-        print(f"✅ Menu item created: {menu_item.get('name')}")
+        
+        if status != 201:
+            print(f"❌ Menu item creation failed ({status}): {menu_item}")
+            return
+            
+        menu_item_id = menu_item['item'].get('id') or menu_item['item'].get('_id')
+        print(f"✅ Menu item created: {menu_item['item'].get('name')}")
 
         # 5. Customer Flow
         print("\n--- Phase 3: Customer Order Flow ---")
         cust_login, status = api_call(client, 'POST', '/api/auth/google-login', {
-            'id_token': f'test_cust_{unique_id}'
+            'id_token': 'mock_customer_test'
         })
         cust_token = cust_login['access_token']
         print("✅ Customer logged in (Google)")
 
-        # Get restaurants
-        rests, _ = api_call(client, 'GET', '/api/customer/restaurants', token=cust_token)
-        target_rest = next((r for r in rests if r['email'] == rest_email), None)
+        # Find the restaurant in the list
+        rest_name = f'Pizza Paradise {unique_id}'
+        rests, status = api_call(client, 'GET', '/api/customer/restaurants', token=cust_token)
+        target_rest = next((r for r in rests if r['name'] == rest_name), None)
+        
+        if not target_rest:
+            print(f"❌ Restaurant '{rest_name}' not found in customer list")
+            return
+        
+        print(f"✅ Found restaurant: {target_rest['name']} (ID: {target_rest['id']})")
         rest_db_id = target_rest['id']
         
         # Place Order
         order_data, status = api_call(client, 'POST', '/api/orders', {
             'restaurant_id': rest_db_id,
-            'items': [{'menu_item_id': menu_item_id, 'qty': 2}],
-            'total_amount': 998,
-            'address': 'Customer Home 456'
+            'items': [{
+                'id': menu_item_id, 
+                'name': 'Classic Margherita',
+                'price': 499,
+                'qty': 2
+            }],
+            'delivery_address': 'Customer Home 456',
+            'payment_method': 'cod'
         }, token=cust_token)
-        order_id = order_data['order_id']
+        
+        if status != 201:
+            print(f"❌ Order placement failed ({status}): {order_data}")
+            return
+            
+        order_id = order_data['order']['id']
         print(f"✅ Order placed: {order_id}")
 
         # 6. Restaurant Manage Order
@@ -143,7 +166,7 @@ def run_tests():
             'vehicle_type': 'bike'
         })
         pending_del, _ = api_call(client, 'GET', '/api/admin/pending-users', token=admin_token)
-        del_user = next((u for u in pending_del['users'] if u['email'] == del_email), None)
+        del_user = next((u for u in pending_del['pending_users'] if u['email'] == del_email), None)
         del_app, _ = api_call(client, 'POST', f'/api/admin/approve/{del_user["id"]}', token=admin_token)
         del_pass = del_app['password']
         
@@ -160,7 +183,8 @@ def run_tests():
 
         # Assign (Auto-assigned conceptually, but let's check assignment)
         # In this system, we might need a manual trigger or just check if it was assigned
-        assignments, _ = api_call(client, 'GET', '/api/delivery/orders', token=del_token)
+        assignments_resp, _ = api_call(client, 'GET', '/api/delivery/orders', token=del_token)
+        assignments = assignments_resp.get('assignments', [])
         print(f"✅ Delivery Assignments found: {len(assignments)}")
 
         if assignments:

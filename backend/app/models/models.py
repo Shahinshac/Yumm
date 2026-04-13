@@ -87,7 +87,7 @@ class Payment(Document):
 
     order = ReferenceField(Order, required=True)
     amount = FloatField(required=True)
-    method = StringField(choices=['card', 'upi', 'wallet', 'cash'], default='card')
+    method = StringField(choices=['card', 'upi', 'wallet', 'cash', 'cod'], default='card')
     status = StringField(choices=['pending', 'completed', 'failed', 'refunded'], default='pending')
 
     # Payment gateway

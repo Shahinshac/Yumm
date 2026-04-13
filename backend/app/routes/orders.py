@@ -88,7 +88,7 @@ def create_order():
         total_amount=total_amount,
         delivery_address=data.get('delivery_address'),
         special_instructions=data.get('special_instructions', ''),
-        status='pending',
+        status='placed',
         estimated_delivery=datetime.utcnow() + timedelta(minutes=restaurant.delivery_time)
     )
     order.save()
@@ -327,7 +327,7 @@ def update_order_status(order_id):
         return jsonify({'error': 'Order not found'}), 404
 
     new_status = data['new_status']
-    allowed_statuses = ['placed', 'accepted', 'assigned', 'picked', 'delivered', 'cancelled']
+    allowed_statuses = ['placed', 'accepted', 'preparing', 'ready', 'waiting', 'assigned', 'picked', 'delivered', 'cancelled']
 
     if new_status not in allowed_statuses:
         return jsonify({'error': f'Invalid status. Must be one of: {", ".join(allowed_statuses)}'}), 400

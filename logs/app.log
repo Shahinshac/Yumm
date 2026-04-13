@@ -1749,3 +1749,228 @@ mongoengine.errors.ValidationError: ValidationError (User:None) (Field is requir
 2026-04-13 12:18:50,914 - root - INFO - ✅ All blueprints registered successfully
 2026-04-13 12:18:50,915 - root - INFO - ✅ SocketIO events registered
 2026-04-13 12:18:50,915 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 13:11:31,749 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 13:11:31,749 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 13:11:31,754 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 13:11:31,755 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 13:11:31,799 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 13:11:31,799 - root - INFO - Registering API blueprints...
+2026-04-13 13:11:31,958 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 13:11:31,958 - root - INFO - ✅ SocketIO events registered
+2026-04-13 13:11:31,958 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 13:11:32,242 - backend.app.routes.auth - INFO - Restaurant registration attempt: rest_9ead9e6a@test.com
+2026-04-13 13:11:32,249 - backend.app.routes.auth - INFO - Restaurant registration submitted: rest_9ead9e6a@test.com
+2026-04-13 13:11:33,339 - backend.app.routes.auth - WARNING - Google ID token verification failed: Wrong number of segments in token: b'test_cust_9ead9e6a'
+2026-04-13 13:11:34,493 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to rest_9ead9e6a@test.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. d9443c01a7336-2b2d4e15f71sm110133685ad.34 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 13:12:16,553 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 13:12:16,553 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 13:12:16,558 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 13:12:16,558 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 13:12:16,614 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 13:12:16,614 - root - INFO - Registering API blueprints...
+2026-04-13 13:12:16,758 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 13:12:16,758 - root - INFO - ✅ SocketIO events registered
+2026-04-13 13:12:16,758 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 13:12:16,980 - backend.app.routes.auth - INFO - Restaurant registration attempt: rest_ef5bfefc@test.com
+2026-04-13 13:12:16,984 - backend.app.routes.auth - INFO - Restaurant registration submitted: rest_ef5bfefc@test.com
+2026-04-13 13:12:17,502 - backend.app.routes.auth - INFO - Using mock google verification for local testing
+2026-04-13 13:12:19,841 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to rest_ef5bfefc@test.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. 41be03b00d2f7-c7921534918sm10119075a12.0 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 13:12:48,842 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 13:12:48,842 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 13:12:48,848 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 13:12:48,849 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 13:12:48,885 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 13:12:48,885 - root - INFO - Registering API blueprints...
+2026-04-13 13:12:49,058 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 13:12:49,058 - root - INFO - ✅ SocketIO events registered
+2026-04-13 13:12:49,058 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 13:12:49,281 - backend.app.routes.auth - INFO - Restaurant registration attempt: rest_cdc02a11@test.com
+2026-04-13 13:12:49,287 - backend.app.routes.auth - INFO - Restaurant registration submitted: rest_cdc02a11@test.com
+2026-04-13 13:12:49,795 - backend.app.routes.auth - INFO - Using mock google verification for local testing
+2026-04-13 13:12:52,667 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to rest_cdc02a11@test.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. 41be03b00d2f7-c793488d824sm4882299a12.16 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 13:13:52,024 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 13:13:52,024 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 13:13:52,030 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 13:13:52,030 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 13:13:52,069 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 13:13:52,069 - root - INFO - Registering API blueprints...
+2026-04-13 13:13:52,228 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 13:13:52,228 - root - INFO - ✅ SocketIO events registered
+2026-04-13 13:13:52,228 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 13:13:52,493 - backend.app.routes.auth - INFO - Restaurant registration attempt: rest_b60995d2@test.com
+2026-04-13 13:13:52,497 - backend.app.routes.auth - INFO - Restaurant registration submitted: rest_b60995d2@test.com
+2026-04-13 13:13:53,020 - backend.app.routes.auth - INFO - Using mock google verification for local testing
+2026-04-13 13:13:53,089 - backend.app.routes.orders - INFO - Applying 50% first order discount for user 69dc91d220d902293440cdf4
+2026-04-13 13:13:53,091 - backend.app - ERROR - Exception on /api/orders [POST]
+Traceback (most recent call last):
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 174, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\middleware\auth.py", line 27, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\routes\orders.py", line 94, in create_order
+    order.save()
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\document.py", line 399, in save
+    self.validate(clean=clean)
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\base\document.py", line 438, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (Order:None) (Value must be one of ['placed', 'accepted', 'preparing', 'ready', 'waiting', 'assigned', 'picked', 'delivered', 'cancelled']: ['status'])
+2026-04-13 13:13:53,198 - root - ERROR - Internal server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 174, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\middleware\auth.py", line 27, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\routes\orders.py", line 94, in create_order
+    order.save()
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\document.py", line 399, in save
+    self.validate(clean=clean)
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\base\document.py", line 438, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (Order:None) (Value must be one of ['placed', 'accepted', 'preparing', 'ready', 'waiting', 'assigned', 'picked', 'delivered', 'cancelled']: ['status'])
+2026-04-13 13:13:55,315 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to rest_b60995d2@test.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. d9443c01a7336-2b2d4f3afebsm105984345ad.72 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 13:15:29,694 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 13:15:29,694 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 13:15:29,699 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 13:15:29,700 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 13:15:29,746 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 13:15:29,747 - root - INFO - Registering API blueprints...
+2026-04-13 13:15:29,923 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 13:15:29,923 - root - INFO - ✅ SocketIO events registered
+2026-04-13 13:15:29,923 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 13:15:30,145 - backend.app.routes.auth - INFO - Restaurant registration attempt: rest_1870d088@test.com
+2026-04-13 13:15:30,154 - backend.app.routes.auth - INFO - Restaurant registration submitted: rest_1870d088@test.com
+2026-04-13 13:15:30,662 - backend.app.routes.auth - INFO - Using mock google verification for local testing
+2026-04-13 13:15:30,683 - backend.app.routes.orders - INFO - Applying 50% first order discount for user 69dc91d220d902293440cdf4
+2026-04-13 13:15:30,686 - backend.app - ERROR - Exception on /api/orders [POST]
+Traceback (most recent call last):
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 174, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\middleware\auth.py", line 27, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\routes\orders.py", line 103, in create_order
+    payment.save()
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\document.py", line 399, in save
+    self.validate(clean=clean)
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\base\document.py", line 438, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (Payment:None) (Value must be one of ['card', 'upi', 'wallet', 'cash']: ['method'])
+2026-04-13 13:15:30,690 - root - ERROR - Internal server error: 500 Internal Server Error: The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.
+Traceback (most recent call last):
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 2190, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1486, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask_cors\extension.py", line 176, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+                                                ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask\app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\flask_jwt_extended\view_decorators.py", line 174, in decorator
+    return current_app.ensure_sync(fn)(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\middleware\auth.py", line 27, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Shahinsha\.antigravity\Yumm\backend\app\routes\orders.py", line 103, in create_order
+    payment.save()
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\document.py", line 399, in save
+    self.validate(clean=clean)
+  File "C:\Users\Shahinsha\AppData\Local\Programs\Python\Python311\Lib\site-packages\mongoengine\base\document.py", line 438, in validate
+    raise ValidationError(message, errors=errors)
+mongoengine.errors.ValidationError: ValidationError (Payment:None) (Value must be one of ['card', 'upi', 'wallet', 'cash']: ['method'])
+2026-04-13 13:15:33,629 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to rest_1870d088@test.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. d9443c01a7336-2b462320562sm15553165ad.37 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 13:17:30,385 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 13:17:30,386 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 13:17:30,391 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 13:17:30,391 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 13:17:30,437 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 13:17:30,437 - root - INFO - Registering API blueprints...
+2026-04-13 13:17:30,590 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 13:17:30,591 - root - INFO - ✅ SocketIO events registered
+2026-04-13 13:17:30,591 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 13:17:30,811 - backend.app.routes.auth - INFO - Restaurant registration attempt: rest_ea9aea83@test.com
+2026-04-13 13:17:30,816 - backend.app.routes.auth - INFO - Restaurant registration submitted: rest_ea9aea83@test.com
+2026-04-13 13:17:33,703 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to rest_ea9aea83@test.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. d9443c01a7336-2b45fdaa77dsm19873645ad.49 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 13:18:39,058 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 13:18:39,058 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 13:18:39,062 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 13:18:39,063 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 13:18:39,107 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 13:18:39,108 - root - INFO - Registering API blueprints...
+2026-04-13 13:18:39,254 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 13:18:39,254 - root - INFO - ✅ SocketIO events registered
+2026-04-13 13:18:39,254 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 13:18:39,476 - backend.app.routes.auth - INFO - Restaurant registration attempt: rest_d6d983f6@test.com
+2026-04-13 13:18:39,483 - backend.app.routes.auth - INFO - Restaurant registration submitted: rest_d6d983f6@test.com
+2026-04-13 13:18:39,999 - backend.app.routes.auth - INFO - Using mock google verification for local testing
+2026-04-13 13:18:42,810 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to rest_d6d983f6@test.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. d9443c01a7336-2b2d4f3ab3dsm113811765ad.74 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 13:19:51,341 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 13:19:51,342 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 13:19:51,346 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 13:19:51,346 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 13:19:51,393 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 13:19:51,393 - root - INFO - Registering API blueprints...
+2026-04-13 13:19:51,573 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 13:19:51,573 - root - INFO - ✅ SocketIO events registered
+2026-04-13 13:19:51,573 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 13:19:51,816 - backend.app.routes.auth - INFO - Restaurant registration attempt: rest_294be60e@test.com
+2026-04-13 13:19:51,822 - backend.app.routes.auth - INFO - Restaurant registration submitted: rest_294be60e@test.com
+2026-04-13 13:19:52,327 - backend.app.routes.auth - INFO - Using mock google verification for local testing
+2026-04-13 13:19:54,006 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to rest_294be60e@test.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. 41be03b00d2f7-c79219c625esm8965293a12.20 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
