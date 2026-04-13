@@ -428,6 +428,43 @@ def update_profile():
         return jsonify({'error': 'Internal server error'}), 500
 
 
+@bp.route('/change-password', methods=['POST'])
+@jwt_required()
+def change_password():
+    """Change password for authenticated user"""
+    try:
+        user_id = get_jwt_identity()
+        user = User.objects(id=user_id).first()
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        data = request.get_json()
+        current_password = data.get('current_password')
+        new_password = data.get('new_password')
+        
+        if not current_password or not new_password:
+            return jsonify({'error': 'Current and new password required'}), 400
+            
+        # Verify current password
+        if not PasswordSecurity.verify_password(current_password, user.password_hash):
+            return jsonify({'error': 'Invalid current password'}), 401
+            
+        # Validate new password (6 characters minimum as requested)
+        if len(str(new_password)) < 6:
+            return jsonify({'error': 'New password must be at least 6 characters'}), 400
+            
+        # Hash and save new password
+        user.password_hash = PasswordSecurity.hash_password(str(new_password))
+        user.save()
+        
+        return jsonify({'message': 'Password changed successfully'}), 200
+        
+    except Exception as e:
+        logger.error(f"Error changing password: {str(e)}")
+        return jsonify({'error': 'Internal server error'}), 500
+
+
 @bp.route('/me', methods=['GET'])
 @jwt_required()
 def get_me():

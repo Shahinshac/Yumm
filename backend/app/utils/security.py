@@ -21,14 +21,8 @@ class PasswordSecurity:
             return False
 
     @staticmethod
-    def generate_secure_password(length: int = 16) -> str:
-        """Generate a secure random password using secrets
-
-        Args:
-            length: Desired length of password (default 16)
-
-        Returns:
-            Cryptographically secure random string (URL-safe base64 encoded)
-        """
-        return secrets.token_urlsafe(length)
+    def generate_secure_password(length: int = 6) -> str:
+        """Generate a secure 6-digit random password using secrets"""
+        import string
+        return "".join(secrets.choice(string.digits) for _ in range(6))
 

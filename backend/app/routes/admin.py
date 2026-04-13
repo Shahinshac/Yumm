@@ -410,36 +410,15 @@ def approve_user(user_id):
                 restaurant.is_approved = True
                 restaurant.save()
         
-        # Automatically send credentials over email in the background to prevent timeouts
-        import threading
-        from flask import current_app
-        
-        def send_async_email(app_instance, user_email, user_name, password):
-            with app_instance.app_context():
-                try:
-                    from backend.app.services.email_service import EmailService
-                    EmailService.send_credentials_email(
-                        user_email=user_email,
-                        user_name=user_name,
-                        password=password
-                    )
-                except Exception as e:
-                    logger.error(f"Background email failed for {user_email}: {str(e)}")
 
-        # Start background thread
-        thread = threading.Thread(
-            target=send_async_email,
-            args=(current_app._get_current_object(), user.email, user.full_name or user.username, generated_password)
-        )
-        thread.start()
 
         return jsonify({
             'success': True,
             'message': f'User approved successfully',
             'user': user.to_dict(),
             'password': generated_password,
-            'email_sent': True, # We mark as true because it is being attempted
-            'note': 'Generated password is shown here. Email will be sent in the background.'
+            'email_sent': False,
+            'note': 'Generated password is shown here. Deliver manually to the partner.'
         }), 200
 
     except Exception as e:

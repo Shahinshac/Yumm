@@ -14,6 +14,8 @@ const RestaurantSettings = () => {
     const [photoFile, setPhotoFile] = useState(null); // new file to upload
     const [photoUploading, setPhotoUploading] = useState(false);
     const photoInputRef = useRef(null);
+    const [passwordData, setPasswordData] = useState({ current: '', new: '', confirm: '' });
+    const [passwordSaving, setPasswordSaving] = useState(false);
 
     useEffect(() => {
         restaurantService.getProfile().then(res => {
@@ -75,6 +77,36 @@ const RestaurantSettings = () => {
             alert('Failed to save UPI ID.');
         } finally {
             setUpiSaving(false);
+        }
+    };
+
+    const handleChangePassword = async () => {
+        if (!passwordData.current || !passwordData.new || !passwordData.confirm) {
+            alert('All password fields are required.');
+            return;
+        }
+        if (passwordData.new !== passwordData.confirm) {
+            alert('New passwords do not match.');
+            return;
+        }
+        if (passwordData.new.length < 6) {
+            alert('New password must be at least 6 characters.');
+            return;
+        }
+
+        setPasswordSaving(true);
+        try {
+            const api = (await import('../../services/api')).default;
+            await api.post('/auth/change-password', {
+                current_password: passwordData.current,
+                new_password: passwordData.new
+            });
+            alert('Password changed successfully!');
+            setPasswordData({ current: '', new: '', confirm: '' });
+        } catch (err) {
+            alert(err.response?.data?.error || 'Failed to change password.');
+        } finally {
+            setPasswordSaving(false);
         }
     };
 
@@ -333,52 +365,46 @@ const RestaurantSettings = () => {
                 </div>
             </Section>
 
-            {/* Operations */}
-            <Section title="Operations" icon={Clock}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <Section title="Security & Password" icon={Settings}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-end">
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                            <div>
-                                <p className="text-xs font-bold text-gray-900">Minimum Order</p>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase mt-0.5">Threshold for delivery</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <span className="text-gray-400 font-bold">₹</span>
-                                <input
-                                    type="number"
-                                    value={profile.min_order}
-                                    onChange={e => setProfile({ ...profile, min_order: e.target.value })}
-                                    className="w-20 px-3 py-1.5 bg-white border border-gray-100 rounded-lg text-sm font-black text-center"
-                                />
-                            </div>
-                        </div>
-                        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100">
-                            <div>
-                                <p className="text-xs font-bold text-gray-900">Est. Delivery Time</p>
-                                <p className="text-[10px] text-gray-400 font-bold uppercase mt-0.5">Minutes to reach customer</p>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <input
-                                    type="number"
-                                    value={profile.delivery_time}
-                                    onChange={e => setProfile({ ...profile, delivery_time: e.target.value })}
-                                    className="w-20 px-3 py-1.5 bg-white border border-gray-100 rounded-lg text-sm font-black text-center"
-                                />
-                            </div>
-                        </div>
+                        <InputField 
+                            label="Current Password" 
+                            type="password"
+                            value={passwordData.current} 
+                            onChange={v => setPasswordData({ ...passwordData, current: v })} 
+                            icon={Power}
+                            placeholder="••••••"
+                        />
+                        <InputField 
+                            label="New Password" 
+                            type="password"
+                            value={passwordData.new} 
+                            onChange={v => setPasswordData({ ...passwordData, new: v })} 
+                            icon={Save}
+                            placeholder="Minimum 6 digits"
+                        />
+                        <InputField 
+                            label="Confirm New Password" 
+                            type="password"
+                            value={passwordData.confirm} 
+                            onChange={v => setPasswordData({ ...passwordData, confirm: v })} 
+                            icon={Save}
+                            placeholder="Re-type new password"
+                        />
+                    </div>
+                    <div>
+                        <button
+                            onClick={handleChangePassword}
+                            disabled={passwordSaving}
+                            className="flex items-center gap-2 px-8 py-4 bg-gray-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg hover:bg-black transition-all disabled:opacity-50"
+                        >
+                            {passwordSaving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
+                            {passwordSaving ? 'Updating...' : 'Update Password'}
+                        </button>
                     </div>
                 </div>
             </Section>
-
-            <div className="flex items-center gap-4 p-6 bg-gray-900 rounded-[2rem] text-white">
-                <div className="p-3 bg-white/10 rounded-2xl text-[#ff4b3a]">
-                    <Settings size={24} />
-                </div>
-                <div>
-                    <h4 className="font-bold text-sm">Security & Privacy</h4>
-                    <p className="text-xs text-gray-400 font-medium">To change your email or password, please contact the system administrator.</p>
-                </div>
-            </div>
         </div>
     );
 };
