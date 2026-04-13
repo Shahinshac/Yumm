@@ -167,8 +167,8 @@ const Layout = () => {
       <div className="flex-1 flex flex-col min-h-screen">
         
         {/* Dynamic Header */}
-        <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'border-b border-gray-100 pt-2 pb-2' : 'py-3 border-b border-gray-100 px-4 md:px-6'}`}>
-          <div className={`${isCustomer ? 'w-full px-3 sm:px-4 md:px-6' : 'flex items-center justify-between w-full'}`}>
+        <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'border-b border-gray-100 pt-3 pb-3' : 'py-3 border-b border-gray-100 px-4 md:px-6'}`}>
+          <div className={`${isCustomer ? 'w-full px-5 sm:px-6 md:px-8' : 'flex items-center justify-between w-full'}`}>
             
             {isCustomer ? (
               /* ZOMATO CLEAN HEADER (CUSTOMERS) */
@@ -259,8 +259,8 @@ const Layout = () => {
         )}
 
         {/* Page Content */}
-        <main className={`flex-1 overflow-y-auto overflow-x-hidden min-w-0 ${isCustomer ? 'bg-white' : 'p-4 md:p-6 lg:p-8 bg-gray-50'}`}>
-          <div className={`${isCustomer ? 'w-full max-w-7xl mx-auto px-3 sm:px-4 md:px-6 py-3 md:py-6' : 'max-w-7xl mx-auto'}`}>
+        <main className={`flex-1 overflow-y-auto overflow-x-hidden min-w-0 ${isCustomer ? 'bg-white pb-28' : 'p-4 md:p-6 lg:p-8 bg-gray-50'}`}>
+          <div className={`${isCustomer ? 'w-full max-w-7xl mx-auto px-5 sm:px-6 md:px-8 py-5 md:py-8' : 'max-w-7xl mx-auto'}`}>
             <Outlet context={{ vegMode, locationName }} />
           </div>
         </main>

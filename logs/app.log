@@ -1974,3 +1974,21 @@ mongoengine.errors.ValidationError: ValidationError (Payment:None) (Value must b
 2026-04-13 13:19:51,822 - backend.app.routes.auth - INFO - Restaurant registration submitted: rest_294be60e@test.com
 2026-04-13 13:19:52,327 - backend.app.routes.auth - INFO - Using mock google verification for local testing
 2026-04-13 13:19:54,006 - backend.app.services.email_service - ERROR - ❌ SMTP Error sending to rest_294be60e@test.com: (530, b'5.7.0 Authentication Required. For more information, go to\n5.7.0  https://support.google.com/accounts/troubleshooter/2402620. 41be03b00d2f7-c79219c625esm8965293a12.20 - gsmtp', '=?utf-8?q?Yumm_FoodHub?= <noreply@yumm.com>')
+2026-04-13 14:34:18,207 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 14:34:18,207 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 14:34:18,275 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 14:34:18,276 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 14:34:18,328 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 14:34:18,328 - root - INFO - Registering API blueprints...
+2026-04-13 14:34:18,589 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 14:34:18,589 - root - INFO - ✅ SocketIO events registered
+2026-04-13 14:34:18,590 - root - INFO - ✅ FoodHub App initialized successfully!
+2026-04-13 14:35:32,827 - root - INFO - Starting FoodHub App in production mode
+2026-04-13 14:35:32,827 - root - INFO - Connecting to MongoDB: mongodb://localhost:27017/fooddelivery
+2026-04-13 14:35:32,832 - root - INFO - ✅ MongoDB connected successfully
+2026-04-13 14:35:32,832 - root - INFO - ✅ CORS configured for origins: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:3000', 'https://yummfoodhub.vercel.app', 'capacitor://localhost', 'http://localhost']
+2026-04-13 14:35:32,868 - root - INFO - ✅ Core extensions (JWT, SocketIO, Mail) initialized
+2026-04-13 14:35:32,868 - root - INFO - Registering API blueprints...
+2026-04-13 14:35:33,083 - root - INFO - ✅ All blueprints registered successfully
+2026-04-13 14:35:33,083 - root - INFO - ✅ SocketIO events registered
+2026-04-13 14:35:33,083 - root - INFO - ✅ FoodHub App initialized successfully!
