@@ -61,6 +61,7 @@ class Order(Document):
             'customer_username': self.customer.username if self.customer else '',
             'restaurant_id': str(self.restaurant.id),
             'restaurant_name': self.restaurant.name if self.restaurant else '',
+            'restaurant_image': self.restaurant.image if self.restaurant else None,
             'restaurant': str(self.restaurant.id),
             'delivery_partner_id': str(self.delivery_partner.id) if self.delivery_partner else None,
             'items': self.items,
