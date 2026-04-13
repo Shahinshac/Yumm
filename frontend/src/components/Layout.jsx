@@ -147,7 +147,7 @@ const Layout = () => {
   );
 
   return (
-    <div className="min-h-screen flex bg-white text-gray-900 font-sans">
+    <div className="min-h-screen flex bg-white text-gray-900 font-sans overflow-x-hidden max-w-[100vw]">
       
       {/* Sidebar - Visible on Desktop */}
       <aside className="hidden lg:flex w-72 bg-white border-r border-gray-100 flex-col shrink-0 shadow-sm">
@@ -164,7 +164,7 @@ const Layout = () => {
         </div>
       )}
 
-      <div className="flex-1 flex flex-col min-h-screen">
+      <div className="flex-1 flex flex-col min-h-screen min-w-0 w-full max-w-[100vw] lg:max-w-none">
         
         {/* Dynamic Header */}
         <header className={`bg-white sticky top-0 z-30 transition-all ${isCustomer ? 'border-b border-gray-100 pt-3 pb-3' : 'py-3 border-b border-gray-100 px-4 md:px-6'}`}>
