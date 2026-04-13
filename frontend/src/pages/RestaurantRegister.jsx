@@ -230,27 +230,7 @@ const RestaurantRegister = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-1">
-                        <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Identity Proof (Optional)</label>
-                        <div className="relative">
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={handleFileUpload}
-                                className="hidden"
-                                id="id-upload"
-                            />
-                            <label 
-                                htmlFor="id-upload"
-                                className={`w-full flex items-center justify-between px-4 py-3 bg-gray-50 border-2 border-dashed rounded-xl cursor-pointer hover:border-[#e23744] transition-all ${formData.id_proof_url ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}
-                            >
-                                <span className={`text-[10px] font-bold ${formData.id_proof_url ? 'text-green-700' : 'text-gray-400'}`}>
-                                    {uploading ? 'Uploading...' : formData.id_proof_url ? 'Document Attached ✓' : 'Click to upload proof'}
-                                </span>
-                                <ShieldCheck className={formData.id_proof_url ? 'text-green-500' : 'text-gray-300'} size={16} />
-                            </label>
-                        </div>
-                    </div>
+
 
                     <div className="space-y-1">
                         <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest ml-1">Store Address</label>

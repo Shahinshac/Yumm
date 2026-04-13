@@ -55,10 +55,6 @@ const DeliveryRegister = () => {
       return;
     }
 
-    if (!formData.id_proof_url) {
-      setError('Please upload ID proof for verification');
-      return;
-    }
 
     setLoading(true);
     try {
@@ -206,25 +202,6 @@ const DeliveryRegister = () => {
                         </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Identity Proof (Aadhaar / License)</label>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileUpload}
-                            className="hidden"
-                            id="id-upload"
-                        />
-                        <label 
-                            htmlFor="id-upload"
-                            className={`w-full flex items-center justify-between px-6 py-4 bg-gray-50 border-2 border-dashed rounded-2xl cursor-pointer hover:border-[#e23744] transition-all ${formData.id_proof_url ? 'border-green-500 bg-green-50' : 'border-gray-200'}`}
-                        >
-                            <span className={`text-xs font-bold ${formData.id_proof_url ? 'text-green-700' : 'text-gray-400'}`}>
-                                {uploading ? 'Processing...' : formData.id_proof_url ? 'ID Linked ✓' : 'Click to scan ID'}
-                            </span>
-                            <ShieldCheck className={formData.id_proof_url ? 'text-green-500' : 'text-gray-300'} size={20} />
-                        </label>
-                    </div>
 
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Vehicle Selection</label>
