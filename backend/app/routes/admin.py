@@ -108,7 +108,7 @@ def get_global_map_data():
                 seen_customers.add(cust_id)
 
         # 3. Fetch online drivers (DeliveryPartners who are marked active/available or online)
-        online_drivers = DeliveryPartner.objects(is_active=True).select_related('user')
+        online_drivers = DeliveryPartner.objects(is_active=True).select_related(max_depth=1)
         driver_data = []
         for dp in online_drivers:
             if dp.current_location:
