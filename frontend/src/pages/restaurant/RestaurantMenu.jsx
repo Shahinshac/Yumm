@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Search, Filter, MoreVertical, Edit3, Trash2, CheckCircle2, XCircle, Loader2, UtensilsCrossed, X, Upload, Link as LinkIcon, Save } from 'lucide-react';
+import { Plus, Search, Edit3, Trash2, Loader2, UtensilsCrossed, X, Upload, Save, ImageIcon } from 'lucide-react';
 import { restaurantService } from '../../services/restaurantService';
 
 const RestaurantMenu = () => {
@@ -12,7 +12,7 @@ const RestaurantMenu = () => {
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
   const [modalLoading, setModalLoading] = useState(false);
-  const [imageMode, setImageMode] = useState('url'); // 'url' or 'upload'
+  const [imagePreview, setImagePreview] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     price: '',
@@ -58,7 +58,7 @@ const RestaurantMenu = () => {
             is_available: item.is_available,
             image: item.image || ''
         });
-        setImageMode('url');
+        setImagePreview(item.image || null);
     } else {
         setEditingItem(null);
         setFormData({
@@ -70,7 +70,7 @@ const RestaurantMenu = () => {
             is_available: true,
             image: ''
         });
-        setImageMode('url');
+        setImagePreview(null);
     }
     setSelectedFile(null);
     setShowModal(true);
@@ -82,8 +82,8 @@ const RestaurantMenu = () => {
     try {
         let imageUrl = formData.image;
 
-        // Handle File Upload if in upload mode
-        if (imageMode === 'upload' && selectedFile) {
+        // Handle File Upload
+        if (selectedFile) {
             const uploadRes = await restaurantService.uploadImage(selectedFile);
             imageUrl = uploadRes.url;
         }
@@ -315,64 +315,39 @@ const RestaurantMenu = () => {
                     </div>
 
                     <div className="space-y-3">
-                        <div className="flex items-center justify-between px-1">
-                            <label className="text-xs font-bold text-gray-500 uppercase">Item Image</label>
-                            <div className="flex bg-gray-100 p-0.5 rounded-lg">
-                                <button 
+                        <label className="text-xs font-bold text-gray-500 uppercase px-1 block">Item Photo</label>
+                        {/* Image Preview */}
+                        {(imagePreview || selectedFile) && (
+                            <div className="relative h-32 rounded-xl overflow-hidden border border-gray-100">
+                                <img
+                                    src={selectedFile ? URL.createObjectURL(selectedFile) : imagePreview}
+                                    alt="preview"
+                                    className="w-full h-full object-cover"
+                                />
+                                <button
                                     type="button"
-                                    onClick={() => setImageMode('url')}
-                                    className={`px-3 py-1 rounded-md text-[10px] font-bold flex items-center gap-1 transition-all ${imageMode === 'url' ? 'bg-white shadow-sm text-orange-600' : 'text-gray-400'}`}
+                                    onClick={() => { setSelectedFile(null); setImagePreview(null); setFormData(d => ({...d, image: ''})); }}
+                                    className="absolute top-2 right-2 bg-black/50 text-white p-1 rounded-full hover:bg-black"
                                 >
-                                    <LinkIcon size={12} /> URL
+                                    <X size={14} />
                                 </button>
-                                <button 
-                                    type="button"
-                                    onClick={() => setImageMode('upload')}
-                                    className={`px-3 py-1 rounded-md text-[10px] font-bold flex items-center gap-1 transition-all ${imageMode === 'upload' ? 'bg-white shadow-sm text-orange-600' : 'text-gray-400'}`}
-                                >
-                                    <Upload size={12} /> Upload
-                                </button>
-                            </div>
-                        </div>
-
-                        {imageMode === 'url' ? (
-                            <input 
-                                type="url"
-                                value={formData.image}
-                                onChange={e => setFormData({...formData, image: e.target.value})}
-                                className="w-full bg-gray-50 border border-gray-200 p-3 rounded-xl focus:bg-white focus:border-orange-500 outline-none text-sm font-medium transition"
-                                placeholder="Paste image link here..."
-                            />
-                        ) : (
-                            <div className="relative">
-                                {selectedFile ? (
-                                    <div className="flex items-center justify-between bg-orange-50 border border-orange-100 p-3 rounded-xl">
-                                        <div className="flex items-center gap-2 text-sm text-orange-700 font-medium">
-                                            <Upload size={16} /> {selectedFile.name}
-                                        </div>
-                                        <button 
-                                            type="button" 
-                                            onClick={() => setSelectedFile(null)}
-                                            className="text-orange-900 hover:bg-orange-100 p-1 rounded-md"
-                                        >
-                                            <X size={14} />
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <label className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl py-8 hover:bg-gray-50 hover:border-orange-400 transition cursor-pointer group">
-                                        <Upload className="text-gray-300 group-hover:text-orange-500 mb-2" size={30} />
-                                        <p className="text-xs font-bold text-gray-500">Click to upload photo</p>
-                                        <p className="text-[10px] text-gray-400 mt-1">PNG, JPG up to 5MB</p>
-                                        <input 
-                                            type="file" 
-                                            className="hidden" 
-                                            onChange={e => setSelectedFile(e.target.files[0])}
-                                            accept="image/*"
-                                        />
-                                    </label>
-                                )}
                             </div>
                         )}
+                        <label className="flex items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-xl py-5 hover:bg-gray-50 hover:border-orange-400 transition cursor-pointer group">
+                            <ImageIcon className="text-gray-300 group-hover:text-orange-500" size={22} />
+                            <span className="text-xs font-bold text-gray-400 group-hover:text-orange-500">
+                                {selectedFile ? 'Change Photo' : 'Click to Upload Photo'}
+                            </span>
+                            <input 
+                                type="file" 
+                                className="hidden" 
+                                onChange={e => {
+                                    const f = e.target.files[0];
+                                    if (f) { setSelectedFile(f); setImagePreview(null); }
+                                }}
+                                accept="image/*"
+                            />
+                        </label>
                     </div>
 
                     <button 

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Settings, Store, Clock, MapPin, Save, Globe, Phone, FileText, Loader2, Power, CreditCard, CheckCircle, QrCode } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Settings, Store, Clock, MapPin, Save, Globe, Phone, FileText, Loader2, Power, CreditCard, CheckCircle, QrCode, Camera, Upload, X } from 'lucide-react';
 import { restaurantService } from '../../services/restaurantService';
 import { QRCodeSVG } from 'qrcode.react';
 
@@ -10,6 +10,10 @@ const RestaurantSettings = () => {
     const [upiInput, setUpiInput] = useState('');
     const [upiSaving, setUpiSaving] = useState(false);
     const [upiSaved, setUpiSaved] = useState(false);
+    const [restPhoto, setRestPhoto] = useState(null); // current photo URL
+    const [photoFile, setPhotoFile] = useState(null); // new file to upload
+    const [photoUploading, setPhotoUploading] = useState(false);
+    const photoInputRef = useRef(null);
 
     useEffect(() => {
         restaurantService.getProfile().then(res => {
@@ -27,6 +31,7 @@ const RestaurantSettings = () => {
                 upi_id: p.upi_id || ''
             });
             setUpiInput(p.upi_id || '');
+            setRestPhoto(p.image || null);
         }).catch(() => {
             setProfile({ name: '', category: '', address: '', min_order: 0, delivery_time: 0, phone: '', is_open: true, special_offer: '', offer_active: false, upi_id: '' });
         }).finally(() => setLoading(false));
@@ -41,6 +46,21 @@ const RestaurantSettings = () => {
             alert('Failed to update settings.');
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handlePhotoUpload = async (file) => {
+        if (!file) return;
+        setPhotoUploading(true);
+        try {
+            const res = await restaurantService.uploadImage(file);
+            await restaurantService.updateProfile({ image: res.url });
+            setRestPhoto(res.url);
+            setPhotoFile(null);
+        } catch {
+            alert('Photo upload failed.');
+        } finally {
+            setPhotoUploading(false);
         }
     };
 
@@ -132,6 +152,69 @@ const RestaurantSettings = () => {
 
             {/* Store Identity */}
             <Section title="Store Identity" icon={Store}>
+                {/* Restaurant Photo */}
+                <div className="flex flex-col sm:flex-row gap-6 items-start">
+                    <div className="relative shrink-0">
+                        <div className="w-28 h-28 rounded-3xl overflow-hidden border-2 border-gray-100 shadow-md bg-gray-50">
+                            {(photoFile ? URL.createObjectURL(photoFile) : restPhoto) ? (
+                                <img
+                                    src={photoFile ? URL.createObjectURL(photoFile) : restPhoto}
+                                    alt="Restaurant"
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                    <Store size={32} className="text-gray-300" />
+                                </div>
+                            )}
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => photoInputRef.current?.click()}
+                            className="absolute -bottom-2 -right-2 w-8 h-8 bg-[#ff4b3a] rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition"
+                        >
+                            <Camera size={14} />
+                        </button>
+                        <input
+                            type="file"
+                            ref={photoInputRef}
+                            className="hidden"
+                            accept="image/*"
+                            onChange={e => {
+                                const f = e.target.files[0];
+                                if (f) setPhotoFile(f);
+                            }}
+                        />
+                    </div>
+                    <div className="flex-1 space-y-3">
+                        <p className="text-xs font-black text-gray-500 uppercase tracking-widest">Restaurant Photo</p>
+                        <p className="text-[11px] text-gray-400 font-medium">This photo is displayed on the customer homepage. Use a high-quality image of your food or storefront.</p>
+                        {photoFile && (
+                            <div className="flex gap-2">
+                                <button
+                                    type="button"
+                                    onClick={() => handlePhotoUpload(photoFile)}
+                                    disabled={photoUploading}
+                                    className="flex items-center gap-2 px-4 py-2 bg-[#ff4b3a] text-white rounded-xl font-black text-xs shadow-md hover:bg-red-600 disabled:opacity-50 transition"
+                                >
+                                    {photoUploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                                    {photoUploading ? 'Uploading...' : 'Save Photo'}
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setPhotoFile(null)}
+                                    className="flex items-center gap-1 px-3 py-2 bg-gray-100 text-gray-500 rounded-xl font-black text-xs hover:bg-gray-200 transition"
+                                >
+                                    <X size={12} /> Cancel
+                                </button>
+                            </div>
+                        )}
+                        {restPhoto && !photoFile && (
+                            <p className="text-[10px] text-green-600 font-bold">✓ Photo uploaded and visible to customers</p>
+                        )}
+                    </div>
+                </div>
+                <div className="border-t border-gray-50 pt-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <InputField label="Restaurant Name" value={profile.name} onChange={v => setProfile({ ...profile, name: v })} icon={Store} />
                     <div className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl border border-gray-100 mt-4">
@@ -146,6 +229,7 @@ const RestaurantSettings = () => {
                             <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all ${profile.is_open ? 'left-7' : 'left-1'}`} />
                         </button>
                     </div>
+                </div>
                 </div>
             </Section>
 

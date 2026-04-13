@@ -349,6 +349,10 @@ def update_profile():
         # UPI Payment
         if 'upi_id' in data:
             restaurant.upi_id = data['upi_id'].strip()
+
+        # Restaurant banner/cover photo
+        if 'image' in data:
+            restaurant.image = data['image']
             
         restaurant.updated_at = datetime.utcnow()
         restaurant.save()

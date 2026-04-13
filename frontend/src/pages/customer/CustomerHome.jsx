@@ -34,9 +34,10 @@ const RestaurantCard = ({ rest, onClick }) => {
     >
       <div className="relative h-56 overflow-hidden rounded-[2rem]">
         <img
-          src={rest.image_url || `https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80&sig=${rest.id}`}
+          src={rest.image || `https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80&sig=${rest.id}`}
           alt={rest.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          onError={e => { e.target.src = `https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80`; }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         
@@ -51,9 +52,9 @@ const RestaurantCard = ({ rest, onClick }) => {
               </div>
               <span className="text-white text-[10px] font-bold text-shadow">1.5 km • 25 mins</span>
            </div>
-           {rest.offer && (
+           {(rest.special_offer && rest.offer_active) && (
              <div className="bg-[#1c1c1c]/80 backdrop-blur px-3 py-1 rounded-lg text-white text-[10px] font-black uppercase tracking-widest mt-1">
-                {rest.offer}
+                {rest.special_offer}
              </div>
            )}
         </div>

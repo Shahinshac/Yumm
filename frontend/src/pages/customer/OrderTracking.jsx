@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-
 import 'leaflet/dist/leaflet.css';
 import { io } from 'socket.io-client';
 import L from 'leaflet';
-import { Navigation, Package, MapPin, Phone, MessageSquare, ChevronLeft, Loader2, Clock, ShieldCheck } from 'lucide-react';
+import { Navigation, Package, MapPin, Phone, MessageSquare, ChevronLeft, Loader2, Clock, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { customerService } from '../../services/customerService';
 import ChatModule from '../../components/ChatModule';
 
@@ -38,6 +38,22 @@ const MapAutoFit = ({ points }) => {
     return null;
 };
 
+// Status pipeline with ordering
+const STATUS_PIPELINE = [
+    { key: 'placed',    label: 'Order Placed',         icon: '📋' },
+    { key: 'accepted',  label: 'Restaurant Accepted',   icon: '✅' },
+    { key: 'preparing', label: 'Being Prepared',        icon: '👨‍🍳' },
+    { key: 'ready',     label: 'Ready for Pickup',      icon: '📦' },
+    { key: 'assigned',  label: 'Rider Assigned',        icon: '🛵' },
+    { key: 'picked',    label: 'Food Picked Up',        icon: '🚀' },
+    { key: 'delivered', label: 'Delivered!',            icon: '🎉' },
+];
+
+const CANCELLED_PIPELINE = [
+    { key: 'placed',    label: 'Order Placed',  icon: '📋' },
+    { key: 'cancelled', label: 'Cancelled',     icon: '❌' },
+];
+
 const OrderTracking = () => {
     const { orderId } = useParams();
     const [order, setOrder] = useState(null);
@@ -62,6 +78,8 @@ const OrderTracking = () => {
         };
 
         fetchOrder();
+        // Poll every 15 seconds for fresh status
+        const poll = setInterval(fetchOrder, 15000);
 
         const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
         setSocket(newSocket);
@@ -83,7 +101,10 @@ const OrderTracking = () => {
             }
         });
 
-        return () => newSocket.disconnect();
+        return () => {
+            clearInterval(poll);
+            newSocket.disconnect();
+        };
     }, [orderId]);
 
     if (loading) {
@@ -112,8 +133,15 @@ const OrderTracking = () => {
         );
     }
 
-    const destLocation = order?.destination_coords || [0, 0]; 
+    const pipeline = order.status === 'cancelled' ? CANCELLED_PIPELINE : STATUS_PIPELINE;
+    const currentIdx = pipeline.findIndex(s => s.key === order.status);
+    const destLocation = order?.destination_coords || [12.9716, 77.5946];
     const points = driverLocation ? [[driverLocation.lat, driverLocation.lng], destLocation] : [destLocation];
+
+    const formatTime = (isoStr) => {
+        if (!isoStr) return '--:--';
+        return new Date(isoStr).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+    };
 
     return (
         <div className="max-w-6xl mx-auto pb-20 px-4">
@@ -126,11 +154,19 @@ const OrderTracking = () => {
                         <h1 className="text-3xl font-black text-gray-900 tracking-tight">Track Your Meal</h1>
                         <p className="text-gray-500 text-sm mt-1 font-medium">Live progress of order #{orderId.slice(-8).toUpperCase()}</p>
                     </div>
-                    <div className="flex items-center gap-3 bg-red-50 px-6 py-3 rounded-2xl border border-red-100">
-                        <Clock className="text-[#ff4b3a]" size={20} />
+                    <div className={`flex items-center gap-3 px-6 py-3 rounded-2xl border ${
+                        order.status === 'delivered' ? 'bg-green-50 border-green-100' :
+                        order.status === 'cancelled' ? 'bg-red-50 border-red-100' :
+                        'bg-red-50 border-red-100'
+                    }`}>
+                        <Clock className={order.status === 'delivered' ? 'text-green-500' : 'text-[#ff4b3a]'} size={20} />
                         <div>
-                            <p className="text-[10px] font-black text-red-400 uppercase tracking-widest leading-none">Estimated Arrival</p>
-                            <p className="text-sm font-black text-[#ff4b3a] mt-1">15 - 20 Mins</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest leading-none text-gray-400">Status</p>
+                            <p className={`text-sm font-black mt-1 capitalize ${
+                                order.status === 'delivered' ? 'text-green-600' :
+                                order.status === 'cancelled' ? 'text-red-600' :
+                                'text-[#ff4b3a]'
+                            }`}>{order.status}</p>
                         </div>
                     </div>
                 </div>
@@ -210,29 +246,53 @@ const OrderTracking = () => {
 
                     <div className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm">
                         <h3 className="text-[10px] font-black uppercase tracking-widest text-[#ff4b3a] mb-8">Order Status</h3>
-                        <div className="space-y-8 relative">
+                        <div className="space-y-6 relative">
                             {/* Connector Line */}
                             <div className="absolute left-[13px] top-2 bottom-2 w-0.5 bg-gray-100" />
                             
-                            {[
-                                { status: 'placed', label: 'Order Placed', time: '12:30 PM' },
-                                { status: 'accepted', label: 'Restaurant Accepted', time: '12:32 PM' },
-                                { status: 'picked', label: 'Food Picked Up', time: '12:45 PM' },
-                                { status: 'delivered', label: 'Delivered', time: '--:--' }
-                            ].map((step, idx) => (
-                                <div key={step.status} className={`flex items-start gap-6 relative z-10 ${order.status === step.status ? 'opacity-100' : 'opacity-40'}`}>
-                                    <div className={`w-7 h-7 rounded-full flex items-center justify-center border-4 border-white shadow-md ${
-                                        order.status === step.status ? 'bg-[#ff4b3a] text-white' : 'bg-gray-200 text-gray-400'
+                            {pipeline.map((step, idx) => {
+                                const isDone    = idx < currentIdx;
+                                const isCurrent = idx === currentIdx;
+                                const isPending = idx > currentIdx;
+                                return (
+                                    <div key={step.key} className={`flex items-start gap-5 relative z-10 transition-all ${
+                                        isPending ? 'opacity-30' : 'opacity-100'
                                     }`}>
-                                        <div className="w-1.5 h-1.5 bg-white rounded-full" />
+                                        <div className={`w-7 h-7 rounded-full flex items-center justify-center border-4 border-white shadow-md shrink-0 mt-0.5 ${
+                                            isDone    ? 'bg-green-500 text-white' :
+                                            isCurrent ? 'bg-[#ff4b3a] text-white ring-4 ring-red-200 ring-offset-1' :
+                                                        'bg-gray-100'
+                                        }`}>
+                                            {isDone ? (
+                                                <CheckCircle2 size={14} className="text-white" />
+                                            ) : (
+                                                <span className="text-xs">{step.icon}</span>
+                                            )}
+                                        </div>
+                                        <div>
+                                            <p className={`text-sm font-black leading-none ${
+                                                isDone ? 'text-green-600' :
+                                                isCurrent ? 'text-gray-900' :
+                                                            'text-gray-400'
+                                            }`}>{step.label}</p>
+                                            {(isDone || isCurrent) && (
+                                                <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
+                                                    {isCurrent ? '⏳ In progress...' : `✓ ${formatTime(order.updated_at)}`}
+                                                </p>
+                                            )}
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p className="text-sm font-black text-gray-900 leading-none">{step.label}</p>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">{step.time}</p>
-                                    </div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
+
+                        {order.status === 'delivered' && (
+                            <div className="mt-8 p-4 bg-green-50 rounded-2xl border border-green-100 text-center">
+                                <p className="text-2xl mb-2">🎉</p>
+                                <p className="font-black text-green-700 text-sm">Order Delivered!</p>
+                                <p className="text-[10px] text-green-500 font-bold mt-1">Enjoy your meal!</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
