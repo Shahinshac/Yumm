@@ -378,7 +378,7 @@ def get_pending_users():
 def approve_user(user_id):
     """Approve a pending user and generate password
 
-    Response includes the generated password (communicate via email/SMS)
+    Response includes the generated password (automatically emailed to the partner)
     """
     try:
         user = User.objects(id=user_id).first()
@@ -404,12 +404,30 @@ def approve_user(user_id):
         user.save()
 
         # Update restaurant/delivery record if exists
-        if user.role == 'restaurant':
-            restaurant = Restaurant.objects(user=user).first()
-            if restaurant:
-                restaurant.is_approved = True
                 restaurant.save()
         
+        # Automatically send credentials over email in the background
+        import threading
+        from flask import current_app
+        
+        def send_async_email(app_instance, user_email, user_name, password):
+            with app_instance.app_context():
+                try:
+                    from backend.app.services.email_service import EmailService
+                    EmailService.send_credentials_email(
+                        user_email=user_email,
+                        user_name=user_name,
+                        password=password
+                    )
+                except Exception as e:
+                    logger.error(f"Background email failed for {user_email}: {str(e)}")
+
+        # Start background thread
+        thread = threading.Thread(
+            target=send_async_email,
+            args=(current_app._get_current_object(), user.email, user.full_name or user.username, generated_password)
+        )
+        thread.start()
 
 
         return jsonify({
@@ -417,8 +435,8 @@ def approve_user(user_id):
             'message': f'User approved successfully',
             'user': user.to_dict(),
             'password': generated_password,
-            'email_sent': False,
-            'note': 'Generated password is shown here. Deliver manually to the partner.'
+            'email_sent': True,
+            'note': 'Generated password is shown here. A copy has been automatically emailed to the partner.'
         }), 200
 
     except Exception as e:

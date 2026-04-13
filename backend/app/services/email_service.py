@@ -16,12 +16,11 @@ class EmailService:
         """Generic email sender"""
         try:
             # Gmail SMTP requires the Sender to match the Authenticated User
-            # We prioritize the config sender but fallback to the authenticated username
             auth_user = current_app.config.get('MAIL_USERNAME')
             default_sender = current_app.config.get('MAIL_DEFAULT_SENDER')
             
-            # Use auth_user if default_sender is missing or appears incorrect
-            sender = default_sender if default_sender and auth_user in str(default_sender) else auth_user
+            # Simple sender selection: Use the default sender if provided, otherwise the auth user
+            sender = default_sender or auth_user
 
             msg = Message(
                 subject=subject,

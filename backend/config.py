@@ -35,12 +35,6 @@ class Config:
     BCRYPT_LOG_ROUNDS = 12
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max request size
 
-    # SMS Notifications (AWS SNS)
-    AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "")
-    AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "")
-    AWS_SNS_REGION = os.getenv("AWS_SNS_REGION", "us-east-1")
-    AWS_SNS_PHONE_REGION = os.getenv("AWS_SNS_PHONE_REGION", "+91")
-    ENABLE_SMS_NOTIFICATIONS = os.getenv("ENABLE_SMS_NOTIFICATIONS", "true").lower() == "true"
     
     # Email Notifications (Flask-Mail)
     MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
