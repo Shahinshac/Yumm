@@ -54,6 +54,17 @@ const CANCELLED_PIPELINE = [
     { key: 'cancelled', label: 'Cancelled',     icon: '❌' },
 ];
 
+const isValidLocation = (value) => {
+    return value && typeof value.lat === 'number' && typeof value.lng === 'number';
+};
+
+const normalizeLocation = (value) => {
+    if (!value) return null;
+    const lat = Number(value.lat);
+    const lng = Number(value.lng);
+    return Number.isFinite(lat) && Number.isFinite(lng) ? { lat, lng } : null;
+};
+
 const OrderTracking = () => {
     const { orderId } = useParams();
     const [order, setOrder] = useState(null);
@@ -61,18 +72,24 @@ const OrderTracking = () => {
     const [loading, setLoading] = useState(true);
     const [socket, setSocket] = useState(null);
     const [showChat, setShowChat] = useState(false);
+    const [error, setError] = useState('');
 
     useEffect(() => {
+        let isMounted = true;
+
         const fetchOrder = async () => {
             try {
                 const data = await customerService.getOrderDetails(orderId);
+                if (!isMounted) return;
                 setOrder(data);
-                if (data.current_location) {
-                    setDriverLocation(data.current_location);
-                }
+                setDriverLocation(normalizeLocation(data.current_location));
+                setError('');
             } catch (err) {
                 console.error(err);
+                if (!isMounted) return;
+                setError(err.response?.data?.error || 'Unable to load tracking data.');
             } finally {
+                if (!isMounted) return;
                 setLoading(false);
             }
         };
@@ -81,29 +98,44 @@ const OrderTracking = () => {
         // Poll every 15 seconds for fresh status
         const poll = setInterval(fetchOrder, 15000);
 
-        const newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
-        setSocket(newSocket);
+        let newSocket;
+        try {
+            newSocket = io(import.meta.env.VITE_API_URL || 'http://localhost:5000');
+            setSocket(newSocket);
 
-        newSocket.on('connect', () => {
-            console.log('🔌 Tracking established');
-            newSocket.emit('join_order_room', { order_id: orderId });
-        });
+            newSocket.on('connect', () => {
+                console.log('🔌 Tracking established');
+                newSocket.emit('join_order_room', { order_id: orderId });
+            });
 
-        newSocket.on('delivery_location_update', (data) => {
-            if (data.order_id === orderId) {
-                setDriverLocation({ lat: data.lat, lng: data.lng });
-            }
-        });
+            newSocket.on('delivery_location_update', (data) => {
+                if (data.order_id === orderId) {
+                    const normalized = normalizeLocation(data);
+                    if (normalized) setDriverLocation(normalized);
+                }
+            });
 
-        newSocket.on('order_status_update', (data) => {
-            if (data.order_id === orderId) {
-                setOrder(prev => ({ ...prev, status: data.status }));
-            }
-        });
+            newSocket.on('order_status_update', (data) => {
+                if (data.order_id === orderId) {
+                    setOrder(prev => prev ? ({ ...prev, status: data.status }) : prev);
+                }
+            });
+
+            newSocket.on('connect_error', (err) => {
+                console.warn('Socket connect error:', err);
+                setError('Live tracking connection failed. Showing latest available data.');
+            });
+        } catch (err) {
+            console.error('Socket initialization failed:', err);
+            setError('Live tracking is unavailable right now.');
+        }
 
         return () => {
+            isMounted = false;
             clearInterval(poll);
-            newSocket.disconnect();
+            if (newSocket && newSocket.disconnect) {
+                newSocket.disconnect();
+            }
         };
     }, [orderId]);
 
@@ -112,6 +144,23 @@ const OrderTracking = () => {
             <div className="flex flex-col items-center justify-center py-20">
                 <Loader2 className="w-10 h-10 animate-spin text-[#ff4b3a] mb-4" />
                 <p className="text-gray-500 font-black text-xs uppercase tracking-widest">Initialising Live Tracking...</p>
+            </div>
+        );
+    }
+
+    if (error && !order) {
+        return (
+            <div className="flex flex-col items-center justify-center py-32 px-6 text-center">
+                <div className="w-24 h-24 bg-yellow-50 rounded-[2.5rem] flex items-center justify-center mb-8">
+                    <ShieldCheck className="text-[#ffb000]" size={40} />
+                </div>
+                <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-4">Tracking Unavailable</h1>
+                <p className="text-gray-500 font-medium max-w-sm mb-10 leading-relaxed">
+                    {error}
+                </p>
+                <Link to="/orders" className="bg-[#1c1c1c] text-white px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-xl shadow-gray-200">
+                    Back to My Orders
+                </Link>
             </div>
         );
     }
@@ -135,9 +184,10 @@ const OrderTracking = () => {
 
     const pipeline = order.status === 'cancelled' ? CANCELLED_PIPELINE : STATUS_PIPELINE;
     const currentIdx = pipeline.findIndex(s => s.key === order.status);
-    const destLocation = order?.restaurant_location?.lat && order?.restaurant_location?.lng
-        ? [order.restaurant_location.lat, order.restaurant_location.lng]
-        : (order?.current_location ? [order.current_location.lat, order.current_location.lng] : [12.9716, 77.5946]);
+
+    const defaultLocation = [12.9716, 77.5946];
+    const restaurantLocation = normalizeLocation(order?.restaurant_location);
+    const destLocation = restaurantLocation ? [restaurantLocation.lat, restaurantLocation.lng] : defaultLocation;
     const points = driverLocation ? [[driverLocation.lat, driverLocation.lng], destLocation] : [destLocation];
 
     const formatTime = (isoStr) => {
