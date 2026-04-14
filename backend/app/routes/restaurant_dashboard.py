@@ -7,6 +7,7 @@ from backend.app.models.restaurant import Restaurant, MenuItem
 from backend.app.models.models import Order
 from backend.app.models.user import User
 from backend.app.middleware.role_auth import restaurant_required, restaurant_approved_required
+from backend.app.routes.socket_events import broadcast_delivery_request
 from backend.app.services.restaurant_service import RestaurantService
 from backend.app.services.order_service import OrderService
 from backend.app.utils.validators import Validators
@@ -379,8 +380,15 @@ def verify_payment(order_id):
             return jsonify({'error': 'Order not found'}), 404
 
         order.payment_status = 'paid'
-        order.updated_at = datetime.utcnow()
-        order.save()
+
+        if order.delivery_partner is None and order.status in ['placed', 'accepted', 'preparing', 'ready']:
+            order.status = 'ready'
+            order.updated_at = datetime.utcnow()
+            order.save()
+            broadcast_delivery_request(order.to_dict())
+        else:
+            order.updated_at = datetime.utcnow()
+            order.save()
 
         return jsonify({'message': 'Payment verified', 'order': order.to_dict()}), 200
     except Exception as e:

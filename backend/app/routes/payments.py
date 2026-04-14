@@ -7,8 +7,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 import razorpay
 import os
 import logging
+from datetime import datetime
 from backend.app.models.models import Order
 from backend.app.middleware.role_auth import customer_required
+from backend.app.routes.socket_events import broadcast_delivery_request
 
 logger = logging.getLogger(__name__)
 
@@ -106,11 +108,15 @@ def verify_payment():
         if order:
             order.payment_status = 'paid'
             order.razorpay_payment_id = razorpay_payment_id
-            order.save()
+
+            if order.delivery_partner is None and order.status in ['placed', 'accepted', 'preparing', 'ready']:
+                order.status = 'ready'
+                order.updated_at = datetime.utcnow()
+                order.save()
+                broadcast_delivery_request(order.to_dict())
+            else:
+                order.updated_at = datetime.utcnow()
+                order.save()
+
             return jsonify({'message': 'Payment verified successfully', 'status': 'paid'}), 200
-            
-        return jsonify({'error': 'Order not found for this payment'}), 404
-        
-    except Exception as e:
-        logger.error(f"Payment verification system error: {str(e)}")
-        return jsonify({'error': 'Internal server error during verification'}), 500
+

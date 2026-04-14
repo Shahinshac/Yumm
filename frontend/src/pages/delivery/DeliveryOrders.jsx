@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Package, MapPin, CheckCircle2, Navigation, Clock, Loader2, ArrowRight } from 'lucide-react';
 import api from '../../services/api';
+import { formatIndianDateTime } from '../../utils/dateUtils';
 
 const DeliveryOrders = () => {
   const [orders, setOrders] = useState([]);
@@ -50,7 +51,7 @@ const DeliveryOrders = () => {
                      <div className="min-w-0">
                        <h3 className="font-bold text-gray-900 truncate">Order #{order.id.slice(-8)}</h3>
                        <p className="text-xs text-gray-400 font-medium">
-                         {new Date(order.created_at).toLocaleDateString()} · {new Date(order.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                         {formatIndianDateTime(order.created_at)}
                        </p>
                      </div>
                   </div>

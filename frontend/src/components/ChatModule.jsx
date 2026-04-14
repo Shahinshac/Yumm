@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Send, X, MessageSquare, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { formatIndianTime } from '../utils/dateUtils';
 
 const ChatModule = ({ orderId, socket, onClose }) => {
     const { user } = useAuth();
@@ -80,7 +81,7 @@ const ChatModule = ({ orderId, socket, onClose }) => {
                                         {!isMe && <p className="text-[8px] font-black uppercase tracking-widest mb-1 text-gray-400">{msg.sender_name}</p>}
                                         <p className="text-sm font-medium leading-relaxed">{msg.message}</p>
                                         <p className={`text-[8px] mt-1 font-bold uppercase tracking-tighter ${isMe ? 'text-white/60 text-right' : 'text-gray-300'}`}>
-                                            {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                            {formatIndianTime(msg.created_at)}
                                         </p>
                                     </div>
                                 </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Clock, CheckCircle2, XCircle, Loader2, Play, Check, IndianRupee, ShieldCheck, QrCode, X } from 'lucide-react';
 import { restaurantService } from '../../services/restaurantService';
+import { formatIndianTime } from '../../utils/dateUtils';
 import { QRCodeSVG } from 'qrcode.react';
 
 const RestaurantOrders = () => {
@@ -174,7 +175,7 @@ const RestaurantOrders = () => {
                         <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase ${payBadge.color}`}>{payBadge.label}</span>
                         <span className={`px-2 py-1 rounded-md text-[9px] font-black uppercase ${payStatus.color}`}>{payStatus.label}</span>
                         <span className="text-[10px] font-bold text-gray-400 flex items-center gap-1">
-                          <Clock size={12} /> {order.created_at ? new Date(order.created_at).toLocaleTimeString() : 'Recently'}
+                          <Clock size={12} /> {order.created_at ? formatIndianTime(order.created_at) : 'Recently'}
                         </span>
                       </div>
 

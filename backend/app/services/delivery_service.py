@@ -48,13 +48,15 @@ class DeliveryService:
                 return None, "Delivery partner not found"
             
             partner.is_available = is_available
+            partner.is_online = is_available
             partner.last_online_at = datetime.utcnow()
             partner.save()
             
             status = "online" if is_available else "offline"
             return {
                 "message": f"Delivery partner is now {status}",
-                "is_available": partner.is_available
+                "is_available": partner.is_available,
+                "is_online": partner.is_online
             }, None
         except Exception as e:
             return None, str(e)
@@ -153,10 +155,22 @@ class DeliveryService:
             if not order:
                 return None, "Order no longer available or already assigned"
             
-            order.delivery_partner = User.objects(id=user_id).first()
+            partner_user = User.objects(id=user_id).first()
+            order.delivery_partner = partner_user
             order.status = 'picked' # Immediately mark as picked for simplicity in this flow
             order.updated_at = datetime.utcnow()
             order.save()
+
+            partner.is_available = False
+            partner.save()
+
+            assignment = DeliveryAssignment(
+                order=order,
+                delivery_partner=partner_user,
+                status='accepted',
+                accepted_at=datetime.utcnow()
+            )
+            assignment.save()
             
             return order.to_dict(), None
         except Exception as e:

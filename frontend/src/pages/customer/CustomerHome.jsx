@@ -74,6 +74,10 @@ const CustomerHome = () => {
   const [filtered, setFiltered] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState('All');
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [under200, setUnder200] = useState(false);
+  const [highRatingOnly, setHighRatingOnly] = useState(false);
+  const [offersOnly, setOffersOnly] = useState(false);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -82,7 +86,7 @@ const CustomerHome = () => {
         const res = await api.get('/customer/restaurants');
         const list = res.data || [];
         setRestaurants(list);
-        applyFilters(list, 'All', vegMode);
+        applyFilters(list, 'All', vegMode, under200, highRatingOnly, offersOnly);
       } catch (error) {
         console.error("Fetch error:", error);
       } finally {
@@ -92,7 +96,7 @@ const CustomerHome = () => {
     fetchRestaurants();
   }, []);
 
-  const applyFilters = (list, category, isVeg) => {
+  const applyFilters = (list, category, isVeg, under200Filter, ratingFilter, offersFilter) => {
     let result = [...list];
     if (category !== 'All') {
       result = result.filter(r => r.category === category || r.name.toLowerCase().includes(category.toLowerCase()));
@@ -100,12 +104,21 @@ const CustomerHome = () => {
     if (isVeg) {
       result = result.filter(r => r.is_veg || r.category === 'Veg' || r.name.toLowerCase().includes('veg'));
     }
+    if (under200Filter) {
+      result = result.filter(r => (r.min_order ?? 0) <= 200);
+    }
+    if (ratingFilter) {
+      result = result.filter(r => (r.rating ?? 0) >= 4);
+    }
+    if (offersFilter) {
+      result = result.filter(r => r.special_offer && r.offer_active);
+    }
     setFiltered(result);
   };
 
   useEffect(() => {
-    applyFilters(restaurants, activeCategory, vegMode);
-  }, [vegMode, activeCategory, restaurants]);
+    applyFilters(restaurants, activeCategory, vegMode, under200, highRatingOnly, offersOnly);
+  }, [vegMode, activeCategory, restaurants, under200, highRatingOnly, offersOnly]);
 
   return (
     <div className="space-y-5 pb-24">
@@ -154,17 +167,53 @@ const CustomerHome = () => {
       </div>
 
       {/* FILTER PILLS */}
-      <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
-         <button className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-[10px] font-black text-gray-700 hover:border-black transition shadow-sm shrink-0">
+      <div className="relative flex items-center gap-2 overflow-x-auto scrollbar-hide">
+         <button
+           onClick={() => setShowFilterMenu(prev => !prev)}
+           className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-gray-200 rounded-full text-[10px] font-black text-gray-700 hover:border-black transition shadow-sm shrink-0"
+         >
             <SlidersHorizontal size={11} /> Filters <ChevronDown size={11} />
          </button>
-         <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-[10px] font-black text-gray-700 hover:border-black transition shadow-sm shrink-0">
+         {showFilterMenu && (
+           <div className="absolute top-full left-0 mt-2 w-64 bg-white border border-gray-200 rounded-3xl shadow-xl p-4 z-20">
+              <div className="space-y-3">
+                <button
+                  onClick={() => setUnder200(prev => !prev)}
+                  className={`w-full text-left px-3 py-2 rounded-2xl border ${under200 ? 'border-[#e23744] bg-[#fff1f0] text-[#b91c1c]' : 'border-gray-200 text-gray-700'} font-black text-[10px] uppercase tracking-widest`}
+                >
+                  Under ₹200
+                </button>
+                <button
+                  onClick={() => setHighRatingOnly(prev => !prev)}
+                  className={`w-full text-left px-3 py-2 rounded-2xl border ${highRatingOnly ? 'border-[#e23744] bg-[#fff1f0] text-[#b91c1c]' : 'border-gray-200 text-gray-700'} font-black text-[10px] uppercase tracking-widest`}
+                >
+                  4.0+ Rating
+                </button>
+                <button
+                  onClick={() => setOffersOnly(prev => !prev)}
+                  className={`w-full text-left px-3 py-2 rounded-2xl border ${offersOnly ? 'border-[#e23744] bg-[#fff1f0] text-[#b91c1c]' : 'border-gray-200 text-gray-700'} font-black text-[10px] uppercase tracking-widest`}
+                >
+                  Offers Only
+                </button>
+              </div>
+           </div>
+         )}
+         <button
+           onClick={() => setUnder200(prev => !prev)}
+           className={`px-3 py-1.5 rounded-full text-[10px] font-black transition shadow-sm shrink-0 border ${under200 ? 'bg-[#e23744] text-white border-transparent' : 'bg-white border border-gray-200 text-gray-700 hover:border-black'}`}
+         >
             Under ₹200
          </button>
-         <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-[10px] font-black text-gray-700 hover:border-black transition shadow-sm shrink-0">
+         <button
+           onClick={() => setHighRatingOnly(prev => !prev)}
+           className={`px-3 py-1.5 rounded-full text-[10px] font-black transition shadow-sm shrink-0 border ${highRatingOnly ? 'bg-[#e23744] text-white border-transparent' : 'bg-white border border-gray-200 text-gray-700 hover:border-black'}`}
+         >
             4.0+ ⭐
          </button>
-         <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-[10px] font-black text-gray-700 hover:border-black transition shadow-sm shrink-0">
+         <button
+           onClick={() => setOffersOnly(prev => !prev)}
+           className={`px-3 py-1.5 rounded-full text-[10px] font-black transition shadow-sm shrink-0 border ${offersOnly ? 'bg-[#e23744] text-white border-transparent' : 'bg-white border border-gray-200 text-gray-700 hover:border-black'}`}
+         >
             <span className="flex items-center gap-1"><Percent size={10} /> Offers</span>
          </button>
       </div>

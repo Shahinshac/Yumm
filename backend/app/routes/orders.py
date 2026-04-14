@@ -7,7 +7,7 @@ from backend.app.models.user import User
 from backend.app.models.restaurant import Restaurant
 from backend.app.models.models import Order, Payment
 from backend.app.middleware.auth import required_auth, get_current_user, role_required
-from backend.app.routes.socket_events import emit_order_status_update, emit_new_order
+from backend.app.routes.socket_events import broadcast_delivery_request, emit_order_status_update, emit_new_order
 import logging
 
 logger = logging.getLogger(__name__)
@@ -362,6 +362,9 @@ def update_order_status(order_id):
     # Update order
     order.status = new_status
     order.updated_at = datetime.utcnow()
+
+    if new_status == 'ready' and order.delivery_partner is None:
+        broadcast_delivery_request(order.to_dict())
 
     # Update delivery partner availability when order is delivered
     if new_status == 'delivered' and order.delivery_partner:

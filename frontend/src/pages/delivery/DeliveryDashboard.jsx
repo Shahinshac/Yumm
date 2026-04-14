@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
-  Package, MapPin, IndianRupee, Clock, CheckCircle, Navigation, 
-  TrendingUp, Bike, Loader2, QrCode, X, Signal, Power, 
+  Package, MapPin, Clock, Navigation, 
+  Bike, Loader2, QrCode, X, Signal, Power, 
   ChevronRight, Map as MapIcon, Phone, FileText, ChevronDown, ChevronUp
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -10,22 +10,11 @@ import { authService } from '../../services/authService';
 import useLocationTracking from '../../hooks/useLocationTracking';
 import { QRCodeSVG } from 'qrcode.react';
 
-const StatCard = ({ icon: Icon, label, value, color }) => (
-  <div className="bg-white rounded-[2rem] p-6 border border-gray-100 hover:border-gray-200 transition-all group">
-    <div className={`w-12 h-12 rounded-2xl ${color} bg-opacity-10 flex items-center justify-center mb-4 transition-transform group-hover:scale-110`}>
-      <Icon size={20} className={color} />
-    </div>
-    <p className="text-2xl font-black text-gray-900 tracking-tight">{value}</p>
-    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">{label}</p>
-  </div>
-);
-
 const DeliveryDashboard = () => {
     const { user } = useAuth();
     const [online, setOnline] = useState(false);
     const [availableOrders, setAvailableOrders] = useState([]);
     const [activeDelivery, setActiveDelivery] = useState(null);
-    const [stats, setStats] = useState({ deliveredToday: 0, earningsToday: 0, kmToday: 0, rate: '100%' });
     const [loading, setLoading] = useState(true);
     const [showQrModal, setShowQrModal] = useState(false);
     const [showItems, setShowItems] = useState(false);
@@ -37,11 +26,11 @@ const DeliveryDashboard = () => {
     const [passwordError, setPasswordError] = useState('');
     const requestTimerRef = useRef(null);
 
-    const { socket } = useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
+    const { coords, socket } = useLocationTracking(user?.id, localStorage.getItem('access_token'), activeDelivery?.id);
 
     useEffect(() => {
         if (user) {
-            deliveryService.updateStatus(null, online ? 'online' : 'offline').catch(() => {});
+            deliveryService.toggleAvailability(online).catch(() => {});
         }
 
         // Always keep the dashboard data fresh on initial load.
@@ -99,14 +88,12 @@ const DeliveryDashboard = () => {
 
     const refreshDashboard = async () => {
         try {
-            const [avail, assigned, s] = await Promise.all([
+            const [avail, assigned] = await Promise.all([
                 deliveryService.getAvailableOrders(),
-                deliveryService.getOrders(),
-                deliveryService.getStats().catch(() => ({ deliveredToday: 0, earningsToday: 0 }))
+                deliveryService.getOrders()
             ]);
             
             setAvailableOrders(avail || []);
-            setStats(s || { deliveredToday: 0, earningsToday: 0, kmToday: 0, rate: '100%' });
             
             const active = assigned?.find(o => o.status !== 'delivered');
             setActiveDelivery(active || null);
@@ -230,12 +217,23 @@ const DeliveryDashboard = () => {
         </button>
       </div>
 
-      {/* PERFORMANCE METRICS */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard icon={CheckCircle} label="Success" value={stats.deliveredToday || 0} color="text-green-500" />
-        <StatCard icon={IndianRupee} label="Daily Pay" value={`₹${stats.earningsToday || 0}`} color="text-blue-500" />
-        <StatCard icon={Navigation} label="Kms" value={`${stats.kmToday || 0}`} color="text-purple-500" />
-        <StatCard icon={TrendingUp} label="Rank" value="Gold" color="text-orange-500" />
+      {/* LIVE DELIVERY SUMMARY */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Live Coordinates</p>
+          <p className="text-2xl font-black text-gray-900">{coords ? `${coords.lat.toFixed(5)}, ${coords.lng.toFixed(5)}` : 'Awaiting GPS signal'}</p>
+          <p className="text-xs text-gray-400 mt-2">Current device location in Indian Standard Time zone.</p>
+        </div>
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Nearby Requests</p>
+          <p className="text-2xl font-black text-gray-900">{availableOrders.length}</p>
+          <p className="text-xs text-gray-400 mt-2">Number of live delivery requests awaiting assignment.</p>
+        </div>
+        <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6">
+          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Drive Mode</p>
+          <p className="text-2xl font-black text-gray-900">{online ? 'Online' : 'Offline'}</p>
+          <p className="text-xs text-gray-400 mt-2">Toggle to receive assignments from the fleet hub.</p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">

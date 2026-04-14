@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Package, Clock, ChevronRight, CheckCircle2, XCircle, Loader2, Navigation } from 'lucide-react';
 import { customerService } from '../../services/customerService';
+import { formatIndianDate } from '../../utils/dateUtils';
 
 const CustomerOrders = () => {
   const [orders, setOrders] = useState([]);

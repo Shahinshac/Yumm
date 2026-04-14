@@ -34,5 +34,10 @@ export const deliveryService = {
   claimOrder: async (orderId) => {
     const resp = await api.post(`/delivery-dashboard/orders/${orderId}/claim`);
     return resp.data;
+  },
+
+  toggleAvailability: async (isAvailable) => {
+    const resp = await api.post('/delivery-dashboard/availability', { is_available: isAvailable });
+    return resp.data;
   }
 };

@@ -6,6 +6,7 @@ import { io } from 'socket.io-client';
 import L from 'leaflet';
 import { Navigation, Package, MapPin, Phone, MessageSquare, ChevronLeft, Loader2, Clock, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { customerService } from '../../services/customerService';
+import { formatIndianTime } from '../../utils/dateUtils';
 import ChatModule from '../../components/ChatModule';
 
 const DriverIcon = L.divIcon({
@@ -192,7 +193,7 @@ const OrderTracking = () => {
 
     const formatTime = (isoStr) => {
         if (!isoStr) return '--:--';
-        return new Date(isoStr).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+        return formatIndianTime(isoStr);
     };
 
     return (
