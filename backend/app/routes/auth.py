@@ -169,7 +169,7 @@ def register_delivery():
     data = request.get_json()
 
     # Validate required fields
-    required_fields = ['name', 'email', 'phone', 'vehicle_type', 'id_proof_url']
+    required_fields = ['name', 'email', 'phone', 'vehicle_type']
     missing = [f for f in required_fields if not data.get(f)]
     if missing:
         return jsonify({'error': f'Missing required fields: {", ".join(missing)}'}), 400
@@ -209,7 +209,6 @@ def register_delivery():
             is_approved=False,
             is_verified=False,
             is_active=True,
-            id_proof_url=data.get('id_proof_url'),
             password_hash=None  # No password until admin approves
         )
         user.save()

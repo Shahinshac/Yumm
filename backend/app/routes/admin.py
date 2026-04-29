@@ -403,14 +403,11 @@ def approve_user(user_id):
         user.password_generated_at = datetime.utcnow()
         user.save()
 
-        # Update restaurant/delivery record if exists
-                restaurant.save()
-        
         # Automatically send credentials over email in the background
         import threading
         from flask import current_app
-        
-        def send_async_email(app_instance, user_email, user_name, password):
+
+        def send_async_email(app_instance, user_email, user_name, username, password):
             with app_instance.app_context():
                 try:
                     from backend.app.services.email_service import EmailService
@@ -426,8 +423,15 @@ def approve_user(user_id):
         # Start background thread
         thread = threading.Thread(
             target=send_async_email,
-            args=(current_app._get_current_object(), user.email, user.full_name or user.username, user.username, generated_password)
+            args=(
+                current_app._get_current_object(),
+                user.email,
+                user.full_name or user.username,
+                user.username,
+                generated_password,
+            ),
         )
+        thread.daemon = True
         thread.start()
 
 
