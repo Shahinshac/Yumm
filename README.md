@@ -1,213 +1,188 @@
-# 🍕 FoodHub - Fast Food Delivery App
+# 🍔 Yumm - Food Delivery Platform
 
-A full-stack food delivery application built with **Flutter** (mobile & web), **Flask** backend, and **MongoDB** database.
+A modern, full-stack food delivery platform built with Next.js, PostgreSQL, and Tailwind CSS. Deploy on Vercel with zero friction.
 
----
+## 🚀 Tech Stack
 
-## 🚀 Live Deployment
+- **Frontend:** React + Next.js 14 (TypeScript)
+- **Backend:** Next.js API Routes (Node.js)
+- **Database:** PostgreSQL with Prisma ORM
+- **Styling:** Tailwind CSS + Custom Components
+- **Deployment:** Vercel (Zero-config)
+- **Auth:** JWT + bcryptjs
 
-### **Frontend (Flutter Web)**
-🌐 **Coming Soon on Netlify** - Currently deploying...
-
-### **Backend API**
-🔧 **https://yumm-ym2m.onrender.com** (Render)
-- Health check: https://yumm-ym2m.onrender.com/api/health
-- API docs: https://yumm-ym2m.onrender.com/api/version
-
----
-
-## 🎯 Features
-
-✅ **Customer Features**
-- Google Sign-In for quick registration
-- Browse restaurants & menus
-- Place orders with real-time tracking
-- Review & rate restaurants
-
-✅ **Restaurant Features**
-- Register and manage menu items
-- View incoming orders
-- Update order status (pending → preparing → ready → delivered)
-
-✅ **Delivery Partner Features**
-- Accept available delivery jobs
-- Track deliveries in real-time
-- Update delivery status
-
-✅ **Admin Features**
-- Approve new restaurant & delivery registrations
-- Generate secure passwords for new users
-- Manage system-wide settings
-
----
-
-## 📱 Getting Started
-
-### **Option 1: Access Web App (Share with Friends!)**
-```
-1. Visit: https://yummfoodhub.netlify.app
-2. Partners can register and wait for admin approval.
-3. Customers can sign in with Google Sign-In.
-```
-
-### **Option 2: Run Mobile App Locally**
-```bash
-# Clone repository
-git clone https://github.com/Shahinshac/Yumm.git
-cd Yumm/frontend-mobile
-
-# Install dependencies
-flutter pub get
-
-# Run on Android/iOS/Web
-flutter run              # Select device
-flutter run -d chrome    # Run on web
-```
-
-### **Option 3: Test Backend API Directly**
-```bash
-# Health check
-curl https://yumm-ym2m.onrender.com/api/health
-
-# Admin login
-curl -X POST https://yumm-ym2m.onrender.com/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"username":"ADMIN_USERNAME","password":"ADMIN_PASSWORD"}'
-```
-
----
-
-## 🏗️ Architecture
-
-## 🏗️ Architecture
+## 📋 Project Structure
 
 ```
-FoodHub/
-├── frontend-mobile/          # Flutter app (Web, Android, iOS)
-│   ├── lib/
-│   │   ├── screens/          # UI screens
-│   │   ├── providers/        # State management (Provider)
-│   │   ├── services/         # HTTP & Google Sign-In services
-│   │   └── core/             # Design system & widgets
-│   └── pubspec.yaml
-├── backend/                  # Flask API
+yumm/
+├── src/
 │   ├── app/
-│   │   ├── routes/           # API endpoints
-│   │   ├── models/           # MongoDB models
-│   │   ├── middleware/       # Auth & role checks
-│   │   └── utils/            # Validators, security
-│   └── requirements.txt
-└── README.md
+│   │   ├── api/                    # API Routes
+│   │   │   ├── auth/
+│   │   │   ├── restaurants/
+│   │   │   ├── orders/
+│   │   │   └── health/
+│   │   ├── components/             # Reusable UI Components
+│   │   ├── lib/                    # Utilities & Helpers
+│   │   ├── layout.tsx
+│   │   ├── page.tsx               # Home Page
+│   │   └── globals.css
+│   └── middleware.ts               # Auth middleware (optional)
+├── prisma/
+│   └── schema.prisma              # Database Schema
+├── public/                         # Static Assets
+├── package.json
+├── tsconfig.json
+├── tailwind.config.ts
+├── next.config.js
+├── postcss.config.js
+└── .env.local.example
 ```
 
----
+## 🔧 Setup & Installation
 
-## 🔧 Tech Stack
+### Prerequisites
+- Node.js 18+
+- PostgreSQL 12+ or use Supabase (PostgreSQL-as-a-Service)
+- Git
 
-**Frontend:**
-- Flutter 3.x (Dart)
-- Provider (state management)
-- Dio (HTTP client)
-- go_router (navigation)
-- google_sign_in (authentication)
+### 1. Clone & Install
 
-**Backend:**
-- Flask (Python web framework)
-- MongoEngine (MongoDB ODM)
-- Flask-JWT-Extended (authentication)
-- Flask-CORS (cross-origin requests)
-- Flask-SocketIO (real-time updates)
+```bash
+git clone <repo>
+cd yumm
+npm install
+```
 
-**Database:**
-- MongoDB Atlas (cloud database)
+### 2. Database Setup
 
-**Deployment:**
-- Netlify (frontend)
-- Render (backend API)
-- Vercel (optional API hosting)
+#### Option A: Local PostgreSQL
+```bash
+# Install PostgreSQL and start the service
+# Create database
+createdb yumm_db
 
----
+# Create .env.local
+cp .env.local.example .env.local
 
-## 📡 API Endpoints
+# Update DATABASE_URL in .env.local
+DATABASE_URL="postgresql://user:password@localhost:5432/yumm_db"
+```
+
+#### Option B: Supabase (Recommended for Vercel)
+1. Go to [supabase.com](https://supabase.com)
+2. Create project → Copy PostgreSQL connection string
+3. Update `.env.local` with your Supabase URL
+
+### 3. Prisma Setup
+
+```bash
+# Push schema to database
+npm run db:push
+
+# Optional: Open Prisma Studio to browse data
+npm run db:studio
+```
+
+### 4. Development Server
+
+```bash
+npm run dev
+```
+
+Visit [http://localhost:3000](http://localhost:3000)
+
+## 🌐 Deploy on Vercel
+
+### 1. Push to GitHub
+```bash
+git add .
+git commit -m "Initial commit: Next.js food delivery app"
+git push origin main
+```
+
+### 2. Connect to Vercel
+1. Go to [vercel.com](https://vercel.com)
+2. Click "New Project" → Import your GitHub repo
+3. Configure environment variables:
+   - `DATABASE_URL`: Your Supabase PostgreSQL connection string
+   - `NEXTAUTH_SECRET`: Generate with `openssl rand -base64 32`
+   - `NEXTAUTH_URL`: https://your-domain.vercel.app
+
+### 3. Deploy
+- Click "Deploy" → Vercel automatically builds and deploys
+- Your app is live! 🎉
+
+## 📚 API Documentation
+
+### Health Check
+```bash
+GET /api/health
+```
 
 ### Authentication
-- `POST /api/auth/login` - Login with username/password
-- `POST /api/auth/google-login` - Google Sign-In
-- `POST /api/auth/register/restaurant` - Restaurant registration
-- `POST /api/auth/register/delivery` - Delivery partner registration
+```bash
+POST /api/auth/login
+Content-Type: application/json
 
-### Admin
-- `GET /api/admin/pending-users` - List pending approvals
-- `POST /api/admin/approve/<user_id>` - Approve user & generate password
-- `POST /api/admin/reject/<user_id>` - Reject registration
+{
+  "email": "user@example.com",
+  "password": "password123"
+}
+```
 
-### Restaurants
-- `GET /api/restaurants` - List all restaurants
-- `GET /api/restaurants/<id>` - Get restaurant details
-- `POST /api/restaurants/<id>/menu` - Add menu item
+## 🎨 Tailwind CSS Customization
 
-### Orders
-- `POST /api/orders` - Create order
-- `GET /api/orders/<id>` - Get order details
-- `PUT /api/orders/<id>/status` - Update order status
+Colors are defined in `tailwind.config.ts`:
+- `primary`: #FF6B35 (Orange)
+- `secondary`: #004E89 (Blue)
+- `accent`: #F7B801 (Yellow)
+- `success`: #2A9D8F (Teal)
+- `danger`: #E76F51 (Red)
 
-### Health
-- `GET /api/health` - Check backend status
-- `GET /api/version` - Get API version
+Custom components available in `src/app/globals.css`:
+- `.btn-primary`, `.btn-secondary`, `.btn-outline`
+- `.card`, `.input`, `.badge`
 
----
+## 🔐 Security Best Practices
 
-## 🚀 Deployment Guide
+1. **Never commit `.env.local`** - Use `.env.local.example` as template
+2. **Store secrets in Vercel dashboard** - Not in .env
+3. **Use Prisma for queries** - Prevents SQL injection
+4. **Hash passwords** - bcryptjs is pre-configured
+5. **Validate all inputs** - Especially from API calls
 
-### Deploy Frontend (Netlify)
-Netlify auto-deploys when you push to GitHub. Just wait 2-5 minutes for the first build!
+## 📦 Key Dependencies
 
-**Access at:** `https://foodhub.netlify.app` (when ready)
+| Package | Purpose |
+|---------|---------|
+| `next` | React framework |
+| `@prisma/client` | Database ORM |
+| `bcryptjs` | Password hashing |
+| `jsonwebtoken` | JWT tokens |
+| `tailwindcss` | CSS framework |
+| `typescript` | Type safety |
 
-### Deploy Backend (Render)
-Already live at: `https://yumm-ym2m.onrender.com`
+## 🚀 Next Steps
 
-Push to GitHub → Render auto-deploys automatically.
-
----
-
-## 🤝 Contributing
-
-Want to add features? Fork the repo and submit a PR!
-
-Areas to contribute:
-- Add payment gateway integration
-- Implement real-time chat between customer & delivery
-- Enhance restaurant analytics dashboard
-- Add more cuisine categories
-
----
+1. **Implement authentication pages** (Login, Register)
+2. **Build restaurant listing** with search & filters
+3. **Create menu & ordering system**
+4. **Add order tracking**
+5. **Implement payment gateway** (Stripe)
+6. **Setup email notifications** (SendGrid)
+7. **Add admin dashboard**
 
 ## 📞 Support
 
-**Issues with the app?**
-- Check backend status: https://yumm-ym2m.onrender.com/api/health
-- Create a GitHub issue: https://github.com/Shahinshac/Yumm/issues
-
-**Questions about setup?**
-- Email: admin@yumm.com
-- GitHub: [@Shahinshac](https://github.com/Shahinshac)
-
----
+- Documentation: `/docs`
+- Issues: GitHub Issues
+- Email: support@yumm.app
 
 ## 📄 License
 
-This project is open source and available under the MIT License.
+MIT License - Feel free to use for personal and commercial projects.
 
 ---
 
-## ✨ Acknowledgments
-
-- Flutter team for the amazing cross-platform framework
-- MongoDB for reliable cloud database
-- Render & Netlify for free hosting
-
----
-
-**Last Updated:** 2026-04-07
-**Status:** ✅ Production Ready
+**Happy Coding! 🚀**

@@ -1,15 +1,20 @@
 {
-  "version": 2,
-  "buildCommand": "cd frontend && npm install && npm run build",
-  "outputDirectory": "frontend/dist",
-  "rewrites": [
+  "buildCommand": "npm run build",
+  "devCommand": "npm run dev",
+  "installCommand": "npm install",
+  "framework": "nextjs",
+  "env": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://yumm-ym2m.onrender.com/api/$1"
+      "key": "DATABASE_URL",
+      "description": "PostgreSQL connection string from Supabase or local PostgreSQL"
     },
     {
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
+      "key": "NEXTAUTH_SECRET",
+      "description": "Generate with: openssl rand -base64 32"
+    },
+    {
+      "key": "NEXTAUTH_URL",
+      "description": "Your deployed domain, e.g., https://yumm.vercel.app"
     }
   ]
 }
