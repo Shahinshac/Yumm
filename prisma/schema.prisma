@@ -112,14 +112,15 @@ model Delivery {
   id          String   @id @default(cuid())
   orderId     String   @unique
   order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  deliveryId  String?
-  deliveryPerson DeliveryProfile?
+  deliveryPersonId String?
+  deliveryPerson   DeliveryProfile? @relation(fields: [deliveryPersonId], references: [id])
   status      DeliveryStatus @default(PENDING)
   estimatedTime Int? // in minutes
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@index([orderId])
+  @@index([deliveryPersonId])
 }
 
 model DeliveryProfile {
