@@ -154,10 +154,18 @@ export default function RestaurantDetailPage() {
               </div>
 
               {/* Contact */}
-              <div className="flex gap-lg text-sm text-gray-600">
+              <div className="flex gap-lg text-sm text-gray-600 mb-lg">
                 <span>📍 {restaurant.address}</span>
                 <span>📞 {restaurant.phone}</span>
               </div>
+
+              {/* Reviews Button */}
+              <Button
+                variant="outline"
+                onClick={() => router.push(`/restaurants/${restaurant.id}/reviews`)}
+              >
+                📝 View All Reviews
+              </Button>
             </div>
           </div>
         </div>
