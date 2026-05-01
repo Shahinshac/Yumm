@@ -2,27 +2,5 @@
   "buildCommand": "npm run build",
   "devCommand": "npm run dev",
   "installCommand": "npm install",
-  "framework": "nextjs",
-  "env": {
-    "DATABASE_URL": {
-      "description": "PostgreSQL connection string from Supabase or local PostgreSQL",
-      "required": true
-    },
-    "DIRECT_URL": {
-      "description": "Direct PostgreSQL connection URL (non-pooled)",
-      "required": true
-    },
-    "NEXTAUTH_SECRET": {
-      "description": "Generate with: openssl rand -base64 32",
-      "required": true
-    },
-    "NEXTAUTH_URL": {
-      "description": "Your deployed domain, e.g., https://yumm.vercel.app",
-      "required": true
-    },
-    "NEXT_PUBLIC_API_URL": {
-      "description": "API base URL, e.g., https://yumm.vercel.app/api",
-      "required": true
-    }
-  }
+  "framework": "nextjs"
 }
