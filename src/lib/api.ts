@@ -37,6 +37,28 @@ export async function apiCall<T>(
   }
 }
 
+export interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    role: string;
+  };
+}
+
+export interface RegisterResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    email: string;
+    name: string;
+    role: string;
+  };
+}
+
 export async function fetchRestaurants() {
   return apiCall("/restaurants");
 }
@@ -46,8 +68,15 @@ export async function fetchMenuItems(restaurantId: string) {
 }
 
 export async function loginUser(email: string, password: string) {
-  return apiCall("/auth/login", {
+  return apiCall<LoginResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
+  });
+}
+
+export async function registerUser(data: any) {
+  return apiCall<RegisterResponse>("/auth/register", {
+    method: "POST",
+    body: JSON.stringify(data),
   });
 }

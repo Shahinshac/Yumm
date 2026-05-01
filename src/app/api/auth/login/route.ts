@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
+import { comparePasswords } from "@/lib/auth";
+import { generateToken, generateRefreshToken } from "@/lib/jwt";
 
 const prisma = new PrismaClient();
 
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const validPassword = await bcrypt.compare(password, user.password);
+    const validPassword = await comparePasswords(password, user.password);
 
     if (!validPassword) {
       return NextResponse.json(
@@ -35,18 +36,47 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    return NextResponse.json(
+    // Generate tokens
+    const accessToken = generateToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    const refreshToken = generateRefreshToken({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    // Create response with tokens
+    const response = NextResponse.json(
       {
+        success: true,
         message: "Login successful",
+        accessToken,
+        refreshToken,
         user: {
           id: user.id,
           email: user.email,
           name: user.name,
           role: user.role,
+          avatar: user.avatar,
         },
       },
       { status: 200 }
     );
+
+    // Set refresh token as httpOnly cookie
+    response.cookies.set("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60, // 30 days
+      path: "/",
+    });
+
+    return response;
   } catch (error) {
     console.error("Login error:", error);
     return NextResponse.json(
