@@ -4,6 +4,8 @@ import { verifyTokenFromHeader } from "@/lib/jwt";
 
 const prisma = new PrismaClient();
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     // Get token from Authorization header

@@ -182,10 +182,8 @@ export default function RestaurantDetailPage() {
                   <MenuItemCard
                     key={item.id}
                     {...item}
-                    onAddToCart={() => {
-                      // TODO: Add to cart functionality
-                      alert(`Added ${item.name} to cart!`);
-                    }}
+                    restaurantId={restaurant.id}
+                    restaurantName={restaurant.name}
                   />
                 ))}
               </div>

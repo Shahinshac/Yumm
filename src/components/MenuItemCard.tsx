@@ -3,32 +3,46 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "./Button";
+import { useCart } from "@/hooks/useCart";
 
 interface MenuItemCardProps {
   id: string;
+  restaurantId: string;
+  restaurantName: string;
   name: string;
   description?: string;
   price: number;
   image?: string;
   category?: string;
-  onAddToCart?: (item: MenuItemCardProps) => void;
 }
 
 export function MenuItemCard({
   id,
+  restaurantId,
+  restaurantName,
   name,
   description,
   price,
   image,
   category,
-  onAddToCart,
 }: MenuItemCardProps) {
   const [quantity, setQuantity] = useState(1);
+  const [added, setAdded] = useState(false);
+  const { addItem } = useCart();
 
   const handleAddToCart = () => {
-    if (onAddToCart) {
-      onAddToCart({ id, name, description, price, image, category });
-    }
+    addItem({
+      id,
+      restaurantId,
+      restaurantName,
+      name,
+      description,
+      price,
+      image,
+      quantity,
+    });
+    setAdded(true);
+    setTimeout(() => setAdded(false), 2000);
   };
 
   return (
@@ -67,18 +81,36 @@ export function MenuItemCard({
       )}
 
       {/* Price & Action */}
-      <div className="mt-auto flex items-center justify-between gap-md">
-        <div className="font-bold text-lg text-primary">
-          ₹{price.toFixed(0)}
+      <div className="mt-auto flex items-center justify-between gap-md flex-wrap">
+        <div>
+          <div className="font-bold text-lg text-primary">
+            ₹{price.toFixed(0)}
+          </div>
+          <div className="flex items-center gap-sm border border-gray-300 rounded px-xs py-xs mt-xs">
+            <button
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+              className="text-primary hover:bg-gray-100 px-xs"
+            >
+              −
+            </button>
+            <span className="w-6 text-center text-sm">{quantity}</span>
+            <button
+              onClick={() => setQuantity(quantity + 1)}
+              className="text-primary hover:bg-gray-100 px-xs"
+            >
+              +
+            </button>
+          </div>
         </div>
         <Button
-          variant="primary"
+          variant={added ? "secondary" : "primary"}
           size="sm"
           onClick={handleAddToCart}
         >
-          Add +
+          {added ? "✓ Added" : "Add +"}
         </Button>
       </div>
     </div>
   );
 }
+
