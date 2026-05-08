@@ -3,21 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import MobileNav from '../../components/MobileNav';
 
-export default function RestaurantMenu() {
-  const { id } = useParams();
-  const navigate = useNavigate();
-  const { restaurants, addToCart, cartCount, cartTotal } = useApp();
-  const restaurant = restaurants.find(r => r.id === id);
-
-  if (!restaurant) return (
-    <div className="mobile-frame flex items-center justify-center min-h-screen">
-      <p className="font-lexend font-bold text-xl">Restaurant not found.</p>
-    </div>
-  );
+  const [portionItem, setPortionItem] = React.useState<MenuItem | null>(null);
 
   return (
     <div className="app-container bg-surface min-h-screen">
-      {/* Hero */}
+      {/* ... Hero same ... */}
       <div className="relative h-72 md:h-96">
         <img src={restaurant.imageUrl} alt={restaurant.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#281812]/90 via-[#281812]/40 to-transparent" />
@@ -30,9 +20,6 @@ export default function RestaurantMenu() {
             </svg>
           </button>
           <div className="flex gap-3">
-            <button className="glass-1 px-4 py-2 rounded-2xl hidden md:flex items-center gap-2 text-white font-bold">
-              <span>Share</span>
-            </button>
             <button className="glass-1 w-11 h-11 rounded-2xl flex items-center justify-center">
               <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -53,73 +40,50 @@ export default function RestaurantMenu() {
                 <div className="flex items-center gap-1 text-white">
                   <span className="text-yellow-400">★</span>
                   <span className="font-bold">{restaurant.rating}</span>
-                  <span className="text-white/70 text-sm">({restaurant.reviewCount}+ reviews)</span>
                 </div>
-              </div>
-            </div>
-            <div className="hidden md:flex glass-1 px-6 py-3 rounded-2xl items-center gap-6 text-white border border-white/20">
-              <div className="text-center">
-                <p className="text-[10px] uppercase font-bold text-white/60 tracking-widest">Delivery</p>
-                <p className="font-bold">{restaurant.deliveryTime}</p>
-              </div>
-              <div className="w-px h-8 bg-white/10" />
-              <div className="text-center">
-                <p className="text-[10px] uppercase font-bold text-white/60 tracking-widest">Fee</p>
-                <p className="font-bold text-emerald-400">{restaurant.deliveryFee}</p>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="md:grid md:grid-cols-12 md:gap-12 px-6 md:px-12 py-8 md:py-12">
-        {/* Menu Section */}
+      <div className="md:grid md:grid-cols-12 md:gap-12 px-6 md:px-12 py-8 md:py-12 pb-32">
         <div className="md:col-span-8">
           <div className="flex justify-between items-center mb-8 pb-4 border-b border-outline-variant/30">
-            <h2 className="font-lexend font-bold text-2xl text-on-surface">Main Menu</h2>
-            <div className="flex gap-2">
-              <button className="chip-active text-xs">Full Menu</button>
-              <button className="chip-inactive text-xs">Popular</button>
-            </div>
+            <h2 className="font-lexend font-bold text-2xl text-on-surface">Curated Menu</h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {restaurant.menu.map(item => (
-              <div key={item.id} className="glass-1 rounded-[32px] p-6 flex flex-col gap-5 hover:shadow-2xl hover:shadow-primary/5 transition-all group border border-outline-variant/30">
+              <div key={item.id} className="glass-1 rounded-[32px] p-6 flex flex-col gap-5 hover:shadow-2xl transition-all group border border-outline-variant/30">
                 <div className="relative overflow-hidden rounded-[24px] h-48 w-full">
-                  <img src={item.imageUrl} alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute top-4 left-4">
-                    {item.isVeg ? (
-                      <span className="bg-white/90 backdrop-blur-md p-2 rounded-lg flex items-center justify-center shadow-lg">
-                        <span className="w-3 h-3 border-2 border-green-600 rounded-sm flex items-center justify-center"><span className="w-1.5 h-1.5 bg-green-600 rounded-full" /></span>
-                      </span>
-                    ) : (
-                      <span className="bg-white/90 backdrop-blur-md p-2 rounded-lg flex items-center justify-center shadow-lg">
-                        <span className="w-3 h-3 border-2 border-red-600 rounded-sm flex items-center justify-center"><span className="w-1.5 h-1.5 bg-red-600 rounded-full" /></span>
-                      </span>
-                    )}
+                    <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest backdrop-blur-md border border-white/20
+                      ${item.isVeg ? 'bg-green-500/80 text-white' : 'bg-red-500/80 text-white'}`}>
+                      {item.isVeg ? 'Veg' : 'Non-Veg'}
+                    </span>
                   </div>
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="font-lexend font-black text-xl text-charcoal leading-tight">{item.name}</p>
-                      <p className="text-on-surface-variant text-xs mt-2 line-clamp-2 font-medium leading-relaxed">{item.description}</p>
-                    </div>
-                    <span className="font-lexend font-black text-2xl text-primary">${item.price.toFixed(2)}</span>
+                <div className="flex-1 flex flex-col">
+                  <div className="flex items-start justify-between gap-4 mb-2">
+                    <h3 className="font-lexend font-black text-xl text-charcoal leading-tight truncate">{item.name}</h3>
+                    <span className="font-lexend font-black text-xl text-primary">${item.price.toFixed(2)}</span>
                   </div>
-                  <div className="flex items-center justify-between mt-6 pt-5 border-t border-outline-variant/10">
-                    <div className="flex items-center gap-3">
-                      <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Recommended</span>
-                      <div className="flex text-yellow-400 text-xs">★★★★★</div>
-                    </div>
+                  <p className="text-on-surface-variant text-xs line-clamp-2 font-medium leading-relaxed">{item.description}</p>
+                  
+                  <div className="mt-auto pt-6 flex items-center justify-between">
+                    {item.hasPortions ? (
+                      <span className="text-[10px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-1 rounded-md">Portions Available</span>
+                    ) : (
+                      <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant/40 italic">Single Portion</span>
+                    )}
                     <button onClick={() => {
-                      addToCart(item);
+                      if (item.hasPortions) setPortionItem(item);
+                      else addToCart(item);
                     }}
                       className="btn-primary px-6 py-3 rounded-2xl flex items-center gap-3 shadow-lg shadow-primary/20 active:scale-95 transition-all">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
-                      <span className="font-bold text-sm">Add to Basket</span>
+                      <span className="font-bold text-sm">Add +</span>
                     </button>
                   </div>
                 </div>
@@ -127,6 +91,57 @@ export default function RestaurantMenu() {
             ))}
           </div>
         </div>
+
+        <div className="hidden md:block md:col-span-4">
+          <div className="sticky top-12 glass-1 rounded-[40px] p-8 border border-outline-variant/30 shadow-2xl">
+            <h3 className="font-lexend font-black text-2xl mb-8 flex items-center gap-3">
+              🍱 Your Selection
+            </h3>
+            {cartCount === 0 ? (
+              <div className="py-12 text-center opacity-40">
+                <p className="text-5xl mb-4">🛒</p>
+                <p className="font-bold uppercase tracking-widest text-[10px]">Your basket is empty</p>
+              </div>
+            ) : (
+              <div className="space-y-8">
+                <div className="flex justify-between items-end">
+                  <p className="text-on-surface-variant font-black text-[10px] uppercase tracking-widest">Grand Total</p>
+                  <p className="font-lexend font-black text-4xl text-primary">${cartTotal.toFixed(2)}</p>
+                </div>
+                <button onClick={() => navigate('/customer/cart')}
+                  className="w-full btn-primary py-5 rounded-2xl text-lg shadow-2xl shadow-primary/30 active:scale-95 transition-all">
+                  Checkout Now
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {portionItem && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+          <div className="absolute inset-0 bg-charcoal/80 backdrop-blur-xl animate-in fade-in duration-500" onClick={() => setPortionItem(null)} />
+          <div className="relative w-full max-w-sm bg-white rounded-[48px] p-10 shadow-2xl animate-in zoom-in duration-500">
+            <h2 className="font-lexend font-black text-3xl text-charcoal mb-2 tracking-tight">Select Portion</h2>
+            <p className="text-on-surface-variant font-medium mb-8 text-sm">Choose the perfect size for your appetite</p>
+            
+            <div className="grid grid-cols-1 gap-3">
+              {portionItem.portions?.map(p => (
+                <button key={p.label} onClick={() => { addToCart(portionItem, p); setPortionItem(null); }}
+                  className="flex justify-between items-center p-5 rounded-[24px] bg-surface-container/50 border-2 border-transparent hover:border-primary hover:bg-primary/5 transition-all group">
+                  <div>
+                    <p className="font-lexend font-black text-lg text-charcoal leading-none mb-1">{p.label}</p>
+                    <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Recommended size</p>
+                  </div>
+                  <span className="font-lexend font-black text-xl text-primary">${p.price.toFixed(2)}</span>
+                </button>
+              ))}
+            </div>
+            
+            <button onClick={() => setPortionItem(null)} className="w-full mt-6 py-4 rounded-2xl text-on-surface-variant font-black text-xs uppercase tracking-widest hover:underline">Cancel</button>
+          </div>
+        </div>
+      )}
 
         {/* Sidebar: Cart Summary for Desktop */}
         <div className="hidden md:block md:col-span-4">

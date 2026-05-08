@@ -115,24 +115,32 @@ export default function CartCheckout() {
             <span className="text-on-surface-variant text-sm font-bold">{cart.length} Items</span>
           </div>
           <div className="space-y-3">
-            {cart.map(({ menuItem, quantity }) => (
-              <div key={menuItem.id} className="glass-1 rounded-3xl p-4 flex gap-4 items-center group transition-all hover:bg-surface-container">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 border border-outline-variant/30">
-                  <img src={menuItem.imageUrl} alt={menuItem.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-bold text-on-surface truncate">{menuItem.name}</p>
-                  <p className="text-xs text-on-surface-variant mt-0.5 line-clamp-1">{menuItem.description}</p>
-                </div>
-                <div className="text-right flex flex-col items-end gap-1">
-                  <p className="font-lexend font-bold text-on-surface">${(menuItem.price * quantity).toFixed(2)}</p>
-                  <div className="flex items-center gap-2 bg-surface-container rounded-lg px-2 py-0.5 border border-outline-variant/30">
-                    <span className="text-[10px] font-bold text-on-surface-variant uppercase">Qty</span>
-                    <span className="text-xs font-bold text-primary">{quantity}</span>
+            {cart.map(({ menuItem, quantity, selectedPortion }, idx) => {
+              const itemPrice = selectedPortion ? selectedPortion.price : menuItem.price;
+              return (
+                <div key={`${menuItem.id}-${idx}`} className="glass-1 rounded-3xl p-4 flex gap-4 items-center group transition-all hover:bg-surface-container/40 border border-outline-variant/10">
+                  <div className="w-16 h-16 rounded-2xl overflow-hidden flex-shrink-0 border border-outline-variant/30">
+                    <img src={menuItem.imageUrl} alt={menuItem.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-bold text-on-surface truncate">{menuItem.name}</p>
+                      {selectedPortion && (
+                        <span className="bg-primary/10 text-primary text-[9px] font-black px-1.5 py-0.5 rounded-md border border-primary/20">{selectedPortion.label}</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-on-surface-variant mt-0.5 line-clamp-1">{menuItem.description}</p>
+                  </div>
+                  <div className="text-right flex flex-col items-end gap-1">
+                    <p className="font-lexend font-bold text-on-surface">${(itemPrice * quantity).toFixed(2)}</p>
+                    <div className="flex items-center gap-2 bg-surface-container rounded-lg px-2 py-0.5 border border-outline-variant/30">
+                      <span className="text-[10px] font-bold text-on-surface-variant uppercase">Qty</span>
+                      <span className="text-xs font-bold text-primary">{quantity}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

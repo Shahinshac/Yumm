@@ -109,18 +109,27 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 4000);
   };
 
-  const addToCart = (item: MenuItem) => {
+  const addToCart = (item: MenuItem, portion?: Portion) => {
     setCart(prev => {
-      const ex = prev.find(c => c.menuItem.id === item.id);
-      return ex ? prev.map(c => c.menuItem.id === item.id ? { ...c, quantity: c.quantity + 1 } : c)
-               : [...prev, { menuItem: item, quantity: 1 }];
+      const ex = prev.find(c => c.menuItem.id === item.id && c.selectedPortion?.label === portion?.label);
+      if (ex) {
+        return prev.map(c => (c.menuItem.id === item.id && c.selectedPortion?.label === portion?.label) ? { ...c, quantity: c.quantity + 1 } : c);
+      }
+      return [...prev, { menuItem: item, quantity: 1, selectedPortion: portion }];
     });
-    showNotification(`${item.name} added to cart`);
+    showNotification(`${item.name} ${portion ? `(${portion.label})` : ''} added to basket`);
   };
 
-  const removeFromCart = (itemId: string) => setCart(prev => prev.filter(c => c.menuItem.id !== itemId));
+  const removeFromCart = (itemId: string, portionLabel?: string) => 
+    setCart(prev => prev.filter(c => !(c.menuItem.id === itemId && c.selectedPortion?.label === portionLabel)));
+
   const clearCart = () => setCart([]);
-  const cartTotal = cart.reduce((s, i) => s + i.menuItem.price * i.quantity, 0);
+
+  const cartTotal = cart.reduce((s, i) => {
+    const price = i.selectedPortion ? i.selectedPortion.price : i.menuItem.price;
+    return s + price * i.quantity;
+  }, 0);
+
   const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
 
   const placeOrder = (restaurantId: string, address: string) => {
@@ -129,8 +138,9 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       id: `ORD-${Math.floor(Math.random()*9000)+1000}`,
       restaurantId, restaurantName: r?.name || 'Restaurant',
       items: [...cart], status: 'pending',
-      total: cartTotal + 4.99 + 2.50,
+      total: cartTotal + 4.99 + 2.50, // Fees
       createdAt: new Date(), address,
+      customerName: currentUser?.name,
     };
     setOrders(prev => [order, ...prev]);
     clearCart();

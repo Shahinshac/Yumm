@@ -299,11 +299,10 @@ export default function Login() {
       <div className="animate-in fade-in slide-in-from-right-4 duration-500">
         <BackBtn onClick={() => goTo('owner-auth')} />
         <h2 className="font-lexend font-black text-2xl text-charcoal mb-6 tracking-tight">Business Registration</h2>
-        <form onSubmit={(e) => { e.preventDefault(); registerOwner({ name: ownerName, email: ownerEmail, phone: ownerPhone, restaurantName: restName, restaurantLocation: restLocation, restaurantCategory: restCategory }); goTo('pending-approval'); }} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <form onSubmit={(e) => { e.preventDefault(); registerOwner({ name: ownerName, email: ownerEmail, phone: ownerPhone, restaurantName: restName, cuisineType: restCategory }); goTo('pending-approval'); }} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="Full Name" value={ownerName} onChange={setOwnerName} placeholder="Your name" />
           <Field label="Email" type="email" value={ownerEmail} onChange={setOwnerEmail} placeholder="Business email" />
           <div className="md:col-span-2"><Field label="Restaurant Name" value={restName} onChange={setRestName} placeholder="Name of your outlet" /></div>
-          <div className="md:col-span-2"><Field label="Address" value={restLocation} onChange={setRestLocation} placeholder="City and Area" /></div>
           <div className="md:col-span-2">
             <label className="block text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 text-on-surface-variant">Cuisine Type</label>
             <select value={restCategory} onChange={e => setRestCategory(e.target.value)} required
@@ -313,6 +312,29 @@ export default function Login() {
             </select>
           </div>
           <button type="submit" className="md:col-span-2 w-full btn-primary rounded-[20px] py-4 text-lg mt-2">Submit Application</button>
+        </form>
+      </div>
+    );
+
+    if (screen === 'partner-register') return (
+      <div className="animate-in fade-in slide-in-from-right-4 duration-500">
+        <BackBtn onClick={() => goTo('partner-auth')} />
+        <h2 className="font-lexend font-black text-2xl text-charcoal mb-6 tracking-tight">Logistics Application</h2>
+        <form onSubmit={(e) => { e.preventDefault(); registerPartner({ name: partnerName, email: partnerEmail, phone: partnerPhone, vehicleType: vehicleType }); goTo('pending-approval'); }} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Field label="Full Name" value={partnerName} onChange={setPartnerName} placeholder="Your legal name" />
+          <Field label="Email" type="email" value={partnerEmail} onChange={setPartnerEmail} placeholder="Personal email" />
+          <Field label="Phone" value={partnerPhone} onChange={setPartnerPhone} placeholder="+1 (555) 000-0000" />
+          <div className="md:col-span-1">
+            <label className="block text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 text-on-surface-variant">Vehicle Type</label>
+            <select value={vehicleType} onChange={e => setVehicleType(e.target.value)} required
+              className="w-full bg-surface-container/50 border border-outline-variant/30 rounded-[16px] px-5 py-3.5 font-bold text-on-surface focus:outline-none focus:border-primary appearance-none text-sm">
+              <option value="Bicycle">Bicycle</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="Scooter">Scooter</option>
+              <option value="Car">Car</option>
+            </select>
+          </div>
+          <button type="submit" className="md:col-span-2 w-full btn-primary rounded-[20px] py-4 text-lg mt-2">Join the Fleet</button>
         </form>
       </div>
     );
