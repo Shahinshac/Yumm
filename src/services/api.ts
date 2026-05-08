@@ -100,6 +100,17 @@ export const ApiService = {
   },
 
   async fetchPendingOwners(): Promise<PendingOwner[]> {
+    if (IS_PROD) {
+      try {
+        const res = await fetch(`${API_BASE}/approvals`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return data.owners || [];
+      } catch (err) {
+        console.error('Failed to fetch pending owners from API:', err);
+        return JSON.parse(localStorage.getItem('pendingOwners') || '[]');
+      }
+    }
     if (IS_SUPABASE_ENABLED && supabase) {
       const { data } = await supabase.from('pending_owners').select('*').order('registeredAt', { ascending: false });
       return data || [];
@@ -108,11 +119,37 @@ export const ApiService = {
   },
 
   async fetchPendingPartners(): Promise<PendingPartner[]> {
+    if (IS_PROD) {
+      try {
+        const res = await fetch(`${API_BASE}/approvals`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        return data.partners || [];
+      } catch (err) {
+        console.error('Failed to fetch pending partners from API:', err);
+        return JSON.parse(localStorage.getItem('pendingPartners') || '[]');
+      }
+    }
     if (IS_SUPABASE_ENABLED && supabase) {
       const { data } = await supabase.from('pending_partners').select('*').order('registeredAt', { ascending: false });
       return data || [];
     }
     return JSON.parse(localStorage.getItem('pendingPartners') || '[]');
+  },
+
+  async updateApprovalStatus(id: string, type: 'owner' | 'partner', status: string): Promise<void> {
+    if (IS_PROD) {
+      await fetch(`${API_BASE}/approvals`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, type, status }),
+      });
+      return;
+    }
+    if (IS_SUPABASE_ENABLED && supabase) {
+      const table = type === 'owner' ? 'pending_owners' : 'pending_partners';
+      await supabase.from(table).update({ status }).eq('id', id);
+    }
   },
 
   // --- REAL-TIME SUBSCRIPTION ---
@@ -124,3 +161,4 @@ export const ApiService = {
       .subscribe();
   }
 };
+

@@ -201,7 +201,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     showNotification('Item removed from menu');
   };
 
-  const approveOwner = (id: string) => {
+  const approveOwner = async (id: string) => {
     setPendingOwners(prev => prev.map(o => {
       if (o.id === id) {
         const r: Restaurant = {
@@ -222,6 +222,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       }
       return o;
     }));
+    try { await ApiService.updateApprovalStatus(id, 'owner', 'approved'); } catch (e) { console.warn('Sync failed', e); }
     showNotification('Owner approved and restaurant created');
   };
 
@@ -250,9 +251,18 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
-  const rejectOwner = (id: string) => setPendingOwners(prev => prev.map(o => o.id === id ? { ...o, status: 'rejected' } : o));
-  const approvePartner = (id: string) => setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'approved' } : p));
-  const rejectPartner = (id: string) => setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'rejected' } : p));
+  const rejectOwner = async (id: string) => {
+    setPendingOwners(prev => prev.map(o => o.id === id ? { ...o, status: 'rejected' } : o));
+    try { await ApiService.updateApprovalStatus(id, 'owner', 'rejected'); } catch (e) { console.warn('Sync failed', e); }
+  };
+  const approvePartner = async (id: string) => {
+    setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'approved' } : p));
+    try { await ApiService.updateApprovalStatus(id, 'partner', 'approved'); } catch (e) { console.warn('Sync failed', e); }
+  };
+  const rejectPartner = async (id: string) => {
+    setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'rejected' } : p));
+    try { await ApiService.updateApprovalStatus(id, 'partner', 'rejected'); } catch (e) { console.warn('Sync failed', e); }
+  };
 
   const isApproved = (role: string, email?: string, name?: string) => {
     if (role === 'customer' || role === 'admin') return true;
