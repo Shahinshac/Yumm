@@ -9,7 +9,7 @@ const RESTAURANTS: Restaurant[] = [
   {
     id: 'r1', name: 'The Velvet Bistro', cuisine: 'Modern European',
     tags: 'French Fusion • Fine Dining • Wine Bar',
-    rating: 4.9, reviewCount: 842, deliveryTime: '40-55 min',
+    rating: 0.0, reviewCount: 0, deliveryTime: '40-55 min',
     deliveryFee: 'Free delivery', promo: '20% OFF',
     imageUrl: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1000&auto=format&fit=crop',
     menu: [
@@ -22,7 +22,7 @@ const RESTAURANTS: Restaurant[] = [
   {
     id: 'r2', name: 'Zen Garden Sushi', cuisine: 'Japanese',
     tags: 'Premium Seafood • Omakase • Sake Bar',
-    rating: 4.8, reviewCount: 621, deliveryTime: '35-45 min',
+    rating: 0.0, reviewCount: 0, deliveryTime: '35-45 min',
     deliveryFee: '$2.99 delivery', promo: '50% OFF',
     imageUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=1000&auto=format&fit=crop',
     menu: [
@@ -33,7 +33,7 @@ const RESTAURANTS: Restaurant[] = [
   {
     id: 'r3', name: "L'Or Brasserie", cuisine: 'French',
     tags: 'Brasserie • Champagne • Oyster Bar',
-    rating: 4.7, reviewCount: 389, deliveryTime: '50-65 min',
+    rating: 0.0, reviewCount: 0, deliveryTime: '50-65 min',
     deliveryFee: 'Free delivery',
     imageUrl: 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1000&auto=format&fit=crop',
     menu: [

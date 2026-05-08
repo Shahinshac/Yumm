@@ -64,7 +64,7 @@ export default function OwnerDashboard() {
                 </div>
                 <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
                   <span className="text-yellow-500 text-xs">★</span>
-                  <span className="text-white font-bold text-xs">4.9 (1.2k Reviews)</span>
+                  <span className="text-white font-bold text-xs">0.0 (0 Reviews)</span>
                 </div>
               </div>
             </div>
@@ -154,10 +154,10 @@ export default function OwnerDashboard() {
           <h2 className="font-lexend font-black text-2xl text-on-surface mb-6">Store Intelligence</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[
-              { label: 'Avg Prep', value: '18m', icon: '⚡', color: 'bg-emerald-50 text-emerald-600' },
-              { label: 'Rating', value: '4.9', icon: '⭐', color: 'bg-yellow-50 text-yellow-600' },
+              { label: 'Avg Prep', value: '0m', icon: '⚡', color: 'bg-emerald-50 text-emerald-600' },
+              { label: 'Rating', value: '0.0', icon: '⭐', color: 'bg-yellow-50 text-yellow-600' },
               { label: 'Missed', value: '0', icon: '📉', color: 'bg-red-50 text-red-600' },
-              { label: 'Peak Hour', value: '8 PM', icon: '🔥', color: 'bg-purple-50 text-purple-600' },
+              { label: 'Peak Hour', value: '--', icon: '🔥', color: 'bg-purple-50 text-purple-600' },
             ].map(m => (
               <div key={m.label} className="glass-1 rounded-[32px] p-6 border border-outline-variant/30 flex items-center gap-4">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl ${m.color}`}>{m.icon}</div>

@@ -73,16 +73,15 @@ export function AdminLayout({ children, active }: { children: React.ReactNode; a
 
 export function AdminOverview() {
   const { orders, restaurants, pendingOwners, pendingPartners } = useApp();
-  const revenue = orders.reduce((s, o) => s + o.total, 0);
 
   const stats = [
-    { label: 'GTV (Gross Volume)', value: `$${revenue.toLocaleString()}`, trend: '+24%', up: true, emoji: '💎', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
-    { label: 'Live Orders', value: orders.length, trend: '+12%', up: true, emoji: '📦', color: 'bg-primary/5 text-primary border-primary/10' },
-    { label: 'Active Fleet', value: 142, trend: '-2%', up: false, emoji: '🛵', color: 'bg-orange-50 text-orange-600 border-orange-100' },
-    { label: 'Platform Partners', value: restaurants.length, trend: '+8', up: true, emoji: '🏪', color: 'bg-purple-50 text-purple-600 border-purple-100' },
+    { label: 'GTV (Gross Volume)', value: '$0', trend: '0%', up: true, emoji: '💎', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
+    { label: 'Live Orders', value: '0', trend: '0%', up: true, emoji: '📦', color: 'bg-primary/5 text-primary border-primary/10' },
+    { label: 'Active Fleet', value: '0', trend: '0%', up: true, emoji: '🛵', color: 'bg-orange-50 text-orange-600 border-orange-100' },
+    { label: 'Platform Partners', value: '0', trend: '0', up: true, emoji: '🏪', color: 'bg-purple-50 text-purple-600 border-purple-100' },
   ];
 
-  const chartData = [45, 62, 58, 74, 90, 85, 110]; // Mock daily orders
+  const chartData = [0, 0, 0, 0, 0, 0, 0]; // Empty chart for fresh state
 
   return (
     <AdminLayout active="overview">
@@ -181,7 +180,7 @@ export function AdminOverview() {
               <div className="space-y-3">
                 <button className="w-full flex items-center justify-between p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 font-bold text-sm hover:bg-red-100 transition-colors">
                   <span>Disputed Orders</span>
-                  <span className="bg-red-700 text-white px-2 py-0.5 rounded-lg text-[10px]">4</span>
+                  <span className="bg-red-700 text-white px-2 py-0.5 rounded-lg text-[10px]">0</span>
                 </button>
                 <button className="w-full flex items-center justify-between p-4 bg-primary/5 text-primary rounded-2xl border border-primary/10 font-bold text-sm hover:bg-primary/10 transition-colors">
                   <span>Pending Approvals</span>
