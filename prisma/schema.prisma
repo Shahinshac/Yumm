@@ -23,6 +23,22 @@ model Order {
   @@map("orders")
 }
 
+model Restaurant {
+  id           String   @id
+  ownerId      String?
+  name         String
+  cuisine      String
+  rating       Float    @default(4.5)
+  reviewCount  Int      @default(0)
+  deliveryTime String   @default("25-35 min")
+  deliveryFee  String   @default("Free")
+  imageUrl     String   @default("")
+  menu         Json     @default("[]")
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+
+  @@map("restaurants")
+}
 
 model PendingOwner {
   id             String   @id
@@ -37,7 +53,6 @@ model PendingOwner {
   @@map("pending_owners")
 }
 
-
 model PendingPartner {
   id           String   @id
   name         String
@@ -49,4 +64,3 @@ model PendingPartner {
 
   @@map("pending_partners")
 }
-

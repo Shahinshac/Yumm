@@ -89,14 +89,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const sync = async () => {
       try {
-        const [o, p, ords] = await Promise.all([
+        const [o, p, ords, rests] = await Promise.all([
           ApiService.fetchPendingOwners(),
           ApiService.fetchPendingPartners(),
-          ApiService.fetchOrders()
+          ApiService.fetchOrders(),
+          ApiService.fetchRestaurants()
         ]);
         if (Array.isArray(o)) setPendingOwners(o);
         if (Array.isArray(p)) setPendingPartners(p);
         if (Array.isArray(ords)) setOrders(ords);
+        if (Array.isArray(rests) && rests.length > 0) setRestaurants(rests);
       } catch (err) { 
         console.error('Background synchronization failed. System operating in local-first mode.', err); 
       }
@@ -202,6 +204,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const approveOwner = async (id: string) => {
+    let newRestaurant: Restaurant | null = null;
     setPendingOwners(prev => prev.map(o => {
       if (o.id === id) {
         const r: Restaurant = {
@@ -217,12 +220,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           menu: [],
           status: 'active'
         };
+        newRestaurant = r;
         setRestaurants(prevR => [...prevR, r]);
         return { ...o, status: 'approved' };
       }
       return o;
     }));
-    try { await ApiService.updateApprovalStatus(id, 'owner', 'approved'); } catch (e) { console.warn('Sync failed', e); }
+    try {
+      await ApiService.updateApprovalStatus(id, 'owner', 'approved');
+      if (newRestaurant) await ApiService.createRestaurant(newRestaurant);
+    } catch (e) { console.warn('Sync failed', e); }
     showNotification('Owner approved and restaurant created');
   };
 
