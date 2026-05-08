@@ -1,38 +1,9 @@
-import React, { createContext, useState, useContext, ReactNode } from 'react';
-
-export type MenuItem = {
-  id: string; name: string; description: string; price: number;
-  imageUrl: string; category: string; isVeg?: boolean;
-};
-export type Restaurant = {
-  id: string; name: string; cuisine: string; tags: string;
-  rating: number; reviewCount: number; deliveryTime: string;
-  deliveryFee: string; imageUrl: string; menu: MenuItem[];
-  promo?: string;
-};
-export type CartItem = { menuItem: MenuItem; quantity: number; };
-export type OrderStatus = 'pending'|'accepted'|'preparing'|'ready'|'delivering'|'delivered';
-export type Order = {
-  id: string; restaurantId: string; restaurantName: string;
-  items: CartItem[]; status: OrderStatus; total: number;
-  createdAt: Date; address: string;
-};
-
-// ── New: Pending registrations ──────────────────────────────────────────────
-export type PendingOwner = {
-  id: string;
-  name: string; email: string; phone: string;
-  restaurantName: string; restaurantLocation: string; restaurantCategory: string;
-  status: 'pending' | 'approved' | 'rejected';
-  registeredAt: Date;
-};
-export type PendingPartner = {
-  id: string;
-  name: string; email: string; phone: string;
-  vehicleType: string;
-  status: 'pending' | 'approved' | 'rejected';
-  registeredAt: Date;
-};
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import { ApiService } from '../services/api';
+import type { 
+  MenuItem, Restaurant, CartItem, OrderStatus, Order, 
+  PendingOwner, PendingPartner, Notification 
+} from '../types';
 
 const RESTAURANTS: Restaurant[] = [
   {
@@ -81,11 +52,9 @@ interface AppContextType {
   cartTotal: number; cartCount: number;
   placeOrder: (restaurantId: string, address: string) => Order;
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
-  // Auth
-  currentUser: { role: string; name: string } | null;
-  login: (role: string, name: string) => void;
+  currentUser: { role: string; name: string; email?: string } | null;
+  login: (role: string, name: string, email?: string) => boolean;
   logout: () => void;
-  // Approvals
   pendingOwners: PendingOwner[];
   pendingPartners: PendingPartner[];
   registerOwner: (data: Omit<PendingOwner, 'id' | 'status' | 'registeredAt'>) => void;
@@ -94,23 +63,55 @@ interface AppContextType {
   rejectOwner: (id: string) => void;
   approvePartner: (id: string) => void;
   rejectPartner: (id: string) => void;
+  notifications: Notification[];
+  showNotification: (message: string, type?: Notification['type']) => void;
+  isApproved: (role: string, email?: string, name?: string) => boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [currentUser, setCurrentUser] = useState<{ role: string; name: string } | null>(null);
-  const [pendingOwners, setPendingOwners] = useState<PendingOwner[]>([]);
-  const [pendingPartners, setPendingPartners] = useState<PendingPartner[]>([]);
+  // Load from localStorage
+  const load = (key: string, def: any) => {
+    const saved = localStorage.getItem(key);
+    if (!saved) return def;
+    try {
+      const parsed = JSON.parse(saved);
+      // Revive dates
+      if (key === 'orders') return parsed.map((o: any) => ({ ...o, createdAt: new Date(o.createdAt) }));
+      if (key === 'pendingOwners' || key === 'pendingPartners') return parsed.map((o: any) => ({ ...o, registeredAt: new Date(o.registeredAt) }));
+      return parsed;
+    } catch { return def; }
+  };
 
-  const addToCart = (item: MenuItem) =>
+  const [cart, setCart] = useState<CartItem[]>(() => load('cart', []));
+  const [orders, setOrders] = useState<Order[]>(() => load('orders', []));
+  const [currentUser, setCurrentUser] = useState<{ role: string; name: string; email?: string } | null>(() => load('user', null));
+  const [pendingOwners, setPendingOwners] = useState<PendingOwner[]>(() => load('pendingOwners', []));
+  const [pendingPartners, setPendingPartners] = useState<PendingPartner[]>(() => load('pendingPartners', []));
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  // Persistence
+  useEffect(() => localStorage.setItem('cart', JSON.stringify(cart)), [cart]);
+  useEffect(() => localStorage.setItem('orders', JSON.stringify(orders)), [orders]);
+  useEffect(() => localStorage.setItem('user', JSON.stringify(currentUser)), [currentUser]);
+  useEffect(() => localStorage.setItem('pendingOwners', JSON.stringify(pendingOwners)), [pendingOwners]);
+  useEffect(() => localStorage.setItem('pendingPartners', JSON.stringify(pendingPartners)), [pendingPartners]);
+
+  const showNotification = (message: string, type: Notification['type'] = 'success') => {
+    const id = Math.random().toString(36).substr(2, 9);
+    setNotifications(prev => [...prev, { id, message, type }]);
+    setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 4000);
+  };
+
+  const addToCart = (item: MenuItem) => {
     setCart(prev => {
       const ex = prev.find(c => c.menuItem.id === item.id);
       return ex ? prev.map(c => c.menuItem.id === item.id ? { ...c, quantity: c.quantity + 1 } : c)
                : [...prev, { menuItem: item, quantity: 1 }];
     });
+    showNotification(`${item.name} added to cart`);
+  };
 
   const removeFromCart = (itemId: string) =>
     setCart(prev => prev.filter(c => c.menuItem.id !== itemId));
@@ -130,23 +131,53 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     };
     setOrders(prev => [order, ...prev]);
     clearCart();
+    showNotification('Order placed successfully!', 'success');
     return order;
   };
 
-  const updateOrderStatus = (orderId: string, status: OrderStatus) =>
+  const updateOrderStatus = (orderId: string, status: OrderStatus) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
+    showNotification(`Order status updated to ${status}`, 'info');
+  };
 
-  const login = (role: string, name: string) => setCurrentUser({ role, name });
-  const logout = () => setCurrentUser(null);
+  const login = (role: string, name: string, email?: string) => {
+    // High-level Security: Verify approval for privileged roles
+    if (role === 'owner') {
+      const approval = pendingOwners.find(o => o.email === email || o.name === name);
+      if (!approval || approval.status !== 'approved') {
+        showNotification('Security Access Denied: Merchant account pending admin approval.', 'error');
+        return false;
+      }
+    }
+    if (role === 'partner') {
+      const approval = pendingPartners.find(p => p.email === email || p.name === name);
+      if (!approval || approval.status !== 'approved') {
+        showNotification('Security Access Denied: Logistics account pending admin approval.', 'error');
+        return false;
+      }
+    }
 
-  const registerOwner = (data: Omit<PendingOwner, 'id' | 'status' | 'registeredAt'>) => {
+    setCurrentUser({ role, name, email });
+    showNotification(`Logged in as ${name}`, 'success');
+    return true;
+  };
+
+  const logout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('user');
+    showNotification('Securely logged out', 'info');
+  };
+
+  const registerOwner = async (data: Omit<PendingOwner, 'id' | 'status' | 'registeredAt'>) => {
     const entry: PendingOwner = {
       ...data,
       id: `OWN-${Date.now()}`,
       status: 'pending',
       registeredAt: new Date(),
     };
+    await ApiService.submitOwnerApplication(entry);
     setPendingOwners(prev => [entry, ...prev]);
+    showNotification('Registration submitted for review');
   };
 
   const registerPartner = (data: Omit<PendingPartner, 'id' | 'status' | 'registeredAt'>) => {
@@ -157,16 +188,38 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       registeredAt: new Date(),
     };
     setPendingPartners(prev => [entry, ...prev]);
+    showNotification('Application submitted for review');
   };
 
-  const approveOwner = (id: string) =>
+  const approveOwner = (id: string) => {
     setPendingOwners(prev => prev.map(o => o.id === id ? { ...o, status: 'approved' } : o));
-  const rejectOwner = (id: string) =>
+    showNotification('Owner approved');
+  };
+  const rejectOwner = (id: string) => {
     setPendingOwners(prev => prev.map(o => o.id === id ? { ...o, status: 'rejected' } : o));
-  const approvePartner = (id: string) =>
+    showNotification('Owner application rejected', 'error');
+  };
+  const approvePartner = (id: string) => {
     setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'approved' } : p));
-  const rejectPartner = (id: string) =>
+    showNotification('Partner approved');
+  };
+  const rejectPartner = (id: string) => {
     setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'rejected' } : p));
+    showNotification('Partner application rejected', 'error');
+  };
+
+  const isApproved = (role: string, email?: string, name?: string) => {
+    if (role === 'customer' || role === 'admin') return true;
+    if (role === 'owner') {
+      const approval = pendingOwners.find(o => o.email === email || o.name === name);
+      return approval?.status === 'approved';
+    }
+    if (role === 'partner') {
+      const approval = pendingPartners.find(p => p.email === email || p.name === name);
+      return approval?.status === 'approved';
+    }
+    return false;
+  };
 
   return (
     <AppContext.Provider value={{
@@ -176,8 +229,22 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       pendingOwners, pendingPartners,
       registerOwner, registerPartner,
       approveOwner, rejectOwner, approvePartner, rejectPartner,
+      notifications, showNotification,
+      isApproved,
     }}>
       {children}
+      {/* Global Notification UI */}
+      <div className="fixed bottom-24 right-6 z-[9999] flex flex-col gap-2 pointer-events-none">
+        {notifications.map(n => (
+          <div key={n.id} className={`pointer-events-auto px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-slide-up border border-white/20
+            ${n.type === 'success' ? 'bg-emerald-500 text-white' : n.type === 'error' ? 'bg-red-500 text-white' : 'bg-charcoal text-white'}`}>
+            <span className="text-xl">
+              {n.type === 'success' ? '✅' : n.type === 'error' ? '❌' : 'ℹ️'}
+            </span>
+            <span className="font-bold">{n.message}</span>
+          </div>
+        ))}
+      </div>
     </AppContext.Provider>
   );
 };
@@ -187,3 +254,4 @@ export const useApp = () => {
   if (!ctx) throw new Error('useApp must be inside AppProvider');
   return ctx;
 };
+

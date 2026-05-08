@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { AdminLayout } from './AdminOverview';
 import { useApp } from '../../context/AppContext';
-import type { PendingOwner, PendingPartner } from '../../context/AppContext';
+import type { PendingOwner, PendingPartner } from '../../types';
 
 type Tab = 'owners' | 'partners';
 

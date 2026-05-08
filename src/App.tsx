@@ -1,71 +1,75 @@
-import React from 'react';
+import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AppProvider } from './context/AppContext';
-
-const GOOGLE_CLIENT_ID = "946437330680-9r4mutghresee1heq36ailmtrh7drtv1.apps.googleusercontent.com";
-// Mobile Client IDs for reference:
-// Android: 946437330680-87ma1tf4dg56rcp0mk4moi00r7f3159m.apps.googleusercontent.com
-// iOS: 946437330680-drp10qt4b720rhdl6h19uruj1pqirsat.apps.googleusercontent.com
+import { SecurityGuard } from './components/SecurityGuard';
+import LoadingScreen from './components/LoadingScreen';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Auth
-import Login from './pages/Login';
+const Login = lazy(() => import('./pages/Login'));
 
 // Customer
-import HomeFeed from './pages/customer/HomeFeed';
-import SearchDiscovery from './pages/customer/SearchDiscovery';
-import RestaurantMenu from './pages/customer/RestaurantMenu';
-import CartCheckout from './pages/customer/CartCheckout';
-import OrderTracking from './pages/customer/OrderTracking';
-import OrderHistory from './pages/customer/OrderHistory';
-import UserProfile from './pages/customer/UserProfile';
+const HomeFeed = lazy(() => import('./pages/customer/HomeFeed'));
+const SearchDiscovery = lazy(() => import('./pages/customer/SearchDiscovery'));
+const RestaurantMenu = lazy(() => import('./pages/customer/RestaurantMenu'));
+const CartCheckout = lazy(() => import('./pages/customer/CartCheckout'));
+const OrderTracking = lazy(() => import('./pages/customer/OrderTracking'));
+const OrderHistory = lazy(() => import('./pages/customer/OrderHistory'));
+const UserProfile = lazy(() => import('./pages/customer/UserProfile'));
 
 // Owner
-import OwnerDashboard from './pages/owner/OwnerDashboard';
-import OwnerOrders from './pages/owner/OwnerOrders';
+const OwnerDashboard = lazy(() => import('./pages/owner/OwnerDashboard'));
+const OwnerOrders = lazy(() => import('./pages/owner/OwnerOrders'));
 
 // Admin
-import { AdminOverview } from './pages/admin/AdminOverview';
-import AdminRestaurants from './pages/admin/AdminRestaurants';
-import AdminApprovals from './pages/admin/AdminApprovals';
+const AdminOverview = lazy(() => import('./pages/admin/AdminOverview').then(m => ({ default: m.AdminOverview })));
+const AdminRestaurants = lazy(() => import('./pages/admin/AdminRestaurants'));
+const AdminApprovals = lazy(() => import('./pages/admin/AdminApprovals'));
 
 // Partner
-import PartnerNavigation from './pages/partner/PartnerNavigation';
+const PartnerNavigation = lazy(() => import('./pages/partner/PartnerNavigation'));
+
+const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 
 function App() {
   return (
     <AppProvider>
       <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
         <BrowserRouter>
-          <Routes>
-            {/* Auth */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="/login" element={<Login />} />
+          <SecurityGuard>
+            <Suspense fallback={<LoadingScreen />}>
+              <Routes>
+                {/* Auth */}
+                <Route path="/" element={<Navigate to="/login" replace />} />
+                <Route path="/login" element={<Login />} />
 
-            {/* Customer */}
-            <Route path="/customer" element={<HomeFeed />} />
-            <Route path="/customer/search" element={<SearchDiscovery />} />
-            <Route path="/customer/restaurant/:id" element={<RestaurantMenu />} />
-            <Route path="/customer/cart" element={<CartCheckout />} />
-            <Route path="/customer/track/:orderId" element={<OrderTracking />} />
-            <Route path="/customer/orders" element={<OrderHistory />} />
-            <Route path="/customer/profile" element={<UserProfile />} />
+                {/* Customer */}
+                <Route path="/customer" element={<ProtectedRoute role="customer"><HomeFeed /></ProtectedRoute>} />
+                <Route path="/customer/search" element={<ProtectedRoute role="customer"><SearchDiscovery /></ProtectedRoute>} />
+                <Route path="/customer/restaurant/:id" element={<ProtectedRoute role="customer"><RestaurantMenu /></ProtectedRoute>} />
+                <Route path="/customer/cart" element={<ProtectedRoute role="customer"><CartCheckout /></ProtectedRoute>} />
+                <Route path="/customer/track/:orderId" element={<ProtectedRoute role="customer"><OrderTracking /></ProtectedRoute>} />
+                <Route path="/customer/orders" element={<ProtectedRoute role="customer"><OrderHistory /></ProtectedRoute>} />
+                <Route path="/customer/profile" element={<ProtectedRoute role="customer"><UserProfile /></ProtectedRoute>} />
 
-            {/* Owner */}
-            <Route path="/owner" element={<OwnerDashboard />} />
-            <Route path="/owner/orders" element={<OwnerOrders />} />
+                {/* Owner */}
+                <Route path="/owner" element={<ProtectedRoute role="owner"><OwnerDashboard /></ProtectedRoute>} />
+                <Route path="/owner/orders" element={<ProtectedRoute role="owner"><OwnerOrders /></ProtectedRoute>} />
 
-            {/* Admin */}
-            <Route path="/admin" element={<AdminOverview />} />
-            <Route path="/admin/approvals" element={<AdminApprovals />} />
-            <Route path="/admin/restaurants" element={<AdminRestaurants />} />
+                {/* Admin */}
+                <Route path="/admin" element={<ProtectedRoute role="admin"><AdminOverview /></ProtectedRoute>} />
+                <Route path="/admin/approvals" element={<ProtectedRoute role="admin"><AdminApprovals /></ProtectedRoute>} />
+                <Route path="/admin/restaurants" element={<ProtectedRoute role="admin"><AdminRestaurants /></ProtectedRoute>} />
 
-            {/* Partner */}
-            <Route path="/partner" element={<PartnerNavigation />} />
+                {/* Partner */}
+                <Route path="/partner" element={<ProtectedRoute role="partner"><PartnerNavigation /></ProtectedRoute>} />
 
-            {/* Fallback */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
-          </Routes>
+                {/* Fallback */}
+                <Route path="*" element={<Navigate to="/login" replace />} />
+              </Routes>
+            </Suspense>
+          </SecurityGuard>
         </BrowserRouter>
       </GoogleOAuthProvider>
     </AppProvider>

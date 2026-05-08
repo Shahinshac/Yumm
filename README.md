@@ -1,73 +1,36 @@
-# React + TypeScript + Vite
+# Yumm (NexFood) - High-Fidelity Delivery Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a premium, multi-role delivery marketplace built with **Vite, React, TypeScript, and Tailwind CSS v4**.
 
-Currently, two official plugins are available:
+## 🛡️ High-Level Protection & Security
+- **Security Guard**: A global monitor that ensures users only access paths assigned to their role. It detects session tampering and local storage manipulation.
+- **Admin Approval Workflow**: Merchants (Owners) and Logistics Partners must be approved by an Admin before they can access their respective dashboards.
+- **Protected Routes**: React Router guards prevent unauthorized entry to internal pages.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ⚙️ Admin Approval Process
+1. **Registration**: Owners/Partners register via the **Merchant Hub** or **Logistics Fleet** options on the Login page.
+2. **Review**: Admins log in (User: `shahinsha`, Pass: `262007`) and navigate to the **Approval Queue**.
+3. **Activation**: Clicking "Approve & Activate" updates the user's status. Only then can the user log in with their credentials (or Google OAuth).
 
-## React Compiler
+## 🚀 Deployment Instructions
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Deploy to Vercel (Recommended)
+1. Install Vercel CLI: `npm i -g vercel`
+2. Run `vercel` in the root directory.
+3. Configure the following **Environment Variables**:
+   - `VITE_GOOGLE_CLIENT_ID`: `946437330680-9r4mutghresee1heq36ailmtrh7drtv1.apps.googleusercontent.com`
+4. The `vercel.json` included handles the Single Page Application (SPA) routing correctly.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Local Production Build
+```bash
+npm install
+npm run build
+npm run preview
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🛠️ Tech Stack
+- **Framework**: Vite + React
+- **Styling**: Tailwind CSS v4 (Glassmorphism & Haute Cuisine Theme)
+- **Auth**: Google OAuth + Custom Role-Based System
+- **Icons**: Lucide React
+- **Routing**: React Router Dom v6

@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Order {
+  id             String   @id
+  restaurantId   String
+  restaurantName String
+  items          Json
+  status         String
+  total          Decimal
+  address        String
+  createdAt      DateTime @default(now())
+
+  @@map("orders")
+}
+
+model PendingOwner {
+  id                 String   @id
+  name               String
+  email              String
+  phone              String?
+  restaurantName     String
+  restaurantLocation String
+  restaurantCategory String?
+  status             String   @default("pending")
+  registeredAt       DateTime @default(now())
+
+  @@map("pending_owners")
+}
+
+model PendingPartner {
+  id           String   @id
+  name         String
+  email        String
+  phone        String?
+  vehicleType  String?
+  status       String   @default("pending")
+  registeredAt DateTime @default(now())
+
+  @@map("pending_partners")
+}
