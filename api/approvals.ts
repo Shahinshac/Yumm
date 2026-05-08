@@ -12,9 +12,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         prisma.pendingPartner.findMany({ orderBy: { registeredAt: 'desc' } }),
       ]);
       return res.status(200).json({ owners, partners });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to fetch approvals:', err);
-      return res.status(500).json({ error: 'Failed to fetch approvals' });
+      return res.status(500).json({ error: 'Failed to fetch approvals', detail: err.message });
     }
   }
 
@@ -44,9 +44,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       return res.status(400).json({ error: 'Invalid type' });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Failed to update approval:', err);
-      return res.status(500).json({ error: 'Failed to update approval status' });
+      return res.status(500).json({ error: 'Failed to update approval status', detail: err.message });
     }
   }
 
