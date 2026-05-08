@@ -57,19 +57,18 @@ function HeroPanel() {
       
       <div className="relative z-10 flex flex-col justify-end p-20 w-full">
         <div className="flex items-center gap-4 mb-12">
-          <div className="w-16 h-16 bg-primary rounded-[24px] flex items-center justify-center text-white font-lexend font-black text-3xl shadow-2xl shadow-primary/40">Y</div>
+          <div className="w-16 h-16 bg-primary rounded-[24px] flex items-center justify-center text-white font-lexend font-black text-3xl shadow-2xl shadow-primary/40">N</div>
           <div>
-            <span className="font-lexend font-black text-white text-3xl tracking-tight leading-none block">YUMM</span>
-            <span className="text-white/40 font-bold uppercase tracking-[0.4em] text-[10px] mt-1 block">Global Food Marketplace</span>
+            <span className="font-lexend font-black text-white text-3xl tracking-tight leading-none block">NEXFOOD</span>
+            <span className="text-white/40 font-bold uppercase tracking-[0.4em] text-[10px] mt-1 block">Haute Cuisine Network</span>
           </div>
         </div>
         <h1 className="font-lexend font-black text-7xl text-white leading-[0.9] tracking-tighter mb-8">
-          The Future of<br/>
-          <span className="text-primary italic">Fine Dining</span><br/>
-          is Here.
+          Culinary Luxury,<br/>
+          <span className="text-primary italic">Delivered.</span><br/>
         </h1>
         <p className="text-white/60 text-xl font-medium leading-relaxed max-w-lg mb-12">
-          Experience the world's most seamless multi-role logistics network. Connecting culinary artists with diners worldwide.
+          The world's most sophisticated food logistics ecosystem. Connecting legendary chefs with the most discerning palates.
         </p>
         <div className="flex gap-10">
           {[
@@ -176,7 +175,7 @@ export default function Login() {
   const renderContent = () => {
     if (screen === 'role') return (
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <h2 className="font-lexend font-black text-3xl text-charcoal mb-1 tracking-tight">Welcome to Yumm</h2>
+        <h2 className="font-lexend font-black text-3xl text-charcoal mb-1 tracking-tight">Welcome to NexFood</h2>
         <p className="text-on-surface-variant font-medium mb-6 text-sm">Select how you want to use the platform</p>
         
         <div className="grid grid-cols-1 gap-3 mb-6">
@@ -279,7 +278,7 @@ export default function Login() {
 
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-outline-variant/20" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">New to Yumm?</span>
+            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">New to NexFood?</span>
             <div className="flex-1 h-px bg-outline-variant/20" />
           </div>
 
@@ -369,8 +368,8 @@ export default function Login() {
       <main className="flex-1 flex items-center justify-center p-6 lg:p-12 overflow-y-auto scrollbar-hide">
         <div className="w-full max-w-md animate-in fade-in zoom-in duration-700">
           <div className="flex items-center gap-3 mb-8 lg:hidden">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-lexend font-black text-xl">Y</div>
-            <span className="font-lexend font-black text-charcoal text-xl tracking-tighter">YUMM</span>
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white font-lexend font-black text-xl">N</div>
+            <span className="font-lexend font-black text-charcoal text-xl tracking-tighter">NEXFOOD</span>
           </div>
           {renderContent()}
         </div>

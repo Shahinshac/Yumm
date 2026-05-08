@@ -25,12 +25,13 @@ export default function RoleSelector() {
       style={{ backgroundImage: 'radial-gradient(ellipse at 60% 0%, rgba(210,66,0,0.08) 0%, transparent 60%), radial-gradient(ellipse at 0% 100%, rgba(210,66,0,0.05) 0%, transparent 50%)' }}>
       <div className="w-full max-w-sm">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-[28px] mb-5"
-            style={{ background: 'linear-gradient(135deg, #d24200, #ff5200)', boxShadow: '0 8px 32px rgba(210,66,0,0.35)' }}>
-            <span className="text-3xl">🍽️</span>
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-[32px] mb-6 relative group"
+            style={{ background: 'linear-gradient(135deg, #a83300, #d24200)', boxShadow: '0 12px 48px rgba(168,51,0,0.35)' }}>
+            <div className="absolute inset-0 bg-white/10 rounded-[32px] opacity-0 group-hover:opacity-100 transition-opacity" />
+            <span className="text-4xl text-white font-lexend font-black">N</span>
           </div>
-          <h1 className="text-4xl font-lexend font-bold text-on-surface tracking-tight">NexFood</h1>
-          <p className="text-on-surface-variant mt-2 text-base">Multi-Role Delivery Platform</p>
+          <h1 className="text-4xl font-lexend font-black text-on-surface tracking-tighter">NexFood</h1>
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mt-2">Executive Access Hub</p>
         </div>
 
         <div className="space-y-3">

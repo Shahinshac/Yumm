@@ -87,11 +87,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           ApiService.fetchPendingPartners(),
           ApiService.fetchOrders()
         ]);
-        if (o.length) setPendingOwners(o);
-        if (p.length) setPendingPartners(p);
-        if (ords.length) setOrders(ords);
-      } catch (err) { console.error('Sync failed', err); }
+        if (Array.isArray(o)) setPendingOwners(o);
+        if (Array.isArray(p)) setPendingPartners(p);
+        if (Array.isArray(ords)) setOrders(ords);
+      } catch (err) { 
+        console.error('Background synchronization failed. System operating in local-first mode.', err); 
+      }
     };
+
     sync();
     if (userLocation === 'Fetching location...') updateLocation();
   }, []);
@@ -218,14 +221,27 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const registerOwner = async (data: any) => {
     const entry = { ...data, id: `OWN-${Date.now()}`, status: 'pending', registeredAt: new Date() };
     setPendingOwners(prev => [entry, ...prev]);
-    showNotification('Registration submitted');
+    try {
+      await ApiService.submitOwnerApplication(entry);
+      showNotification('Enterprise registration submitted and synced');
+    } catch (err) {
+      console.warn('Network sync failed, registration saved locally', err);
+      showNotification('Registration saved locally');
+    }
   };
 
-  const registerPartner = (data: any) => {
+  const registerPartner = async (data: any) => {
     const entry = { ...data, id: `DRV-${Date.now()}`, status: 'pending', registeredAt: new Date() };
     setPendingPartners(prev => [entry, ...prev]);
-    showNotification('Application submitted');
+    try {
+      await ApiService.submitPartnerApplication(entry);
+      showNotification('Logistics application submitted and synced');
+    } catch (err) {
+      console.warn('Network sync failed, application saved locally', err);
+      showNotification('Application saved locally');
+    }
   };
+
 
   const rejectOwner = (id: string) => setPendingOwners(prev => prev.map(o => o.id === id ? { ...o, status: 'rejected' } : o));
   const approvePartner = (id: string) => setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'approved' } : p));

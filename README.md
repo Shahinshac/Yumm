@@ -1,4 +1,4 @@
-# Yumm (NexFood) - High-Fidelity Delivery Platform
+# NexFood - Haute Cuisine Multi-Role Logistics Network
 
 This is a premium, multi-role delivery marketplace built with **Vite, React, TypeScript, and Tailwind CSS v4**.
 

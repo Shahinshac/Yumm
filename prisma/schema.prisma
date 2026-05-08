@@ -16,24 +16,27 @@ model Order {
   status         String
   total          Decimal
   address        String
+  customerName   String?
+  customerPhone  String?
   createdAt      DateTime @default(now())
 
   @@map("orders")
 }
 
+
 model PendingOwner {
-  id                 String   @id
-  name               String
-  email              String
-  phone              String?
-  restaurantName     String
-  restaurantLocation String
-  restaurantCategory String?
-  status             String   @default("pending")
-  registeredAt       DateTime @default(now())
+  id             String   @id
+  name           String
+  email          String
+  phone          String?
+  restaurantName String
+  cuisineType    String?
+  status         String   @default("pending")
+  registeredAt   DateTime @default(now())
 
   @@map("pending_owners")
 }
+
 
 model PendingPartner {
   id           String   @id
@@ -46,3 +49,4 @@ model PendingPartner {
 
   @@map("pending_partners")
 }
+

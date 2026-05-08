@@ -24,9 +24,21 @@ export const ApiService = {
   // --- ORDERS ---
   async fetchOrders(): Promise<Order[]> {
     if (IS_PROD) {
-      const res = await fetch(`${API_BASE}/orders`);
-      return res.json();
+      try {
+        const res = await fetch(`${API_BASE}/orders`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          throw new Error('Server returned non-JSON response');
+        }
+        return res.json();
+      } catch (err) {
+        console.error('API Fetch Failed:', err);
+        const orders = localStorage.getItem('orders');
+        return orders ? JSON.parse(orders) : [];
+      }
     }
+
     if (IS_SUPABASE_ENABLED && supabase) {
       const { data } = await supabase.from('orders').select('*').order('createdAt', { ascending: false });
       return data || [];

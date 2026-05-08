@@ -61,10 +61,10 @@ export default function AdminApprovals() {
               <div key={owner.id} className="glass-1 rounded-3xl p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-blue-100 text-blue-700 rounded-2xl flex items-center justify-center text-2xl">🧑‍🍳</div>
+                    <div className="w-14 h-14 bg-primary/10 text-primary rounded-[20px] flex items-center justify-center text-3xl shadow-inner">🧑‍🍳</div>
                     <div>
-                      <p className="font-lexend font-bold text-lg text-on-surface">{owner.restaurantName}</p>
-                      <p className="text-sm text-on-surface-variant">{owner.restaurantCategory} · {owner.restaurantLocation}</p>
+                      <p className="font-lexend font-black text-xl text-on-surface leading-tight">{owner.restaurantName}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-primary mt-0.5">{owner.cuisineType || 'Luxury Dining'}</p>
                     </div>
                   </div>
                   {statusBadge(owner.status)}
@@ -117,10 +117,10 @@ export default function AdminApprovals() {
               <div key={partner.id} className="glass-1 rounded-3xl p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-green-100 text-green-700 rounded-2xl flex items-center justify-center text-2xl">🛵</div>
+                    <div className="w-14 h-14 bg-primary/10 text-primary rounded-[20px] flex items-center justify-center text-3xl shadow-inner">🛵</div>
                     <div>
-                      <p className="font-lexend font-bold text-lg text-on-surface">{partner.name}</p>
-                      <p className="text-sm text-on-surface-variant">{partner.vehicleType} · {partner.phone}</p>
+                      <p className="font-lexend font-black text-xl text-on-surface leading-tight">{partner.name}</p>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-primary mt-0.5">{partner.vehicleType} Logistics Partner</p>
                     </div>
                   </div>
                   {statusBadge(partner.status)}

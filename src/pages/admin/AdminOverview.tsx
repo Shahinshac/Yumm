@@ -19,11 +19,11 @@ function AdminSidebar({ active }: { active: string }) {
                        pendingPartners.filter(p => p.status === 'pending').length;
   return (
     <aside className="w-72 min-h-screen flex flex-col gap-1 p-6 border-r border-outline-variant bg-white/50 backdrop-blur-xl fixed top-0 left-0 bottom-0 z-40">
-      <div className="flex items-center gap-4 px-3 py-6 mb-8 bg-primary/5 rounded-3xl border border-primary/10">
+      <div className="flex items-center gap-4 px-3 py-6 mb-8 bg-surface-container-highest/30 rounded-3xl border border-outline-variant/30">
         <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center text-white font-lexend font-black text-2xl shadow-lg shadow-primary/20">N</div>
         <div>
           <p className="font-lexend font-bold text-xl text-on-surface leading-none">NexFood</p>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mt-1">Control Center</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-primary mt-1">Operations Control</p>
         </div>
       </div>
 
@@ -114,15 +114,18 @@ export function AdminOverview() {
       {/* Stats Grid */}
       <div className="grid grid-cols-4 gap-6 mb-10">
         {stats.map(s => (
-          <div key={s.label} className={`glass-1 rounded-[32px] p-8 border-2 ${s.color} transition-all hover:-translate-y-1`}>
+          <div key={s.label} className={`glass-1 rounded-[32px] p-8 border border-outline-variant/30 transition-all hover:-translate-y-2 hover:glass-2 group`}>
             <div className="flex justify-between items-start mb-6">
-              <div className="text-3xl">{s.emoji}</div>
-              <div className={`px-2 py-1 rounded-lg text-xs font-black ${s.up ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>
+              <div className={`w-14 h-14 rounded-2xl ${s.color} flex items-center justify-center text-3xl shadow-lg border-2 border-white/50 group-hover:rotate-6 transition-transform`}>{s.emoji}</div>
+              <div className={`px-2.5 py-1.5 rounded-xl text-[10px] font-black tracking-widest ${s.up ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'} border border-current/10`}>
                 {s.up ? '↑' : '↓'} {s.trend}
               </div>
             </div>
             <p className="text-[10px] font-black text-on-surface-variant uppercase tracking-[0.2em] mb-1">{s.label}</p>
             <p className="font-lexend font-black text-4xl text-on-surface">{s.value}</p>
+            <div className="mt-4 pt-4 border-t border-outline-variant/10">
+              <p className="text-[9px] font-bold text-on-surface-variant/60 uppercase tracking-widest">Real-time sync active</p>
+            </div>
           </div>
         ))}
       </div>
