@@ -301,7 +301,8 @@ export default function Login() {
         <form onSubmit={(e) => { e.preventDefault(); registerOwner({ name: ownerName, email: ownerEmail, phone: ownerPhone, restaurantName: restName, cuisineType: restCategory }); goTo('pending-approval'); }} className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Field label="Full Name" value={ownerName} onChange={setOwnerName} placeholder="Your name" />
           <Field label="Email" type="email" value={ownerEmail} onChange={setOwnerEmail} placeholder="Business email" />
-          <div className="md:col-span-2"><Field label="Restaurant Name" value={restName} onChange={setRestName} placeholder="Name of your outlet" /></div>
+          <Field label="Phone" value={ownerPhone} onChange={setOwnerPhone} placeholder="Business phone" />
+          <div className="md:col-span-1"><Field label="Restaurant Name" value={restName} onChange={setRestName} placeholder="Name of your outlet" /></div>
           <div className="md:col-span-2">
             <label className="block text-[10px] font-black uppercase tracking-[0.2em] mb-1.5 text-on-surface-variant">Cuisine Type</label>
             <select value={restCategory} onChange={e => setRestCategory(e.target.value)} required

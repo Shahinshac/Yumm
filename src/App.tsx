@@ -28,7 +28,10 @@ const OwnerInventory = lazy(() => import('./pages/owner/OwnerInventory'));
 const AdminOverview = lazy(() => import('./pages/admin/AdminOverview'));
 const AdminRestaurants = lazy(() => import('./pages/admin/AdminRestaurants'));
 const AdminApprovals = lazy(() => import('./pages/admin/AdminApprovals'));
-const AdminPlaceholder = lazy(() => import('./pages/admin/AdminPlaceholder'));
+const AdminLiveOrders = lazy(() => import('./pages/admin/AdminLiveOrders'));
+const AdminDriverFleet = lazy(() => import('./pages/admin/AdminDriverFleet'));
+const AdminFinancials = lazy(() => import('./pages/admin/AdminFinancials'));
+const AdminDisputes = lazy(() => import('./pages/admin/AdminDisputes'));
 
 // Partner
 const PartnerNavigation = lazy(() => import('./pages/partner/PartnerNavigation'));
@@ -66,10 +69,10 @@ function App() {
                   <Route path="/admin" element={<ProtectedRoute role="admin"><AdminOverview /></ProtectedRoute>} />
                   <Route path="/admin/approvals" element={<ProtectedRoute role="admin"><AdminApprovals /></ProtectedRoute>} />
                   <Route path="/admin/restaurants" element={<ProtectedRoute role="admin"><AdminRestaurants /></ProtectedRoute>} />
-                  <Route path="/admin/orders" element={<ProtectedRoute role="admin"><AdminPlaceholder title="Live Orders" active="orders" /></ProtectedRoute>} />
-                  <Route path="/admin/drivers" element={<ProtectedRoute role="admin"><AdminPlaceholder title="Driver Fleet" active="drivers" /></ProtectedRoute>} />
-                  <Route path="/admin/financials" element={<ProtectedRoute role="admin"><AdminPlaceholder title="Financial Operations" active="financials" /></ProtectedRoute>} />
-                  <Route path="/admin/disputes" element={<ProtectedRoute role="admin"><AdminPlaceholder title="Dispute Center" active="disputes" /></ProtectedRoute>} />
+                  <Route path="/admin/orders" element={<ProtectedRoute role="admin"><AdminLiveOrders /></ProtectedRoute>} />
+                  <Route path="/admin/drivers" element={<ProtectedRoute role="admin"><AdminDriverFleet /></ProtectedRoute>} />
+                  <Route path="/admin/financials" element={<ProtectedRoute role="admin"><AdminFinancials /></ProtectedRoute>} />
+                  <Route path="/admin/disputes" element={<ProtectedRoute role="admin"><AdminDisputes /></ProtectedRoute>} />
 
                   {/* Partner */}
                   <Route path="/partner" element={<ProtectedRoute role="partner"><PartnerNavigation /></ProtectedRoute>} />
