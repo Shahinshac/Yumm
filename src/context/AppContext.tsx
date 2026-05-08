@@ -45,10 +45,17 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     if (!saved) return def;
     try {
       const parsed = JSON.parse(saved);
-      if (key === 'orders') return parsed.map((o: any) => ({ ...o, createdAt: new Date(o.createdAt) }));
-      if (key === 'pendingOwners' || key === 'pendingPartners') return parsed.map((o: any) => ({ ...o, registeredAt: new Date(o.registeredAt) }));
+      if (key === 'orders' && Array.isArray(parsed)) {
+        return parsed.map((o: any) => ({ ...o, createdAt: new Date(o.createdAt || Date.now()) }));
+      }
+      if ((key === 'pendingOwners' || key === 'pendingPartners') && Array.isArray(parsed)) {
+        return parsed.map((o: any) => ({ ...o, registeredAt: new Date(o.registeredAt || Date.now()) }));
+      }
       return parsed;
-    } catch { return def; }
+    } catch (e) {
+      console.error(`Failed to load ${key} from localStorage:`, e);
+      return def;
+    }
   };
 
   const [restaurants, setRestaurants] = useState<Restaurant[]>(() => load('restaurants', []));

@@ -1,155 +1,84 @@
+/* Tailwind v4 CSS without @import to isolate build error */
 @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-@import "tailwindcss";
-
 @theme {
-  --color-primary: #d24200;
-  --color-on-surface: #281812;
-  --color-on-surface-variant: #5c4037;
-  --color-surface: #fff8f6;
-  --color-surface-container: #ffe9e3;
-  --color-outline-variant: #e5beb2;
-  --color-charcoal: #150f0d;
+  --color-primary: #a83300;
+  --color-surface: #FDFCFB;
+  --color-surface-container: #F5F3F1;
+  --color-on-surface: #1A1A1B;
+  --color-on-surface-variant: #6D6864;
+  --color-outline: #85736E;
+  --color-outline-variant: #D8C2BC;
+  --color-charcoal: #1A1A1B;
 
-  --font-family-lexend: 'Lexend', sans-serif;
-  --font-family-inter: 'Inter', sans-serif;
+  --font-lexend: "Lexend", sans-serif;
+  --font-inter: "Inter", sans-serif;
 }
 
-@layer base {
-  * { box-sizing: border-box; }
-  body {
-    font-family: 'Inter', sans-serif;
-    background-color: #fff8f6;
-    color: #281812;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
-  h1,h2,h3,h4,h5,h6 { font-family: 'Lexend', sans-serif; font-weight: 900; }
+body {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer components {
-  /* Premium Glassmorphism */
-  .glass-1 {
-    background: rgba(255,255,255,0.70);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,0.40);
-    box-shadow: 0 4px 24px rgba(40,24,18,0.04);
-  }
-  .glass-2 {
-    background: rgba(255,255,255,0.85);
-    backdrop-filter: blur(32px);
-    -webkit-backdrop-filter: blur(32px);
-    border: 1px solid rgba(255,255,255,0.50);
-    box-shadow: 0 12px 48px rgba(40,24,18,0.08);
-  }
-  .glass-3 {
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(48px);
-    -webkit-backdrop-filter: blur(48px);
-    border: 1px solid rgba(255,255,255,0.60);
-    box-shadow: 0 32px 80px rgba(40,24,18,0.12);
-  }
-
-  /* Dark Glass (for Admin/Owner) */
-  .glass-dark {
-    background: rgba(21,15,13,0.70);
-    backdrop-filter: blur(24px);
-    -webkit-backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,0.08);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  }
-
-  /* Buttons */
-  .btn-primary {
-    background: #d24200;
-    color: #fff;
-    font-family: 'Lexend', sans-serif;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 11px;
-    border-radius: 20px;
-    padding: 18px 32px;
-    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 10px 30px rgba(210,66,0,0.3);
-  }
-  .btn-primary:hover { 
-    background: #e64a00; 
-    transform: translateY(-4px) scale(1.02); 
-    box-shadow: 0 20px 40px rgba(210,66,0,0.4); 
-  }
-  .btn-primary:active { transform: translateY(0) scale(0.98); }
-
-  .btn-secondary {
-    background: rgba(255,255,255,0.8);
-    backdrop-filter: blur(20px);
-    color: #281812;
-    font-family: 'Lexend', sans-serif;
-    font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-size: 11px;
-    border: 1px solid rgba(40,24,18,0.1);
-    border-radius: 20px;
-    padding: 18px 32px;
-    transition: all 0.3s ease;
-  }
-  .btn-secondary:hover { background: #fff; border-color: #d24200; color: #d24200; }
-
-  /* Badges */
-  .badge-green {
-    background: rgba(16,185,129,0.1);
-    color: #059669;
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 6px 14px;
-    border-radius: 99px;
-    border: 1px solid rgba(16,185,129,0.2);
-  }
-  .badge-orange {
-    background: rgba(210,66,0,0.1);
-    color: #d24200;
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    padding: 6px 14px;
-    border-radius: 99px;
-    border: 1px solid rgba(210,66,0,0.2);
-  }
-
-  /* Patterns & FX */
-  .bg-grid {
-    background-image: radial-gradient(rgba(210,66,0,0.1) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
-  
-  .shimmer {
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    background-size: 200% 100%;
-    animation: shimmer 2s infinite linear;
-  }
-
-  @keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
-  }
-
-  .floating {
-    animation: floating 3s ease-in-out infinite;
-  }
-
-  @keyframes floating {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
+.glass-1 {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 25px 50px -12px rgba(26, 26, 27, 0.05);
 }
 
-/* Scrollbar styling */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #fff8f6; }
-::-webkit-scrollbar-thumb { background: #e5beb2; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #d24200; }
+.glass-2 {
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  font-family: var(--font-lexend);
+  font-weight: 700;
+  padding: 1rem 2rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 1rem;
+}
+
+.btn-secondary {
+  background-color: var(--color-surface-container);
+  color: var(--color-on-surface);
+  font-family: var(--font-lexend);
+  font-weight: 700;
+  padding: 1rem 2rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border-radius: 1rem;
+}
+
+.card-premium {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(24px);
+  border: 1px solid rgba(216, 194, 188, 0.2);
+  border-radius: 40px;
+  padding: 2rem;
+  transition: all 0.3s;
+}
+
+/* Custom Scrollbar */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

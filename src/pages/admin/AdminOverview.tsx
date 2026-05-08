@@ -71,6 +71,8 @@ export function AdminLayout({ children, active }: { children: React.ReactNode; a
   );
 }
 
+export default AdminOverview;
+
 export function AdminOverview() {
   const { orders, restaurants, pendingOwners, pendingPartners, clearAllData } = useApp();
 
