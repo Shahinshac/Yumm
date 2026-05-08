@@ -9,8 +9,8 @@ interface AppContextType {
   restaurants: Restaurant[];
   cart: CartItem[];
   orders: Order[];
-  addToCart: (item: MenuItem) => void;
-  removeFromCart: (itemId: string) => void;
+  addToCart: (item: MenuItem, portion?: Portion) => void;
+  removeFromCart: (itemId: string, portionLabel?: string) => void;
   clearCart: () => void;
   cartTotal: number;
   cartCount: number;

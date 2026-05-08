@@ -13,7 +13,7 @@ const profileMenu = [
 
 export default function UserProfile() {
   const navigate = useNavigate();
-  const { orders } = useApp();
+  const { orders, currentUser } = useApp();
 
   return (
     <div className="mobile-frame bg-surface min-h-screen">

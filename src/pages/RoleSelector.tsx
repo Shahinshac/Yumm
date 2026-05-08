@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApp } from '../context/AppContext';
 
 const roles = [
   { id: 'customer', path: '/customer', label: 'Customer', desc: 'Discover & order premium food', emoji: '🛍️',
@@ -14,6 +15,11 @@ const roles = [
 
 export default function RoleSelector() {
   const navigate = useNavigate();
+  const { logout } = useApp();
+
+  React.useEffect(() => {
+    logout();
+  }, []);
   return (
     <div className="min-h-screen bg-surface flex flex-col items-center justify-center p-6"
       style={{ backgroundImage: 'radial-gradient(ellipse at 60% 0%, rgba(210,66,0,0.08) 0%, transparent 60%), radial-gradient(ellipse at 0% 100%, rgba(210,66,0,0.05) 0%, transparent 50%)' }}>

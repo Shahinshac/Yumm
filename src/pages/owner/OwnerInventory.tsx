@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useNavigate } from 'react-router-dom';
-import { PortionLabel } from '../../types';
+import type { PortionLabel } from '../../types';
 
 function OwnerNav({ active }: { active: string }) {
   const navigate = useNavigate();

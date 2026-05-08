@@ -15,11 +15,11 @@ export default function SearchDiscovery() {
   const filtered = restaurants.filter(r => {
     const matchQ = query === '' || 
       r.name.toLowerCase().includes(query.toLowerCase()) || 
-      r.tags.toLowerCase().includes(query.toLowerCase()) ||
+      (r.tags || '').toLowerCase().includes(query.toLowerCase()) ||
       r.cuisine.toLowerCase().includes(query.toLowerCase());
     const matchC = selectedCuisine === 'All' || 
       r.cuisine.toLowerCase().includes(selectedCuisine.toLowerCase()) || 
-      r.tags.toLowerCase().includes(selectedCuisine.toLowerCase());
+      (r.tags || '').toLowerCase().includes(selectedCuisine.toLowerCase());
     return matchQ && matchC;
   });
 

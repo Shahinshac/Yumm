@@ -139,7 +139,7 @@ export default function HomeFeed() {
               <button className="text-primary font-bold text-sm">Refresh</button>
             </div>
             <div className="space-y-6">
-              {restaurants.flatMap(r => r.menu.slice(0,1)).slice(0,3).map(item => (
+              {restaurants.flatMap(r => (r.menu || []).slice(0,1)).slice(0,3).map(item => (
                 <div key={item.id} className="flex items-center gap-4 group cursor-pointer">
                   <div className="relative overflow-hidden rounded-2xl w-20 h-20 flex-shrink-0">
                     <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform" />
