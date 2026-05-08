@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useGoogleLogin } from '@react-oauth/google';
+import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
+import { GoogleAuth } from '@codetrix-studio/capacitor-google-auth';
+import { Capacitor } from '@capacitor/core';
 import { useApp } from '../context/AppContext';
 
 type Role = 'customer' | 'owner' | 'admin' | 'partner';
@@ -140,7 +142,25 @@ export default function Login() {
     }
   };
 
-  const googleLogin = useGoogleLogin({
+  const handleGoogleLogin = async () => {
+    if (Capacitor.isNativePlatform()) {
+      try {
+        setLoading(true);
+        const user = await GoogleAuth.signIn();
+        if (login(selectedRole, user.name, user.email)) {
+          setTimeout(() => navigate(selectedRole === 'customer' ? '/customer' : `/${selectedRole}`), 700);
+        } else setLoading(false);
+      } catch (err) {
+        setLoading(false);
+        console.error('Native Google Login Error:', err);
+      }
+    } else {
+      // Web login handled by @react-oauth/google hook
+      webGoogleLogin();
+    }
+  };
+
+  const webGoogleLogin = useGoogleLogin({
     onSuccess: () => {
       setLoading(true);
       if (login(selectedRole, 'Sophia Laurent')) {
@@ -182,9 +202,11 @@ export default function Login() {
           Continue
         </button>
         <div className="mt-8 pt-4 border-t border-outline-variant/10 text-center">
-          <button onClick={() => { setSelectedRole('admin'); goTo('admin-login'); }}
-            className="text-[10px] font-bold text-on-surface-variant/40 hover:text-primary uppercase tracking-[0.2em] transition-colors">
-            Staff Portal Access
+          <button 
+            onClick={() => { setSelectedRole('admin'); goTo('admin-login'); }}
+            className="text-on-surface-variant/40 hover:text-primary transition-colors text-[10px] font-black uppercase tracking-[0.2em]"
+          >
+            Admin portal
           </button>
         </div>
       </div>
@@ -210,7 +232,7 @@ export default function Login() {
         <BackBtn onClick={() => goTo('role')} />
         <h2 className="font-lexend font-black text-3xl text-charcoal mb-6 tracking-tight">Welcome back</h2>
         <div className="space-y-6">
-          <GoogleBtn onClick={() => googleLogin()} />
+          <GoogleBtn onClick={() => handleGoogleLogin()} />
           <div className="flex items-center gap-4">
             <div className="flex-1 h-px bg-outline-variant/20" />
             <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">or sign in with email</span>
