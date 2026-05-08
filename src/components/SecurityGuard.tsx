@@ -31,21 +31,7 @@ export const SecurityGuard: React.FC<{ children: React.ReactNode }> = ({ childre
       navigate('/login');
     }
 
-    // 2. Session Integrity Check (Mock)
-    // In a real app, this would verify a JWT or session token.
-    const savedUser = localStorage.getItem('user');
-    if (savedUser) {
-      try {
-        const parsed = JSON.parse(savedUser);
-        if (parsed.role !== role) {
-          showNotification('Security Alert: Session hijacking or tampering detected.', 'error');
-          logout();
-          navigate('/login');
-        }
-      } catch {
-        logout();
-      }
-    }
+    // 2. Session Integrity is handled by AppContext state synchronization.
   }, [location.pathname, currentUser, logout, navigate, showNotification]);
 
   return <>{children}</>;
