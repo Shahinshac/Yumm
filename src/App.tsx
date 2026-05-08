@@ -26,6 +26,7 @@ const OwnerOrders = lazy(() => import('./pages/owner/OwnerOrders'));
 const AdminOverview = lazy(() => import('./pages/admin/AdminOverview').then(m => ({ default: m.AdminOverview })));
 const AdminRestaurants = lazy(() => import('./pages/admin/AdminRestaurants'));
 const AdminApprovals = lazy(() => import('./pages/admin/AdminApprovals'));
+const AdminPlaceholder = lazy(() => import('./pages/admin/AdminPlaceholder'));
 
 // Partner
 const PartnerNavigation = lazy(() => import('./pages/partner/PartnerNavigation'));
@@ -61,6 +62,10 @@ function App() {
                 <Route path="/admin" element={<ProtectedRoute role="admin"><AdminOverview /></ProtectedRoute>} />
                 <Route path="/admin/approvals" element={<ProtectedRoute role="admin"><AdminApprovals /></ProtectedRoute>} />
                 <Route path="/admin/restaurants" element={<ProtectedRoute role="admin"><AdminRestaurants /></ProtectedRoute>} />
+                <Route path="/admin/orders" element={<ProtectedRoute role="admin"><AdminPlaceholder title="Live Orders" active="orders" /></ProtectedRoute>} />
+                <Route path="/admin/drivers" element={<ProtectedRoute role="admin"><AdminPlaceholder title="Driver Fleet" active="drivers" /></ProtectedRoute>} />
+                <Route path="/admin/financials" element={<ProtectedRoute role="admin"><AdminPlaceholder title="Financial Operations" active="financials" /></ProtectedRoute>} />
+                <Route path="/admin/disputes" element={<ProtectedRoute role="admin"><AdminPlaceholder title="Dispute Center" active="disputes" /></ProtectedRoute>} />
 
                 {/* Partner */}
                 <Route path="/partner" element={<ProtectedRoute role="partner"><PartnerNavigation /></ProtectedRoute>} />

@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
 import { AdminLayout } from './AdminOverview';
-
-const mockRestaurants = [
-  { id: 'r1', name: 'The Velvet Bistro', cuisine: 'Modern European', status: 'active', revenue: '$12,450', rating: 4.9, orders: 340, joined: 'Jan 2024' },
-  { id: 'r2', name: 'Zen Garden Sushi', cuisine: 'Japanese', status: 'active', revenue: '$9,210', rating: 4.8, orders: 210, joined: 'Mar 2024' },
-  { id: 'r3', name: "L'Or Brasserie", cuisine: 'French', status: 'pending', revenue: '$0', rating: null, orders: 0, joined: 'May 2024' },
-  { id: 'r4', name: 'Maison Rouge', cuisine: 'French Fusion', status: 'suspended', revenue: '$3,100', rating: 3.2, orders: 88, joined: 'Feb 2024' },
-];
+import { useApp } from '../../context/AppContext';
 
 const STATUS: Record<string, { badge: string; label: string }> = {
   active:    { badge: 'badge-green',  label: 'Active' },
@@ -15,16 +9,17 @@ const STATUS: Record<string, { badge: string; label: string }> = {
 };
 
 export default function AdminRestaurants() {
+  const { restaurants } = useApp();
   const [filter, setFilter] = useState('All');
   const tabs = ['All', 'Active', 'Pending', 'Suspended'];
-  const filtered = filter === 'All' ? mockRestaurants : mockRestaurants.filter(r => r.status === filter.toLowerCase());
+  const filtered = filter === 'All' ? restaurants : restaurants.filter(r => (r as any).status === filter.toLowerCase());
 
   return (
     <AdminLayout active="restaurants">
       <header className="flex justify-between items-start mb-8">
         <div>
           <h1 className="font-lexend font-bold text-3xl text-on-surface">Restaurant Management</h1>
-          <p className="text-on-surface-variant mt-1">{mockRestaurants.length} partner restaurants registered</p>
+          <p className="text-on-surface-variant mt-1">{restaurants.length} partner restaurants registered</p>
         </div>
         <button className="btn-primary rounded-xl px-5 py-2.5 text-sm">+ Onboard Partner</button>
       </header>
@@ -32,10 +27,10 @@ export default function AdminRestaurants() {
       {/* Summary cards */}
       <div className="grid grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Total', value: mockRestaurants.length, color: 'text-on-surface' },
-          { label: 'Active', value: mockRestaurants.filter(r => r.status === 'active').length, color: 'text-emerald-600' },
-          { label: 'Pending', value: mockRestaurants.filter(r => r.status === 'pending').length, color: 'text-primary' },
-          { label: 'Suspended', value: mockRestaurants.filter(r => r.status === 'suspended').length, color: 'text-red-500' },
+          { label: 'Total', value: restaurants.length, color: 'text-on-surface' },
+          { label: 'Active', value: restaurants.filter(r => (r as any).status === 'active').length, color: 'text-emerald-600' },
+          { label: 'Pending', value: restaurants.filter(r => (r as any).status === 'pending').length, color: 'text-primary' },
+          { label: 'Suspended', value: restaurants.filter(r => (r as any).status === 'suspended').length, color: 'text-red-500' },
         ].map(s => (
           <div key={s.label} className="glass-1 rounded-2xl p-5 text-center">
             <p className={`font-lexend font-bold text-4xl ${s.color}`}>{s.value}</p>
