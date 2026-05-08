@@ -94,12 +94,21 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [userLocation, setUserLocation] = useState<string>(() => localStorage.getItem('location') || 'Fetching location...');
 
-  const updateLocation = () => {
+  const updateLocation = async () => {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((pos) => {
-        const loc = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
-        setUserLocation(loc);
-        localStorage.setItem('location', loc);
+      setUserLocation('Fetching location...');
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${pos.coords.latitude}&lon=${pos.coords.longitude}`);
+          const data = await res.json();
+          const addr = data.address.city || data.address.town || data.address.suburb || data.address.road || 'Current Location';
+          const fullAddr = `${addr}, ${data.address.country}`;
+          setUserLocation(fullAddr);
+          localStorage.setItem('location', fullAddr);
+        } catch (err) {
+          const loc = `${pos.coords.latitude.toFixed(2)}, ${pos.coords.longitude.toFixed(2)}`;
+          setUserLocation(loc);
+        }
       }, () => {
         setUserLocation('Location permission denied');
       });
@@ -109,6 +118,19 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    const sync = async () => {
+      try {
+        const [o, p, ords] = await Promise.all([
+          ApiService.fetchPendingOwners(),
+          ApiService.fetchPendingPartners(),
+          ApiService.fetchOrders()
+        ]);
+        if (o.length) setPendingOwners(o);
+        if (p.length) setPendingPartners(p);
+        if (ords.length) setOrders(ords);
+      } catch (err) { console.error('Sync failed', err); }
+    };
+    sync();
     if (userLocation === 'Fetching location...') updateLocation();
   }, []);
 

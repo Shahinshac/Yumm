@@ -87,6 +87,22 @@ export const ApiService = {
     }
   },
 
+  async fetchPendingOwners(): Promise<PendingOwner[]> {
+    if (IS_SUPABASE_ENABLED && supabase) {
+      const { data } = await supabase.from('pending_owners').select('*').order('registeredAt', { ascending: false });
+      return data || [];
+    }
+    return JSON.parse(localStorage.getItem('pendingOwners') || '[]');
+  },
+
+  async fetchPendingPartners(): Promise<PendingPartner[]> {
+    if (IS_SUPABASE_ENABLED && supabase) {
+      const { data } = await supabase.from('pending_partners').select('*').order('registeredAt', { ascending: false });
+      return data || [];
+    }
+    return JSON.parse(localStorage.getItem('pendingPartners') || '[]');
+  },
+
   // --- REAL-TIME SUBSCRIPTION ---
   subscribeToOrders(callback: (payload: any) => void) {
     if (!IS_SUPABASE_ENABLED || !supabase) return null;
