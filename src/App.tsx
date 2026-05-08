@@ -21,6 +21,7 @@ const UserProfile = lazy(() => import('./pages/customer/UserProfile'));
 // Owner
 const OwnerDashboard = lazy(() => import('./pages/owner/OwnerDashboard'));
 const OwnerOrders = lazy(() => import('./pages/owner/OwnerOrders'));
+const OwnerInventory = lazy(() => import('./pages/owner/OwnerInventory'));
 
 // Admin
 const AdminOverview = lazy(() => import('./pages/admin/AdminOverview').then(m => ({ default: m.AdminOverview })));
@@ -57,6 +58,7 @@ function App() {
                 {/* Owner */}
                 <Route path="/owner" element={<ProtectedRoute role="owner"><OwnerDashboard /></ProtectedRoute>} />
                 <Route path="/owner/orders" element={<ProtectedRoute role="owner"><OwnerOrders /></ProtectedRoute>} />
+                <Route path="/owner/inventory" element={<ProtectedRoute role="owner"><OwnerInventory /></ProtectedRoute>} />
 
                 {/* Admin */}
                 <Route path="/admin" element={<ProtectedRoute role="admin"><AdminOverview /></ProtectedRoute>} />

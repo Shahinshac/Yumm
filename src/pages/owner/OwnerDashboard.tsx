@@ -7,8 +7,8 @@ function OwnerNav({ active }: { active: string }) {
   const items = [
     { id: 'dashboard', label: 'Overview', emoji: '📊', path: '/owner' },
     { id: 'orders', label: 'Orders', emoji: '📦', path: '/owner/orders' },
-    { id: 'menu', label: 'Inventory', emoji: '📋', path: '/owner' },
-    { id: 'analytics', label: 'Revenue', emoji: '📈', path: '/owner' },
+    { id: 'menu', label: 'Inventory', emoji: '📋', path: '/owner/inventory' },
+    { id: 'analytics', label: 'Revenue', emoji: '📈', path: '/owner/inventory' },
   ];
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-[100] bg-surface/80 backdrop-blur-xl border-t border-outline-variant/30 px-6 pb-8 pt-4">

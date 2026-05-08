@@ -5,18 +5,18 @@ import type {
   PendingOwner, PendingPartner, Notification 
 } from '../types';
 
-const RESTAURANTS: Restaurant[] = [];
-
 interface AppContextType {
-  restaurants: Restaurant[]; cart: CartItem[];
+  restaurants: Restaurant[];
+  cart: CartItem[];
   orders: Order[];
   addToCart: (item: MenuItem) => void;
   removeFromCart: (itemId: string) => void;
   clearCart: () => void;
-  cartTotal: number; cartCount: number;
+  cartTotal: number;
+  cartCount: number;
   placeOrder: (restaurantId: string, address: string) => Order;
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
-  currentUser: { role: string; name: string; email?: string } | null;
+  currentUser: { role: string; name: string; email?: string; id?: string } | null;
   login: (role: string, name: string, email?: string) => boolean;
   logout: () => void;
   pendingOwners: PendingOwner[];
@@ -33,27 +33,28 @@ interface AppContextType {
   userLocation: string;
   updateLocation: () => void;
   clearAllData: () => void;
+  addMenuItem: (restaurantId: string, item: Omit<MenuItem, 'id'>) => void;
+  removeMenuItem: (restaurantId: string, itemId: string) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
-  // Load from localStorage
   const load = (key: string, def: any) => {
     const saved = localStorage.getItem(key);
     if (!saved) return def;
     try {
       const parsed = JSON.parse(saved);
-      // Revive dates
       if (key === 'orders') return parsed.map((o: any) => ({ ...o, createdAt: new Date(o.createdAt) }));
       if (key === 'pendingOwners' || key === 'pendingPartners') return parsed.map((o: any) => ({ ...o, registeredAt: new Date(o.registeredAt) }));
       return parsed;
     } catch { return def; }
   };
 
+  const [restaurants, setRestaurants] = useState<Restaurant[]>(() => load('restaurants', []));
   const [cart, setCart] = useState<CartItem[]>(() => load('cart', []));
   const [orders, setOrders] = useState<Order[]>(() => load('orders', []));
-  const [currentUser, setCurrentUser] = useState<{ role: string; name: string; email?: string } | null>(() => load('user', null));
+  const [currentUser, setCurrentUser] = useState<any>(() => load('user', null));
   const [pendingOwners, setPendingOwners] = useState<PendingOwner[]>(() => load('pendingOwners', []));
   const [pendingPartners, setPendingPartners] = useState<PendingPartner[]>(() => load('pendingPartners', []));
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -74,11 +75,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
           const loc = `${pos.coords.latitude.toFixed(2)}, ${pos.coords.longitude.toFixed(2)}`;
           setUserLocation(loc);
         }
-      }, () => {
-        setUserLocation('Location permission denied');
-      });
-    } else {
-      setUserLocation('Geolocation not supported');
+      }, () => setUserLocation('Location permission denied'));
     }
   };
 
@@ -99,7 +96,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     if (userLocation === 'Fetching location...') updateLocation();
   }, []);
 
-  // Persistence
+  useEffect(() => localStorage.setItem('restaurants', JSON.stringify(restaurants)), [restaurants]);
   useEffect(() => localStorage.setItem('cart', JSON.stringify(cart)), [cart]);
   useEffect(() => localStorage.setItem('orders', JSON.stringify(orders)), [orders]);
   useEffect(() => localStorage.setItem('user', JSON.stringify(currentUser)), [currentUser]);
@@ -121,18 +118,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     showNotification(`${item.name} added to cart`);
   };
 
-  const removeFromCart = (itemId: string) =>
-    setCart(prev => prev.filter(c => c.menuItem.id !== itemId));
-
+  const removeFromCart = (itemId: string) => setCart(prev => prev.filter(c => c.menuItem.id !== itemId));
   const clearCart = () => setCart([]);
   const cartTotal = cart.reduce((s, i) => s + i.menuItem.price * i.quantity, 0);
   const cartCount = cart.reduce((s, i) => s + i.quantity, 0);
 
   const placeOrder = (restaurantId: string, address: string) => {
-    const r = RESTAURANTS.find(r => r.id === restaurantId)!;
+    const r = restaurants.find(r => r.id === restaurantId);
     const order: Order = {
       id: `ORD-${Math.floor(Math.random()*9000)+1000}`,
-      restaurantId, restaurantName: r.name,
+      restaurantId, restaurantName: r?.name || 'Restaurant',
       items: [...cart], status: 'pending',
       total: cartTotal + 4.99 + 2.50,
       createdAt: new Date(), address,
@@ -149,23 +144,23 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login = (role: string, name: string, email?: string) => {
-    // High-level Security: Verify approval for privileged roles
     if (role === 'owner') {
       const approval = pendingOwners.find(o => o.email === email || o.name === name);
       if (!approval || approval.status !== 'approved') {
-        showNotification('Security Access Denied: Merchant account pending admin approval.', 'error');
+        showNotification('Access Denied: Account pending approval.', 'error');
         return false;
       }
-    }
-    if (role === 'partner') {
+      setCurrentUser({ role, name, email, id: approval.id });
+    } else if (role === 'partner') {
       const approval = pendingPartners.find(p => p.email === email || p.name === name);
       if (!approval || approval.status !== 'approved') {
-        showNotification('Security Access Denied: Logistics account pending admin approval.', 'error');
+        showNotification('Access Denied: Account pending approval.', 'error');
         return false;
       }
+      setCurrentUser({ role, name, email, id: approval.id });
+    } else {
+      setCurrentUser({ role, name, email });
     }
-
-    setCurrentUser({ role, name, email });
     showNotification(`Logged in as ${name}`, 'success');
     return true;
   };
@@ -176,72 +171,71 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     showNotification('Securely logged out', 'info');
   };
 
-  const registerOwner = async (data: Omit<PendingOwner, 'id' | 'status' | 'registeredAt'>) => {
-    const entry: PendingOwner = {
-      ...data,
-      id: `OWN-${Date.now()}`,
-      status: 'pending',
-      registeredAt: new Date(),
-    };
-    await ApiService.submitOwnerApplication(entry);
-    setPendingOwners(prev => [entry, ...prev]);
-    showNotification('Registration submitted for review');
+  const addMenuItem = (restaurantId: string, item: Omit<MenuItem, 'id'>) => {
+    setRestaurants(prev => prev.map(r => r.id === restaurantId ? { ...r, menu: [...r.menu, { ...item, id: `item-${Date.now()}` }] } : r));
+    showNotification('Menu item added successfully');
   };
 
-  const registerPartner = (data: Omit<PendingPartner, 'id' | 'status' | 'registeredAt'>) => {
-    const entry: PendingPartner = {
-      ...data,
-      id: `DRV-${Date.now()}`,
-      status: 'pending',
-      registeredAt: new Date(),
-    };
-    setPendingPartners(prev => [entry, ...prev]);
-    showNotification('Application submitted for review');
+  const removeMenuItem = (restaurantId: string, itemId: string) => {
+    setRestaurants(prev => prev.map(r => r.id === restaurantId ? { ...r, menu: r.menu.filter(i => i.id !== itemId) } : r));
+    showNotification('Item removed from menu');
   };
 
   const approveOwner = (id: string) => {
-    setPendingOwners(prev => prev.map(o => o.id === id ? { ...o, status: 'approved' } : o));
-    showNotification('Owner approved');
+    setPendingOwners(prev => prev.map(o => {
+      if (o.id === id) {
+        const r: Restaurant = {
+          id: `res-${Date.now()}`,
+          ownerId: id,
+          name: o.restaurantName,
+          cuisine: o.cuisineType,
+          rating: 4.5,
+          reviewCount: 0,
+          deliveryTime: '25-35 min',
+          deliveryFee: 'Free',
+          imageUrl: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=800&auto=format&fit=crop',
+          menu: [],
+          status: 'active'
+        };
+        setRestaurants(prevR => [...prevR, r]);
+        return { ...o, status: 'approved' };
+      }
+      return o;
+    }));
+    showNotification('Owner approved and restaurant created');
   };
-  const rejectOwner = (id: string) => {
-    setPendingOwners(prev => prev.map(o => o.id === id ? { ...o, status: 'rejected' } : o));
-    showNotification('Owner application rejected', 'error');
+
+  const registerOwner = async (data: any) => {
+    const entry = { ...data, id: `OWN-${Date.now()}`, status: 'pending', registeredAt: new Date() };
+    setPendingOwners(prev => [entry, ...prev]);
+    showNotification('Registration submitted');
   };
-  const approvePartner = (id: string) => {
-    setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'approved' } : p));
-    showNotification('Partner approved');
+
+  const registerPartner = (data: any) => {
+    const entry = { ...data, id: `DRV-${Date.now()}`, status: 'pending', registeredAt: new Date() };
+    setPendingPartners(prev => [entry, ...prev]);
+    showNotification('Application submitted');
   };
-  const rejectPartner = (id: string) => {
-    setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'rejected' } : p));
-    showNotification('Partner application rejected', 'error');
-  };
+
+  const rejectOwner = (id: string) => setPendingOwners(prev => prev.map(o => o.id === id ? { ...o, status: 'rejected' } : o));
+  const approvePartner = (id: string) => setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'approved' } : p));
+  const rejectPartner = (id: string) => setPendingPartners(prev => prev.map(p => p.id === id ? { ...p, status: 'rejected' } : p));
 
   const isApproved = (role: string, email?: string, name?: string) => {
     if (role === 'customer' || role === 'admin') return true;
-    if (role === 'owner') {
-      const approval = pendingOwners.find(o => o.email === email || o.name === name);
-      return approval?.status === 'approved';
-    }
-    if (role === 'partner') {
-      const approval = pendingPartners.find(p => p.email === email || p.name === name);
-      return approval?.status === 'approved';
-    }
-    return false;
+    const approval = role === 'owner' ? pendingOwners.find(o => o.email === email || o.name === name) : pendingPartners.find(p => p.email === email || p.name === name);
+    return approval?.status === 'approved';
   };
 
   const clearAllData = () => {
-    setCart([]);
-    setOrders([]);
-    setPendingOwners([]);
-    setPendingPartners([]);
     localStorage.clear();
-    showNotification('System Reset: All local data purged.', 'info');
+    showNotification('System Reset', 'info');
     setTimeout(() => window.location.reload(), 1000);
   };
 
   return (
     <AppContext.Provider value={{
-      restaurants: RESTAURANTS, cart, orders, addToCart, removeFromCart, clearCart,
+      restaurants, cart, orders, addToCart, removeFromCart, clearCart,
       cartTotal, cartCount, placeOrder, updateOrderStatus,
       currentUser, login, logout,
       pendingOwners, pendingPartners,
@@ -251,16 +245,14 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       isApproved,
       userLocation, updateLocation,
       clearAllData,
+      addMenuItem, removeMenuItem,
     }}>
       {children}
-      {/* Global Notification UI */}
       <div className="fixed bottom-24 right-6 z-[9999] flex flex-col gap-2 pointer-events-none">
         {notifications.map(n => (
           <div key={n.id} className={`pointer-events-auto px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 animate-slide-up border border-white/20
             ${n.type === 'success' ? 'bg-emerald-500 text-white' : n.type === 'error' ? 'bg-red-500 text-white' : 'bg-charcoal text-white'}`}>
-            <span className="text-xl">
-              {n.type === 'success' ? '✅' : n.type === 'error' ? '❌' : 'ℹ️'}
-            </span>
+            <span className="text-xl">{n.type === 'success' ? '✅' : n.type === 'error' ? '❌' : 'ℹ️'}</span>
             <span className="font-bold">{n.message}</span>
           </div>
         ))}
@@ -274,4 +266,3 @@ export const useApp = () => {
   if (!ctx) throw new Error('useApp must be inside AppProvider');
   return ctx;
 };
-
