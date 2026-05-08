@@ -83,30 +83,43 @@ export default function RestaurantMenu() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             {restaurant.menu.map(item => (
-              <div key={item.id} className="glass-1 rounded-[24px] p-5 flex gap-4 hover:shadow-xl hover:shadow-charcoal/5 transition-all group">
-                <div className="relative overflow-hidden rounded-2xl w-24 h-24 flex-shrink-0">
+              <div key={item.id} className="glass-1 rounded-[32px] p-6 flex flex-col gap-5 hover:shadow-2xl hover:shadow-primary/5 transition-all group border border-outline-variant/30">
+                <div className="relative overflow-hidden rounded-[24px] h-48 w-full">
                   <img src={item.imageUrl} alt={item.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                </div>
-                <div className="flex-1 min-w-0 flex flex-col">
-                  <div className="flex items-center justify-between gap-2">
-                    <p className="font-lexend font-bold text-on-surface truncate group-hover:text-primary transition-colors">{item.name}</p>
-                    {item.isVeg && (
-                      <span className="w-4 h-4 border-2 border-green-600 rounded-sm flex items-center justify-center flex-shrink-0">
-                        <span className="w-2 h-2 bg-green-600 rounded-full" />
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute top-4 left-4">
+                    {item.isVeg ? (
+                      <span className="bg-white/90 backdrop-blur-md p-2 rounded-lg flex items-center justify-center shadow-lg">
+                        <span className="w-3 h-3 border-2 border-green-600 rounded-sm flex items-center justify-center"><span className="w-1.5 h-1.5 bg-green-600 rounded-full" /></span>
+                      </span>
+                    ) : (
+                      <span className="bg-white/90 backdrop-blur-md p-2 rounded-lg flex items-center justify-center shadow-lg">
+                        <span className="w-3 h-3 border-2 border-red-600 rounded-sm flex items-center justify-center"><span className="w-1.5 h-1.5 bg-red-600 rounded-full" /></span>
                       </span>
                     )}
                   </div>
-                  <p className="text-on-surface-variant text-xs mt-1 line-clamp-2 leading-relaxed">{item.description}</p>
-                  <div className="flex items-center justify-between mt-auto pt-3">
-                    <span className="font-lexend font-bold text-xl text-primary">${item.price.toFixed(2)}</span>
-                    <button onClick={() => addToCart(item)}
-                      className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center hover:bg-charcoal transition-all shadow-lg shadow-primary/10">
-                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 4v16m8-8H4" />
-                      </svg>
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="font-lexend font-black text-xl text-charcoal leading-tight">{item.name}</p>
+                      <p className="text-on-surface-variant text-xs mt-2 line-clamp-2 font-medium leading-relaxed">{item.description}</p>
+                    </div>
+                    <span className="font-lexend font-black text-2xl text-primary">${item.price.toFixed(2)}</span>
+                  </div>
+                  <div className="flex items-center justify-between mt-6 pt-5 border-t border-outline-variant/10">
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Recommended</span>
+                      <div className="flex text-yellow-400 text-xs">★★★★★</div>
+                    </div>
+                    <button onClick={() => {
+                      addToCart(item);
+                    }}
+                      className="btn-primary px-6 py-3 rounded-2xl flex items-center gap-3 shadow-lg shadow-primary/20 active:scale-95 transition-all">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 4v16m8-8H4" /></svg>
+                      <span className="font-bold text-sm">Add to Basket</span>
                     </button>
                   </div>
                 </div>
