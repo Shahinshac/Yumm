@@ -6,12 +6,12 @@ import MobileNav from '../../components/MobileNav';
 const categories = ['All','Burgers','Sushi','French','Vegan','Desserts','Pizza'];
 
 export default function HomeFeed() {
-  const { restaurants } = useApp();
+  const { restaurants, userLocation, updateLocation } = useApp();
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('All');
 
   return (
-    <div className="app-container bg-surface min-h-screen overflow-hidden">
+    <div className="app-container bg-surface min-h-screen">
       {/* Hero background blob */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl -translate-y-24 translate-x-24 pointer-events-none" />
 
@@ -19,9 +19,9 @@ export default function HomeFeed() {
       <header className="px-6 md:px-12 pt-14 pb-4 flex items-start justify-between relative z-10">
         <div>
           <p className="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Delivering to</p>
-          <button className="flex items-center mt-1 gap-1">
-            <span className="font-lexend font-bold text-xl md:text-2xl text-on-surface">4521 Luxury Lane</span>
-            <svg className="w-5 h-5 text-primary mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <button onClick={updateLocation} className="flex items-center mt-1 gap-1 group">
+            <span className="font-lexend font-bold text-xl md:text-2xl text-on-surface group-hover:text-primary transition-colors">{userLocation}</span>
+            <svg className="w-5 h-5 text-primary mt-0.5 group-hover:rotate-180 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
             </svg>
           </button>

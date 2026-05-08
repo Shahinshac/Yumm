@@ -66,6 +66,8 @@ interface AppContextType {
   notifications: Notification[];
   showNotification: (message: string, type?: Notification['type']) => void;
   isApproved: (role: string, email?: string, name?: string) => boolean;
+  userLocation: string;
+  updateLocation: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -90,6 +92,25 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [pendingOwners, setPendingOwners] = useState<PendingOwner[]>(() => load('pendingOwners', []));
   const [pendingPartners, setPendingPartners] = useState<PendingPartner[]>(() => load('pendingPartners', []));
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [userLocation, setUserLocation] = useState<string>(() => localStorage.getItem('location') || 'Fetching location...');
+
+  const updateLocation = () => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const loc = `${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)}`;
+        setUserLocation(loc);
+        localStorage.setItem('location', loc);
+      }, () => {
+        setUserLocation('Location permission denied');
+      });
+    } else {
+      setUserLocation('Geolocation not supported');
+    }
+  };
+
+  useEffect(() => {
+    if (userLocation === 'Fetching location...') updateLocation();
+  }, []);
 
   // Persistence
   useEffect(() => localStorage.setItem('cart', JSON.stringify(cart)), [cart]);
@@ -231,6 +252,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       approveOwner, rejectOwner, approvePartner, rejectPartner,
       notifications, showNotification,
       isApproved,
+      userLocation, updateLocation,
     }}>
       {children}
       {/* Global Notification UI */}

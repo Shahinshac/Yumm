@@ -6,8 +6,8 @@ type PaymentMethod = 'apple' | 'google' | 'card' | 'cash';
 
 export default function CartCheckout() {
   const navigate = useNavigate();
-  const { cart, cartTotal, removeFromCart, placeOrder } = useApp();
-  const [address] = useState('4521 Luxury Lane, Suite 400');
+  const { cart, cartTotal, removeFromCart, placeOrder, userLocation } = useApp();
+  const [address] = useState(userLocation);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
   const [placing, setPlacing] = useState(false);
 
@@ -184,7 +184,7 @@ export default function CartCheckout() {
 
       {/* Floating Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 z-[100] px-6 pb-8 pt-4 bg-gradient-to-t from-surface via-surface to-transparent">
-        <div className="max-w-xl mx-auto">
+        <div className="max-w-md mx-auto">
           <button onClick={handleOrder} disabled={placing}
             className="w-full relative overflow-hidden group btn-primary rounded-[24px] py-5 text-xl shadow-2xl shadow-primary/30 transition-all active:scale-[0.98] disabled:opacity-80">
             {placing ? (

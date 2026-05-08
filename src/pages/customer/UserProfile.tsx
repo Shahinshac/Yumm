@@ -29,12 +29,11 @@ export default function UserProfile() {
 
       {/* Avatar */}
       <div className="flex flex-col items-center -mt-14 relative z-10 mb-4">
-        <div className="w-28 h-28 rounded-full border-4 border-white shadow-xl overflow-hidden">
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop&face"
-            alt="User" className="w-full h-full object-cover" />
+        <div className="w-28 h-28 rounded-full border-4 border-white shadow-xl overflow-hidden bg-primary/10 flex items-center justify-center text-3xl font-black text-primary">
+          {currentUser?.name?.charAt(0) || 'U'}
         </div>
-        <h2 className="font-lexend font-bold text-2xl mt-3 text-on-surface">Sophia Laurent</h2>
-        <p className="text-on-surface-variant">sophia@nexfood.com</p>
+        <h2 className="font-lexend font-bold text-2xl mt-3 text-on-surface">{currentUser?.name || 'Guest'}</h2>
+        <p className="text-on-surface-variant font-medium lowercase">{currentUser?.email || `${currentUser?.name || 'user'}@nexfood.com`}</p>
       </div>
 
       {/* Stats */}

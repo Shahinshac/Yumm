@@ -32,7 +32,7 @@ export default function MobileNav({ active }: NavProps) {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] z-50">
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-4 z-50">
       <div className="glass-3 rounded-t-[32px] px-6 pt-4 pb-8">
         <div className="flex justify-between items-center">
           {items.map(item => (

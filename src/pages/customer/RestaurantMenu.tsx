@@ -160,7 +160,7 @@ export default function RestaurantMenu() {
 
       {/* Mobile Sticky Cart */}
       {cartCount > 0 && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-full max-w-[358px] px-6 z-50 md:hidden">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 w-full max-w-md px-6 z-50 md:hidden">
           <button onClick={() => navigate('/customer/cart')}
             className="w-full btn-primary flex justify-between items-center shadow-2xl shadow-primary/40">
             <span className="bg-white/20 text-white text-xs font-bold px-2.5 py-1 rounded-lg">
