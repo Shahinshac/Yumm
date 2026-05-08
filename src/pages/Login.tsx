@@ -122,7 +122,9 @@ export default function Login() {
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (adminUser === 'shahinsha' && adminPass === '262007') {
+    const user = adminUser.trim().toLowerCase();
+    const pass = adminPass.trim();
+    if (user === 'shahinsha' && pass === '262007') {
       setLoading(true);
       if (login('admin', 'Shahinsha')) {
         setTimeout(() => navigate('/admin'), 700);

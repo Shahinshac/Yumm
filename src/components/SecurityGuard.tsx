@@ -26,9 +26,9 @@ export const SecurityGuard: React.FC<{ children: React.ReactNode }> = ({ childre
     );
 
     if (isAccessingForbidden) {
-      showNotification('Security Alert: Unauthorized access attempt detected.', 'error');
-      logout();
-      navigate('/login');
+      showNotification('Access Redirect: Returning to your authorized portal.', 'info');
+      const home = role === 'customer' ? '/customer' : `/${role}`;
+      navigate(home);
     }
 
     // 2. Session Integrity is handled by AppContext state synchronization.
