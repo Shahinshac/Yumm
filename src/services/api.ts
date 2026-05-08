@@ -13,7 +13,7 @@ const IS_SUPABASE_ENABLED = !!import.meta.env.VITE_SUPABASE_URL;
 export const ApiService = {
   // --- AUTH & SESSIONS ---
   async verifySession() {
-    if (IS_SUPABASE_ENABLED) {
+    if (IS_SUPABASE_ENABLED && supabase) {
       const { data: { session } } = await supabase.auth.getSession();
       return session?.user || null;
     }
@@ -27,7 +27,7 @@ export const ApiService = {
       const res = await fetch(`${API_BASE}/orders`);
       return res.json();
     }
-    if (IS_SUPABASE_ENABLED) {
+    if (IS_SUPABASE_ENABLED && supabase) {
       const { data } = await supabase.from('orders').select('*').order('createdAt', { ascending: false });
       return data || [];
     }
@@ -44,7 +44,7 @@ export const ApiService = {
       });
       return;
     }
-    if (IS_SUPABASE_ENABLED) {
+    if (IS_SUPABASE_ENABLED && supabase) {
       await supabase.from('orders').insert(order);
     } else {
       const orders = await this.fetchOrders();
@@ -62,7 +62,7 @@ export const ApiService = {
       });
       return;
     }
-    if (IS_SUPABASE_ENABLED) {
+    if (IS_SUPABASE_ENABLED && supabase) {
       await supabase.from('pending_owners').insert(data);
     } else {
       const applications = JSON.parse(localStorage.getItem('pendingOwners') || '[]');
@@ -79,7 +79,7 @@ export const ApiService = {
       });
       return;
     }
-    if (IS_SUPABASE_ENABLED) {
+    if (IS_SUPABASE_ENABLED && supabase) {
       await supabase.from('pending_partners').insert(data);
     } else {
       const applications = JSON.parse(localStorage.getItem('pendingPartners') || '[]');
@@ -89,7 +89,7 @@ export const ApiService = {
 
   // --- REAL-TIME SUBSCRIPTION ---
   subscribeToOrders(callback: (payload: any) => void) {
-    if (!IS_SUPABASE_ENABLED) return null;
+    if (!IS_SUPABASE_ENABLED || !supabase) return null;
     return supabase
       .channel('order-updates')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, callback)
