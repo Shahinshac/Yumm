@@ -254,14 +254,43 @@ export default function Login() {
     if (screen === 'owner-auth' || screen === 'partner-auth') return (
       <div className="animate-in fade-in slide-in-from-right-4 duration-500">
         <BackBtn onClick={() => goTo('role')} />
-        <h2 className="font-lexend font-black text-3xl text-charcoal mb-1 tracking-tight">{selectedRole === 'owner' ? 'Partner with us' : 'Join our fleet'}</h2>
-        <p className="text-on-surface-variant font-medium mb-8 text-sm">Become part of the Yumm ecosystem</p>
-        <button onClick={() => goTo(selectedRole === 'owner' ? 'owner-register' : 'partner-register')}
-          className="w-full bg-charcoal text-white rounded-[20px] py-5 font-lexend font-black text-base shadow-lg hover:scale-[1.01] active:scale-95 transition-all">
-          Start Application
-        </button>
-        <p className="mt-6 text-center text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
-          Approval time: ~24 Hours
+        <h2 className="font-lexend font-black text-3xl text-charcoal mb-1 tracking-tight">
+          {selectedRole === 'owner' ? 'Merchant Portal' : 'Logistics Portal'}
+        </h2>
+        <p className="text-on-surface-variant font-medium mb-8 text-sm">Access your enterprise dashboard</p>
+        
+        <div className="space-y-6">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            setLoading(true);
+            if (login(selectedRole, partnerEmail.split('@')[0], partnerEmail)) {
+              setTimeout(() => navigate(`/${selectedRole}`), 700);
+            } else {
+              setLoading(false);
+              setError('Security Access Denied: Account not approved or not found.');
+            }
+          }} className="space-y-4">
+            <Field label="Registration Email" type="email" value={partnerEmail} onChange={setPartnerEmail} placeholder="your@email.com" />
+            {error && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest">{error}</p>}
+            <button type="submit" disabled={loading} className="w-full btn-primary rounded-[20px] py-4 text-lg shadow-xl shadow-primary/20">
+              {loading ? <Spinner /> : 'Sign In'}
+            </button>
+          </form>
+
+          <div className="flex items-center gap-4">
+            <div className="flex-1 h-px bg-outline-variant/20" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">New to Yumm?</span>
+            <div className="flex-1 h-px bg-outline-variant/20" />
+          </div>
+
+          <button onClick={() => goTo(selectedRole === 'owner' ? 'owner-register' : 'partner-register')}
+            className="w-full bg-charcoal text-white rounded-[20px] py-4 font-lexend font-black text-base shadow-lg hover:scale-[1.01] active:scale-95 transition-all">
+            Start New Application
+          </button>
+        </div>
+        
+        <p className="mt-8 text-center text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">
+          Approval time for new partners: ~24 Hours
         </p>
       </div>
     );

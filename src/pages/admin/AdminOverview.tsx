@@ -72,7 +72,7 @@ export function AdminLayout({ children, active }: { children: React.ReactNode; a
 }
 
 export function AdminOverview() {
-  const { orders, restaurants, pendingOwners, pendingPartners } = useApp();
+  const { orders, restaurants, pendingOwners, pendingPartners, clearAllData } = useApp();
 
   const stats = [
     { label: 'GTV (Gross Volume)', value: '$0', trend: '0%', up: true, emoji: '💎', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
@@ -97,9 +97,13 @@ export function AdminOverview() {
           </p>
         </div>
         <div className="flex gap-4">
-          <button className="px-6 py-3.5 rounded-2xl bg-white border border-outline-variant font-bold text-sm hover:shadow-xl transition-all flex items-center gap-2">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" strokeWidth={2.5} /></svg>
-            Export Report
+          <button onClick={() => {
+            if(window.confirm('CRITICAL: Purge all system data? This will clear all restaurants, orders, and users. Action cannot be undone.')) {
+              clearAllData();
+            }
+          }} className="px-6 py-3.5 rounded-2xl bg-red-50 text-red-600 border border-red-100 font-bold text-sm hover:bg-red-500 hover:text-white transition-all flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" strokeWidth={2.5} /></svg>
+            Reset System
           </button>
           <button className="px-6 py-3.5 rounded-2xl bg-primary text-white font-bold text-sm shadow-xl shadow-primary/20 hover:scale-105 transition-all">
             Refresh Metrics

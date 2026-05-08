@@ -5,43 +5,7 @@ import type {
   PendingOwner, PendingPartner, Notification 
 } from '../types';
 
-const RESTAURANTS: Restaurant[] = [
-  {
-    id: 'r1', name: 'The Velvet Bistro', cuisine: 'Modern European',
-    tags: 'French Fusion • Fine Dining • Wine Bar',
-    rating: 0.0, reviewCount: 0, deliveryTime: '40-55 min',
-    deliveryFee: 'Free delivery', promo: '20% OFF',
-    imageUrl: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1000&auto=format&fit=crop',
-    menu: [
-      { id: 'm1', name: 'Truffle Atlantic Salmon', description: 'Pan-seared Atlantic salmon with black truffle cream, seasonal vegetables and saffron risotto.', price: 28.50, imageUrl: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?q=80&w=800&auto=format&fit=crop', category: 'Mains', isVeg: false },
-      { id: 'm2', name: 'Signature Angus Burger', description: 'Hand-pressed 200g Angus patty with truffle aioli, aged cheddar, and brioche bun.', price: 14.50, imageUrl: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800&auto=format&fit=crop', category: 'Mains', isVeg: false },
-      { id: 'm3', name: 'Quinoa Buddha Bowl', description: 'Tri-color quinoa, roasted vegetables, tahini, pomegranate and micro herbs.', price: 12.00, imageUrl: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop', category: 'Mains', isVeg: true },
-      { id: 'm4', name: 'Molten Lava Cake', description: 'Warm Valrhona chocolate fondant with vanilla bean ice cream and gold leaf.', price: 12.00, imageUrl: 'https://images.unsplash.com/photo-1624353365286-3f8d62daad51?q=80&w=800&auto=format&fit=crop', category: 'Desserts', isVeg: true },
-    ],
-  },
-  {
-    id: 'r2', name: 'Zen Garden Sushi', cuisine: 'Japanese',
-    tags: 'Premium Seafood • Omakase • Sake Bar',
-    rating: 0.0, reviewCount: 0, deliveryTime: '35-45 min',
-    deliveryFee: '$2.99 delivery', promo: '50% OFF',
-    imageUrl: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?q=80&w=1000&auto=format&fit=crop',
-    menu: [
-      { id: 'm5', name: 'Wagyu Nigiri Set', description: 'Six-piece premium A5 Wagyu nigiri with house soy and wasabi.', price: 48.00, imageUrl: 'https://images.unsplash.com/photo-1617196034183-421b4040ed20?q=80&w=800&auto=format&fit=crop', category: 'Sushi', isVeg: false },
-      { id: 'm6', name: 'Dragon Roll', description: 'Shrimp tempura, cucumber, avocado, topped with tobiko and eel sauce.', price: 22.00, imageUrl: 'https://images.unsplash.com/photo-1617196034296-1f527b965b30?q=80&w=800&auto=format&fit=crop', category: 'Rolls', isVeg: false },
-    ],
-  },
-  {
-    id: 'r3', name: "L'Or Brasserie", cuisine: 'French',
-    tags: 'Brasserie • Champagne • Oyster Bar',
-    rating: 0.0, reviewCount: 0, deliveryTime: '50-65 min',
-    deliveryFee: 'Free delivery',
-    imageUrl: 'https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=1000&auto=format&fit=crop',
-    menu: [
-      { id: 'm7', name: 'Duck Confit', description: 'Slow-cooked Moulard duck leg, Puy lentils, roasted shallots and jus.', price: 34.00, imageUrl: 'https://images.unsplash.com/photo-1590846406792-0adc7f928f1e?q=80&w=800&auto=format&fit=crop', category: 'Mains', isVeg: false },
-      { id: 'm8', name: 'Crème Brûlée', description: 'Classic Madagascar vanilla custard with caramelized sugar crust.', price: 10.00, imageUrl: 'https://images.unsplash.com/photo-1470124182917-cc6e71b22ecc?q=80&w=800&auto=format&fit=crop', category: 'Desserts', isVeg: true },
-    ],
-  },
-];
+const RESTAURANTS: Restaurant[] = [];
 
 interface AppContextType {
   restaurants: Restaurant[]; cart: CartItem[];
@@ -68,6 +32,7 @@ interface AppContextType {
   isApproved: (role: string, email?: string, name?: string) => boolean;
   userLocation: string;
   updateLocation: () => void;
+  clearAllData: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -264,6 +229,16 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     return false;
   };
 
+  const clearAllData = () => {
+    setCart([]);
+    setOrders([]);
+    setPendingOwners([]);
+    setPendingPartners([]);
+    localStorage.clear();
+    showNotification('System Reset: All local data purged.', 'info');
+    setTimeout(() => window.location.reload(), 1000);
+  };
+
   return (
     <AppContext.Provider value={{
       restaurants: RESTAURANTS, cart, orders, addToCart, removeFromCart, clearCart,
@@ -275,6 +250,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
       notifications, showNotification,
       isApproved,
       userLocation, updateLocation,
+      clearAllData,
     }}>
       {children}
       {/* Global Notification UI */}
