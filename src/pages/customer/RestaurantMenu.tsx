@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../../context/AppContext';
 import MobileNav from '../../components/MobileNav';
+import { MenuItem } from '../../types';
 
-  const [portionItem, setPortionItem] = React.useState<MenuItem | null>(null);
+export default function RestaurantMenu() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { restaurants, addToCart, cartCount, cartTotal } = useApp();
+  const restaurant = restaurants.find(r => r.id === id);
+  const [portionItem, setPortionItem] = useState<MenuItem | null>(null);
+
+  if (!restaurant) return (
+    <div className="mobile-frame flex items-center justify-center min-h-screen">
+      <p className="font-lexend font-bold text-xl">Restaurant not found.</p>
+    </div>
+  );
 
   return (
     <div className="app-container bg-surface min-h-screen">
-      {/* ... Hero same ... */}
+      {/* Hero */}
       <div className="relative h-72 md:h-96">
         <img src={restaurant.imageUrl} alt={restaurant.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#281812]/90 via-[#281812]/40 to-transparent" />
@@ -142,49 +154,6 @@ import MobileNav from '../../components/MobileNav';
           </div>
         </div>
       )}
-
-        {/* Sidebar: Cart Summary for Desktop */}
-        <div className="hidden md:block md:col-span-4">
-          <div className="sticky top-12 bg-white rounded-[32px] p-8 border border-outline-variant/30 shadow-2xl shadow-charcoal/5">
-            <h3 className="font-lexend font-bold text-xl mb-6 flex items-center gap-2">
-              <svg className="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" strokeWidth={2}/></svg>
-              Your Order
-            </h3>
-            
-            {cartCount === 0 ? (
-              <div className="py-12 text-center">
-                <p className="text-4xl mb-4 opacity-20">🛒</p>
-                <p className="text-on-surface-variant font-medium">Your basket is empty.</p>
-                <p className="text-xs text-on-surface-variant mt-1">Add items to start your gourmet experience.</p>
-              </div>
-            ) : (
-              <div className="space-y-6">
-                <div className="max-h-[40vh] overflow-y-auto pr-2 space-y-4 scrollbar-hide">
-                  {/* We would map actual cart items here if useApp provided them, 
-                      for now let's assume it does since we defined it in context */}
-                  <p className="text-sm font-bold text-on-surface">Items in basket:</p>
-                  <p className="text-3xl font-lexend font-bold text-primary">${cartTotal.toFixed(2)}</p>
-                </div>
-                <div className="space-y-3 pt-6 border-t border-outline-variant/20">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-on-surface-variant">Subtotal</span>
-                    <span className="font-bold text-on-surface">${cartTotal.toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-on-surface-variant">Delivery Fee</span>
-                    <span className="font-bold text-emerald-600">FREE</span>
-                  </div>
-                </div>
-                <button onClick={() => navigate('/customer/cart')}
-                  className="w-full btn-primary py-4 rounded-2xl flex items-center justify-center gap-3">
-                  Proceed to Checkout
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path d="M13 7l5 5-5 5M6 12h12" strokeWidth={2.5}/></svg>
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
 
       {/* Mobile Sticky Cart */}
       {cartCount > 0 && (
